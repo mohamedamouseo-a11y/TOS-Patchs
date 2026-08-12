@@ -1,0 +1,71 @@
+diff --git a/frontend/src/features/tasks/taskShared.jsx b/frontend/src/features/tasks/taskShared.jsx
+--- a/frontend/src/features/tasks/taskShared.jsx
++++ b/frontend/src/features/tasks/taskShared.jsx
+@@ -2258,17 +2258,49 @@ function decorateDesignRequestBriefFiles(root, files = [], ui = getTaskUiText("en")) {
+   valueNode.appendChild(container);
+   return true;
+ }
+ 
+-function RichTextContent({ html, placeholder, className = "", ui = getTaskUiText("en"), designBriefFiles = [] }) {
++function flattenTaskDescriptionLinks(root) {
++  if (!root || typeof document === "undefined") return false;
++  let changed = false;
++
++  root.querySelectorAll("a.tos-smart-link-chip[href]").forEach((chip) => {
++    const href = normalizeExternalUrl(chip.getAttribute("href") || "");
++    if (!href) return;
++
++    const plainLink = document.createElement("a");
++    plainLink.href = href;
++    plainLink.target = "_blank";
++    plainLink.rel = "noopener noreferrer";
++    plainLink.className = "tos-task-description-link not-prose text-blue-600 underline underline-offset-2 dark:text-blue-300";
++    plainLink.textContent = href;
++    plainLink.setAttribute("dir", "ltr");
++    plainLink.style.display = "block";
++    plainLink.style.width = "fit-content";
++    plainLink.style.maxWidth = "100%";
++    plainLink.style.margin = "0.25rem 0";
++    plainLink.style.overflowWrap = "anywhere";
++    plainLink.style.wordBreak = "break-word";
++    plainLink.style.unicodeBidi = "plaintext";
++
++    chip.replaceWith(plainLink);
++    changed = true;
++  });
++
++  return changed;
++}
++
++function RichTextContent({ html, placeholder, className = "", ui = getTaskUiText("en"), designBriefFiles = [], plainBlockLinks = false }) {
+   const contentRef = useRef(null);
+   const safeHtml = htmlOrPlaceholder(html, placeholder ?? ui.noContentYet);
+ 
+   useEffect(() => {
+     const root = contentRef.current;
+     if (!root) return;
+     localizeDesignRequestBlocks(root, ui);
+     normalizeRichTextLinks(root, ui);
+-    compactDesignRequestLinks(root);
++    if (plainBlockLinks) flattenTaskDescriptionLinks(root);
++    else compactDesignRequestLinks(root);
+     decorateDesignRequestBriefFiles(root, designBriefFiles, ui);
+-    enhanceSmartLinkTitles(root, undefined, ui);
+-  }, [safeHtml, ui, designBriefFiles]);
++    if (!plainBlockLinks) enhanceSmartLinkTitles(root, undefined, ui);
++  }, [safeHtml, ui, designBriefFiles, plainBlockLinks]);
+ 
+   return <div ref={contentRef} className={className} onClick={openRichTextLink} dangerouslySetInnerHTML={{ __html: safeHtml }} />;
+ }
+ 
+diff --git a/frontend/src/components/ProfessionalTaskBoard.jsx b/frontend/src/components/ProfessionalTaskBoard.jsx
+--- a/frontend/src/components/ProfessionalTaskBoard.jsx
++++ b/frontend/src/components/ProfessionalTaskBoard.jsx
+@@ -1892,7 +1892,7 @@ function CardDetailsModal({ task, tasks = [], dependencyTasks = [], lists, labels,
+                   </>
+                 ) : (
+-                  <RichTextContent html={draft.description} placeholder={modalUi.noDescription} className="tos-task-rich-text-display prose prose-sm max-w-none min-h-[360px] rounded-2xl bg-slate-50 p-5 text-sm leading-8 text-slate-700 dark:prose-invert dark:bg-zinc-900 dark:text-zinc-300" designBriefFiles={designBriefFiles} />
++                  <RichTextContent html={draft.description} placeholder={modalUi.noDescription} plainBlockLinks className="tos-task-rich-text-display prose prose-sm max-w-none min-w-0 min-h-[360px] rounded-2xl bg-slate-50 p-5 text-sm leading-6 text-slate-700 [overflow-wrap:anywhere] [&_p]:my-2 [&_p]:leading-6 [&_li]:my-1 dark:prose-invert dark:bg-zinc-900 dark:text-zinc-300" designBriefFiles={designBriefFiles} />
+                 )}
+               </section>
+               )}
