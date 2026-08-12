@@ -1,0 +1,73 @@
+diff --git a/frontend/src/features/tasks/taskShared.jsx b/frontend/src/features/tasks/taskShared.jsx
+--- a/frontend/src/features/tasks/taskShared.jsx
++++ b/frontend/src/features/tasks/taskShared.jsx
+@@ -2262,47 +2262,33 @@
+-function flattenTaskDescriptionLinks(root) {
++function formatTaskDescriptionLinkCards(root) {
+   if (!root || typeof document === "undefined") return false;
+   let changed = false;
+ 
+   root.querySelectorAll("a.tos-smart-link-chip[href]").forEach((chip) => {
+-    const href = normalizeExternalUrl(chip.getAttribute("href") || "");
+-    if (!href) return;
+-
+-    const plainLink = document.createElement("a");
+-    plainLink.href = href;
+-    plainLink.target = "_blank";
+-    plainLink.rel = "noopener noreferrer";
+-    plainLink.className = "tos-task-description-link not-prose text-blue-600 underline underline-offset-2 dark:text-blue-300";
+-    plainLink.textContent = href;
+-    plainLink.setAttribute("dir", "ltr");
+-    plainLink.style.display = "block";
+-    plainLink.style.width = "fit-content";
+-    plainLink.style.maxWidth = "100%";
+-    plainLink.style.margin = "0.25rem 0";
+-    plainLink.style.overflowWrap = "anywhere";
+-    plainLink.style.wordBreak = "break-word";
+-    plainLink.style.unicodeBidi = "plaintext";
+-
+-    chip.replaceWith(plainLink);
++    chip.style.display = "flex";
++    chip.style.width = "fit-content";
++    chip.style.maxWidth = "100%";
++    chip.style.margin = "0.3rem 0";
++    chip.style.verticalAlign = "top";
+     changed = true;
+   });
+ 
+   return changed;
+ }
+ 
+-function RichTextContent({ html, placeholder, className = "", ui = getTaskUiText("en"), designBriefFiles = [], plainBlockLinks = false }) {
++function RichTextContent({ html, placeholder, className = "", ui = getTaskUiText("en"), designBriefFiles = [], preserveLinkCards = false }) {
+   const contentRef = useRef(null);
+   const safeHtml = htmlOrPlaceholder(html, placeholder ?? ui.noContentYet);
+ 
+   useEffect(() => {
+     const root = contentRef.current;
+     if (!root) return;
+     localizeDesignRequestBlocks(root, ui);
+     normalizeRichTextLinks(root, ui);
+-    if (plainBlockLinks) flattenTaskDescriptionLinks(root);
++    if (preserveLinkCards) formatTaskDescriptionLinkCards(root);
+     else compactDesignRequestLinks(root);
+     decorateDesignRequestBriefFiles(root, designBriefFiles, ui);
+-    if (!plainBlockLinks) enhanceSmartLinkTitles(root, undefined, ui);
+-  }, [safeHtml, ui, designBriefFiles, plainBlockLinks]);
++    enhanceSmartLinkTitles(root, undefined, ui);
++  }, [safeHtml, ui, designBriefFiles, preserveLinkCards]);
+ 
+   return <div ref={contentRef} className={className} onClick={openRichTextLink} dangerouslySetInnerHTML={{ __html: safeHtml }} />;
+ }
+
+diff --git a/frontend/src/components/ProfessionalTaskBoard.jsx b/frontend/src/components/ProfessionalTaskBoard.jsx
+--- a/frontend/src/components/ProfessionalTaskBoard.jsx
++++ b/frontend/src/components/ProfessionalTaskBoard.jsx
+@@ -1892,7 +1892,7 @@
+                   </>
+                 ) : (
+-                  <RichTextContent html={draft.description} placeholder={modalUi.noDescription} plainBlockLinks className="tos-task-rich-text-display prose prose-sm max-w-none min-w-0 min-h-[360px] rounded-2xl bg-slate-50 p-5 text-sm leading-6 text-slate-700 [overflow-wrap:anywhere] [&_p]:my-2 [&_p]:leading-6 [&_li]:my-1 dark:prose-invert dark:bg-zinc-900 dark:text-zinc-300" designBriefFiles={designBriefFiles} />
++                  <RichTextContent html={draft.description} placeholder={modalUi.noDescription} preserveLinkCards className="tos-task-rich-text-display prose prose-sm max-w-none min-w-0 min-h-[360px] rounded-2xl bg-slate-50 p-5 text-sm leading-6 text-slate-700 [overflow-wrap:anywhere] [&_p]:my-2 [&_p]:leading-6 [&_li]:my-1 dark:prose-invert dark:bg-zinc-900 dark:text-zinc-300" designBriefFiles={designBriefFiles} />
+                 )}
+               </section>
+               )}
