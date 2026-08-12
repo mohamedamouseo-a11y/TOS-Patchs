@@ -1,0 +1,95 @@
+Apply TOS-RAMZY-GEMINI-PRIMARY-AGNES-FALLBACK-V1 to the LIVE TOS source with minimal work/credit.
+
+TARGET:
+/var/www/TOS
+
+IMPORTANT:
+- Do NOT modify or push to the private TOS GitHub repository.
+- Do NOT make unrelated changes.
+- Do NOT expose or print API keys.
+- Do NOT assume the GitHub main source matches production.
+- Stop safely if the actual Ramzy source cannot be identified.
+
+1) cd /var/www/TOS
+
+2) Locate the real Ramzy implementation only. Search narrowly for:
+Ramzy
+رمزي
+Mastra Agency Operator
+gpt-4.1-mini
+AGENT_SETTINGS_ENCRYPTION_KEY
+AI_API_KEY
+/api/agent
+provider
+model
+
+Use the files that actually implement the live Settings -> Ramzy AI page and its backend model execution. Do not scan unrelated modules after the relevant files are identified.
+
+3) BASELINE GUARD:
+Before editing, confirm the source contains at least TWO strong Ramzy anchors from this list:
+- Ramzy / رمزي
+- Mastra Agency Operator
+- gpt-4.1-mini
+- AGENT_SETTINGS_ENCRYPTION_KEY
+- /api/agent
+- existing Ramzy provider/model settings
+
+If not, return SOURCE_MISMATCH and STOP with zero production changes.
+
+4) Create ONE small timestamped backup containing ONLY the files you will change.
+
+5) Apply ONLY this provider change:
+- Primary provider = Gemini
+- Automatic fallback = Agnes AI
+- Agnes API base URL = https://apihub.agnes-ai.com/v1
+- Agnes default model = agnes-2.0-flash
+- Gemini and Agnes use separate server-side API keys/models.
+- Preserve the project's existing encrypted-secret mechanism and AGENT_SETTINGS_ENCRYPTION_KEY behavior.
+- GEMINI_API_KEY and AGNES_API_KEY may be environment fallbacks if this matches the existing settings architecture.
+- Never send provider secrets to the frontend.
+- Existing OpenAI configuration may remain for backward compatibility, but Ramzy must not require OpenAI for normal execution.
+
+6) Failover behavior:
+Gemini -> Agnes only.
+Fallback on missing Gemini configuration, timeout/network errors, HTTP 429, and HTTP 5xx/provider-unavailable errors.
+If Gemini auth/config fails, write the failure to the existing audit/error log before fallback.
+Perform fallback BEFORE tool/action side effects so Ramzy tools are never executed twice.
+
+7) Preserve ALL existing Ramzy behavior:
+approval flow, proposals/read-only mode, tool/function calling, memory, workspaces, allowed roles, daily limits, tool-call limits, audit logs, and all unrelated settings.
+
+8) UI:
+Settings -> Ramzy AI must clearly show:
+- Primary: Gemini
+- Fallback: Agnes AI
+- separate Gemini API key/model
+- separate Agnes API key/model
+Secrets remain masked after save and are never returned plaintext.
+
+9) Database/schema:
+Do NOT create a migration unless the current live schema genuinely has no safe existing provider-settings storage. If a migration is required, make the smallest additive/idempotent change only; never drop/rename existing fields.
+
+10) Verification, minimal only:
+- run the project's existing typecheck/build command once
+- restart ONLY the existing TOS PM2 process
+- verify the authenticated Ramzy settings page loads
+- verify saved provider order reports Gemini -> Agnes
+- if test buttons already exist, test Gemini and Agnes individually WITHOUT printing keys
+- do not trigger any destructive Ramzy tool/action during verification
+
+11) On any edit/build/restart failure, restore the changed files from the backup, rebuild if required by the existing deployment, restart only TOS, and report the first error.
+
+Return ONLY:
+SOURCE_MATCH=OK|FAIL
+CHANGED_FILES=[...]
+PRIMARY=Gemini|FAIL
+FALLBACK=Agnes|FAIL
+BUILD=OK|FAIL
+PM2=OK|FAIL
+UI=OK|FAIL
+GEMINI_TEST=OK|FAIL|NOT_RUN
+AGNES_TEST=OK|FAIL|NOT_RUN
+ROLLBACK=NOT_REQUIRED|DONE|FAIL
+BACKUP=<path|NONE>
+FIRST_ERROR=<none|text>
+FINAL_MARKER=TOS_RAMZY_GEMINI_PRIMARY_AGNES_FALLBACK_V1_OK
