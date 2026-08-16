@@ -1,0 +1,55 @@
+diff --git a/frontend/src/pages/DesignQueuePage.jsx b/frontend/src/pages/DesignQueuePage.jsx
+--- a/frontend/src/pages/DesignQueuePage.jsx
++++ b/frontend/src/pages/DesignQueuePage.jsx
+@@ -596,9 +596,31 @@
+   );
+ }
+
++function mergeDesignQueueProjectOptions(current = [], candidates = []) {
++  const byId = new Map();
++
++  for (const project of [...current, ...candidates]) {
++    const id = String(project?.id || "").trim();
++    if (!id || project?.archivedAt) continue;
++
++    const previous = byId.get(id) || {};
++    byId.set(id, {
++      ...previous,
++      ...project,
++      id,
++      name: String(project?.name || previous?.name || id).trim() || id,
++    });
++  }
++
++  return [...byId.values()].sort((left, right) =>
++    String(left?.name || "").localeCompare(String(right?.name || ""), "ar"),
++  );
++}
++
+ export function DesignQueuePage({ user, projects = [] }) {
+   const { lang, isAr } = usePreferences();
+   const tr = getDesignOperationsT(lang);
+   const [data, setData] = useState({ summary: {}, designers: [], tasks: [], settings: {}, permissions: {} });
++  const [projectOptions, setProjectOptions] = useState(() => mergeDesignQueueProjectOptions([], projects));
+   const [filters, setFilters] = useState({ projectId: "all", status: "all", assignee: "all", lifecycle: "active" });
+   const [query, setQuery] = useState("");
+@@ -680,6 +702,10 @@
+         ]);
+         const nextData = { summary: payload?.summary || {}, designers: payload?.designers || [], tasks: payload?.tasks || [], settings: payload?.settings || {}, permissions: payload?.permissions || {}, leadership: payload?.leadership || {} };
+         setData(nextData);
++        setProjectOptions((current) => mergeDesignQueueProjectOptions(current, [
++          ...projects,
++          ...nextData.tasks.map((task) => task?.project).filter(Boolean),
++        ]));
+         setCapacityDrafts(Object.fromEntries(nextData.designers.map((designer) => [designer.id, String(designer.capacityLimit || 0)])));
+         if (openTaskId && refreshedDetails?.id === openTaskId) setSelectedTaskDetails(refreshedDetails);
+         if (!preserveModal) {
+@@ -872,7 +898,7 @@
+       <Card className="p-3.5">
+         <div className="grid gap-2.5 md:grid-cols-2 xl:grid-cols-[1.3fr_1fr_1fr_1fr_1fr_auto]">
+           <div className="relative"><Search size={16} className="pointer-events-none absolute top-1/2 -translate-y-1/2 text-zinc-400 ltr:left-3 rtl:right-3" /><Field value={query} onChange={(event) => setQuery(event.target.value)} placeholder={tr.queue.filters.search} className="ltr:pl-9 rtl:pr-9" /></div>
+-          <Field as="select" value={filters.projectId} onChange={(event) => updateFilters({ projectId: event.target.value })}><option value="all">{tr.queue.filters.projects}</option>{projects.filter((project) => project?.id && !project.archivedAt).map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</Field>
++          <Field as="select" value={filters.projectId} onChange={(event) => updateFilters({ projectId: event.target.value })}><option value="all">{tr.queue.filters.projects}</option>{projectOptions.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</Field>
+           <Field as="select" value={filters.status} onChange={(event) => updateFilters({ status: event.target.value })}>{STATUS_OPTIONS.map((status) => <option key={status} value={status}>{status === "all" ? tr.queue.filters.statuses : tr.status[status]}</option>)}</Field>
+           <Field as="select" value={filters.assignee} onChange={(event) => updateFilters({ assignee: event.target.value })}><option value="all">{tr.queue.filters.assignees}</option><option value="unassigned">{tr.queue.stats.unassigned}</option>{data.designers.map((designer) => <option key={designer.id} value={designer.id}>{designerLabel(designer, tr.common.designer)}</option>)}</Field>
+           <Field as="select" value={filters.lifecycle} onChange={(event) => updateFilters({ lifecycle: event.target.value })}><option value="active">{tr.queue.filters.active}</option><option value="archived">{tr.queue.filters.archived}</option><option value="rejected">{tr.queue.filters.rejected}</option><option value="all">{tr.queue.filters.all}</option></Field>
