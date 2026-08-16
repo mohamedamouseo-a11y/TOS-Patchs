@@ -1,0 +1,149 @@
+diff --git a/backend/.env.example b/backend/.env.example
+--- a/backend/.env.example
++++ b/backend/.env.example
+@@ -18,4 +18,10 @@ DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DATABASE
+ JWT_SECRET=change_this_to_a_long_random_secret_at_least_32_chars
+ DRIVE_TOKEN_ENCRYPTION_KEY=change_this_to_32_bytes_hex_or_base64
++
++# Dedicated encrypted PostgreSQL backup (independent from normal Drive storage)
++# Generate with: openssl rand -hex 32
++TOS_DB_BACKUP_ENCRYPTION_KEY=change_this_to_64_hex_chars
++TOS_DB_BACKUP_CONFIG_DIR=/var/lib/tos/database-backups
++TOS_DB_BACKUP_TMP_DIR=/var/tmp/tos-db-backups
+ COOKIE_SAME_SITE=lax
+ COOKIE_SECURE=true
+diff --git a/backend/src/server.js b/backend/src/server.js
+--- a/backend/src/server.js
++++ b/backend/src/server.js
+@@ -4,6 +4,7 @@ import { Server } from "socket.io";
+ import { createApp } from "./app.js";
+ import { registerSockets } from "./sockets.js";
+ import { startSystemBackupScheduler } from "./services/systemBackup.service.js";
++import { isDatabaseRestoreInProgress, startDatabaseBackupScheduler } from "./services/databaseBackup.service.js";
+ import { startTcrmProjectPullScheduler } from "./services/tcrmProjectPull.service.js";
+ import { bootstrapTgwsSettings } from "./services/tgws.service.js";
+ import { startRamzyScheduler } from "./agency-operator/services/ramzyScheduler.service.js";
+@@ -49,6 +50,11 @@ const app = createApp(io);
+ server.removeAllListeners("request");
+ server.on("request", app);
++io.use((socket, next) => {
++  if (isDatabaseRestoreInProgress()) return next(new Error("Database maintenance in progress"));
++  return next();
++});
+ registerSockets(io);
+ startSystemBackupScheduler();
++startDatabaseBackupScheduler();
+ startTcrmProjectPullScheduler();
+ startRamzyScheduler();
+diff --git a/backend/src/app.js b/backend/src/app.js
+--- a/backend/src/app.js
++++ b/backend/src/app.js
+@@ -25,5 +25,7 @@ import auditLogRoutes from "./routes/auditLog.routes.js";
+ import crmProjectsIntegrationRoutes from "./routes/crmProjectsIntegration.routes.js";
+ import systemBackupRoutes from "./routes/systemBackup.routes.js";
++import databaseBackupRoutes from "./routes/databaseBackup.routes.js";
++import { isDatabaseRestoreInProgress } from "./services/databaseBackup.service.js";
+ import employeeWorkRoutes from "./routes/employeeWork.routes.js";
+ import emailSettingsRoutes from "./routes/emailSettings.routes.js";
+ import centralChatNativeRoutes from "./routes/centralChatNative.routes.js";
+@@ -150,6 +152,13 @@ export function createApp(io = null) {
+     next();
+   });
+ 
++  app.use(API, (req, res, next) => {
++    if (isDatabaseRestoreInProgress() && !req.originalUrl.startsWith(`${API}/database-backups`)) {
++      return res.status(503).json({ message: "Database restore in progress. Please retry shortly." });
++    }
++    return next();
++  });
++
+   app.get(`${BASE}/health`, (_req, res) => res.json({ ok: true, service: "tamiyouz-backend", time: new Date() }));
+ 
+   app.use(`${API}/auth`, authRoutes);
+@@ -168,5 +178,6 @@ export function createApp(io = null) {
+   app.use(`${API}/audit-log`, auditLogRoutes);
+   app.use(`${API}/integrations/crm`, crmProjectsIntegrationRoutes);
+   app.use(`${API}/system-backups`, systemBackupRoutes);
++  app.use(`${API}/database-backups`, databaseBackupRoutes);
+   app.use(`${API}/employee-work`, employeeWorkRoutes);
+   app.use(`${API}/email-settings`, emailSettingsRoutes);
+diff --git a/frontend/src/lib/api.js b/frontend/src/lib/api.js
+--- a/frontend/src/lib/api.js
++++ b/frontend/src/lib/api.js
+@@ -540,8 +540,17 @@
+   },
+   systemBackups: {
+     status: () => request("/api/system-backups/status"),
+     updateSettings: (payload = {}) => request("/api/system-backups/settings", { method: "PATCH", body: JSON.stringify(payload || {}) }),
+     runNow: () => request("/api/system-backups/run-now", { method: "POST" }),
+   },
++  databaseBackups: {
++    status: () => request("/api/database-backups/status"),
++    updateSettings: (payload = {}) => request("/api/database-backups/settings", { method: "PATCH", body: JSON.stringify(payload || {}) }),
++    authUrl: () => request("/api/database-backups/google-drive/auth-url"),
++    disconnect: () => request("/api/database-backups/google-drive/disconnect", { method: "DELETE" }),
++    backupNow: () => request("/api/database-backups/backup-now", { method: "POST" }),
++    prepareRestore: (fileId) => request(`/api/database-backups/restore/${encodeURIComponent(fileId)}/prepare`, { method: "POST" }),
++    confirmRestore: (fileId, payload = {}) => request(`/api/database-backups/restore/${encodeURIComponent(fileId)}/confirm`, { method: "POST", body: JSON.stringify(payload || {}) }),
++  },
+ 
+   tws: {
+diff --git a/frontend/src/pages/SettingsPage.jsx b/frontend/src/pages/SettingsPage.jsx
+--- a/frontend/src/pages/SettingsPage.jsx
++++ b/frontend/src/pages/SettingsPage.jsx
+@@ -5,7 +5,8 @@
+ import { Badge, Button, Card, Field, Notice, PageIntro, StatCard } from "../components/ui/Primitives";
+ import GithubAdvancedAdmin from "../components/GithubAdvancedAdmin";
+ import { TgwsSettingsAdmin } from "../components/settings/TgwsSettingsAdmin";
+ import { RamzySettingsAdmin } from "../components/RamzySettingsAdmin";
++import { DatabaseBackupAdmin } from "../components/settings/DatabaseBackupAdmin";
+ 
+ 
+ function EmailSettingsAdmin({ user }) {
+@@ -6130,9 +6130,14 @@
+       case "tgws":
+         return <TgwsSettingsAdmin user={user} />;
+       case "thrs":
+         return <ThrsIntegrationAdmin user={user} />;
+       case "backups":
+-        return <SystemBackupAdmin user={user} />;
++        return (
++          <div className="space-y-5">
++            <DatabaseBackupAdmin user={user} />
++            <SystemBackupAdmin user={user} />
++          </div>
++        );
+       case "github":
+         return <GithubAdmin user={user} />;
+       case "crm":
+diff --git a/backend/src/routes/databaseBackup.routes.js b/backend/src/routes/databaseBackup.routes.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..aca428e970d5da122753e1afb50a2416a4e7c7da
+GIT binary patch
+literal 2921
+zcmc&$QE%He5Pr|EV1=NN2S?5}tPc*nAWgE>K$;kKyr%&!Bc2_tvgnXh62tX>-*==e
+z%Z-B#Yk|E<yyM+>ci$Z^n=iC+VkL&UbY#R@OpTt4h@KaQtc^|%vY=t4qpNJ5xm|@L
+zK0nG?u+?1&S-ShSF!WGnhK4$)+HjI|=9yACJxN0y)=U0sxWQGsEYc6MfXWum?kzG#
+z8@qe&KnS^5P@&FBmAN*4Q(a6mGar(5+K@jn1hnsE`ng>2zsf9>3QFDYTF-L2FxjJ5
+zoKf@S3?RoQ=Nk}=oOGq-A7p5OAQ}#=e58h{Tm6{|ugZcEIhPeP{BM$ss4SVsEG64f
+z(#bn%D|AV99%4KIO6!CPCF)hRid!d@Kp{j^rVi+RiIBLSs0$Xafb}UWlz#eXyW-uk
+z_(A-5e0<Cy%;j@e{LEk0A?4Dj4<r>C=)t1TMNTuBF6-l|%&kA4gC255U2v!VjBd4t
+z&0;Aw;fOn*ZBGTDw22txgfPXE1eNY+iqgQ<5{VIVCbJ@m#2OhwYzHCUq_h+>PjJ*Y
+zX>co!M&rTdaB_C>v40)48dp)SIO-rYR4i)mP%HL46Y&Iwn5niUdcO)z6~2*nUBuF3
+ztV<rV<#p5iLb~*x9aNQl#l=5)Xp$p_a&o8DQhfO$R^Ho=%Mj7b)AdL(Uwsc9l_vj>
+z-eIvp*^28P1`=;x#JmSUD)XGn{BHpSHm6z<XgYERwfFuWN;1pS#0wC86txlv=gf28
+z&1eBG<^Eei^2#+oF!nkNl2@)_prG%!_ZCK@Rc%7WV=@@Ozv`b)&IW_YczDItYD#|_
+z-dx{aUSDivQ3t_bT;wvPxbtV{u+!%FIIwIg;u^)9P4I7gJS|U1rlc!P;hAYjVWg%m
+z{&cts_|`T5PB%mxK_SycFEpQhtM0<k>v>0SF$Tf!-r<T0_BS5(&o!oeL515wiRPKL
+zD9wabCfZCqqNuh0<YBJ?9erB?46U+v{KYFwVnyvxyS89fbrH$~H#R1`xAq-FtR_0C
+z3a3c9OMQ<2pLCuk)qG@<M4Ct0WYaQ}smyXxjjZl;yP}*NVZ!V*{Px*G$Gx2W`{&$?
+zAr!ih=QIc&>bEuAm<XZ$f<ohkMOmdMSyx0C!~P$alZ*c7{O0=l^86OCm@Fk;k!Wx>
+z8u4IA@d%Gm@V?p>Kgm=jxtt>p4FU0g#f^F%Ggh!=CqoNudBg{z9~JuP+fxF6W$x;v
+zq>ZHkL5JQ!V0h+A>4z?dw#EK6>Q(gwvIZMY0#>BxUjFpUyZSi%@>Ar{hv?p$&$X;^
+z=FRU*0j%?$)9FsZsJ`k{+sU`&qt1M&{_eixM>h5!Ik!o0=@&lV)h}L+s!U&F1P6IV
+z`;HhZi^GtN7(<Fj%R{mYv_9sSmR}qXLvq&r&c+K-xVJ}vp8a|m<UGSzdmAw}XWpn4
+NO(oMPtSl!7e*?0Q=jZ?c
+
+literal 0
+HcmV?d00001
+
