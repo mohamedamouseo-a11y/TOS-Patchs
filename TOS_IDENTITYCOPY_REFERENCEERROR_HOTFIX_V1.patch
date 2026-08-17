@@ -1,0 +1,12 @@
+diff --git a/frontend/src/pages/SettingsPage.jsx b/frontend/src/pages/SettingsPage.jsx
+--- a/frontend/src/pages/SettingsPage.jsx
++++ b/frontend/src/pages/SettingsPage.jsx
+@@ -786,7 +786,7 @@ function SystemBackupAdmin({ user }) {
+       <Notice type="success" className="mt-4">{message}</Notice>
+ 
+       <div className="mt-5 flex flex-wrap gap-2">
+-        <Button type="button" variant="soft" onClick={loadStatus} disabled={loading || Boolean(actionLoading)}><RefreshCw size={17} className={loading ? "animate-spin" : ""} />{identityCopy.refresh}</Button>
++        <Button type="button" variant="soft" onClick={loadStatus} disabled={loading || Boolean(actionLoading)}><RefreshCw size={17} className={loading ? "animate-spin" : ""} />{loading ? "جاري التحديث..." : "تحديث الحالة"}</Button>
+         <Button type="button" variant="soft" onClick={saveSettings} disabled={Boolean(actionLoading)}>{actionLoading === "save" ? "جاري الحفظ..." : "حفظ الإعدادات"}</Button>
+         <Button type="button" onClick={runNow} disabled={Boolean(actionLoading) || !form.sourcePath.trim()}>{actionLoading === "run" ? "جاري النسخ..." : "Run Backup Now"}</Button>
+       </div>
