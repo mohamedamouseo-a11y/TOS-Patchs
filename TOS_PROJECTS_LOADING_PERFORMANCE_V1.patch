@@ -1,0 +1,93 @@
+diff --git a/backend/src/routes/projects.routes.js b/backend/src/routes/projects.routes.js
+--- a/backend/src/routes/projects.routes.js
++++ b/backend/src/routes/projects.routes.js
+@@ -133,5 +133,29 @@
+   _count: { select: { tasks: true, files: true, meetings: true, boards: true } },
+ };
+ 
++// Fast list mode keeps the project cards/dashboard payload compatible while
++// avoiding relation fields that are only needed after opening project details.
++const projectListInclude = {
++  client: { select: { id: true, name: true } },
++  members: {
++    orderBy: { createdAt: "asc" },
++    include: { user: { select: userSummarySelect } },
++  },
++  links: {
++    orderBy: { createdAt: "desc" },
++    select: {
++      id: true,
++      title: true,
++      url: true,
++      type: true,
++      isClientVisible: true,
++      projectId: true,
++      createdAt: true,
++      updatedAt: true,
++    },
++  },
++  _count: { select: { tasks: true, files: true, meetings: true, boards: true } },
++};
++
+ const projectDetailInclude = {
+   ...projectInclude,
+@@ -358,4 +382,4 @@
+-async function enrichProjectsWithTaskSummary(projects) {
++async function enrichProjectsWithTaskSummary(projects, { includeActualTeam = true } = {}) {
+   if (!Array.isArray(projects) || projects.length === 0) return projects;
+   const projectIds = projects.map((project) => project.id).filter(Boolean);
+   if (!projectIds.length) return projects;
+@@ -379,9 +403,11 @@
+       },
+       _count: { _all: true },
+     }),
+-    prisma.taskAssignee.findMany({
+-      where: { task: { projectId: { in: projectIds }, archivedAt: null } },
+-      include: { user: { select: userSummarySelect }, task: { select: { projectId: true } } },
+-      orderBy: { createdAt: "asc" },
+-    }),
++    includeActualTeam
++      ? prisma.taskAssignee.findMany({
++          where: { task: { projectId: { in: projectIds }, archivedAt: null } },
++          include: { user: { select: userSummarySelect }, task: { select: { projectId: true } } },
++          orderBy: { createdAt: "asc" },
++        })
++      : Promise.resolve([]),
+   ]);
+@@ -697,13 +723,14 @@
+ router.get("/", asyncHandler(async (req, res) => {
+   const archived = req.query.archived === "true";
++  const summaryMode = req.query.summary === "1" || req.query.summary === "true";
+   const projectScope = archived ? { archivedAt: { not: null } } : { archivedAt: null };
+   const where = await buildProjectVisibilityWhere(req.user, projectScope, prisma);
+   const projects = await prisma.project.findMany({
+     where,
+-    include: projectInclude,
++    include: summaryMode ? projectListInclude : projectInclude,
+     orderBy: { createdAt: "desc" },
+   });
+-  const enriched = await enrichProjectsWithTaskSummary(projects);
++  const enriched = await enrichProjectsWithTaskSummary(projects, { includeActualTeam: !summaryMode });
+   const managedDepartments = await getManagerDepartmentScope(req.user, prisma);
+   const accesses = enriched.map((project) => resolveLoadedProjectAccess(req.user, project, managedDepartments));
+   res.json(enriched.map((project, index) => safeProject(project, { viewer: req.user, access: accesses[index] })));
+diff --git a/frontend/src/lib/api.js b/frontend/src/lib/api.js
+--- a/frontend/src/lib/api.js
++++ b/frontend/src/lib/api.js
+@@ -1,4 +1,7 @@
+   projects: {
+-    list: (options = {}) => request(`/api/projects${options.archived ? "?archived=true" : ""}`),
+-    archived: () => request("/api/projects?archived=true"),
++    list: (options = {}) => request(`/api/projects${queryString({
++      archived: options.archived ? "true" : "",
++      summary: options.summary ? "1" : "",
++    })}`),
++    archived: () => request("/api/projects?archived=true&summary=1"),
+     get: (projectId) => request(`/api/projects/${projectId}`),
+diff --git a/frontend/src/hooks/useProjects.js b/frontend/src/hooks/useProjects.js
+--- a/frontend/src/hooks/useProjects.js
++++ b/frontend/src/hooks/useProjects.js
+@@ -1,2 +1,2 @@
+-      const data = await api.projects.list();
++      const data = await api.projects.list({ summary: true });
+       setProjects(data);
