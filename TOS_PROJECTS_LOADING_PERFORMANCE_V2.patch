@@ -1,0 +1,48 @@
+diff --git a/frontend/src/App.jsx b/frontend/src/App.jsx
+--- a/frontend/src/App.jsx
++++ b/frontend/src/App.jsx
+@@ -38,5 +38,6 @@
+ const TOS_STAFF_ROLES = new Set(["SUPER_ADMIN", "ADMIN", "MANAGER", "PROJECT_MANAGER", "TEAM_MEMBER"]);
+ const MY_WORKSPACE_ROLES = new Set(["SUPER_ADMIN", "ADMIN", "MANAGER", "PROJECT_MANAGER", "TEAM_MEMBER"]);
+ const DESIGN_QUEUE_ROLES = new Set(["SUPER_ADMIN", "ADMIN", "MANAGER", "PROJECT_MANAGER"]);
++const PROJECT_LOADING_BLOCKED_PAGES = new Set(["dashboard", "teamPerformance", "projects", "tasks", "myWorkspace", "chat", "files", "tws", "tgws"]);
+ 
+ function canUseWorkHub(user) {
+@@ -1160,3 +1161,3 @@
+           />
+           <div className="tos-premium-page-viewport h-[calc(100%-78px)] overflow-y-auto bg-app-soft">
+-            {loading && <div className="p-6 text-zinc-500 dark:text-zinc-400">{tr.loading}</div>}
++            {loading && PROJECT_LOADING_BLOCKED_PAGES.has(active) && <div className="p-6 text-zinc-500 dark:text-zinc-400">{tr.loading}</div>}
+             {error && <Notice type="error" className="m-6">{getErrorMessage(error)}</Notice>}
+@@ -1238,11 +1239,11 @@
+             {!loading && active === "files" && <FilesHub user={user} activeProjectId={activeProjectId} activeProject={activeProject} projects={projects} uploadSignal={fileUploadSignal} />}
+             {!loading && active === "tws" && <TwsPage user={user} projects={projects} />}
+             {!loading && active === "tgws" && hasWorkHubAccess && <TgwsPage user={user} projects={projects} />}
+-            {!loading && active === "team" && <TeamPage user={user} inviteSignal={teamInviteSignal} />}
+-            {!loading && active === "permissions" && canViewPermissions && <PermissionsPage user={user} />}
+-            {!loading && active === "workHub" && hasWorkHubAccess && <EmployeeWorkHub user={user} />}
+-            {!loading && active === "profile" && <ProfilePage user={user} />}
+-            {!loading && active === "clients" && (
++            {active === "team" && <TeamPage user={user} inviteSignal={teamInviteSignal} />}
++            {active === "permissions" && canViewPermissions && <PermissionsPage user={user} />}
++            {active === "workHub" && hasWorkHubAccess && <EmployeeWorkHub user={user} />}
++            {active === "profile" && <ProfilePage user={user} />}
++            {active === "clients" && (
+               <ClientsPage
+                 user={user}
+                 clients={clients}
+@@ -1260,7 +1261,7 @@
+                 }}
+               />
+             )}
+-            {!loading && active === "auditLog" && (
++            {active === "auditLog" && (
+               canViewAuditLog
+                 ? <AuditLogPage activeProjectId={activeProjectId} />
+                 : <Notice type="error" className="m-6">غير مسموح لك بعرض سجل النظام.</Notice>
+@@ -1268,5 +1269,5 @@
+-            {!loading && active === "settings" && canViewSettings && <SettingsPage user={user} />}
++            {active === "settings" && canViewSettings && <SettingsPage user={user} />}
+           </div>
+         </main>
+       </div>
