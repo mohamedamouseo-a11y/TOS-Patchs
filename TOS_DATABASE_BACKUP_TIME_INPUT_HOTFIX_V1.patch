@@ -1,0 +1,10 @@
+diff --git a/frontend/src/components/settings/DatabaseBackupAdmin.jsx b/frontend/src/components/settings/DatabaseBackupAdmin.jsx
+--- a/frontend/src/components/settings/DatabaseBackupAdmin.jsx
++++ b/frontend/src/components/settings/DatabaseBackupAdmin.jsx
+@@ -206,5 +206,5 @@
+         <label className="flex items-center gap-2 rounded-2xl border border-zinc-200 px-4 py-3 text-sm font-black dark:border-zinc-800">
+           <input type="checkbox" checked={form.enabled} onChange={(e) => setForm((prev) => ({ ...prev, enabled: e.target.checked }))} /> Automatic daily backup
+         </label>
+-        <input ref={scheduleTimeRef} type="time" value={form.scheduleTime} onInput={(e) => setForm((prev) => ({ ...prev, scheduleTime: e.currentTarget.value }))} onChange={(e) => setForm((prev) => ({ ...prev, scheduleTime: e.currentTarget.value }))} dir="ltr" className="tos-premium-field w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition-colors placeholder:text-zinc-400 focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100" />
++        <input ref={scheduleTimeRef} type="time" value={form.scheduleTime} onInput={(e) => { const value = e.currentTarget.value; setForm((prev) => ({ ...prev, scheduleTime: value })); }} onChange={(e) => { const value = e.currentTarget.value; setForm((prev) => ({ ...prev, scheduleTime: value })); }} dir="ltr" className="tos-premium-field w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition-colors placeholder:text-zinc-400 focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100" />
+         <Field value={form.timeZone} onChange={(e) => setForm((prev) => ({ ...prev, timeZone: e.target.value }))} placeholder="Africa/Cairo" dir="ltr" />
