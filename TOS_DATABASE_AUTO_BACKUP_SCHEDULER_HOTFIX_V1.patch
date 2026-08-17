@@ -9,7 +9,7 @@ diff --git a/backend/src/services/databaseBackup.service.js b/backend/src/servic
      retentionOk: true
    };
  }
-@@ -927,10 +928,14 @@ async function schedulerTick() {
+@@ -927,9 +928,13 @@ async function schedulerTick() {
      if (!config.enabled || !config.googleDrive.refreshTokenEnc || !encryptionReady() || isDatabaseRestoreInProgress()) return;
      const state = await readState();
      const local = getLocalDateParts(new Date(), config.timeZone);
