@@ -6,7 +6,6 @@ TMP=$(mktemp)
 BAK="${CONF}.bak.$(date +%s)"
 
 cat > "$TMP" <<'EOF'
-gzip on;
 gzip_proxied any;
 gzip_comp_level 6;
 gzip_min_length 1024;
