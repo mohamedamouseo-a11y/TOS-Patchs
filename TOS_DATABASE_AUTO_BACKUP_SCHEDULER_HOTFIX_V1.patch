@@ -1,0 +1,27 @@
+diff --git a/backend/src/services/databaseBackup.service.js b/backend/src/services/databaseBackup.service.js
+--- a/backend/src/services/databaseBackup.service.js
++++ b/backend/src/services/databaseBackup.service.js
+@@ -97,6 +97,7 @@ function defaultState() {
+     lastBackupSha256: '',
+     lastBackupSize: 0,
+     lastScheduledAttemptDate: '',
++    lastScheduledAttemptKey: '',
+     retentionOk: true
+   };
+ }
+@@ -927,10 +928,14 @@ async function schedulerTick() {
+     if (!config.enabled || !config.googleDrive.refreshTokenEnc || !encryptionReady() || isDatabaseRestoreInProgress()) return;
+     const state = await readState();
+     const local = getLocalDateParts(new Date(), config.timeZone);
+-    if (state.lastScheduledAttemptDate === local.date) return;
++    const scheduledAttemptKey = `${local.date}|${config.scheduleTime}|${config.timeZone}`;
++    if (state.lastScheduledAttemptKey === scheduledAttemptKey) return;
+     if (minutesOfDay(local.time) < minutesOfDay(config.scheduleTime)) return;
+-    await writeState({ lastScheduledAttemptDate: local.date });
++    await writeState({
++      lastScheduledAttemptDate: local.date,
++      lastScheduledAttemptKey: scheduledAttemptKey
++    });
+     await createBackup({ reason: 'scheduled' });
+   } catch (error) {
+     console.error('TOS_DATABASE_BACKUP_SCHEDULED_FAILED', cleanText(error.message, 500));
