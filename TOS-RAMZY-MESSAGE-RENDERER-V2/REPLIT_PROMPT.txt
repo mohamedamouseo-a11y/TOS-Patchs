@@ -1,0 +1,191 @@
+TARGET: /var/www/TOS
+
+Apply ONLY patch requirements from:
+Repository: mohamedamouseo-a11y/TOS-Patchs
+Folder: TOS-RAMZY-MESSAGE-RENDERER-V2
+
+GOAL:
+Fix Ramzy chat message presentation only:
+- render Markdown/GFM correctly
+- fix Arabic/English RTL/LTR readability
+- convert project/task result tables into readable cards
+- make the messages body scroll correctly
+- reduce the oversized composer height
+
+CURRENT SYSTEM TO PRESERVE EXACTLY:
+- Ramzy panel size/layout already deployed
+- launcher drag/open/minimize/history behavior
+- microphone speech-to-prompt
+- text send + streaming
+- Agnes/Gemini provider configuration
+- memory
+- system intelligence
+- tools/function calling
+- approvals/read-only protections
+- audit
+- permissions/workspace isolation
+- backend/API behavior
+
+ALLOWED SOURCE FILES:
+1. frontend/src/components/RamzyAssistant.jsx
+2. frontend/src/index.css
+
+ONLY IF the current frontend has no safe Markdown/GFM renderer already installed, also allow:
+3. frontend/package.json
+4. the existing frontend lockfile
+
+DO NOT:
+- modify backend
+- modify Prisma/DB
+- modify env/API keys
+- modify provider settings
+- modify memory/system-intelligence services
+- modify tool schemas or response data
+- modify Nginx
+- run the root build that outputs /var/www/TOS/dist/public
+- use dangerouslySetInnerHTML
+- enable raw HTML rendering
+- add rehype-raw
+- rewrite RamzyAssistant.jsx wholesale
+
+STEP 1 — VERIFY LIVE SOURCE FIRST
+Inspect:
+- frontend/src/components/RamzyAssistant.jsx
+- frontend/src/index.css
+- frontend/package.json
+
+Confirm the current component still contains:
+- Ramzy message render loop
+- sendMessage / existing send flow
+- streaming behavior
+- ramzy panel/messages/composer structure
+- microphone controls already deployed
+
+If materially different, STOP and return SOURCE_MISMATCH=YES.
+
+STEP 2 — SAFE MARKDOWN/GFM RENDERER
+Assistant messages must render Markdown instead of showing raw markers such as **, #, and pipe tables.
+
+First reuse any existing React Markdown/GFM package already in frontend/package.json.
+If none exists, add only the minimum safe frontend dependency needed for React Markdown + GFM tables.
+
+Requirements:
+- no raw HTML execution
+- no dangerouslySetInnerHTML
+- no rehype-raw
+- support headings, bold, italic, lists, code, links, line breaks, fenced code and GFM tables
+- external links use safe target/rel handling
+- user messages can remain plain text unless they already use the same safe renderer
+
+STEP 3 — RTL/LTR
+For assistant reply content:
+- Arabic remains RTL
+- mixed prose uses dir="auto" where appropriate
+- add CSS unicode-bidi: plaintext to natural mixed-direction blocks
+- code, URLs, IDs and technical status tokens stay readable LTR where appropriate
+- do not force the whole reply LTR
+
+STEP 4 — PROJECT/TASK CARDS
+For valid GFM tables with operational headers such as:
+Arabic: المشروع، المهمة، الحالة، التأخير، المسؤول
+English: project, task, status, overdue, assignee
+
+Render data rows as compact cards instead of a cramped table.
+
+Each card must preserve EXACT returned values and show label/value pairs.
+Do not invent data.
+
+Status values may receive visual badges only, including:
+PLANNING
+DELIVERY
+IN_REVIEW
+BLOCKED
+DEVELOPMENT
+CANCELLED
+COMPLETED
+
+Unknown table types should render normally inside a responsive table wrapper.
+If detection/parsing fails, gracefully fall back to normal Markdown; never hide/drop the reply.
+
+STEP 5 — SCROLL
+Do not change the current panel dimensions.
+Make the messages section the main vertical scroll region:
+- min-height: 0
+- overflow-y: auto
+- overscroll-behavior: contain
+- header remains at top in panel layout
+- composer remains at bottom in panel layout
+- preserve scroll-to-latest
+- prevent long IDs/code/tables from causing page-level horizontal overflow
+
+STEP 6 — COMPACT COMPOSER
+Keep Mic + Send exactly functional.
+Reduce default textarea visual height to approximately 48–56px.
+Auto-grow with content up to about 120px.
+Preserve:
+- Enter sends
+- Shift+Enter newline
+- streaming disabled state
+- focus state
+- microphone/listening state
+- dictated text remains editable and never auto-sends
+
+STEP 7 — CSS
+Add only scoped Ramzy styles, for example:
+.ramzy-markdown
+.ramzy-markdown-table-wrap
+.ramzy-result-cards
+.ramzy-result-card
+.ramzy-result-field
+.ramzy-status-badge
+
+Preserve dark mode and mobile responsiveness.
+Do not introduce global markdown/table/input CSS regressions.
+
+STEP 8 — BUILD THE ACTUAL SERVED FRONTEND
+Use ONLY the frontend build from:
+cd /var/www/TOS/frontend
+
+Run its existing build script ONCE.
+Expected production output:
+/var/www/TOS/frontend/dist
+
+Do NOT use /var/www/TOS/dist/public.
+Do NOT modify Nginx.
+Do NOT restart Nginx.
+Do NOT restart PM2/backend unless the existing frontend deployment script explicitly requires that for static assets.
+
+STEP 9 — VERIFY
+Verify in built/served frontend:
+1. A response containing `**عنوان**` shows bold text, not literal **.
+2. A GFM project/task table becomes readable cards.
+3. Unknown Markdown table still renders as a responsive table.
+4. Arabic/English mixed project names/status/IDs remain readable.
+5. Long replies scroll inside messages body.
+6. Header and composer stay visible in the panel layout.
+7. Composer starts compact and grows with typing.
+8. Mic works as before.
+9. Send/streaming works as before.
+10. No console runtime error.
+11. Mobile has no horizontal overflow.
+
+Return ONLY:
+SOURCE_MISMATCH=YES|NO
+MARKDOWN_RENDERER=<existing|added|fail>
+RAW_HTML_ENABLED=NO
+PROJECT_TASK_CARDS=OK|FAIL
+RTL_LTR=OK|FAIL
+MESSAGE_SCROLL=OK|FAIL
+COMPOSER_COMPACT=OK|FAIL
+MIC_PRESERVED=YES|NO
+STREAMING_PRESERVED=YES|NO
+BACKEND_CHANGED=NO
+DB_CHANGED=NO
+PROVIDERS_CHANGED=NO
+MEMORY_CHANGED=NO
+SYSTEM_INTELLIGENCE_CHANGED=NO
+CHANGED_FILES=[...]
+FRONTEND_BUILD=OK|FAIL
+SERVED_DIST=/var/www/TOS/frontend/dist
+PUBLIC_UI=OK|FAIL|MANUAL_REQUIRED
+FINAL_MARKER=TOS_RAMZY_MESSAGE_RENDERER_V2_OK|FAIL
