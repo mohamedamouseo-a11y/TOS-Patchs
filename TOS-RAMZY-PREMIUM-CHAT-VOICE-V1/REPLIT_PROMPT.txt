@@ -1,0 +1,171 @@
+TARGET: /var/www/TOS
+
+GOAL:
+Upgrade ONLY the Ramzy chat UI to a larger Professional/Premium design and add microphone speech-to-prompt.
+
+CURRENT SYSTEM TO PRESERVE:
+- Agnes AI = Primary
+- Gemini = Fallback
+- Ramzy Memory Upgrade
+- Ramzy System Intelligence
+- Existing tools, approvals, permissions, audit, workspace isolation and streaming
+
+ALLOWED FILES ONLY:
+1. frontend/src/components/RamzyAssistant.jsx
+2. frontend/src/index.css
+
+DO NOT:
+- modify backend code
+- modify DB / Prisma
+- modify provider settings
+- modify API keys/env
+- modify memory/system-intelligence services
+- add external/paid speech APIs
+- upload or store raw microphone audio
+- auto-send dictated text
+
+STEP 1 — INSPECT FIRST
+Inspect the LIVE files above before editing.
+Confirm RamzyAssistant.jsx still contains:
+- computePanelLayout
+- sendMessage
+- ramzy-panel
+- ramzy-composer
+- the existing streaming flow
+
+If source anchors differ materially, STOP and report SOURCE_MISMATCH=YES. Do not overwrite the component wholesale.
+
+STEP 2 — LARGER PREMIUM CHAT
+Modify the existing Ramzy panel, preserving launcher behavior.
+
+Desktop target:
+- max width: 720px instead of the current ~410px
+- max height: 760px
+- still clamp to viewport
+- keep existing mobile overlay behavior
+
+Premium UI requirements:
+- rounded panel ~28–30px
+- premium navy/dark header with subtle purple depth
+- Ramzy avatar ~50–52px on desktop
+- title larger and clearer
+- subtitle: "مساعدك الذكي في نظام TOS"
+- online green dot beside subtitle
+- cleaner premium control buttons
+- messages area with subtle white/lavender background
+- assistant bubbles: white/glass, subtle border/shadow
+- user bubbles: purple gradient
+- increase message typography/readability
+- larger composer with premium focus state
+- dedicated Mic and Send buttons
+- preserve RTL and dark mode
+- preserve current mobile responsiveness
+
+Do NOT convert Ramzy into a separate page. Keep it as the existing floating assistant panel, only larger and more premium.
+
+STEP 3 — ADD MICROPHONE SPEECH-TO-PROMPT
+Use browser Web Speech API ONLY:
+- window.SpeechRecognition
+- window.webkitSpeechRecognition
+
+Add lucide icons:
+- Mic
+- MicOff
+
+Behavior:
+1. User clicks Mic.
+2. Browser requests microphone permission if needed.
+3. Start speech recognition.
+4. Arabic UI => recognition.lang = "ar-EG".
+5. English UI => recognition.lang = "en-US".
+6. interimResults = true.
+7. Spoken words must appear inside the EXISTING prompt textarea.
+8. Preserve any text already typed before dictation.
+9. User can edit the recognized text before sending.
+10. NEVER automatically call sendMessage when speech recognition ends.
+11. Second click stops recognition.
+12. Stop/cleanup recognition on component unmount.
+13. If the chat message is sent while listening, stop recognition first.
+
+Voice UI states:
+- idle Mic icon
+- listening MicOff icon + visible listening state/pulse
+- small status: "جاري الاستماع... كلامك يتحول للبرومبت مباشرة"
+- permission denied: "اسمح للمتصفح باستخدام الميكروفون ثم جرّب مرة أخرى."
+- no speech: "لم يتم التقاط صوت. اضغط الميكروفون وحاول مرة أخرى."
+- unsupported browser: disable Mic and show a clear tooltip/message recommending current Chrome/Edge
+
+IMPORTANT:
+Voice transcription must populate the textarea only. It must NOT bypass normal sendMessage, approvals, tools, permissions or Ramzy runtime.
+
+STEP 4 — KEEP EXISTING CHAT CONTRACT
+Must preserve:
+- createConversation
+- conversation history
+- loadConversation
+- SSE/streamMessage
+- text-delta handling
+- stop generation
+- retry
+- feedback
+- approvals
+- Enter = send
+- Shift+Enter = newline
+- launcher drag/minimize/close
+
+STEP 5 — CSS
+Prefer adding ONE clearly marked override block at the END of frontend/src/index.css:
+
+/* TOS_RAMZY_PREMIUM_CHAT_VOICE_V1 */
+
+Avoid rewriting or deleting old global CSS.
+Scope all new styles to .ramzy-* classes only.
+
+STEP 6 — BUILD / DEPLOY
+- Create one timestamped backup of ONLY the two files before editing.
+- Build ONCE using the existing production build command.
+- If build succeeds, restart ONLY:
+  pm2 restart tamiyouz-system
+- Verify PM2 online.
+
+STEP 7 — VERIFY
+Verify:
+- Ramzy opens/closes/minimizes normally
+- panel is visibly larger on desktop
+- no viewport overflow
+- text sending works
+- streaming works
+- history works
+- Mic button renders
+- browser microphone permission can be requested
+- speech becomes prompt text
+- voice text is NOT auto-sent
+- Enter still sends
+- Shift+Enter remains newline
+- mobile layout remains usable
+- no console runtime errors
+
+Browser microphone permission may require a real authenticated HTTPS browser session.
+If automated browser cannot grant mic permission, return MANUAL_REQUIRED; do NOT add backend workarounds.
+
+RETURN ONLY:
+SOURCE_MATCH=YES|NO
+BACKUP=<path|NONE>
+CHANGED_FILES=[...]
+PANEL_DESKTOP=720x760_MAX|FAIL
+PREMIUM_UI=OK|FAIL
+MIC_BUTTON=OK|FAIL
+SPEECH_RECOGNITION=OK|MANUAL_REQUIRED|FAIL
+VOICE_TO_PROMPT=OK|MANUAL_REQUIRED|FAIL
+VOICE_AUTO_SEND=DISABLED|FAIL
+TEXT_CHAT=OK|FAIL
+STREAMING=OK|FAIL
+MOBILE_RESPONSIVE=OK|FAIL
+BUILD=OK|FAIL
+PM2=OK|FAIL
+BACKEND_CHANGED=NO
+DB_CHANGED=NO
+PROVIDERS_PRESERVED=YES|NO
+MEMORY_PRESERVED=YES|NO
+SYSTEM_INTELLIGENCE_PRESERVED=YES|NO
+FINAL_MARKER=TOS_RAMZY_PREMIUM_CHAT_VOICE_V1_OK|FAIL
