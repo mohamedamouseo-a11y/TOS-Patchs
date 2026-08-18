@@ -1,0 +1,135 @@
+diff --git a/backend/src/agency-operator/services/ramzyRuntime.service.js b/backend/src/agency-operator/services/ramzyRuntime.service.js
+--- a/backend/src/agency-operator/services/ramzyRuntime.service.js
++++ b/backend/src/agency-operator/services/ramzyRuntime.service.js
+@@ -47,8 +47,20 @@ function historyPrompt(history, message, memoryContext = "") {
+ }
+ 
+ function hasValidProviderResult(result) {
+-  return Boolean(result?.text) || Number(result?.toolCallsCount || 0) > 0;
++  return Boolean(String(result?.text || "").trim());
++}
++
++function toolNameFromCall(value) {
++  return String(
++    value?.toolName
++    || value?.name
++    || value?.payload?.toolName
++    || value?.payload?.name
++    || value?.tool?.name
++    || "",
++  ).trim();
++}
++
++function isSideEffectTool(value) {
++  return toolNameFromCall(value) === "propose_task_action";
+ }
+ 
+ function providerStatus(error) {
+@@ -61,6 +73,7 @@ function classifyGeminiFailure(error) {
+   if (/timeout|timed out|abort/.test(message)) return { code: "GEMINI_TIMEOUT", status };
+   if (/network|fetch failed|econn|enotfound|unavailable|socket/.test(message)) return { code: "GEMINI_NETWORK_ERROR", status };
+   if (/gemini.*not configured|google ai api key.*not configured|api key.*not configured/.test(message)) return { code: "GEMINI_NOT_CONFIGURED", status };
++  if (/empty model response|without a final text response/.test(message)) return { code: "GEMINI_EMPTY_FINAL_RESPONSE", status };
+   return { code: "GEMINI_PROVIDER_ERROR", status };
+ }
+ 
+@@ -72,6 +85,7 @@ function isAllowedFallbackFailure(failure) {
+     "GEMINI_NETWORK_ERROR",
+     "GEMINI_TIMEOUT",
+     "GEMINI_AUTH_ERROR",
++    "GEMINI_EMPTY_FINAL_RESPONSE",
+   ]).has(failure.code);
+ }
+ 
+@@ -102,8 +116,8 @@ async function tryProviderRun(agent, prompt, signal) {
+           const delta = String(chunk.payload?.text || chunk.payload?.delta || chunk.textDelta || "");
+           if (delta) text += delta;
+         } else if (chunk.type === "tool-call") {
+           toolCallsCount += 1;
+-          sideEffectStarted = true;
++          if (isSideEffectTool(chunk)) sideEffectStarted = true;
+         } else if (chunk.type === "finish") {
+           finishReason = chunk.payload?.stepResult?.reason || chunk.payload?.finishReason || chunk.finishReason || null;
+         }
+@@ -112,8 +126,9 @@ async function tryProviderRun(agent, prompt, signal) {
+       return { text: text.trim(), toolCallsCount, sideEffectStarted, finishReason, usage: stream.usage || null };
+     }
+     const result = await agent.generate(prompt, { abortSignal: signal || undefined });
+-    const toolCallsCount = Array.isArray(result?.toolCalls) ? result.toolCalls.length : 0;
+-    sideEffectStarted = toolCallsCount > 0;
++    const toolCalls = Array.isArray(result?.toolCalls) ? result.toolCalls : [];
++    const toolCallsCount = toolCalls.length;
++    sideEffectStarted = toolCalls.some(isSideEffectTool);
+     return {
+       text: String(result?.text || "").trim(),
+       toolCallsCount,
+@@ -188,7 +203,11 @@ export async function runRamzyTurn({
+       providerResult = await tryProviderRun(agent, prompt, signal);
+       text = providerResult.text;
+       usage = providerResult.usage;
+-      if (!hasValidProviderResult(providerResult)) throw new Error("Empty model response");
++      if (!hasValidProviderResult(providerResult)) {
++        const error = new Error(providerResult.toolCallsCount > 0
++          ? "Model completed tool execution without a final text response"
++          : "Empty model response");
++        throw error;
++      }
+     } catch (modelError) {
+       if (signal?.aborted) throw modelError;
+       if (providerResult?.sideEffectStarted || modelError?.ramzySideEffectStarted) {
+@@ -250,6 +269,20 @@ export async function runRamzyTurn({
+         }).catch(() => null);
+       }
+     }
++
++    if (!String(text || "").trim()) {
++      const snapshot = await getOperationalSnapshot(user, {
++        projectId: conversation.projectId,
++        workspaceId: conversation.workspaceId,
++        allowedWorkspaceIds: settings.allowedWorkspaceIds,
++      });
++      text = fallbackText(snapshot, message);
++      providerUsed = "operational_snapshot";
++      modelUsed = null;
++      fallback = true;
++      usage = {
++        ...(usage || {}),
++        fallback: true,
++        emptyFinalResponseRecovered: true,
++      };
++    }
+ 
+     const persistentMemoryCreated = await persistHighConfidenceMemory({
+       user,
+       conversation,
+
+diff --git a/frontend/src/components/RamzyAssistant.jsx b/frontend/src/components/RamzyAssistant.jsx
+--- a/frontend/src/components/RamzyAssistant.jsx
++++ b/frontend/src/components/RamzyAssistant.jsx
+@@ -308,6 +308,7 @@ export function RamzyAssistant({ user, projectId = "" }) {
+   const bottomRef = useRef(null);
+   const composerRef = useRef(null);
+   const streamControllerRef = useRef(null);
++  const sendLockRef = useRef(false);
+   const initializedRef = useRef(false);
+   const dragStateRef = useRef(null);
+   const ignoreLauncherClickRef = useRef(false);
+@@ -557,7 +558,9 @@ export function RamzyAssistant({ user, projectId = "" }) {
+   async function sendMessage(text = input) {
+     if (listening) stopVoiceRecognition();
+     const content = String(text || "").trim();
+-    if (!content || loading) return;
++    if (!content || loading || sendLockRef.current) return;
++    sendLockRef.current = true;
++
+     const optimisticUserId = `optimistic-user-${Date.now()}`;
+     const streamingAssistantId = `streaming-assistant-${Date.now()}`;
+     const controller = new AbortController();
+@@ -607,6 +610,7 @@ export function RamzyAssistant({ user, projectId = "" }) {
+       }
+     } finally {
+       if (streamControllerRef.current === controller) streamControllerRef.current = null;
++      sendLockRef.current = false;
+       setLoading(false);
+     }
+   }
