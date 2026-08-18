@@ -1,0 +1,261 @@
+diff --git a/backend/src/agency-operator/services/entityResolution.service.js b/backend/src/agency-operator/services/entityResolution.service.js
+new file mode 100644
+--- /dev/null
++++ b/backend/src/agency-operator/services/entityResolution.service.js
+@@ -0,0 +1,143 @@
++const DEFAULT_LIMIT = 8;
++
++export function normalizeEntityText(value) {
++  return String(value || "")
++    .normalize("NFKC")
++    .toLowerCase()
++    .replace(/[ًٌٍَُِّْـ]/g, "")
++    .replace(/[أإآٱ]/g, "ا")
++    .replace(/ى/g, "ي")
++    .replace(/ة/g, "ه")
++    .replace(/[ؤئ]/g, "ء")
++    .replace(/[^\p{L}\p{N}\s@._-]/gu, " ")
++    .replace(/\s+/g, " ")
++    .trim();
++}
++
++export function tokenizeEntityText(value) {
++  return normalizeEntityText(value).split(/\s+/).filter((token) => token.length > 1);
++}
++
++function candidateValues(candidate, fields) {
++  return fields
++    .flatMap((field) => {
++      const value = candidate?.[field];
++      return Array.isArray(value) ? value : [value];
++    })
++    .map((value) => ({ raw: value, normalized: normalizeEntityText(value) }))
++    .filter((entry) => entry.normalized);
++}
++
++function scoreValue(query, value) {
++  if (!query || !value) return { score: 0, matchType: "NONE" };
++  if (query === value) return { score: 1, matchType: "EXACT" };
++  if (value.startsWith(query)) return { score: 0.9, matchType: "PREFIX" };
++  if (value.includes(query)) return { score: 0.82, matchType: "CONTAINS" };
++
++  const queryTokens = tokenizeEntityText(query);
++  if (!queryTokens.length) return { score: 0, matchType: "NONE" };
++  const matches = queryTokens.filter((token) => value.includes(token)).length;
++  if (!matches) return { score: 0, matchType: "NONE" };
++  return {
++    score: 0.65 + (matches / queryTokens.length) * 0.2,
++    matchType: "TOKEN_OVERLAP",
++  };
++}
++
++export function scoreEntityCandidate(query, candidate, {
++  fields = ["name"],
++  aliasField = null,
++} = {}) {
++  const normalizedQuery = normalizeEntityText(query);
++  let best = { score: 0, matchType: "NONE", matchedField: null, matchedValue: null };
++
++  for (const field of fields) {
++    for (const entry of candidateValues(candidate, [field])) {
++      const scored = scoreValue(normalizedQuery, entry.normalized);
++      if (scored.score > best.score) {
++        best = { ...scored, matchedField: field, matchedValue: entry.raw };
++      }
++    }
++  }
++
++  if (aliasField && candidate?.[aliasField] && best.score < 0.98) {
++    best = { score: 0.98, matchType: "ALIAS", matchedField: aliasField, matchedValue: true };
++  }
++
++  return best;
++}
++
++export function resolveEntityCandidates({
++  query,
++  candidates = [],
++  fields = ["name"],
++  exactFields = fields,
++  idField = "id",
++  explicitId = null,
++  aliasField = null,
++  limit = DEFAULT_LIMIT,
++  ambiguityDelta = 0.08,
++  ambiguityAutoResolveThreshold = 0.9,
++} = {}) {
++  const normalizedQuery = normalizeEntityText(query);
++  const boundedLimit = Math.max(1, Math.min(50, Number(limit) || DEFAULT_LIMIT));
++
++  if (explicitId) {
++    const entity = candidates.find((candidate) => String(candidate?.[idField] || "") === String(explicitId));
++    return entity
++      ? { entity, confidence: 1, matchType: "EXPLICIT_ID", candidates: [entity], clarificationRequired: false, ambiguityReason: null }
++      : { entity: null, confidence: 0, matchType: "NONE", candidates: [], clarificationRequired: false, ambiguityReason: "ID_NOT_FOUND" };
++  }
++
++  if (!normalizedQuery) {
++    return { entity: null, confidence: 0, matchType: "NONE", candidates: [], clarificationRequired: false, ambiguityReason: "EMPTY_QUERY" };
++  }
++
++  const ranked = candidates
++    .map((candidate) => ({
++      ...candidate,
++      ...scoreEntityCandidate(normalizedQuery, candidate, { fields, aliasField }),
++    }))
++    .filter((candidate) => candidate.score > 0)
++    .sort((a, b) => b.score - a.score)
++    .slice(0, boundedLimit);
++
++  if (!ranked.length) {
++    return { entity: null, confidence: 0, matchType: "NONE", candidates: [], clarificationRequired: false, ambiguityReason: "NO_MATCH" };
++  }
++
++  const exactMatches = ranked.filter((candidate) => exactFields.some((field) => (
++    candidateValues(candidate, [field]).some((entry) => entry.normalized === normalizedQuery)
++  )));
++  if (exactMatches.length > 1) {
++    return {
++      entity: null,
++      confidence: 1,
++      matchType: "EXACT",
++      candidates: exactMatches,
++      clarificationRequired: true,
++      ambiguityReason: "EXACT_DUPLICATE",
++    };
++  }
++
++  const top = ranked[0];
++  const close = ranked.filter((candidate) => top.score - candidate.score < ambiguityDelta);
++  if (close.length > 1 && top.score < ambiguityAutoResolveThreshold) {
++    return {
++      entity: null,
++      confidence: top.score,
++      matchType: top.matchType,
++      candidates: close,
++      clarificationRequired: true,
++      ambiguityReason: "LOW_CONFIDENCE_TIE",
++    };
++  }
++
++  return {
++    entity: top,
++    confidence: top.score,
++    matchType: top.matchType,
++    candidates: ranked,
++    clarificationRequired: false,
++    ambiguityReason: null,
++  };
++}
++
++export function getEntityResolutionConfig() {
++  return {
++    version: "RAMZY_ENTITY_RESOLUTION_V1",
++    strategies: ["EXPLICIT_ID", "EXACT", "ALIAS_COMPAT", "PREFIX", "CONTAINS", "TOKEN_OVERLAP"],
++    multilingualNormalization: ["UNICODE_NFKC", "ARABIC_DIACRITICS", "ARABIC_LETTER_NORMALIZATION", "CASE_FOLDING"],
++  };
++}
+diff --git a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+--- a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
++++ b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+@@ -2,6 +2,7 @@ import { prisma } from "../../prisma.js";
+ import { buildProjectVisibilityWhere } from "../../services/projectAccessScope.service.js";
+ import { getOperationalSnapshot, getTaskContext } from "./agentQueries.service.js";
+ import { buildAgentTaskVisibilityWhere, resolveAgentProjectAccess, resolveAgentWorkspaceAccess } from "../policies/agentAccess.service.js";
++import { normalizeEntityText, resolveEntityCandidates } from "./entityResolution.service.js";
+ 
+ const CLOSED_TASKS = ["DONE", "CANCELLED"];
+ const MAX_PROJECT_CANDIDATES = 8;
+@@ -10,16 +11,7 @@ const MAX_USER_CANDIDATES = 8;
+ 
+ function clean(value) {
+-  return String(value || "")
+-    .normalize("NFKC")
+-    .toLowerCase()
+-    .replace(/[ًٌٍَُِّْـ]/g, "")
+-    .replace(/[أإآٱ]/g, "ا")
+-    .replace(/ى/g, "ي")
+-    .replace(/ة/g, "ه")
+-    .replace(/[ؤئ]/g, "ء")
+-    .replace(/[^\p{L}\p{N}\s_-]/gu, " ")
+-    .replace(/\s+/g, " ")
+-    .trim();
++  return normalizeEntityText(value);
+ }
+ 
+ function tokens(value) {
+@@ -111,18 +103,23 @@ async function resolveProject(user, settings, query, workspaceId, explicitProjectId = null) {
+       take: 5,
+     });
+   }
+-  const scored = candidates.map((candidate) => ({ ...candidate, aliasMatch: aliases.some((alias) => alias.entityId === candidate.id), score: projectScore(query, candidate) })).filter((candidate) => candidate.score > 0).sort((a, b) => b.score - a.score).slice(0, MAX_PROJECT_CANDIDATES);
+-  if (!scored.length) return { entity: null, confidence: 0, aliasUsed: false, candidates: [] };
+-  const exactMatches = scored.filter((item) => (
+-    clean(item.name) === normalized
+-    || (clean(item.code) && clean(item.code) === normalized)
+-  ));
+-  if (exactMatches.length > 1) return { entity: null, confidence: 1, aliasUsed: false, candidates: exactMatches, ambiguityReason: "EXACT_DUPLICATE" };
+-  const top = scored[0];
+-  const close = scored.filter((item) => top.score - item.score < 0.08);
+-  if (close.length > 1 && top.score < 0.9) return { entity: null, confidence: top.score, aliasUsed: false, candidates: close, ambiguityReason: "LOW_CONFIDENCE_TIE" };
+-  return { entity: top, confidence: top.score, aliasUsed: Boolean(top.aliasMatch), candidates: scored };
++  const enriched = candidates.map((candidate) => ({
++    ...candidate,
++    aliasMatch: aliases.some((alias) => alias.entityId === candidate.id),
++  }));
++  const resolution = resolveEntityCandidates({
++    query,
++    candidates: enriched,
++    fields: ["name", "code"],
++    exactFields: ["name", "code"],
++    aliasField: "aliasMatch",
++    limit: MAX_PROJECT_CANDIDATES,
++    ambiguityDelta: 0.08,
++    ambiguityAutoResolveThreshold: 0.9,
++  });
++  return {
++    ...resolution,
++    aliasUsed: Boolean(resolution.entity?.aliasMatch),
++  };
+ }
+ 
+ async function resolveUser(user, project, query) {
+@@ -132,12 +129,17 @@ async function resolveUser(user, project, query) {
+   if (projectIds.length) where.OR = [{ projectMemberships: { some: { projectId: { in: projectIds } } } }, { id: project.projectManagerId || "__none__" }, { id: project.teamLeadId || "__none__" }];
+   const term = clean(query);
+   const users = await prisma.user.findMany({ where: { ...where, ...(term ? { AND: [{ OR: [{ name: { contains: term, mode: "insensitive" } }, { email: { contains: term, mode: "insensitive" } }] }] } : {}) }, select: { id: true, name: true, email: true, department: true, jobTitle: true }, take: MAX_USER_CANDIDATES });
+-  const scored = users.map((candidate) => ({ ...candidate, score: userScore(query, candidate) })).filter((candidate) => candidate.score > 0).sort((a, b) => b.score - a.score);
+-  if (!scored.length) return { entity: null, confidence: 0, candidates: [] };
+-  const top = scored[0];
+-  const close = scored.filter((item) => top.score - item.score < 0.05);
+-  if (close.length > 1 && top.score < 0.95) return { entity: null, confidence: top.score, candidates: close };
+-  return { entity: top, confidence: top.score, candidates: scored };
++  return resolveEntityCandidates({
++    query,
++    candidates: users,
++    fields: ["name", "email"],
++    exactFields: ["name", "email"],
++    limit: MAX_USER_CANDIDATES,
++    ambiguityDelta: 0.05,
++    ambiguityAutoResolveThreshold: 0.95,
++  });
+ }
+@@ -283,7 +285,13 @@ export async function lookupRamzyProjects({ user, settings, query, workspaceId = null, limit = MAX_PROJECT_CANDIDATES }) {
+     query: bounded(query, 160),
+-    resolved: resolution.entity ? { id: resolution.entity.id, name: resolution.entity.name, confidence: resolution.confidence, status: resolution.entity.status, code: resolution.entity.code || null } : null,
+-    candidates: resolution.candidates.slice(0, Math.min(MAX_PROJECT_CANDIDATES, Number(limit) || MAX_PROJECT_CANDIDATES)).map((item) => ({ id: item.id, name: item.name, code: item.code || null, status: item.status, stage: item.stage, progress: item.progress, confidence: item.score || null })),
+-    clarificationRequired: Boolean(!resolution.entity && resolution.candidates.length > 1),
++    resolved: resolution.entity ? { id: resolution.entity.id, name: resolution.entity.name, confidence: resolution.confidence, matchType: resolution.matchType, status: resolution.entity.status, code: resolution.entity.code || null } : null,
++    candidates: resolution.candidates.slice(0, Math.min(MAX_PROJECT_CANDIDATES, Number(limit) || MAX_PROJECT_CANDIDATES)).map((item) => ({ id: item.id, name: item.name, code: item.code || null, status: item.status, stage: item.stage, progress: item.progress, confidence: item.score || null, matchType: item.matchType || null })),
++    clarificationRequired: Boolean(resolution.clarificationRequired),
++    ambiguityReason: resolution.ambiguityReason || null,
+   };
+ }
+@@ -309,7 +317,7 @@ export async function lookupRamzyUsers({ user, projectId = null, query = "", limit = MAX_USER_CANDIDATES }) {
+   const project = projectId ? { id: projectId, projectManagerId: null, teamLeadId: null } : null;
+   const result = await resolveUser(user, project, query);
+-  return result.candidates.slice(0, Math.min(MAX_USER_CANDIDATES, Number(limit) || MAX_USER_CANDIDATES)).map((item) => ({ id: item.id, name: item.name, department: item.department, jobTitle: item.jobTitle, confidence: item.score }));
++  return result.candidates.slice(0, Math.min(MAX_USER_CANDIDATES, Number(limit) || MAX_USER_CANDIDATES)).map((item) => ({ id: item.id, name: item.name, department: item.department, jobTitle: item.jobTitle, confidence: item.score, matchType: item.matchType || null }));
+ }
+ 
+ export function getSystemIntelligenceTestConfig() {
