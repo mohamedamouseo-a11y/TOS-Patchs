@@ -1,0 +1,47 @@
+Apply ONLY the Ramzy Gemini→Agnes patch from:
+https://github.com/mohamedamouseo-a11y/TOS-Patchs/tree/main/TOS-RAMZY-GEMINI-PRIMARY-AGNES-FALLBACK-V1
+
+Target app source:
+/var/www/TOS
+
+Rules:
+- Do not modify or push to mohamedamouseo-a11y/TOS.
+- Use only the files/specification inside this Ramzy patch folder.
+- No unrelated edits, refactors, package upgrades, DB migrations, or schema changes.
+- Do not expose, print, or commit API keys/secrets.
+- Preserve all existing Ramzy permissions, approval flow, read-only/proposals mode, memory, limits, workspaces, roles, tools/function calling, and audit behavior.
+
+Required behavior:
+- Gemini = primary Ramzy provider using GEMINI_API_KEY.
+- Agnes = automatic fallback using AGNES_API_KEY.
+- Agnes base URL = https://apihub.agnes-ai.com/v1
+- Agnes default model = agnes-2.0-flash
+- Use the Gemini model already supported by the production source/runtime; do not upgrade packages just to change the model.
+- Fallback only at model-generation stage before any tool/action side effects begin.
+- Fallback on missing Gemini config, 429, 5xx, network error, or timeout.
+- For Gemini 401/403, keep/log the authentication failure clearly; fallback is allowed only if no side effect has started and must not hide the original auth error.
+- Never replay/fallback after any tool/action side effect has started.
+- If both providers fail, preserve the existing Ramzy provider-error response shape.
+
+Before applying:
+1. From the downloaded patch folder, run:
+   node apply.mjs /var/www/TOS
+2. If it returns PATCH_BASE_MISMATCH, STOP immediately. Do not guess file paths or edit unrelated/older AI code.
+3. If it returns PATCH_BASE_MATCH, use only the matched/candidate Ramzy provider/model files reported by the guard and implement RAMZY_PROVIDER_SPEC.md with the smallest possible diff.
+
+Then:
+1. Apply the provider change only.
+2. Run the existing production build/check command already defined by the app.
+3. If build/check fails because of the patch, restore only the files changed by this patch.
+4. Restart only the existing TOS production process; do not change process configuration unless required by the existing app.
+5. Smoke-test Ramzy settings and one normal Gemini request.
+6. If safe and possible without exposing secrets or causing side effects, verify Agnes fallback using a non-mutating/read-only request.
+
+Return only:
+APPLY_OK or PATCH_BASE_MISMATCH
+Build: OK/FAIL
+Restart/Health: OK/FAIL
+Ramzy Smoke Test: OK/FAIL
+Primary Provider: Gemini
+Fallback Provider: Agnes
+Changed files: [...]
