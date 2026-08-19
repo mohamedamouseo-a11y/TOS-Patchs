@@ -1,0 +1,54 @@
+diff --git a/backend/src/agency-operator/services/ambiguityConfidenceGuard.service.js b/backend/src/agency-operator/services/ambiguityConfidenceGuard.service.js
+--- a/backend/src/agency-operator/services/ambiguityConfidenceGuard.service.js
++++ b/backend/src/agency-operator/services/ambiguityConfidenceGuard.service.js
+@@ -143,6 +143,7 @@ export function evaluateTaskActionTargetGuard({
+   semanticOperation = null,
+   previous = {},
+   contextResolution = {},
++  validatedExplicitTaskId = null,
+   assigneeResolution = null,
+ } = {}) {
+@@ -163,7 +164,8 @@ export function evaluateTaskActionTargetGuard({
+   }
+ 
+   const tasks = compactTaskCandidates(previous);
+-  let targetTaskId = contextResolution?.referencedTaskId || null;
++  let targetTaskId = validatedExplicitTaskId || contextResolution?.referencedTaskId || null;
++  const explicitTaskTarget = Boolean(validatedExplicitTaskId);
+   if (!targetTaskId && tasks.length === 1) targetTaskId = tasks[0].id;
+   if (!targetTaskId && previous?.lastResultType === "TASK" && previous?.activeTaskId) targetTaskId = previous.activeTaskId;
+@@ -201,7 +203,7 @@ export function evaluateTaskActionTargetGuard({
+     version: "RAMZY_AMBIGUITY_CONFIDENCE_GUARD_V1",
+     required: true,
+     decision: DECISIONS.AUTO_RESOLVE,
+-    reason: "ACTION_TARGET_UNIQUE",
++    reason: explicitTaskTarget ? "EXPLICIT_TASK_ID_CONFIRMED" : "ACTION_TARGET_UNIQUE",
+     entityType: "TASK",
+     targetTaskId,
+-    candidates: tasks.filter((item) => item.id === targetTaskId),
++    candidates: tasks.filter((item) => item.id === targetTaskId),
+   };
+ }
+diff --git a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+--- a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
++++ b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+@@ -261,7 +261,18 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+   if (assigneeIntent && !assigneeResolution?.entity && contextResolution.useActiveUser) {
+     assigneeResolution = await resolveUser(user, project, "", workspaceId, contextResolution.activeUserId);
+   }
+ 
+-  const actionTargetGuard = evaluateTaskActionTargetGuard({ detectedIntent, semanticOperation: intentResolution.operation, previous, contextResolution, assigneeResolution });
++  const explicitTaskIdCandidate = detectedIntent === "TASK_UPDATE"
++    ? (String(requestText || "").match(/\b[a-z0-9_-]{12,}\b/i)?.[0] || null)
++    : null;
++  let validatedExplicitTaskId = null;
++  if (explicitTaskIdCandidate) {
++    try {
++      const explicitTask = await getTaskContext(user, explicitTaskIdCandidate, settings.allowedWorkspaceIds);
++      validatedExplicitTaskId = explicitTask?.id || null;
++    } catch {
++      validatedExplicitTaskId = null;
++    }
++  }
++  const actionTargetGuard = evaluateTaskActionTargetGuard({ detectedIntent, semanticOperation: intentResolution.operation, previous, contextResolution, validatedExplicitTaskId, assigneeResolution });
+   const projectBlocked = Boolean(explicitProject && projectResolution?.guardDecision && projectResolution.guardDecision !== "AUTO_RESOLVE");
