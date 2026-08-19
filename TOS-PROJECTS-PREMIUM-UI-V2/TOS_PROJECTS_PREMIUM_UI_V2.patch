@@ -1,0 +1,189 @@
+diff --git a/frontend/src/pages/ProjectsPage.jsx b/frontend/src/pages/ProjectsPage.jsx
+--- a/frontend/src/pages/ProjectsPage.jsx
++++ b/frontend/src/pages/ProjectsPage.jsx
+@@ -2358,4 +2358,4 @@
+-  const navButtonClass = "inline-flex h-10 items-center justify-center rounded-2xl border border-zinc-100 bg-white px-4 text-xs font-black text-zinc-600 shadow-sm transition hover:border-zinc-200 hover:bg-zinc-50 disabled:pointer-events-none disabled:opacity-40 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900";
++  const navButtonClass = "inline-flex h-9 items-center justify-center rounded-[14px] border border-zinc-200/70 bg-white px-3.5 text-[11px] font-black text-zinc-600 shadow-[0_3px_10px_rgba(15,23,42,0.04)] transition hover:border-zinc-300 hover:bg-zinc-50 disabled:pointer-events-none disabled:opacity-35 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900";
+ 
+   return (
+-    <nav className="mt-6 rounded-[28px] border border-zinc-100 bg-white/90 p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/90" aria-label="Projects pagination">
++    <nav className="mt-5 rounded-[24px] border border-zinc-200/60 bg-white/85 p-2.5 shadow-[0_10px_30px_rgba(15,23,42,0.045)] backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/85" aria-label="Projects pagination">
+@@ -2452,22 +2452,28 @@
+   const current = palette[tone] || palette.zinc;
+   const percent = Math.max(0, Math.min(100, Math.round(Number(progress) || 0)));
+   const ringStyle = { background: `conic-gradient(${current.ring} ${percent}%, ${current.soft} 0)` };
++  const toneIcons = { purple: TrendingUp, success: CheckCircle2, gold: Briefcase, danger: AlertTriangle, zinc: Activity };
++  const ToneIcon = toneIcons[tone] || Activity;
+ 
+   return (
+     <div
+       dir={lang === "ar" ? "rtl" : "ltr"}
+-      className="group relative flex min-h-[142px] items-center gap-5 overflow-hidden rounded-[28px] border border-zinc-100 bg-white/95 p-5 text-start shadow-[0_10px_32px_rgba(15,23,42,0.055)] transition-all duration-300 hover:-translate-y-0.5 hover:border-zinc-200 hover:shadow-[0_18px_44px_rgba(15,23,42,0.09)] dark:border-zinc-800 dark:bg-zinc-900/95"
++      className="group relative flex min-h-[148px] items-center gap-4 overflow-hidden rounded-[26px] border border-zinc-200/60 bg-gradient-to-br from-white via-white to-zinc-50/55 p-5 text-start shadow-[0_14px_42px_rgba(15,23,42,0.055)] ring-1 ring-white/80 transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300/80 hover:shadow-[0_24px_60px_rgba(15,23,42,0.10)] dark:border-zinc-800 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-950 dark:ring-white/[0.03]"
+     >
+-      <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent dark:via-white/10" />
+-      <div className="relative grid h-[86px] w-[86px] shrink-0 place-items-center rounded-full shadow-sm" style={ringStyle}>
+-        <div className="grid h-[66px] w-[66px] place-items-center rounded-full bg-white shadow-inner ring-1 ring-black/[0.03] dark:bg-zinc-900 dark:ring-white/5">
+-          <span className={cn("text-[26px] font-black tracking-tight", current.text)}>{Number(value) || 0}</span>
++      <div className="pointer-events-none absolute -end-8 -top-8 h-24 w-24 rounded-full bg-zinc-100/80 blur-2xl transition group-hover:scale-125 dark:bg-white/[0.035]" />
++      <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-zinc-300/80 to-transparent dark:via-white/10" />
++      <div className="relative grid h-[82px] w-[82px] shrink-0 place-items-center rounded-full shadow-[0_10px_22px_rgba(15,23,42,0.08)]" style={ringStyle}>
++        <div className="grid h-[62px] w-[62px] place-items-center rounded-full bg-white shadow-inner ring-1 ring-black/[0.035] dark:bg-zinc-900 dark:ring-white/5">
++          <span className={cn("text-[25px] font-black tracking-[-0.03em]", current.text)}>{Number(value) || 0}</span>
+         </div>
+       </div>
+-      <div className="min-w-0 flex-1">
+-        <div className="text-sm font-black text-zinc-950 dark:text-white">{label}</div>
+-        <div className="mt-1 text-xs font-bold leading-5 text-zinc-500 dark:text-zinc-400">{note}</div>
+-        {trend && <div className={cn("mt-2 text-[11px] font-black", current.badge)}>{trend}</div>}
++      <div className="relative min-w-0 flex-1 pe-9">
++        <div className="text-[13px] font-black tracking-[-0.01em] text-zinc-950 dark:text-white">{label}</div>
++        <div className="mt-1.5 text-[11px] font-bold leading-5 text-zinc-500 dark:text-zinc-400">{note}</div>
++        {trend && <div className={cn("mt-2.5 inline-flex rounded-full bg-white px-2.5 py-1 text-[10px] font-black shadow-sm ring-1 ring-zinc-100", current.badge, "dark:bg-white/5 dark:ring-white/10")}>{trend}</div>}
++      </div>
++      <div className={cn("absolute end-4 top-4 grid h-8 w-8 place-items-center rounded-[12px] bg-white shadow-sm ring-1 ring-zinc-100", current.text, "dark:bg-white/5 dark:ring-white/10")}>
++        <ToneIcon size={15} strokeWidth={2.2} />
+       </div>
+     </div>
+   );
+@@ -2485,17 +2485,18 @@
+   const clientName = projectClientName(project) || ui.noClient;
+   const accentTone = project.status === "COMPLETED"
+-    ? "from-emerald-400 via-emerald-200 to-transparent"
++    ? "from-emerald-500 via-emerald-300 to-emerald-100"
+     : progress >= 50
+-      ? "from-amber-400 via-amber-200 to-transparent"
+-      : "from-rose-400 via-rose-200 to-transparent";
++      ? "from-amber-500 via-amber-300 to-amber-100"
++      : "from-rose-500 via-rose-300 to-rose-100";
+ 
+   return (
+     <Card
+       hover
+       className={cn(
+-        "group relative overflow-hidden rounded-[24px] border border-zinc-200/70 bg-white p-4 text-right shadow-[0_8px_28px_rgba(15,23,42,0.055)] transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-[0_18px_42px_rgba(15,23,42,0.10)] dark:border-zinc-800 dark:bg-zinc-950",
++        "group relative overflow-hidden rounded-[26px] border border-zinc-200/60 bg-gradient-to-b from-white to-zinc-50/45 p-4 text-right shadow-[0_12px_34px_rgba(15,23,42,0.055)] ring-1 ring-white/70 transition-all duration-300 hover:-translate-y-1.5 hover:border-zinc-300/80 hover:shadow-[0_24px_58px_rgba(15,23,42,0.11)] dark:border-zinc-800 dark:from-zinc-950 dark:to-zinc-900/70 dark:ring-white/[0.025]",
+         isActive ? "border-amber-300 ring-4 ring-amber-100/70 dark:border-amber-500/50 dark:ring-amber-500/10" : ""
+       )}
+     >
+-      <div className={cn("pointer-events-none absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r", accentTone)} />
+-      <div className="flex items-start justify-between gap-2.5 pt-1">
++      <div className="pointer-events-none absolute -end-12 -top-12 h-28 w-28 rounded-full bg-zinc-100/80 blur-3xl transition duration-500 group-hover:scale-125 dark:bg-white/[0.03]" />
++      <div className={cn("pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r opacity-95", accentTone)} />
++      <div className="relative flex items-start justify-between gap-2.5 pt-1">
+@@ -2505,9 +2505,9 @@
+-          className="grid h-9 w-9 place-items-center rounded-full border border-zinc-200 bg-white text-base font-black text-zinc-500 shadow-sm transition hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
++          className="grid h-[34px] w-[34px] place-items-center rounded-[13px] border border-zinc-200/80 bg-white/95 text-sm font-black text-zinc-500 shadow-[0_4px_12px_rgba(15,23,42,0.05)] transition hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
+           aria-label={ui.select}
+         >
+           {isActive ? "×" : "☆"}
+         </button>
+-        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-zinc-950 text-xs font-black text-white shadow-lg shadow-zinc-950/15 ring-1 ring-zinc-900/10 dark:bg-white dark:text-zinc-950 dark:ring-white/10">
++        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-[15px] bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-700 text-xs font-black text-white shadow-[0_8px_18px_rgba(15,23,42,0.18)] ring-1 ring-black/10 dark:from-white dark:via-zinc-100 dark:to-zinc-300 dark:text-zinc-950 dark:ring-white/10">
+           {projectInitials}
+         </div>
+         <div className="flex flex-wrap items-center justify-end gap-1.5">
+@@ -2521,5 +2521,5 @@
+-      <div className="mt-4 text-center">
+-        <h3 dir="auto" className="line-clamp-1 text-[15px] font-black leading-7 text-zinc-950 dark:text-white">
++      <div className="relative mt-4 text-center">
++        <h3 dir="auto" className="line-clamp-1 text-[15px] font-black leading-7 tracking-[-0.015em] text-zinc-950 dark:text-white">
+           {project.name || ui.projectFallback}
+         </h3>
+-        <p className="mx-auto mt-0.5 max-w-[250px] truncate text-[11px] font-bold text-zinc-500 dark:text-zinc-400">
++        <p className="mx-auto mt-0.5 max-w-[250px] truncate text-[10.5px] font-bold text-zinc-500 dark:text-zinc-400">
+@@ -2541,12 +2541,12 @@
+-      <div className="mt-4">
+-        <div className="mb-2 flex items-center justify-between gap-2 text-[11px] font-black">
++      <div className="relative mt-4 rounded-[17px] border border-zinc-100/90 bg-white/80 px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-zinc-800 dark:bg-white/[0.025]">
++        <div className="mb-2 flex items-center justify-between gap-2 text-[10.5px] font-black">
+           <span className={progressTextTone}>{progress}%</span>
+           <span className="text-zinc-500 dark:text-zinc-400">{ui.progressLabel}</span>
+         </div>
+-        <div className="h-2 overflow-hidden rounded-full bg-zinc-100 ring-1 ring-zinc-100 dark:bg-zinc-800 dark:ring-zinc-800">
+-          <div className={cn("h-full rounded-full transition-all", progressTone)} style={{ width: `${progress}%` }} />
++        <div className="h-2 overflow-hidden rounded-full bg-zinc-100 ring-1 ring-inset ring-zinc-200/70 dark:bg-zinc-800 dark:ring-zinc-700/60">
++          <div className={cn("h-full rounded-full shadow-[0_0_12px_rgba(0,0,0,0.08)] transition-all duration-500", progressTone)} style={{ width: `${progress}%` }} />
+         </div>
+       </div>
+ 
+-      <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[10px] font-black text-zinc-700 dark:text-zinc-300">
+-        <div className="rounded-[16px] border border-zinc-200/70 bg-zinc-50/70 p-2.5 dark:border-zinc-800 dark:bg-white/[0.03]">
++      <div className="relative mt-3 grid grid-cols-3 gap-2 text-center text-[10px] font-black text-zinc-700 dark:text-zinc-300">
++        <div className="rounded-[15px] border border-zinc-200/60 bg-white/85 p-2.5 shadow-[0_4px_12px_rgba(15,23,42,0.035)] dark:border-zinc-800 dark:bg-white/[0.03]">
+@@ -2560,19 +2560,19 @@
+-        <div className="rounded-[16px] border border-zinc-200/70 bg-zinc-50/70 p-2.5 dark:border-zinc-800 dark:bg-white/[0.03]">
++        <div className="rounded-[15px] border border-zinc-200/60 bg-white/85 p-2.5 shadow-[0_4px_12px_rgba(15,23,42,0.035)] dark:border-zinc-800 dark:bg-white/[0.03]">
+           <UsersRound className="mx-auto mb-1 h-4 w-4 text-blue-500" />
+           <span className="block">{memberCount || 1} {ui.member}</span>
+         </div>
+-        <div className="rounded-[16px] border border-zinc-200/70 bg-zinc-50/70 p-2.5 dark:border-zinc-800 dark:bg-white/[0.03]">
++        <div className="rounded-[15px] border border-zinc-200/60 bg-white/85 p-2.5 shadow-[0_4px_12px_rgba(15,23,42,0.035)] dark:border-zinc-800 dark:bg-white/[0.03]">
+           <ClipboardList className="mx-auto mb-1 h-4 w-4 text-emerald-500" />
+           <span className="block">{summary?.total ?? project.tasksCount ?? 0} {ui.tasks}</span>
+         </div>
+       </div>
+ 
+-      <div className="mt-4 grid grid-cols-3 gap-2">
+-        <Button type="button" variant="soft" className="h-10 justify-center rounded-[14px] bg-zinc-50 px-2.5 py-2 text-[11px] font-black text-zinc-950 ring-1 ring-zinc-200 hover:bg-white dark:bg-zinc-900 dark:text-zinc-100 dark:ring-zinc-800" onClick={() => onOpenDetails(project, "overview")}>{ui.details}</Button>
++      <div className="relative mt-3 grid grid-cols-3 gap-2">
++        <Button type="button" variant="dark" className="h-10 justify-center rounded-[13px] px-2.5 py-2 text-[11px] font-black shadow-[0_6px_16px_rgba(15,23,42,0.12)]" onClick={() => onOpenDetails(project, "overview")}>{ui.details}</Button>
+         {!showArchived ? (
+-          <Button type="button" variant="soft" className="h-10 justify-center rounded-[14px] bg-zinc-50 px-2.5 py-2 text-[11px] font-black text-zinc-950 ring-1 ring-zinc-200 hover:bg-white dark:bg-zinc-900 dark:text-zinc-100 dark:ring-zinc-800" onClick={() => { setActiveProjectId(project.id); onOpenTasks?.(project.id); }}>{ui.taskBoard}</Button>
++          <Button type="button" variant="soft" className="h-10 justify-center rounded-[13px] bg-white px-2.5 py-2 text-[11px] font-black text-zinc-950 ring-1 ring-zinc-200/80 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-100 dark:ring-zinc-800" onClick={() => { setActiveProjectId(project.id); onOpenTasks?.(project.id); }}>{ui.taskBoard}</Button>
+         ) : (
+-          <Button type="button" variant="soft" className="h-10 justify-center rounded-[14px] bg-zinc-50 px-2.5 py-2 text-[11px] font-black text-zinc-950 ring-1 ring-zinc-200 dark:bg-zinc-900 dark:text-zinc-100 dark:ring-zinc-800" disabled>{ui.taskBoard}</Button>
++          <Button type="button" variant="soft" className="h-10 justify-center rounded-[13px] bg-white px-2.5 py-2 text-[11px] font-black text-zinc-950 ring-1 ring-zinc-200/80 dark:bg-zinc-900 dark:text-zinc-100 dark:ring-zinc-800" disabled>{ui.taskBoard}</Button>
+         )}
+-        <Button type="button" variant="soft" className="h-10 justify-center rounded-[14px] bg-zinc-50 px-2.5 py-2 text-[11px] font-black text-zinc-950 ring-1 ring-zinc-200 hover:bg-white dark:bg-zinc-900 dark:text-zinc-100 dark:ring-zinc-800" onClick={() => onOpenDetails(project, "links")}>{ui.files}</Button>
++        <Button type="button" variant="soft" className="h-10 justify-center rounded-[13px] bg-white px-2.5 py-2 text-[11px] font-black text-zinc-950 ring-1 ring-zinc-200/80 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-100 dark:ring-zinc-800" onClick={() => onOpenDetails(project, "links")}>{ui.files}</Button>
+       </div>
+@@ -4448,12 +4448,12 @@
+-      <Card className="rounded-[30px] border-zinc-100 bg-white/95 p-4 shadow-[0_12px_38px_rgba(15,23,42,0.06)] dark:border-zinc-800 dark:bg-zinc-900/95 md:p-5">
+-        <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
++      <Card className="rounded-[28px] border-zinc-200/60 bg-white/88 p-3.5 shadow-[0_18px_50px_rgba(15,23,42,0.055)] ring-1 ring-white/80 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/88 dark:ring-white/[0.025] md:p-4">
++        <div className="flex flex-col gap-2.5 xl:flex-row xl:items-center">
+           <div className="min-w-[260px] flex-1">
+-            <SearchField value={query} onChange={(event) => setQuery(event.target.value)} placeholder={ui.searchProjects} className="h-12 rounded-[16px] border-zinc-200 bg-zinc-50/60 px-4 text-sm shadow-none transition focus:bg-white dark:border-zinc-800 dark:bg-zinc-950" />
++            <SearchField value={query} onChange={(event) => setQuery(event.target.value)} placeholder={ui.searchProjects} className="h-11 rounded-[14px] border-zinc-200/80 bg-zinc-50/70 px-4 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] transition focus:border-zinc-300 focus:bg-white dark:border-zinc-800 dark:bg-zinc-950" />
+           </div>
+ 
+           <Button
+             type="button"
+             variant="soft"
+-            className="h-12 justify-center rounded-[16px] border border-amber-100 bg-amber-50 px-4 text-amber-800 hover:bg-amber-100 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-200"
++            className="h-11 justify-center rounded-[14px] border border-zinc-200/80 bg-white px-4 text-zinc-700 shadow-sm hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200"
+             onClick={() => setFiltersExpanded((value) => !value)}
+           >
+@@ -4464,2 +4464,2 @@
+           <div className="min-w-[210px] xl:w-[250px]">
+-            <Field as="select" value={sortMode} onChange={(event) => setSortMode(event.target.value)} className="h-12 rounded-[16px] border-zinc-200 bg-zinc-50/60 px-4 shadow-none dark:border-zinc-800 dark:bg-zinc-950">
++            <Field as="select" value={sortMode} onChange={(event) => setSortMode(event.target.value)} className="h-11 rounded-[14px] border-zinc-200/80 bg-white px-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+@@ -4474,2 +4474,2 @@
+-              "flex h-12 min-w-[165px] items-center justify-between rounded-[16px] border px-4 shadow-none transition",
+-              showArchived ? "border-zinc-900 bg-zinc-950 text-white dark:border-white dark:bg-white dark:text-zinc-950" : "border-zinc-200 bg-white text-zinc-700 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200"
++              "flex h-11 min-w-[160px] items-center justify-between rounded-[14px] border px-3.5 shadow-sm transition",
++              showArchived ? "border-zinc-900 bg-zinc-950 text-white shadow-zinc-950/10 dark:border-white dark:bg-white dark:text-zinc-950" : "border-zinc-200/80 bg-white text-zinc-700 hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200"
+@@ -4490,5 +4490,5 @@
+-              <Button type="button" variant="gold" className="h-12 rounded-[16px] border border-amber-300 bg-amber-400 px-5 !text-zinc-950 text-zinc-950 shadow-sm shadow-amber-200/60 hover:bg-amber-300 dark:border-amber-300 dark:bg-amber-300 dark:!text-zinc-950 dark:text-zinc-950 dark:hover:bg-amber-200 [&_*]:!text-zinc-950 [&_svg]:!stroke-zinc-950 [&_svg_*]:!stroke-zinc-950 dark:[&_*]:!text-zinc-950 dark:[&_svg]:!stroke-zinc-950 dark:[&_svg_*]:!stroke-zinc-950" onClick={() => { setCreateExpanded(true); createFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
++              <Button type="button" variant="gold" className="h-11 rounded-[14px] border border-amber-300/80 bg-gradient-to-r from-amber-300 to-orange-300 px-5 !text-zinc-950 text-zinc-950 shadow-[0_8px_18px_rgba(245,158,11,0.18)] hover:from-amber-200 hover:to-orange-200 dark:border-amber-300 dark:from-amber-300 dark:to-orange-300 dark:!text-zinc-950 dark:text-zinc-950 [&_*]:!text-zinc-950 [&_svg]:!stroke-zinc-950 [&_svg_*]:!stroke-zinc-950 dark:[&_*]:!text-zinc-950 dark:[&_svg]:!stroke-zinc-950 dark:[&_svg_*]:!stroke-zinc-950" onClick={() => { setCreateExpanded(true); createFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+                 <Plus size={18} /> {ui.newProject}
+               </Button>
+             )}
+-            <Button type="button" variant="soft" className="h-12 rounded-[16px] bg-white px-4 ring-1 ring-zinc-200 hover:bg-zinc-50 dark:bg-zinc-950 dark:ring-zinc-800" onClick={exportProjectsCsv}>
++            <Button type="button" variant="soft" className="h-11 rounded-[14px] bg-white px-4 ring-1 ring-zinc-200/80 shadow-sm hover:bg-zinc-50 dark:bg-zinc-950 dark:ring-zinc-800" onClick={exportProjectsCsv}>
+@@ -4502,2 +4502,2 @@
+-          <div className="mt-4 overflow-hidden rounded-[22px] border border-zinc-200/70 bg-zinc-50/45 shadow-none dark:border-zinc-800 dark:bg-white/[0.03]">
+-            <div className="flex flex-col gap-3 border-b border-zinc-100/90 px-4 py-3.5 dark:border-zinc-800/80 lg:flex-row lg:items-center lg:justify-between">
++          <div className="mt-3.5 overflow-hidden rounded-[20px] border border-zinc-200/60 bg-gradient-to-b from-zinc-50/70 to-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-zinc-800 dark:from-white/[0.035] dark:to-white/[0.02]">
++            <div className="flex flex-col gap-3 border-b border-zinc-200/60 px-3.5 py-3 dark:border-zinc-800/80 lg:flex-row lg:items-center lg:justify-between">
+@@ -4517,2 +4517,2 @@
+-                      "inline-flex items-center gap-2 rounded-[14px] px-4 py-2.5 text-sm font-black transition",
+-                      filterTab === key ? "bg-white text-amber-700 shadow-sm ring-1 ring-amber-200 dark:bg-zinc-950 dark:text-amber-300 dark:ring-amber-500/30" : "text-zinc-500 hover:bg-white/70 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white"
++                      "inline-flex items-center gap-2 rounded-[13px] px-3.5 py-2 text-[12px] font-black transition",
++                      filterTab === key ? "bg-white text-amber-700 shadow-[0_5px_14px_rgba(15,23,42,0.06)] ring-1 ring-amber-200/80 dark:bg-zinc-950 dark:text-amber-300 dark:ring-amber-500/30" : "text-zinc-500 hover:bg-white/80 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white"
+@@ -4534,3 +4534,3 @@
+-            <div className="p-4 md:p-5">
++            <div className="p-3.5 md:p-4">
+               {filterTab === "basic" ? (
+                 <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
