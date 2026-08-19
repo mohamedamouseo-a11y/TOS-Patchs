@@ -1,0 +1,108 @@
+diff --git a/backend/src/agency-operator/prompts/ramzyPrompt.js b/backend/src/agency-operator/prompts/ramzyPrompt.js
+--- a/backend/src/agency-operator/prompts/ramzyPrompt.js
++++ b/backend/src/agency-operator/prompts/ramzyPrompt.js
+@@ -9,7 +9,9 @@ export function ramzyInstructions({ user, settings }) {
+ - عند تحويل رسالة شات إلى مهمة، قدّم مسودة فقط ولا تدّع إنشاء المهمة في V1.
+ - الوضع الحالي ${settings.readOnlyMode ? "Read-only / Proposals only" : "Approval-based actions"}.
+ - أعطِ الأولوية للتأخير، SLA، العوائق، المهام غير المسندة، وضغط العمل.
+-- اربط النتائج بمعرّفات المهام والمشاريع عندما تكون متاحة كي تفتحها الواجهة.
++- معرّفات قاعدة البيانات الداخلية للمشاريع والمهام والمستخدمين والعملاء مخصّصة للآلة والأدوات فقط. لا تطبعها للمستخدم في النص أو الجداول أو العناوين أو بين أقواس، حتى لو كانت موجودة في System Intelligence أو نتائج الأدوات.
++- استخدم المعرّفات داخليًا عند الحاجة لاستدعاء الأدوات أو تجهيز Proposal، لكن اعرض للمستخدم الاسم والحقول التشغيلية المفهومة فقط. إذا احتاجت الواجهة مرجعًا داخليًا فيبقى في metadata/tool payload ولا يظهر في النص.
++- إذا احتجت تمييز نتائج متشابهة للمستخدم، استخدم أرقام اختيار عامة 1، 2، 3 وحقول وصفية آمنة بدل Database ID.
+ - عندما تعرض بيانات منظمة فيها سجلان أو أكثر مثل المهام أو المشاريع أو الموظفين أو حالات SLA أو التأخيرات، اعرضها في Markdown Table واضح بدل سردها كقائمة أو كروت.
+ - استخدم أسماء أعمدة قصيرة وواضحة حسب البيانات المتاحة، مثل: المهمة، المشروع، الحالة، المسؤول، الموعد، التأخير، SLA. لا تضف أعمدة لا توجد لها بيانات حقيقية.
+ - يمكن أن تسبق الجدول بجملة مختصرة جدًا تلخص النتيجة، وبعده ملاحظة أو توصية قصيرة فقط عند الحاجة.
+diff --git a/backend/src/agency-operator/services/ramzyRuntime.service.js b/backend/src/agency-operator/services/ramzyRuntime.service.js
+--- a/backend/src/agency-operator/services/ramzyRuntime.service.js
++++ b/backend/src/agency-operator/services/ramzyRuntime.service.js
+@@ -38,6 +38,69 @@ function safeErrorMessage(error) {
+     .slice(0, 2000);
+ }
+ 
++function isInternalIdKey(key) {
++  return /(?:^id$|id$|ids$)/i.test(String(key || ""));
++}
++
++function collectInternalIdentifiers(value, key = "", found = new Set()) {
++  if (value === null || value === undefined) return found;
++  if (Array.isArray(value)) {
++    for (const item of value) {
++      if (isInternalIdKey(key) && typeof item === "string" && item.length >= 8) found.add(item);
++      collectInternalIdentifiers(item, key, found);
++    }
++    return found;
++  }
++  if (typeof value === "object") {
++    for (const [childKey, childValue] of Object.entries(value)) {
++      if (isInternalIdKey(childKey) && typeof childValue === "string" && childValue.length >= 8) found.add(childValue);
++      if (isInternalIdKey(childKey) && Array.isArray(childValue)) {
++        for (const item of childValue) if (typeof item === "string" && item.length >= 8) found.add(item);
++      }
++      collectInternalIdentifiers(childValue, childKey, found);
++    }
++  }
++  return found;
++}
++
++function lineLooksLikeInternalIdField(line) {
++  const text = String(line || "").trim();
++  if (!text) return false;
++  return /(?:\b(?:project|task|user|client|workspace|board|conversation)\s*id\b|\bID\b|معرف\s+(?:المشروع|المهمة|الموظف|المستخدم|العميل|مساحة العمل|اللوحة|المحادثة)|رقم\s+(?:المشروع|المهمة|الموظف|المستخدم|العميل))/iu.test(text);
++}
++
++function sanitizeUserVisibleInternalIds(text, intelligence = null) {
++  let output = String(text || "");
++  const identifiers = [...collectInternalIdentifiers(intelligence || {})]
++    .filter((value) => value && value.length >= 8)
++    .sort((a, b) => b.length - a.length);
++
++  for (const identifier of identifiers) {
++    output = output.split(`[${identifier}]`).join("");
++    output = output.split(`(${identifier})`).join("");
++    output = output.split(identifier).join("");
++  }
++
++  // TOS currently uses CUID-like database identifiers. This catches IDs surfaced only
++  // through provider tool results that are not already present in System Intelligence.
++  output = output.replace(/\bc[a-z0-9]{20,40}\b/gi, "");
++
++  output = output
++    .split("\n")
++    .filter((line) => !lineLooksLikeInternalIdField(line))
++    .join("\n")
++    .replace(/\[\s*\]/g, "")
++    .replace(/\(\s*\)/g, "")
++    .replace(/[ \t]+$/gm, "")
++    .replace(/\n{3,}/g, "\n\n")
++    .trim();
++
++  return output;
++}
++
+ function rollingDayStart() {
+   return new Date(Date.now() - 24 * 60 * 60 * 1000);
+ }
+@@ -192,7 +255,10 @@ export async function runRamzyTurn({
+     }
+ 
+     if (intelligence.clarificationRequired) {
+-      const text = String(intelligence.clarificationQuestion || "لقيت أكتر من مشروع مطابق. اختار المشروع المطلوب باستخدام Project ID.").trim();
++      const rawClarificationText = String(
++        intelligence.clarificationQuestion || "لقيت أكتر من نتيجة مطابقة. اختار رقم النتيجة المطلوبة.",
++      ).trim();
++      const text = sanitizeUserVisibleInternalIds(rawClarificationText, intelligence) || "لقيت أكتر من نتيجة مطابقة. اختار رقم النتيجة المطلوبة.";
+       const clarificationUsage = {
+         providerUsed: "system_intelligence",
+         modelUsed: null,
+@@ -352,6 +418,12 @@ export async function runRamzyTurn({
+       };
+     }
+ 
++    text = sanitizeUserVisibleInternalIds(text, intelligence);
++    if (!text) {
++      text = "تمت معالجة الطلب، لكن أخفيت المعرّفات التقنية الداخلية من الرد. اطلب التفاصيل باسم المشروع أو المهمة أو الموظف المطلوب.";
++    }
++
+     const persistentMemoryCreated = await persistHighConfidenceMemory({
+       user,
+       conversation,
