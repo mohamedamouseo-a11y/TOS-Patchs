@@ -1,0 +1,192 @@
+diff --git a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+--- a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
++++ b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+@@ -367,6 +367,107 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+   const contextualProjectId = contextResolution.useActiveProject ? contextResolution.activeProjectId : null;
+   const projectResolution = explicitProject || (contextualProjectId ? await resolveProject(user, settings, previous.activeProjectName || "", workspaceId, contextualProjectId) : null);
+   const project = projectResolution?.entity || null;
++
++  // Safety path for a validated project choice after clarification.
++  // This intentionally bypasses provider-dependent rendering for read-only project
++  // lookup/summary resumes. The selected ID has already been resolved through the
++  // authorization-aware project resolver above.
++  const projectSelectionValidated = Boolean(
++    clarificationSelection?.entityType === "PROJECT"
++    && selectedProjectId
++    && project?.id === selectedProjectId,
++  );
++  const pendingProjectIntent = String(
++    clarificationSelection?.pending?.intentResolution?.intent
++    || detectedIntent
++    || "",
++  );
++  const originalProjectRequest = normalizeEntityText(
++    clarificationSelection?.pending?.originalRequestText || "",
++  );
++  const safeProjectBrowseResume = Boolean(
++    projectSelectionValidated
++    && (
++      ["PROJECT_LOOKUP", "PROJECT_SUMMARY"].includes(pendingProjectIntent)
++      || /(?:افتح|اعرض|هات|شوف|open|show|view).*(?:مشروع|project)/iu.test(originalProjectRequest)
++    )
++  );
++
++  if (safeProjectBrowseResume) {
++    const projectId = project.id;
++    const snapshot = await getOperationalSnapshot(user, {
++      projectId,
++      workspaceId,
++      allowedWorkspaceIds: settings.allowedWorkspaceIds,
++      limit: 80,
++    });
++    const projectRow = await prisma.project.findUnique({
++      where: { id: projectId },
++      select: {
++        id: true,
++        name: true,
++        status: true,
++        stage: true,
++        priority: true,
++        progress: true,
++        startDate: true,
++        dueDate: true,
++        deliveryDate: true,
++        client: { select: { id: true, name: true } },
++      },
++    });
++    const visibility = await buildAgentTaskVisibilityWhere(user, [projectId], {
++      workspaceId,
++      allowedWorkspaceIds: settings.allowedWorkspaceIds,
++      db: prisma,
++    });
++    const openTaskWhere = {
++      projectId,
++      archivedAt: null,
++      status: { notIn: CLOSED_TASKS },
++      AND: [visibility],
++    };
++    const [totalCount, taskRows] = await Promise.all([
++      prisma.task.count({ where: openTaskWhere }),
++      prisma.task.findMany({
++        where: openTaskWhere,
++        select: {
++          id: true,
++          title: true,
++          status: true,
++          priority: true,
++          startDate: true,
++          dueDate: true,
++          blockedReason: true,
++          approvalStatus: true,
++          progress: true,
++          projectId: true,
++          project: { select: { id: true, name: true } },
++          assignee: { select: { id: true, name: true } },
++          assignees: { select: { user: { select: { id: true, name: true } } } },
++        },
++        orderBy: [{ dueDate: "asc" }, { updatedAt: "desc" }],
++        take: MAX_TASK_CANDIDATES,
++      }),
++    ]);
++    const tasks = taskRows.map((task) => ({
++      id: task.id,
++      title: task.title,
++      status: task.status,
++      priority: task.priority,
++      startDate: task.startDate,
++      dueDate: task.dueDate,
++      blockedReason: task.blockedReason,
++      approvalStatus: task.approvalStatus,
++      progress: task.progress,
++      projectId: task.projectId,
++      project: task.project,
++      assignee: task.assignee,
++      assignees: task.assignees.map((entry) => entry.user),
++    }));
++    const taskListMeta = {
++      source: "POST_CLARIFICATION_PROJECT_RESUME_SAFETY_V2",
++      totalCount,
++      returnedCount: tasks.length,
++      hasMore: totalCount > tasks.length,
++    };
++    const liveProject = {
++      ...(projectRow || project),
++      snapshot: {
++        totals: snapshot.totals,
++        riskProjects: snapshot.riskProjects.slice(0, 3),
++        overdue: snapshot.overdue.slice(0, 10),
++        blocked: snapshot.blocked.slice(0, 10),
++        dueSoon: snapshot.dueSoon.slice(0, 10),
++        workload: snapshot.workload.slice(0, 10),
++      },
++    };
++    const recentTasks = tasks.map((task) => ({ id: task.id, title: task.title, status: task.status, projectId: task.projectId }));
++    const resumeBase = clarificationSelection.pending.resumeContext || {};
++    const activeContext = {
++      ...resumeBase,
++      contextVersion: resumeBase.contextVersion || "RAMZY_CONTEXT_MEMORY_V1",
++      activeProjectId: project.id,
++      activeProjectName: project.name || null,
++      activeClientId: project.clientId || projectRow?.client?.id || null,
++      activeTaskId: recentTasks.length === 1 ? recentTasks[0].id : null,
++      activeTaskTitle: recentTasks.length === 1 ? recentTasks[0].title : null,
++      recentTasks,
++      recentTaskIds: recentTasks.map((task) => task.id),
++      lastResultType: "TASK_LIST",
++      lastResolvedIntent: pendingProjectIntent || "PROJECT_LOOKUP",
++      pendingClarification: null,
++    };
++    await prisma.agentConversation.update({
++      where: { id: conversation.id },
++      data: { intelligenceContext: activeContext, lastResolvedIntent: activeContext.lastResolvedIntent },
++    });
++    const deterministicResponse = buildDeterministicProjectResumeResponse({
++      selectionIndex: clarificationSelection.index,
++      project: liveProject,
++      tasks,
++      taskListMeta,
++    });
++    const live = { project: liveProject, tasks, taskListMeta };
++    const metadata = {
++      detectedIntent: pendingProjectIntent || detectedIntent,
++      resolvedEntityTypes: ["PROJECT"],
++      resolvedEntityCount: 1,
++      confidenceGuardDecision: "AUTO_RESOLVE",
++      confidenceGuardReason: "VALIDATED_PRIVATE_PROJECT_SELECTION",
++      confidenceGuardEntityType: "PROJECT",
++      clarificationRequired: false,
++      clarificationCandidateCount: 0,
++      clarificationReason: null,
++      clarificationChoiceMode: "PRIVATE_INDEX_RESOLVED",
++      clarificationSelectionUsed: true,
++      clarificationSelectionResolved: true,
++      deterministicResumeResponse: true,
++      deterministicTaskCount: tasks.length,
++      taskTotalCount: totalCount,
++      taskReturnedCount: tasks.length,
++      taskHasMore: totalCount > tasks.length,
++      liveDataFetched: true,
++      systemContextItemCount: tasks.length + 2,
++      resumeSafetyVersion: "RAMZY_POST_CLARIFICATION_RESUME_SAFETY_V2",
++    };
++    return {
++      detectedIntent: pendingProjectIntent || detectedIntent,
++      entities: { project: { id: project.id, name: project.name, confidence: 1, matchType: "EXPLICIT_ID" }, assignee: null },
++      activeContext,
++      live,
++      liveDataFetched: true,
++      clarificationRequired: false,
++      clarificationQuestion: null,
++      clarificationCandidates: [],
++      confidenceGuard: { decision: "AUTO_RESOLVE", reason: "VALIDATED_PRIVATE_PROJECT_SELECTION", entityType: "PROJECT", candidateCount: 0 },
++      contextResolution,
++      deterministicResponse,
++      intentResolution,
++      metadata,
++      promptContext: "",
++    };
++  }
++
+   const userQuery = selectedUserId ? clarificationSelection.candidate.name : (intentResolution.slots?.assigneeQuery || extractUserQuery(requestText));
+   const assigneeIntent = ["TASK_BY_ASSIGNEE", "TASK_OVERDUE", "TASK_BLOCKED", "TASK_SEARCH"].includes(detectedIntent)
+     || intentResolution.operation === "CHANGE_ASSIGNEE";
