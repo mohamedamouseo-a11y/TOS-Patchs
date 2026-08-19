@@ -1,0 +1,88 @@
+diff --git a/backend/src/agency-operator/services/semanticIntentResolver.service.js b/backend/src/agency-operator/services/semanticIntentResolver.service.js
+--- a/backend/src/agency-operator/services/semanticIntentResolver.service.js
++++ b/backend/src/agency-operator/services/semanticIntentResolver.service.js
+@@ -42,7 +42,7 @@ function detectStatus(text) {
+   if (matches(text, [/(?:^|\s)(?:done|مكتمل|مكتمله|خلص|منتهي|منتهيه)(?:\s|$)/iu])) return "DONE";
+   if (matches(text, [/(?:^|\s)(?:cancelled|canceled|ملغي|ملغيه|الغاء)(?:\s|$)/iu])) return "CANCELLED";
+-  if (matches(text, [/(?:^|\s)(?:in progress|in_progress|شغال|شغاله|جاري|جاريه)(?:\s|$)/iu])) return "IN_PROGRESS";
++  if (matches(text, [/(?:^|\s)(?:in progress|in_progress|شغال|شغاله|جاري|جاريه|تنفيذ|التنفيذ|قيد التنفيذ)(?:\s|$)/iu])) return "IN_PROGRESS";
+   if (matches(text, [/(?:^|\s)(?:waiting client|waiting_client|مستني العميل|مستنيه العميل)(?:\s|$)/iu])) return "WAITING_CLIENT";
+   if (matches(text, [/(?:^|\s)(?:in review|in_review|review|مراجعه)(?:\s|$)/iu])) return "IN_REVIEW";
+   if (matches(text, [/(?:^|\s)(?:approved|موافقه|معتمد|معتمده)(?:\s|$)/iu])) return "APPROVED";
+@@ -91,14 +91,14 @@ export function resolveSemanticIntent({ message, context = {} } = {}) {
+     userEntity: matches(text, [/(?:^|\s)(?:user|employee|assignee|مستخدم|المستخدم|موظف|الموظف|شخص)(?:\s|$)/iu]),
+     clientEntity: matches(text, [/(?:^|\s)(?:client|clients|account|عميل|العميل|عملاء|العملاء|حساب)(?:\s|$)/iu]),
+     createAction: matches(text, [/(?:^|\s)(?:create|make|اعمل|انشء|ضيف|اضف|حط)\s+(?:(?:لي|a|new|جديده)\s+)?(?:task|تاسك|التاسك|مهمه|المهمه)(?:\s|$)/iu, /(?:^|\s)(?:new|جديده)\s+(?:task|تاسك|التاسك|مهمه|المهمه)(?:\s|$)/iu, /(?:task|تاسك|التاسك|مهمه|المهمه)\s+(?:جديده|new)(?:\s|$)/iu]),
+-    genericUpdate: matches(text, [/(?:^|\s)(?:غير|عدل|حدث|خلي|اسند|حول|حوّل|انقل|set|change|update|edit|move|assign)(?:\s|$)/iu]),
++    genericUpdate: matches(text, [/(?:^|\s)(?:غير|غيّر|عدل|عدّل|حدث|حدّث|تحديث|خلي|اسند|حول|حوّل|انقل|set|change|update|edit|move|assign)(?:\s|$)/iu]),
+     assignAction: matches(text, [/(?:خلي|خلّي)\s+.+?\s+(?:يمسك|ياخد|يستلم)/iu, /(?:^|\s)(?:اسند|assign)(?:\s|$)/iu, /(?:حول|حوّل|انقل).*(?:لأ|لا|لـ|الى|الي|to)/iu, /(?:خليها|خليه|خلي دي).*(?:مع|على)/iu]),
+     assigneeQuestion: matches(text, [/(?:مين|من)\s+(?:ماسك|مسؤول|مسءول)/iu, /(?:على مين|علي مين|بتاع مين|بتاعه مين|assignee|assigned to|who owns|who is responsible)/iu]),
+-    dueAction: matches(text, [/(?:اجل|اخر|أخر|قدم|غير|عدل|change|move|set).*(?:تسليم|موعد|ميعاد|due|deadline|تاريخ)/iu, /(?:خلي|خلّي).*(?:التسليم|الموعد|الميعاد|due|deadline)/iu]),
++    dueAction: matches(text, [/(?:اجل|اخر|أخر|قدم|غير|غيّر|عدل|عدّل|حدث|حدّث|تحديث|change|update|move|set).*(?:تسليم|موعد|ميعاد|due|deadline|تاريخ)/iu, /(?:خلي|خلّي).*(?:التسليم|الموعد|الميعاد|due|deadline)/iu]),
+     commentAction: matches(text, [/(?:ضيف|اضف|حط|اكتب|add|write).*(?:كومنت|تعليق|comment|note)/iu]),
+     checklistAction: matches(text, [/(?:ضيف|اضف|حط|add).*(?:checklist|تشيك ليست|check list)/iu]),
+-    statusAction: matches(text, [/(?:غير|عدل|خلي|set|change|update).*(?:الحاله|حاله|status)/iu]),
+-    priorityAction: matches(text, [/(?:غير|عدل|خلي|set|change|update).*(?:الاولويه|اولويه|priority)/iu, /(?:خليها|خلّيها|خلي)\s+(?:urgent|عاجل|عاجله|عاجلة|high|عالي|عاليه)/iu]),
++    statusAction: matches(text, [/(?:غير|غيّر|عدل|عدّل|حدث|حدّث|تحديث|خلي|set|change|update).*(?:الحاله|الحالة|حاله|حالة|status)/iu]),
++    priorityAction: matches(text, [/(?:غير|غيّر|عدل|عدّل|حدث|حدّث|تحديث|خلي|set|change|update).*(?:الاولويه|الأولوية|اولويه|اولوية|priority)/iu, /(?:خليها|خلّيها|خلي)\s+(?:urgent|عاجل|عاجله|عاجلة|high|عالي|عاليه)/iu]),
+     overdue: matches(text, [/(?:متاخر|متاخره|متاخرين|overdue|late|فات معاد|فات ميعاد|عدي معاد|عدى معاد|deadline\s+(?:بتاعها|بتاعه)?\s*(?:عدى|عدي|فات|missed)|deadline missed)/iu]),
+     blocked: matches(text, [/(?:واقف|واقفه|متعطل|متعطله|متوقف|متوقفه|معلق|معلقه|blocked|stuck|waiting|مستني|مستنيه)/iu]),
+     details: matches(text, [/(?:تفاصيل|details|detail|افتح|open|كل حاجه|كل حاجة)/iu]),
+diff --git a/backend/src/agency-operator/tests/ramzySemanticIntent.test.js b/backend/src/agency-operator/tests/ramzySemanticIntent.test.js
+new file mode 100644
+--- /dev/null
++++ b/backend/src/agency-operator/tests/ramzySemanticIntent.test.js
+@@ -0,0 +1,58 @@
++import test from "node:test";
++import assert from "node:assert/strict";
++import { resolveSemanticIntent } from "../services/semanticIntentResolver.service.js";
++
++const taskContext = {
++  activeTaskId: "task-test-1",
++  recentTasks: [
++    { id: "task-test-1", title: "اختبار", status: "TODO", projectId: "project-test-1" },
++    { id: "task-test-2", title: "اختبار 2", status: "TODO", projectId: "project-test-1" },
++  ],
++  lastResultType: "TASK_LIST",
++  lastResolvedIntent: "TASK_SEARCH",
++};
++
++const statusPhrases = [
++  "حدّث حالة أول واحدة إلى التنفيذ",
++  "حدث حالة أول واحدة إلى التنفيذ",
++  "تحديث حالة أول واحدة إلى التنفيذ",
++  "حدّث الحاله لأول واحدة إلى التنفيذ",
++  "حدّث الحالة لأول واحدة إلى التنفيذ",
++  "غير حالة أول واحدة إلى التنفيذ",
++];
++
++for (const phrase of statusPhrases) {
++  test(`Ramzy recognizes Arabic status update as INTENT_ONLY: ${phrase}`, () => {
++    const result = resolveSemanticIntent({ message: phrase, context: taskContext });
++    assert.equal(result.intent, "TASK_UPDATE");
++    assert.equal(result.operation, "STATUS_CHANGE");
++    assert.equal(result.actionCapability, "INTENT_ONLY");
++    assert.equal(result.slots.statusValue, "IN_PROGRESS");
++  });
++}
++
++test("Ramzy recognizes Arabic priority update spelling variants", () => {
++  const result = resolveSemanticIntent({
++    message: "حدّث الأولوية لأول واحدة إلى عاجل",
++    context: taskContext,
++  });
++  assert.equal(result.intent, "TASK_UPDATE");
++  assert.equal(result.operation, "PRIORITY_CHANGE");
++  assert.equal(result.actionCapability, "INTENT_ONLY");
++  assert.equal(result.slots.priorityValue, "URGENT");
++});
++
++test("Ramzy recognizes Arabic due-date update spelling variants", () => {
++  const result = resolveSemanticIntent({
++    message: "حدّث موعد أول واحدة لبكرة",
++    context: taskContext,
++  });
++  assert.equal(result.intent, "TASK_UPDATE");
++  assert.equal(result.operation, "CHANGE_DUE_DATE");
++  assert.equal(result.actionCapability, "PROPOSAL_SUPPORTED");
++});
