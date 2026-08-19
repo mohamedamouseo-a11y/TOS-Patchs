@@ -1,0 +1,92 @@
+diff --git a/frontend/src/pages/ProjectsPage.jsx b/frontend/src/pages/ProjectsPage.jsx
+--- a/frontend/src/pages/ProjectsPage.jsx
++++ b/frontend/src/pages/ProjectsPage.jsx
+@@ -2358,5 +2358,5 @@
+-  const navButtonClass = "inline-flex h-9 items-center justify-center rounded-[14px] border border-zinc-200/70 bg-white px-3.5 text-[11px] font-black text-zinc-600 shadow-[0_3px_10px_rgba(15,23,42,0.04)] transition hover:border-zinc-300 hover:bg-zinc-50 disabled:pointer-events-none disabled:opacity-35 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900";
++  const navButtonClass = "inline-flex h-9 items-center justify-center rounded-[13px] border border-zinc-200/70 bg-white/90 px-3.5 text-[11px] font-black text-zinc-600 shadow-[0_4px_12px_rgba(15,23,42,0.045)] backdrop-blur-sm transition hover:-translate-y-px hover:border-amber-200 hover:bg-amber-50/60 hover:text-amber-800 disabled:pointer-events-none disabled:opacity-35 dark:border-zinc-800 dark:bg-zinc-950/90 dark:text-zinc-300 dark:hover:border-amber-500/30 dark:hover:bg-amber-500/10 dark:hover:text-amber-200";
+ 
+   return (
+-    <nav className="mt-5 rounded-[24px] border border-zinc-200/60 bg-white/85 p-2.5 shadow-[0_10px_30px_rgba(15,23,42,0.045)] backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/85" aria-label="Projects pagination">
++    <nav className="mt-5 rounded-[22px] border border-zinc-200/60 bg-gradient-to-r from-white/95 via-white/90 to-amber-50/35 p-2.5 shadow-[0_14px_36px_rgba(15,23,42,0.055)] ring-1 ring-white/80 backdrop-blur-xl dark:border-zinc-800 dark:from-zinc-900/95 dark:via-zinc-900/90 dark:to-amber-500/[0.035] dark:ring-white/[0.025]" aria-label="Projects pagination">
+       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+@@ -2455,8 +2455,8 @@
+   return (
+     <div
+       dir={lang === "ar" ? "rtl" : "ltr"}
+-      className="group relative flex min-h-[148px] items-center gap-4 overflow-hidden rounded-[26px] border border-zinc-200/60 bg-gradient-to-br from-white via-white to-zinc-50/55 p-5 text-start shadow-[0_14px_42px_rgba(15,23,42,0.055)] ring-1 ring-white/80 transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300/80 hover:shadow-[0_24px_60px_rgba(15,23,42,0.10)] dark:border-zinc-800 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-950 dark:ring-white/[0.03]"
++      className="group relative isolate flex min-h-[150px] items-center gap-4 overflow-hidden rounded-[24px] border border-zinc-200/60 bg-gradient-to-br from-white via-white to-zinc-50/70 p-5 text-start shadow-[0_16px_46px_rgba(15,23,42,0.065)] ring-1 ring-white/90 transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300/80 hover:shadow-[0_28px_66px_rgba(15,23,42,0.115)] dark:border-zinc-800 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-950 dark:ring-white/[0.03]"
+     >
+-      <div className="pointer-events-none absolute -end-8 -top-8 h-24 w-24 rounded-full bg-zinc-100/80 blur-2xl transition group-hover:scale-125 dark:bg-white/[0.035]" />
+-      <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-zinc-300/80 to-transparent dark:via-white/10" />
+-      <div className="relative grid h-[82px] w-[82px] shrink-0 place-items-center rounded-full shadow-[0_10px_22px_rgba(15,23,42,0.08)]" style={ringStyle}>
++      <div className="pointer-events-none absolute -end-10 -top-10 -z-10 h-32 w-32 rounded-full bg-white/90 blur-2xl transition duration-500 group-hover:scale-125 dark:bg-white/[0.025]" />
++      <div className="pointer-events-none absolute inset-x-0 top-0 h-[3px] opacity-80" style={{ background: current.ring }} />
++      <div className="relative grid h-[84px] w-[84px] shrink-0 place-items-center rounded-full shadow-[0_12px_28px_rgba(15,23,42,0.10)] ring-4 ring-white/75 dark:ring-white/[0.04]" style={ringStyle}>
+@@ -2496,10 +2496,10 @@
+     <Card
+       hover
+       className={cn(
+-        "group relative overflow-hidden rounded-[26px] border border-zinc-200/60 bg-gradient-to-b from-white to-zinc-50/45 p-4 text-right shadow-[0_12px_34px_rgba(15,23,42,0.055)] ring-1 ring-white/70 transition-all duration-300 hover:-translate-y-1.5 hover:border-zinc-300/80 hover:shadow-[0_24px_58px_rgba(15,23,42,0.11)] dark:border-zinc-800 dark:from-zinc-950 dark:to-zinc-900/70 dark:ring-white/[0.025]",
++        "group relative isolate overflow-hidden rounded-[24px] border border-zinc-200/60 bg-gradient-to-b from-white to-zinc-50/35 p-4 text-right shadow-[0_14px_40px_rgba(15,23,42,0.065)] ring-1 ring-white/85 transition-all duration-300 hover:-translate-y-1.5 hover:border-zinc-300/80 hover:shadow-[0_28px_64px_rgba(15,23,42,0.125)] dark:border-zinc-800 dark:from-zinc-950 dark:to-zinc-900/70 dark:ring-white/[0.025]",
+         isActive ? "border-amber-300 ring-4 ring-amber-100/70 dark:border-amber-500/50 dark:ring-amber-500/10" : ""
+       )}
+     >
+-      <div className="pointer-events-none absolute -end-12 -top-12 h-28 w-28 rounded-full bg-zinc-100/80 blur-3xl transition duration-500 group-hover:scale-125 dark:bg-white/[0.03]" />
+-      <div className={cn("pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r opacity-95", accentTone)} />
+-      <div className="relative flex items-start justify-between gap-2.5 pt-1">
++      <div className="pointer-events-none absolute -end-12 -top-12 -z-10 h-32 w-32 rounded-full bg-white/90 blur-3xl transition duration-500 group-hover:scale-125 dark:bg-white/[0.02]" />
++      <div className={cn("pointer-events-none absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r opacity-95", accentTone)} />
++      <div className="relative flex items-start justify-between gap-2.5 pt-1.5">
+@@ -2570,4 +2570,4 @@
+       <div className="relative mt-3 grid grid-cols-3 gap-2">
+-        <Button type="button" variant="dark" className="h-10 justify-center rounded-[13px] px-2.5 py-2 text-[11px] font-black shadow-[0_6px_16px_rgba(15,23,42,0.12)]" onClick={() => onOpenDetails(project, "overview")}>{ui.details}</Button>
++        <Button type="button" variant="gold" className="h-10 justify-center rounded-[12px] border border-amber-300/80 bg-gradient-to-r from-amber-400 to-orange-400 px-2.5 py-2 text-[11px] font-black !text-zinc-950 shadow-[0_9px_20px_rgba(245,158,11,0.22)] transition hover:-translate-y-px hover:from-amber-300 hover:to-orange-300 [&_*]:!text-zinc-950" onClick={() => onOpenDetails(project, "overview")}>{ui.details}</Button>
+         {!showArchived ? (
+-          <Button type="button" variant="soft" className="h-10 justify-center rounded-[13px] bg-white px-2.5 py-2 text-[11px] font-black text-zinc-950 ring-1 ring-zinc-200/80 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-100 dark:ring-zinc-800" onClick={() => { setActiveProjectId(project.id); onOpenTasks?.(project.id); }}>{ui.taskBoard}</Button>
++          <Button type="button" variant="soft" className="h-10 justify-center rounded-[12px] bg-white/95 px-2.5 py-2 text-[11px] font-black text-zinc-950 ring-1 ring-zinc-200/80 shadow-[0_4px_12px_rgba(15,23,42,0.035)] transition hover:-translate-y-px hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-100 dark:ring-zinc-800" onClick={() => { setActiveProjectId(project.id); onOpenTasks?.(project.id); }}>{ui.taskBoard}</Button>
+@@ -4448,12 +4448,13 @@
+-      <Card className="rounded-[28px] border-zinc-200/60 bg-white/88 p-3.5 shadow-[0_18px_50px_rgba(15,23,42,0.055)] ring-1 ring-white/80 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/88 dark:ring-white/[0.025] md:p-4">
+-        <div className="flex flex-col gap-2.5 xl:flex-row xl:items-center">
++      <Card className="relative overflow-hidden rounded-[24px] border-zinc-200/60 bg-gradient-to-br from-white/95 via-white/90 to-amber-50/30 p-3.5 shadow-[0_20px_54px_rgba(15,23,42,0.06)] ring-1 ring-white/90 backdrop-blur-xl dark:border-zinc-800 dark:from-zinc-900/95 dark:via-zinc-900/90 dark:to-amber-500/[0.025] dark:ring-white/[0.025] md:p-4">
++        <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-amber-200/80 to-transparent dark:via-amber-500/20" />
++        <div className="relative flex flex-col gap-2.5 xl:flex-row xl:items-center">
+           <div className="min-w-[260px] flex-1">
+-            <SearchField value={query} onChange={(event) => setQuery(event.target.value)} placeholder={ui.searchProjects} className="h-11 rounded-[14px] border-zinc-200/80 bg-zinc-50/70 px-4 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] transition focus:border-zinc-300 focus:bg-white dark:border-zinc-800 dark:bg-zinc-950" />
++            <SearchField value={query} onChange={(event) => setQuery(event.target.value)} placeholder={ui.searchProjects} className="h-11 rounded-[13px] border-zinc-200/80 bg-white/85 px-4 text-sm shadow-[0_4px_14px_rgba(15,23,42,0.035),inset_0_1px_0_rgba(255,255,255,0.9)] transition focus:border-amber-300 focus:bg-white focus:ring-4 focus:ring-amber-100/60 dark:border-zinc-800 dark:bg-zinc-950 dark:focus:border-amber-500/40 dark:focus:ring-amber-500/10" />
+           </div>
+ 
+           <Button
+             type="button"
+             variant="soft"
+-            className="h-11 justify-center rounded-[14px] border border-zinc-200/80 bg-white px-4 text-zinc-700 shadow-sm hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200"
++            className="h-11 justify-center rounded-[13px] border border-zinc-200/80 bg-white/90 px-4 text-zinc-700 shadow-[0_4px_12px_rgba(15,23,42,0.04)] transition hover:-translate-y-px hover:border-amber-200 hover:bg-amber-50/60 hover:text-amber-800 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:border-amber-500/30 dark:hover:bg-amber-500/10 dark:hover:text-amber-200"
+             onClick={() => setFiltersExpanded((value) => !value)}
+           >
+@@ -4490,8 +4490,8 @@
+-              <Button type="button" variant="gold" className="h-11 rounded-[14px] border border-amber-300/80 bg-gradient-to-r from-amber-300 to-orange-300 px-5 !text-zinc-950 text-zinc-950 shadow-[0_8px_18px_rgba(245,158,11,0.18)] hover:from-amber-200 hover:to-orange-200 dark:border-amber-300 dark:from-amber-300 dark:to-orange-300 dark:!text-zinc-950 dark:text-zinc-950 [&_*]:!text-zinc-950 [&_svg]:!stroke-zinc-950 [&_svg_*]:!stroke-zinc-950 dark:[&_*]:!text-zinc-950 dark:[&_svg]:!stroke-zinc-950 dark:[&_svg_*]:!stroke-zinc-950" onClick={() => { setCreateExpanded(true); createFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
++              <Button type="button" variant="gold" className="h-11 rounded-[13px] border border-amber-300/80 bg-gradient-to-r from-amber-400 via-amber-300 to-orange-400 px-5 !text-zinc-950 text-zinc-950 shadow-[0_10px_24px_rgba(245,158,11,0.24)] transition hover:-translate-y-px hover:from-amber-300 hover:via-amber-200 hover:to-orange-300 dark:border-amber-300 dark:from-amber-300 dark:via-amber-300 dark:to-orange-300 dark:!text-zinc-950 dark:text-zinc-950 [&_*]:!text-zinc-950 [&_svg]:!stroke-zinc-950 [&_svg_*]:!stroke-zinc-950 dark:[&_*]:!text-zinc-950 dark:[&_svg]:!stroke-zinc-950 dark:[&_svg_*]:!stroke-zinc-950" onClick={() => { setCreateExpanded(true); createFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+                 <Plus size={18} /> {ui.newProject}
+               </Button>
+             )}
+-            <Button type="button" variant="soft" className="h-11 rounded-[14px] bg-white px-4 ring-1 ring-zinc-200/80 shadow-sm hover:bg-zinc-50 dark:bg-zinc-950 dark:ring-zinc-800" onClick={exportProjectsCsv}>
++            <Button type="button" variant="soft" className="h-11 rounded-[13px] bg-white/90 px-4 ring-1 ring-zinc-200/80 shadow-[0_4px_12px_rgba(15,23,42,0.04)] transition hover:-translate-y-px hover:bg-zinc-50 dark:bg-zinc-950 dark:ring-zinc-800" onClick={exportProjectsCsv}>
+               <FileText size={17} /> {ui.export}
+             </Button>
+           </div>
+@@ -4499,5 +4499,6 @@
+         </div>
+ 
+         {filtersExpanded && (
+-          <div className="mt-3.5 overflow-hidden rounded-[20px] border border-zinc-200/60 bg-gradient-to-b from-zinc-50/70 to-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-zinc-800 dark:from-white/[0.035] dark:to-white/[0.02]">
++          <div className="relative mt-3.5 overflow-hidden rounded-[18px] border border-zinc-200/60 bg-gradient-to-b from-white/85 to-zinc-50/65 shadow-[0_8px_24px_rgba(15,23,42,0.035),inset_0_1px_0_rgba(255,255,255,0.9)] dark:border-zinc-800 dark:from-white/[0.035] dark:to-white/[0.02]">
++            <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-amber-200/70 to-transparent dark:via-amber-500/20" />
+             <div className="flex flex-col gap-3 border-b border-zinc-200/60 px-3.5 py-3 dark:border-zinc-800/80 lg:flex-row lg:items-center lg:justify-between">
+@@ -4514,6 +4514,6 @@
+                     className={cn(
+-                      "inline-flex items-center gap-2 rounded-[13px] px-3.5 py-2 text-[12px] font-black transition",
+-                      filterTab === key ? "bg-white text-amber-700 shadow-[0_5px_14px_rgba(15,23,42,0.06)] ring-1 ring-amber-200/80 dark:bg-zinc-950 dark:text-amber-300 dark:ring-amber-500/30" : "text-zinc-500 hover:bg-white/80 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white"
++                      "inline-flex items-center gap-2 rounded-[12px] px-3.5 py-2 text-[12px] font-black transition-all",
++                      filterTab === key ? "bg-gradient-to-b from-white to-amber-50/55 text-amber-800 shadow-[0_6px_16px_rgba(15,23,42,0.06)] ring-1 ring-amber-200/80 dark:from-zinc-950 dark:to-amber-500/10 dark:text-amber-300 dark:ring-amber-500/30" : "text-zinc-500 hover:-translate-y-px hover:bg-white/85 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white"
+                     )}
+                   >
+                     <Icon size={16} /> {label}
