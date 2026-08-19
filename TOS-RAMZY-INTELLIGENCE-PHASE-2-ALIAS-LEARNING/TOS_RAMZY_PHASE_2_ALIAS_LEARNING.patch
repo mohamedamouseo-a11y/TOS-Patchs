@@ -146,16 +146,25 @@ diff --git a/backend/src/agency-operator/services/ramzySystemIntelligence.servic
    const enriched = candidates.map((candidate) => ({
      ...candidate,
      aliasMatch: aliases.some((alias) => alias.entityId === candidate.id),
-@@ -124,15 +118,29 @@ async function resolveUser(user, project, query) {
+@@ -120,19 +114,34 @@ async function resolveProject(user, settings, query, workspaceId, explicitProjectId = null) {
+   };
+ }
+ 
+-async function resolveUser(user, project, query) {
++async function resolveUser(user, project, query, workspaceId = null) {
    const where = { status: "ACTIVE" };
    const projectIds = project ? [project.id] : [];
    if (projectIds.length) where.OR = [{ projectMemberships: { some: { projectId: { in: projectIds } } } }, { id: project.projectManagerId || "__none__" }, { id: project.teamLeadId || "__none__" }];
 -  const term = clean(query);
 -  const users = await prisma.user.findMany({ where: { ...where, ...(term ? { AND: [{ OR: [{ name: { contains: term, mode: "insensitive" } }, { email: { contains: term, mode: "insensitive" } }] }] } : {}) }, select: { id: true, name: true, email: true, department: true, jobTitle: true }, take: MAX_USER_CANDIDATES });
 -  return resolveEntityCandidates({
-+  const users = await prisma.user.findMany({ where, select: { id: true, name: true, email: true, department: true, jobTitle: true }, take: 100 });
-+  const workspaceId = project?.workspaces?.[0]?.id || null;
-+  const aliases = await findMatchingEntityAliases({ user, workspaceId, entityType: "USER", query, limit: 20 });
++  const users = await prisma.user.findMany({
++    where,
++    select: { id: true, name: true, email: true, department: true, jobTitle: true },
++    take: 100,
++  });
++  const effectiveWorkspaceId = workspaceId || project?.workspaces?.[0]?.id || null;
++  const aliases = await findMatchingEntityAliases({ user, workspaceId: effectiveWorkspaceId, entityType: "USER", query, limit: 20 });
 +  const enriched = users.map((candidate) => ({
 +    ...candidate,
 +    aliasMatch: aliases.some((alias) => alias.entityId === candidate.id),
@@ -176,7 +185,7 @@ diff --git a/backend/src/agency-operator/services/ramzySystemIntelligence.servic
 +    aliasUsed: Boolean(resolution.entity?.aliasMatch),
 +  };
  }
-@@ -172,12 +180,9 @@ export function systemIntelligencePromptContext(result) {
+@@ -172,12 +181,9 @@ export function systemIntelligencePromptContext(result) {
  }
  
  export async function learnExplicitEntityAlias({ user, workspaceId, entityType, entityId, canonicalName, alias, confidence = 0.96, source = "EXPLICIT_USER" }) {
@@ -190,14 +199,14 @@ diff --git a/backend/src/agency-operator/services/ramzySystemIntelligence.servic
 -  });
 +  return learnEntityAlias({ user, workspaceId, entityType, entityId, canonicalName, alias, confidence, source });
  }
-@@ -187,6 +192,57 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+@@ -187,6 +193,57 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
    const previous = conversation.intelligenceContext && typeof conversation.intelligenceContext === "object" ? conversation.intelligenceContext : {};
    const workspaceId = conversation.workspaceId || null;
 +  const aliasInstruction = parseExplicitAliasInstruction(requestText);
 +  if (aliasInstruction && workspaceId) {
 +    const aliasResolution = aliasInstruction.entityType === "PROJECT"
 +      ? await resolveProject(user, settings, aliasInstruction.canonicalQuery, workspaceId, looksLikeId(aliasInstruction.canonicalQuery) ? aliasInstruction.canonicalQuery : null)
-+      : await resolveUser(user, null, aliasInstruction.canonicalQuery);
++      : await resolveUser(user, null, aliasInstruction.canonicalQuery, workspaceId);
 +    if (!aliasResolution?.entity) {
 +      const candidates = (aliasResolution?.candidates || []).slice(0, 5);
 +      const clarificationRequired = candidates.length > 1;
@@ -243,10 +252,27 @@ diff --git a/backend/src/agency-operator/services/ramzySystemIntelligence.servic
 +    return { ...result, promptContext: systemIntelligencePromptContext(result) };
 +  }
    const projectQuery = extractProjectQuery(requestText);
-@@ -210,7 +266,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
-   const clarificationQuestion = clarificationRequired
-@@ -218,7 +274,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+@@ -218,7 +275,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+     )).join("\n")}\nرد بالشكل ده: مشروع <PROJECT_ID>`
      : null;
    const userQuery = extractUserQuery(requestText);
 -  const assigneeResolution = userQuery && ["TASK_BY_ASSIGNEE", "TASK_OVERDUE", "TASK_BLOCKED", "TASK_SEARCH"].includes(detectedIntent) ? await resolveUser(user, project, userQuery) : null;
-+  const assigneeResolution = userQuery && ["TASK_BY_ASSIGNEE", "TASK_OVERDUE", "TASK_BLOCKED", "TASK_SEARCH"].includes(detectedIntent) ? await resolveUser(user, project, userQuery) : null;
++  const assigneeResolution = userQuery && ["TASK_BY_ASSIGNEE", "TASK_OVERDUE", "TASK_BLOCKED", "TASK_SEARCH"].includes(detectedIntent) ? await resolveUser(user, project, userQuery, workspaceId) : null;
+@@ -260,7 +317,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+   }
+   if (detectedIntent === "USER_LOOKUP") {
+-    const lookup = await resolveUser(user, project, userQuery || extractUserQuery(requestText));
++    const lookup = await resolveUser(user, project, userQuery || extractUserQuery(requestText), workspaceId);
+     live.users = lookup.candidates.slice(0, settings.maxIntelligenceUsers || MAX_USER_CANDIDATES).map((item) => ({ id: item.id, name: item.name, email: item.email, department: item.department, jobTitle: item.jobTitle, confidence: item.score }));
+     liveDataFetched = true;
+@@ -317,9 +374,9 @@ export async function searchRamzyTasks({ user, settings, projectId = null, workspaceId = null, query = "", status = null, limit = MAX_TASK_CANDIDATES }) {
+   return tasks;
+ }
+ 
+-export async function lookupRamzyUsers({ user, projectId = null, query = "", limit = MAX_USER_CANDIDATES }) {
++export async function lookupRamzyUsers({ user, projectId = null, workspaceId = null, query = "", limit = MAX_USER_CANDIDATES }) {
+   const project = projectId ? { id: projectId, projectManagerId: null, teamLeadId: null } : null;
+-  const result = await resolveUser(user, project, query);
++  const result = await resolveUser(user, project, query, workspaceId);
+   return result.candidates.slice(0, Math.min(MAX_USER_CANDIDATES, Number(limit) || MAX_USER_CANDIDATES)).map((item) => ({ id: item.id, name: item.name, department: item.department, jobTitle: item.jobTitle, confidence: item.score, matchType: item.matchType || null }));
+ }
