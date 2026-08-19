@@ -1,0 +1,472 @@
+diff --git a/backend/src/agency-operator/services/ambiguityConfidenceGuard.service.js b/backend/src/agency-operator/services/ambiguityConfidenceGuard.service.js
+new file mode 100644
+--- /dev/null
++++ b/backend/src/agency-operator/services/ambiguityConfidenceGuard.service.js
+@@ -0,0 +1,203 @@
++import { isFuzzyMultilingualMatchType } from "./multilingualMatching.service.js";
++
++const DECISIONS = Object.freeze({
++  AUTO_RESOLVE: "AUTO_RESOLVE",
++  CLARIFY: "CLARIFY",
++  REJECT: "REJECT",
++});
++
++const ENTITY_PROFILES = Object.freeze({
++  PROJECT: { ambiguityDelta: 0.08, tieAutoResolveThreshold: 0.9 },
++  USER: { ambiguityDelta: 0.05, tieAutoResolveThreshold: 0.95 },
++  TASK: { ambiguityDelta: 0.05, tieAutoResolveThreshold: 0.95 },
++  GENERIC: { ambiguityDelta: 0.08, tieAutoResolveThreshold: 0.9 },
++});
++
++const MATCH_MIN_CONFIDENCE = Object.freeze({
++  EXPLICIT_ID: 1,
++  EXACT: 1,
++  ALIAS: 0.95,
++  PREFIX: 0.9,
++  CONTAINS: 0.82,
++  TOKEN_OVERLAP: 0.78,
++  TRANSLITERATION: 0.84,
++  TRANSLITERATION_FUZZY: 0.82,
++  PHONETIC_EQUIVALENT: 0.84,
++  PHONETIC_FUZZY: 0.82,
++  FUZZY_TYPO: 0.82,
++});
++
++function entityProfile(entityType) {
++  return ENTITY_PROFILES[String(entityType || "GENERIC").toUpperCase()] || ENTITY_PROFILES.GENERIC;
++}
++
++function confidenceBand(value) {
++  const score = Number(value || 0);
++  if (score >= 0.95) return "VERY_HIGH";
++  if (score >= 0.9) return "HIGH";
++  if (score >= 0.82) return "MEDIUM";
++  if (score > 0) return "LOW";
++  return "NONE";
++}
++
++function guardResult({ decision, reason, entityType, confidence = 0, matchType = "NONE", candidates = [], closeCandidates = [] }) {
++  return {
++    version: "RAMZY_AMBIGUITY_CONFIDENCE_GUARD_V1",
++    decision,
++    reason,
++    entityType: String(entityType || "GENERIC").toUpperCase(),
++    confidence: Number(confidence || 0),
++    confidenceBand: confidenceBand(confidence),
++    matchType: String(matchType || "NONE"),
++    candidateCount: Array.isArray(candidates) ? candidates.length : 0,
++    closeCandidateCount: Array.isArray(closeCandidates) ? closeCandidates.length : 0,
++  };
++}
++
++export function evaluateResolutionGuard({
++  entityType = "GENERIC",
++  explicitId = null,
++  explicitIdFound = false,
++  matchType = "NONE",
++  confidence = 0,
++  candidates = [],
++  exactMatches = [],
++  ambiguityDelta = null,
++  tieAutoResolveThreshold = null,
++} = {}) {
++  const profile = entityProfile(entityType);
++  const delta = Number.isFinite(Number(ambiguityDelta)) ? Number(ambiguityDelta) : profile.ambiguityDelta;
++  const tieThreshold = Number.isFinite(Number(tieAutoResolveThreshold)) ? Number(tieAutoResolveThreshold) : profile.tieAutoResolveThreshold;
++
++  if (explicitId) {
++    return guardResult({
++      decision: explicitIdFound ? DECISIONS.AUTO_RESOLVE : DECISIONS.REJECT,
++      reason: explicitIdFound ? "EXPLICIT_ID_CONFIRMED" : "ID_NOT_FOUND",
++      entityType,
++      confidence: explicitIdFound ? 1 : 0,
++      matchType: explicitIdFound ? "EXPLICIT_ID" : "NONE",
++      candidates: explicitIdFound ? candidates : [],
++    });
++  }
++
++  if (!Array.isArray(candidates) || !candidates.length) {
++    return guardResult({ decision: DECISIONS.REJECT, reason: "NO_MATCH", entityType, confidence: 0, matchType: "NONE" });
++  }
++
++  if (Array.isArray(exactMatches) && exactMatches.length > 1) {
++    return guardResult({
++      decision: DECISIONS.CLARIFY,
++      reason: "EXACT_DUPLICATE",
++      entityType,
++      confidence: 1,
++      matchType: "EXACT",
++      candidates: exactMatches,
++      closeCandidates: exactMatches,
++    });
++  }
++
++  const top = candidates[0];
++  const topConfidence = Number(confidence || top?.score || 0);
++  const topMatchType = String(matchType || top?.matchType || "NONE");
++  const close = candidates.filter((candidate) => topConfidence - Number(candidate?.score || 0) < delta);
++
++  if (isFuzzyMultilingualMatchType(topMatchType) && close.length > 1) {
++    return guardResult({
++      decision: DECISIONS.CLARIFY,
++      reason: "FUZZY_MULTILINGUAL_TIE",
++      entityType,
++      confidence: topConfidence,
++      matchType: topMatchType,
++      candidates,
++      closeCandidates: close,
++    });
++  }
++
++  if (close.length > 1 && topConfidence < tieThreshold) {
++    return guardResult({
++      decision: DECISIONS.CLARIFY,
++      reason: "LOW_CONFIDENCE_TIE",
++      entityType,
++      confidence: topConfidence,
++      matchType: topMatchType,
++      candidates,
++      closeCandidates: close,
++    });
++  }
++
++  const minimum = MATCH_MIN_CONFIDENCE[topMatchType] ?? 0.82;
++  if (topConfidence < minimum) {
++    return guardResult({
++      decision: DECISIONS.CLARIFY,
++      reason: "LOW_CONFIDENCE_SINGLE",
++      entityType,
++      confidence: topConfidence,
++      matchType: topMatchType,
++      candidates,
++      closeCandidates: [top],
++    });
++  }
++
++  return guardResult({
++    decision: DECISIONS.AUTO_RESOLVE,
++    reason: "CONFIDENCE_POLICY_PASSED",
++    entityType,
++    confidence: topConfidence,
++    matchType: topMatchType,
++    candidates,
++    closeCandidates: [top],
++  });
++}
++
++function compactTaskCandidates(previous) {
++  const recent = Array.isArray(previous?.recentTasks) ? previous.recentTasks : [];
++  return recent.filter((item) => item?.id).slice(0, 15).map((item) => ({
++    id: item.id,
++    title: String(item.title || "").slice(0, 240),
++    status: item.status || null,
++    projectId: item.projectId || null,
++  }));
++}
++
++export function evaluateTaskActionTargetGuard({
++  detectedIntent,
++  semanticOperation = null,
++  previous = {},
++  contextResolution = {},
++  assigneeResolution = null,
++} = {}) {
++  const actionRequired = detectedIntent === "TASK_UPDATE";
++  if (!actionRequired) {
++    return {
++      version: "RAMZY_AMBIGUITY_CONFIDENCE_GUARD_V1",
++      required: false,
++      decision: DECISIONS.AUTO_RESOLVE,
++      reason: "ACTION_TARGET_NOT_REQUIRED",
++      entityType: "TASK",
++      targetTaskId: null,
++      candidates: [],
++    };
++  }
++
++  const tasks = compactTaskCandidates(previous);
++  let targetTaskId = contextResolution?.referencedTaskId || null;
++  if (!targetTaskId && tasks.length === 1) targetTaskId = tasks[0].id;
++  if (!targetTaskId && previous?.lastResultType === "TASK" && previous?.activeTaskId) targetTaskId = previous.activeTaskId;
++
++  if (!targetTaskId) {
++    return {
++      version: "RAMZY_AMBIGUITY_CONFIDENCE_GUARD_V1",
++      required: true,
++      decision: DECISIONS.CLARIFY,
++      reason: tasks.length > 1 ? "TASK_TARGET_AMBIGUOUS" : "TASK_TARGET_REQUIRED",
++      entityType: "TASK",
++      targetTaskId: null,
++      candidates: tasks,
++    };
++  }
++
++  if (semanticOperation === "CHANGE_ASSIGNEE") {
++    if (!assigneeResolution) {
++      return {
++        version: "RAMZY_AMBIGUITY_CONFIDENCE_GUARD_V1",
++        required: true,
++        decision: DECISIONS.CLARIFY,
++        reason: "USER_TARGET_REQUIRED",
++        entityType: "USER",
++        targetTaskId,
++        candidates: [],
++      };
++    }
++    if (assigneeResolution.guardDecision && assigneeResolution.guardDecision !== DECISIONS.AUTO_RESOLVE) {
++      return {
++        version: "RAMZY_AMBIGUITY_CONFIDENCE_GUARD_V1",
++        required: true,
++        decision: assigneeResolution.guardDecision,
++        reason: assigneeResolution.guardReason || "USER_TARGET_UNRESOLVED",
++        entityType: "USER",
++        targetTaskId,
++        candidates: (assigneeResolution.candidates || []).slice(0, 8),
++      };
++    }
++  }
++
++  return {
++    version: "RAMZY_AMBIGUITY_CONFIDENCE_GUARD_V1",
++    required: true,
++    decision: DECISIONS.AUTO_RESOLVE,
++    reason: "ACTION_TARGET_UNIQUE",
++    entityType: "TASK",
++    targetTaskId,
++    candidates: tasks.filter((item) => item.id === targetTaskId),
++  };
++}
++
++export function getAmbiguityConfidenceGuardConfig() {
++  return {
++    version: "RAMZY_AMBIGUITY_CONFIDENCE_GUARD_V1",
++    decisions: Object.values(DECISIONS),
++    entityProfiles: ENTITY_PROFILES,
++    matchMinimumConfidence: MATCH_MIN_CONFIDENCE,
++    providerCalls: 0,
++  };
++}
+diff --git a/backend/src/agency-operator/services/entityResolution.service.js b/backend/src/agency-operator/services/entityResolution.service.js
+--- a/backend/src/agency-operator/services/entityResolution.service.js
++++ b/backend/src/agency-operator/services/entityResolution.service.js
+@@ -1,4 +1,5 @@
+-import { isFuzzyMultilingualMatchType, scoreMultilingualMatch } from "./multilingualMatching.service.js";
++import { scoreMultilingualMatch } from "./multilingualMatching.service.js";
++import { evaluateResolutionGuard } from "./ambiguityConfidenceGuard.service.js";
+@@ -76,6 +77,7 @@ export function resolveEntityCandidates({
+   explicitId = null,
+   aliasField = null,
++  entityType = "GENERIC",
+   limit = DEFAULT_LIMIT,
+   ambiguityDelta = 0.08,
+   ambiguityAutoResolveThreshold = 0.9,
+@@ -84,9 +86,24 @@ export function resolveEntityCandidates({
+   if (explicitId) {
+     const entity = candidates.find((candidate) => String(candidate?.[idField] || "") === String(explicitId));
+-    return entity
+-      ? { entity, confidence: 1, matchType: "EXPLICIT_ID", candidates: [entity], clarificationRequired: false, ambiguityReason: null }
+-      : { entity: null, confidence: 0, matchType: "NONE", candidates: [], clarificationRequired: false, ambiguityReason: "ID_NOT_FOUND" };
++    const guard = evaluateResolutionGuard({ entityType, explicitId, explicitIdFound: Boolean(entity), candidates: entity ? [entity] : [] });
++    return {
++      entity: guard.decision === "AUTO_RESOLVE" ? entity : null,
++      confidence: guard.confidence,
++      matchType: guard.matchType,
++      candidates: entity ? [entity] : [],
++      clarificationRequired: guard.decision === "CLARIFY",
++      rejected: guard.decision === "REJECT",
++      ambiguityReason: guard.reason,
++      guardDecision: guard.decision,
++      guardReason: guard.reason,
++      confidenceBand: guard.confidenceBand,
++      guardVersion: guard.version,
++    };
+   }
+@@ -94,7 +111,7 @@ export function resolveEntityCandidates({
+   if (!normalizedQuery) {
+-    return { entity: null, confidence: 0, matchType: "NONE", candidates: [], clarificationRequired: false, ambiguityReason: "EMPTY_QUERY" };
++    return { entity: null, confidence: 0, matchType: "NONE", candidates: [], clarificationRequired: false, rejected: true, ambiguityReason: "EMPTY_QUERY", guardDecision: "REJECT", guardReason: "EMPTY_QUERY", confidenceBand: "NONE", guardVersion: "RAMZY_AMBIGUITY_CONFIDENCE_GUARD_V1" };
+   }
+@@ -109,7 +126,20 @@ export function resolveEntityCandidates({
+   if (!ranked.length) {
+-    return { entity: null, confidence: 0, matchType: "NONE", candidates: [], clarificationRequired: false, ambiguityReason: "NO_MATCH" };
++    const guard = evaluateResolutionGuard({ entityType, candidates: [] });
++    return { entity: null, confidence: 0, matchType: "NONE", candidates: [], clarificationRequired: false, rejected: true, ambiguityReason: guard.reason, guardDecision: guard.decision, guardReason: guard.reason, confidenceBand: guard.confidenceBand, guardVersion: guard.version };
+   }
+@@ -119,49 +149,30 @@ export function resolveEntityCandidates({
+     candidateValues(candidate, [field]).some((entry) => entry.normalized === normalizedQuery)
+   )));
+-  if (exactMatches.length > 1) {
+-    return {
+-      entity: null,
+-      confidence: 1,
+-      matchType: "EXACT",
+-      candidates: exactMatches,
+-      clarificationRequired: true,
+-      ambiguityReason: "EXACT_DUPLICATE",
+-    };
+-  }
+-
+   const top = ranked[0];
+-  const close = ranked.filter((candidate) => top.score - candidate.score < ambiguityDelta);
+-  if (isFuzzyMultilingualMatchType(top.matchType) && close.length > 1) {
+-    return {
+-      entity: null,
+-      confidence: top.score,
+-      matchType: top.matchType,
+-      candidates: close,
+-      clarificationRequired: true,
+-      ambiguityReason: "FUZZY_MULTILINGUAL_TIE",
+-    };
+-  }
+-  if (close.length > 1 && top.score < ambiguityAutoResolveThreshold) {
+-    return {
+-      entity: null,
+-      confidence: top.score,
+-      matchType: top.matchType,
+-      candidates: close,
+-      clarificationRequired: true,
+-      ambiguityReason: "LOW_CONFIDENCE_TIE",
+-    };
+-  }
+-
++  const guard = evaluateResolutionGuard({
++    entityType,
++    matchType: top.matchType,
++    confidence: top.score,
++    candidates: ranked,
++    exactMatches,
++    ambiguityDelta,
++    tieAutoResolveThreshold: ambiguityAutoResolveThreshold,
++  });
++  const guardedCandidates = guard.decision === "CLARIFY"
++    ? ranked.filter((candidate) => top.score - candidate.score < ambiguityDelta)
++    : ranked;
+   return {
+-    entity: top,
++    entity: guard.decision === "AUTO_RESOLVE" ? top : null,
+     confidence: top.score,
+     matchType: top.matchType,
+-    candidates: ranked,
+-    clarificationRequired: false,
+-    ambiguityReason: null,
++    candidates: guardedCandidates,
++    clarificationRequired: guard.decision === "CLARIFY",
++    rejected: guard.decision === "REJECT",
++    ambiguityReason: guard.decision === "AUTO_RESOLVE" ? null : guard.reason,
++    guardDecision: guard.decision,
++    guardReason: guard.reason,
++    confidenceBand: guard.confidenceBand,
++    guardVersion: guard.version,
+   };
+ }
+@@ -175,6 +186,7 @@ export function getEntityResolutionConfig() {
+     strategies: ["EXPLICIT_ID", "EXACT", "ALIAS_COMPAT", "PREFIX", "CONTAINS", "TOKEN_OVERLAP", "TRANSLITERATION", "TRANSLITERATION_FUZZY", "PHONETIC_EQUIVALENT", "PHONETIC_FUZZY", "FUZZY_TYPO"],
+     multilingualNormalization: ["UNICODE_NFKC", "ARABIC_DIACRITICS", "ARABIC_LETTER_NORMALIZATION", "CASE_FOLDING"],
+     fuzzyMultilingualVersion: "RAMZY_FUZZY_MULTILINGUAL_V1",
++    ambiguityConfidenceGuardVersion: "RAMZY_AMBIGUITY_CONFIDENCE_GUARD_V1",
+   };
+ }
+diff --git a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+--- a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
++++ b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+@@ -7,6 +7,7 @@ import { findMatchingEntityAliases, learnEntityAlias, parseExplicitAliasInstruction } from "./entityAlias.service.js";
+ import { buildNextConversationContext, resolveContextReference } from "./contextResolution.service.js";
+ import { resolveSemanticIntent } from "./semanticIntentResolver.service.js";
+ import { isFuzzyMultilingualMatchType } from "./multilingualMatching.service.js";
++import { evaluateTaskActionTargetGuard } from "./ambiguityConfidenceGuard.service.js";
+@@ -101,6 +102,7 @@ async function resolveProject(user, settings, query, workspaceId, explicitProjectId = null) {
+     fields: ["name", "code"],
+     exactFields: ["name", "code"],
+     aliasField: "aliasMatch",
++    entityType: "PROJECT",
+     limit: MAX_PROJECT_CANDIDATES,
+@@ -137,6 +139,7 @@ async function resolveUser(user, project, query, workspaceId = null, explicitUserId = null) {
+     explicitId: explicitUserId,
+     exactFields: ["name", "email"],
+     aliasField: "aliasMatch",
++    entityType: "USER",
+     limit: MAX_USER_CANDIDATES,
+@@ -245,31 +248,15 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+   const explicitProject = explicitProjectMention ? await resolveProject(user, settings, projectQuery, workspaceId, looksLikeId(projectQuery) ? projectQuery : null) : null;
+   const contextualProjectId = contextResolution.useActiveProject ? contextResolution.activeProjectId : null;
+   const projectResolution = explicitProject || (contextualProjectId ? await resolveProject(user, settings, previous.activeProjectName || "", workspaceId, contextualProjectId) : null);
+   const project = projectResolution?.entity || null;
+-  const clarificationRequired = Boolean(projectResolution?.clarificationRequired || (projectResolution && !project && projectResolution.candidates?.length > 1));
+-  const clarificationCandidates = clarificationRequired
+-    ? projectResolution.candidates.slice(0, 5).map((item) => ({ id: item.id, name: item.name, code: item.code || null, status: item.status, stage: item.stage, progress: item.progress }))
+-    : [];
+-  const clarificationQuestion = clarificationRequired
+-    ? `لقيت ${clarificationCandidates.length} مشاريع مطابقة للاسم، ومينفعش أختار واحد منهم تلقائيًا.\n${clarificationCandidates.map((item, index) => (
+-      `${index + 1}. ${item.name} — ID: ${item.id} — Status: ${item.status || "-"} — Stage: ${item.stage || "-"} — Progress: ${item.progress ?? "-"}%`
+-    )).join("\n")}\nرد بالشكل ده: مشروع <PROJECT_ID>`
+-    : null;
+   const userQuery = intentResolution.slots?.assigneeQuery || extractUserQuery(requestText);
+   const assigneeIntent = ["TASK_BY_ASSIGNEE", "TASK_OVERDUE", "TASK_BLOCKED", "TASK_SEARCH"].includes(detectedIntent)
+     || intentResolution.operation === "CHANGE_ASSIGNEE";
+-  let assigneeResolution = userQuery && assigneeIntent ? await resolveUser(user, project, userQuery, workspaceId) : null;
++  let assigneeResolution = userQuery && assigneeIntent ? await resolveUser(user, project, userQuery, workspaceId, looksLikeId(userQuery) ? userQuery : null) : null;
+   if (assigneeIntent && !assigneeResolution?.entity && contextResolution.useActiveUser) {
+     assigneeResolution = await resolveUser(user, project, "", workspaceId, contextResolution.activeUserId);
+   }
++
++  const actionTargetGuard = evaluateTaskActionTargetGuard({ detectedIntent, semanticOperation: intentResolution.operation, previous, contextResolution, assigneeResolution });
++  const projectBlocked = Boolean(explicitProject && projectResolution?.guardDecision && projectResolution.guardDecision !== "AUTO_RESOLVE");
++  const userTargetRequired = intentResolution.operation === "CHANGE_ASSIGNEE" || detectedIntent === "TASK_BY_ASSIGNEE";
++  const userBlocked = Boolean(userTargetRequired && assigneeResolution?.guardDecision && assigneeResolution.guardDecision !== "AUTO_RESOLVE");
++  const actionBlocked = Boolean(actionTargetGuard.required && actionTargetGuard.decision !== "AUTO_RESOLVE");
++  const primaryGuard = projectBlocked
++    ? { entityType: "PROJECT", decision: projectResolution.guardDecision, reason: projectResolution.guardReason, candidates: projectResolution.candidates || [] }
++    : userBlocked
++      ? { entityType: "USER", decision: assigneeResolution.guardDecision, reason: assigneeResolution.guardReason, candidates: assigneeResolution.candidates || [] }
++      : actionBlocked
++        ? actionTargetGuard
++        : null;
++  const clarificationRequired = Boolean(primaryGuard);
++  const clarificationCandidates = primaryGuard?.entityType === "PROJECT"
++    ? primaryGuard.candidates.slice(0, 5).map((item) => ({ entityType: "PROJECT", id: item.id, name: item.name, code: item.code || null, status: item.status, stage: item.stage, progress: item.progress }))
++    : primaryGuard?.entityType === "USER"
++      ? primaryGuard.candidates.slice(0, 5).map((item) => ({ entityType: "USER", id: item.id, name: item.name, email: item.email || null, department: item.department || null, jobTitle: item.jobTitle || null }))
++      : (primaryGuard?.candidates || []).slice(0, 5).map((item) => ({ entityType: "TASK", id: item.id, name: item.title || item.name || item.id, status: item.status || null, projectId: item.projectId || null }));
++  const clarificationQuestion = !primaryGuard ? null
++    : primaryGuard.entityType === "PROJECT"
++      ? `${primaryGuard.decision === "REJECT" ? "ملقتش مشروع مؤكد بالوصف ده." : "لقيت أكتر من احتمال للمشروع ومينفعش أختار تلقائيًا."}\n${clarificationCandidates.map((item, index) => `${index + 1}. ${item.name} — ID: ${item.id}`).join("\n")}\n${clarificationCandidates.length ? "رد بالشكل ده: مشروع <PROJECT_ID>" : "ابعت اسم المشروع أو Project ID بشكل أوضح."}`
++      : primaryGuard.entityType === "USER"
++        ? `${primaryGuard.decision === "REJECT" ? "ملقتش موظف مؤكد بالوصف ده." : "لقيت أكتر من احتمال للموظف ومينفعش أختار تلقائيًا."}\n${clarificationCandidates.map((item, index) => `${index + 1}. ${item.name} — ID: ${item.id}${item.email ? ` — ${item.email}` : ""}`).join("\n")}\n${clarificationCandidates.length ? "حدد الموظف بالـID الصحيح." : "ابعت اسم الموظف أو User ID بشكل أوضح."}`
++        : `${primaryGuard.reason === "TASK_TARGET_REQUIRED" ? "محتاج تحدد المهمة المقصودة قبل ما أجهز أي تعديل." : "في أكتر من مهمة ممكن تكون المقصودة، ومينفعش أختار واحدة تلقائيًا."}\n${clarificationCandidates.map((item, index) => `${index + 1}. ${item.name} — ID: ${item.id}`).join("\n")}\n${clarificationCandidates.length ? "حدد المهمة بالـID أو بمرجع واضح زي: الأولى / الثانية." : "ابعت Task ID أو اعرض المهمة المطلوبة الأول."}`;
+@@ -279,7 +266,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+   const live = {};
+   let liveDataFetched = false;
+   const effectiveProjectId = project?.id || contextualProjectId || conversation.projectId || null;
+@@ -337,6 +324,10 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+     referencedTaskId: contextResolution.referencedTaskId || null,
++    confidenceGuardDecision: primaryGuard?.decision || "AUTO_RESOLVE",
++    confidenceGuardReason: primaryGuard?.reason || "NO_BLOCK",
++    confidenceGuardEntityType: primaryGuard?.entityType || null,
++    actionTargetDecision: actionTargetGuard.decision,
+     semanticIntentConfidence: intentResolution.confidence,
+@@ -349,7 +340,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+     aliasUsed: Boolean(projectResolution?.aliasUsed),
+     clarificationRequired,
+     clarificationCandidateCount: clarificationCandidates.length,
+-    clarificationReason: projectResolution?.ambiguityReason || null,
++    clarificationReason: primaryGuard?.reason || null,
+@@ -363,6 +354,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+     clarificationQuestion,
+     clarificationCandidates,
++    confidenceGuard: primaryGuard || { decision: "AUTO_RESOLVE", reason: "NO_BLOCK", entityType: null, candidates: [] },
+     contextResolution,
+@@ -386,6 +378,9 @@ export async function lookupRamzyProjects({ user, settings, query, workspaceId = null, limit = MAX_PROJECT_CANDIDATES }) {
+     candidates: resolution.candidates.slice(0, Math.min(MAX_PROJECT_CANDIDATES, Number(limit) || MAX_PROJECT_CANDIDATES)).map((item) => ({ id: item.id, name: item.name, code: item.code || null, status: item.status, stage: item.stage, progress: item.progress, confidence: item.score || null, matchType: item.matchType || null })),
+     clarificationRequired: Boolean(resolution.clarificationRequired),
+     ambiguityReason: resolution.ambiguityReason || null,
++    guardDecision: resolution.guardDecision || null,
++    guardReason: resolution.guardReason || null,
++    confidenceBand: resolution.confidenceBand || null,
+   };
+ }
+@@ -421,7 +416,7 @@ export async function lookupRamzyUsers({ user, projectId = null, workspaceId = null, query = "", limit = MAX_USER_CANDIDATES }) {
+   const project = projectId ? { id: projectId, projectManagerId: null, teamLeadId: null } : null;
+-  const result = await resolveUser(user, project, query, workspaceId);
++  const result = await resolveUser(user, project, query, workspaceId, looksLikeId(query) ? query : null);
+   return result.candidates.slice(0, Math.min(MAX_USER_CANDIDATES, Number(limit) || MAX_USER_CANDIDATES)).map((item) => ({ id: item.id, name: item.name, department: item.department, jobTitle: item.jobTitle, confidence: item.score, matchType: item.matchType || null }));
+ }
