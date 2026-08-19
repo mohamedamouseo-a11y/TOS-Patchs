@@ -1,0 +1,216 @@
+diff --git a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+--- a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
++++ b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+@@ -28,6 +28,94 @@ function looksLikeId(value) {
+   return /^[a-z0-9_-]{12,}$/i.test(String(value || ""));
+ }
+ 
++function clarificationChoiceIndex(value, count) {
++  const normalized = normalizeEntityText(value)
++    .replace(/^(?:اختار|اختيار|رقم|option|choice)\s+/iu, "")
++    .trim();
++  const choices = [
++    /^(?:1|١|واحد|اول|الاول|الأول|اولي|اولى|الأولى|first)$/iu,
++    /^(?:2|٢|اتنين|اثنين|تاني|تانيه|تانية|الثاني|الثانيه|الثانية|second)$/iu,
++    /^(?:3|٣|تلاته|ثلاثه|تالت|تالته|تالتة|الثالث|الثالثه|الثالثة|third)$/iu,
++    /^(?:4|٤|اربعه|أربعه|رابع|رابعه|رابعة|الرابع|الرابعه|الرابعة|fourth)$/iu,
++    /^(?:5|٥|خمسه|خامس|خامسه|خامسة|الخامس|الخامسه|الخامسة|fifth)$/iu,
++  ];
++  const index = choices.findIndex((pattern) => pattern.test(normalized));
++  return index >= 0 && index < count ? index : null;
++}
++
++function compactResumeContext(previous = {}) {
++  return {
++    contextVersion: previous.contextVersion || "RAMZY_CONTEXT_MEMORY_V1",
++    activeProjectId: previous.activeProjectId || null,
++    activeProjectName: previous.activeProjectName || null,
++    activeClientId: previous.activeClientId || null,
++    activeTaskId: previous.activeTaskId || null,
++    activeTaskTitle: previous.activeTaskTitle || null,
++    activeUserId: previous.activeUserId || null,
++    activeUserName: previous.activeUserName || null,
++    recentTasks: Array.isArray(previous.recentTasks) ? previous.recentTasks.slice(0, 15) : [],
++    recentTaskIds: Array.isArray(previous.recentTaskIds) ? previous.recentTaskIds.slice(0, 15) : [],
++    lastResultType: previous.lastResultType || null,
++    lastResolvedIntent: previous.lastResolvedIntent || null,
++  };
++}
++
++function resolvePendingClarificationSelection(previous, requestText) {
++  const pending = previous?.pendingClarification;
++  const candidates = Array.isArray(pending?.candidates) ? pending.candidates : [];
++  if (!pending || !candidates.length) return null;
++  const index = clarificationChoiceIndex(requestText, candidates.length);
++  if (index === null) return null;
++  const candidate = candidates[index];
++  if (!candidate?.id || !["PROJECT", "USER", "TASK"].includes(pending.entityType)) return null;
++  return { pending, candidate, index, entityType: pending.entityType };
++}
++
++function buildPendingClarification({ previous, primaryGuard, requestText, intentResolution }) {
++  if (!primaryGuard || !["PROJECT", "USER", "TASK"].includes(primaryGuard.entityType)) return null;
++  const candidates = (primaryGuard.candidates || [])
++    .filter((item) => item?.id)
++    .slice(0, 5)
++    .map((item) => ({
++      id: item.id,
++      name: String(item.name || item.title || "").slice(0, 240),
++      status: item.status || null,
++      projectId: item.projectId || null,
++    }));
++  if (!candidates.length) return null;
++  return {
++    version: "RAMZY_PRIVATE_CLARIFICATION_CHOICES_V1",
++    entityType: primaryGuard.entityType,
++    reason: primaryGuard.reason || null,
++    candidates,
++    originalRequestText: bounded(requestText, 1200),
++    intentResolution: {
++      intent: intentResolution?.intent || "GENERAL",
++      operation: intentResolution?.operation || null,
++      actionCapability: intentResolution?.actionCapability || null,
++      slots: intentResolution?.slots && typeof intentResolution.slots === "object" ? intentResolution.slots : {},
++    },
++    resumeContext: compactResumeContext(previous),
++  };
++}
++
++function publicChoiceDetails(entityType, item) {
++  if (entityType === "PROJECT") {
++    return [item.status, item.stage, item.progress !== null && item.progress !== undefined ? `Progress: ${item.progress}%` : null].filter(Boolean);
++  }
++  if (entityType === "USER") return [item.department, item.jobTitle].filter(Boolean);
++  return [item.status].filter(Boolean);
++}
++
++function formatPublicChoices(entityType, candidates) {
++  return candidates.map((item, index) => {
++    const details = publicChoiceDetails(entityType, item);
++    return `${index + 1}. ${item.name}${details.length ? ` — ${details.join(" — ")}` : ""}`;
++  }).join("\n");
++}
++
+ export function classifyRamzyIntent(message, context = {}) {
+   return resolveSemanticIntent({ message, context }).intent;
+ }
+@@ -194,9 +282,21 @@ export async function learnExplicitEntityAlias({ user, workspaceId, entityType, entityId, canonicalName, alias, confidence = 0.96, source = "EXPLICIT_USER" }) {
+ }
+ 
+ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+-  const previous = conversation.intelligenceContext && typeof conversation.intelligenceContext === "object" ? conversation.intelligenceContext : {};
+-  const intentResolution = resolveSemanticIntent({ message: requestText, context: previous });
++  const storedPrevious = conversation.intelligenceContext && typeof conversation.intelligenceContext === "object" ? conversation.intelligenceContext : {};
++  const clarificationSelection = resolvePendingClarificationSelection(storedPrevious, requestText);
++  const previous = clarificationSelection
++    ? { ...(clarificationSelection.pending.resumeContext || {}), pendingClarification: null }
++    : storedPrevious;
++  const resumedIntent = clarificationSelection?.pending?.intentResolution || null;
++  const intentResolution = resumedIntent
++    ? {
++      ...resolveSemanticIntent({ message: clarificationSelection.pending.originalRequestText || requestText, context: previous }),
++      ...resumedIntent,
++      reason: "CLARIFICATION_SELECTION_RESUME",
++      contextUsed: true,
++    }
++    : resolveSemanticIntent({ message: requestText, context: previous });
+   const detectedIntent = intentResolution.intent;
+   const workspaceId = conversation.workspaceId || null;
+   const aliasInstruction = parseExplicitAliasInstruction(requestText);
+@@ -239,11 +339,14 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+     };
+     return { ...result, promptContext: systemIntelligencePromptContext(result) };
+   }
+-  const projectQuery = extractProjectQuery(requestText);
+-  const explicitProjectMention = /(مشروع|project)\s+/i.test(requestText);
++  const selectedProjectId = clarificationSelection?.entityType === "PROJECT" ? clarificationSelection.candidate.id : null;
++  const selectedUserId = clarificationSelection?.entityType === "USER" ? clarificationSelection.candidate.id : null;
++  const selectedTaskId = clarificationSelection?.entityType === "TASK" ? clarificationSelection.candidate.id : null;
++  const projectQuery = selectedProjectId ? clarificationSelection.candidate.name : extractProjectQuery(requestText);
++  const explicitProjectMention = Boolean(selectedProjectId) || /(مشروع|project)\s+/i.test(requestText);
+   const contextResolution = resolveContextReference({ requestText, detectedIntent, previous, explicitProjectMention, conversationProjectId: conversation.projectId });
+-  const explicitProject = explicitProjectMention ? await resolveProject(user, settings, projectQuery, workspaceId, looksLikeId(projectQuery) ? projectQuery : null) : null;
++  const explicitProject = explicitProjectMention ? await resolveProject(user, settings, projectQuery, workspaceId, selectedProjectId || (looksLikeId(projectQuery) ? projectQuery : null)) : null;
+   const contextualProjectId = contextResolution.useActiveProject ? contextResolution.activeProjectId : null;
+   const projectResolution = explicitProject || (contextualProjectId ? await resolveProject(user, settings, previous.activeProjectName || "", workspaceId, contextualProjectId) : null);
+   const project = projectResolution?.entity || null;
+-  const userQuery = intentResolution.slots?.assigneeQuery || extractUserQuery(requestText);
++  const userQuery = selectedUserId ? clarificationSelection.candidate.name : (intentResolution.slots?.assigneeQuery || extractUserQuery(requestText));
+   const assigneeIntent = ["TASK_BY_ASSIGNEE", "TASK_OVERDUE", "TASK_BLOCKED", "TASK_SEARCH"].includes(detectedIntent)
+     || intentResolution.operation === "CHANGE_ASSIGNEE";
+-  let assigneeResolution = userQuery && assigneeIntent ? await resolveUser(user, project, userQuery, workspaceId, looksLikeId(userQuery) ? userQuery : null) : null;
++  let assigneeResolution = (selectedUserId || userQuery) && assigneeIntent
++    ? await resolveUser(user, project, selectedUserId ? "" : userQuery, workspaceId, selectedUserId || (looksLikeId(userQuery) ? userQuery : null))
++    : null;
+   if (assigneeIntent && !assigneeResolution?.entity && contextResolution.useActiveUser) {
+     assigneeResolution = await resolveUser(user, project, "", workspaceId, contextResolution.activeUserId);
+   }
+@@ -251,7 +354,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+-  const explicitTaskIdCandidate = detectedIntent === "TASK_UPDATE"
+-    ? (String(requestText || "").match(/\b[a-z0-9_-]{12,}\b/i)?.[0] || null)
++  const explicitTaskIdCandidate = detectedIntent === "TASK_UPDATE"
++    ? (selectedTaskId || String(requestText || "").match(/\b[a-z0-9_-]{12,}\b/i)?.[0] || null)
+     : null;
+@@ -286,20 +389,25 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+       : actionBlocked
+         ? actionTargetGuard
+         : null;
+   const clarificationRequired = Boolean(primaryGuard);
+-  const clarificationCandidates = primaryGuard?.entityType === "PROJECT"
++  const internalClarificationCandidates = primaryGuard?.entityType === "PROJECT"
+     ? primaryGuard.candidates.slice(0, 5).map((item) => ({ entityType: "PROJECT", id: item.id, name: item.name, code: item.code || null, status: item.status, stage: item.stage, progress: item.progress }))
+     : primaryGuard?.entityType === "USER"
+       ? primaryGuard.candidates.slice(0, 5).map((item) => ({ entityType: "USER", id: item.id, name: item.name, email: item.email || null, department: item.department || null, jobTitle: item.jobTitle || null }))
+       : (primaryGuard?.candidates || []).slice(0, 5).map((item) => ({ entityType: "TASK", id: item.id, name: item.title || item.name || item.id, status: item.status || null, projectId: item.projectId || null }));
++  const clarificationCandidates = internalClarificationCandidates.map(({ id, email, projectId, ...item }, index) => ({
++    ...item,
++    choice: index + 1,
++  }));
++  const publicChoices = formatPublicChoices(primaryGuard?.entityType, clarificationCandidates);
+   const clarificationQuestion = !primaryGuard ? null
+     : primaryGuard.entityType === "PROJECT"
+-      ? `${primaryGuard.decision === "REJECT" ? "ملقتش مشروع مؤكد بالوصف ده." : "لقيت أكتر من احتمال للمشروع ومينفعش أختار تلقائيًا."}\n${clarificationCandidates.map((item, index) => `${index + 1}. ${item.name} — ID: ${item.id}`).join("\n")}\n${clarificationCandidates.length ? "رد بالشكل ده: مشروع <PROJECT_ID>" : "ابعت اسم المشروع أو Project ID بشكل أوضح."}`
++      ? `${primaryGuard.decision === "REJECT" ? "ملقتش مشروع مؤكد بالوصف ده." : "لقيت أكتر من احتمال للمشروع ومينفعش أختار تلقائيًا."}\n${publicChoices}\n${clarificationCandidates.length ? "رد برقم الاختيار فقط، زي: 1" : "ابعت اسم المشروع بشكل أوضح."}`
+       : primaryGuard.entityType === "USER"
+-        ? `${primaryGuard.decision === "REJECT" ? "ملقتش موظف مؤكد بالوصف ده." : "لقيت أكتر من احتمال للموظف ومينفعش أختار تلقائيًا."}\n${clarificationCandidates.map((item, index) => `${index + 1}. ${item.name} — ID: ${item.id}${item.email ? ` — ${item.email}` : ""}`).join("\n")}\n${clarificationCandidates.length ? "حدد الموظف بالـID الصحيح." : "ابعت اسم الموظف أو User ID بشكل أوضح."}`
+-        : `${primaryGuard.reason === "TASK_TARGET_REQUIRED" ? "محتاج تحدد المهمة المقصودة قبل ما أجهز أي تعديل." : "في أكتر من مهمة ممكن تكون المقصودة، ومينفعش أختار واحدة تلقائيًا."}\n${clarificationCandidates.map((item, index) => `${index + 1}. ${item.name} — ID: ${item.id}`).join("\n")}\n${clarificationCandidates.length ? "حدد المهمة بالـID أو بمرجع واضح زي: الأولى / الثانية." : "ابعت Task ID أو اعرض المهمة المطلوبة الأول."}`;
++        ? `${primaryGuard.decision === "REJECT" ? "ملقتش موظف مؤكد بالوصف ده." : "لقيت أكتر من احتمال للموظف ومينفعش أختار تلقائيًا."}\n${publicChoices}\n${clarificationCandidates.length ? "رد برقم الاختيار فقط، زي: 1" : "ابعت اسم الموظف بشكل أوضح."}`
++        : `${primaryGuard.reason === "TASK_TARGET_REQUIRED" ? "محتاج تحدد المهمة المقصودة قبل ما أجهز أي تعديل." : "في أكتر من مهمة ممكن تكون المقصودة، ومينفعش أختار واحدة تلقائيًا."}\n${publicChoices}\n${clarificationCandidates.length ? "رد برقم الاختيار فقط، زي: 1" : "اعرض المهمة المطلوبة أو صفها بشكل أوضح."}`;
++  const pendingClarification = clarificationRequired
++    ? buildPendingClarification({ previous, primaryGuard, requestText, intentResolution })
++    : null;
+   const live = {};
+@@ -349,7 +457,11 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+-  const activeContext = buildNextConversationContext({
++  const nextContext = buildNextConversationContext({
+     previous,
+     project,
+     conversationProjectId: conversation.projectId,
+@@ -361,6 +473,10 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+     clarificationRequired,
+     contextResolution,
+   });
++  const activeContext = {
++    ...nextContext,
++    pendingClarification,
++  };
+   if (JSON.stringify(activeContext) !== JSON.stringify(previous)) {
+     await prisma.agentConversation.update({ where: { id: conversation.id }, data: { intelligenceContext: activeContext, lastResolvedIntent: detectedIntent } });
+   }
+@@ -381,6 +497,8 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+     clarificationRequired,
+     clarificationCandidateCount: clarificationCandidates.length,
+     clarificationReason: primaryGuard?.reason || null,
++    clarificationChoiceMode: clarificationRequired ? "PRIVATE_INDEX" : (clarificationSelection ? "PRIVATE_INDEX_RESOLVED" : null),
++    clarificationSelectionUsed: Boolean(clarificationSelection),
+     liveDataFetched,
+@@ -397,7 +515,11 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+     clarificationRequired,
+     clarificationQuestion,
+     clarificationCandidates,
+-    confidenceGuard: primaryGuard || { decision: "AUTO_RESOLVE", reason: "NO_BLOCK", entityType: null, candidates: [] },
++    confidenceGuard: primaryGuard
++      ? { decision: primaryGuard.decision, reason: primaryGuard.reason, entityType: primaryGuard.entityType, candidateCount: clarificationCandidates.length }
++      : { decision: "AUTO_RESOLVE", reason: "NO_BLOCK", entityType: null, candidateCount: 0 },
+     contextResolution,
+     intentResolution,
