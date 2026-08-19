@@ -269,13 +269,23 @@ diff --git a/backend/src/agency-operator/services/entityResolution.service.js b/
    if (!query || !value) return { score: 0, matchType: "NONE" };
    if (query === value) return { score: 1, matchType: "EXACT" };
    if (value.startsWith(query)) return { score: 0.9, matchType: "PREFIX" };
-@@ -41,12 +43,19 @@ function scoreValue(query, value) {
-   if (!matches) return { score: 0, matchType: "NONE" };
--  return {
-+  const tokenScore = {
-     score: 0.65 + (matches / queryTokens.length) * 0.2,
-     matchType: "TOKEN_OVERLAP",
-   };
+   if (value.includes(query)) return { score: 0.82, matchType: "CONTAINS" };
+ 
+   const queryTokens = tokenizeEntityText(query);
+-  if (!queryTokens.length) return { score: 0, matchType: "NONE" };
+-  const matches = queryTokens.filter((token) => value.includes(token)).length;
+-  if (!matches) return { score: 0, matchType: "NONE" };
+-  const tokenScore = {
+-    score: 0.65 + (matches / queryTokens.length) * 0.2,
+-    matchType: "TOKEN_OVERLAP",
+-  };
+-  if (!allowMultilingual) return tokenScore;
+-  const multilingual = scoreMultilingualMatch(queryRaw, valueRaw, { queryNormalized: query, valueNormalized: value });
+-  return multilingual && multilingual.score > tokenScore.score ? multilingual : tokenScore;
++  const matches = queryTokens.filter((token) => value.includes(token)).length;
++  const tokenScore = queryTokens.length && matches
++    ? { score: 0.65 + (matches / queryTokens.length) * 0.2, matchType: "TOKEN_OVERLAP" }
++    : { score: 0, matchType: "NONE" };
 +  if (!allowMultilingual) return tokenScore;
 +  const multilingual = scoreMultilingualMatch(queryRaw, valueRaw, { queryNormalized: query, valueNormalized: value });
 +  return multilingual && multilingual.score > tokenScore.score ? multilingual : tokenScore;
