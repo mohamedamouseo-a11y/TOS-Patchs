@@ -1,0 +1,252 @@
+diff --git a/backend/src/agency-operator/services/entityAlias.service.js b/backend/src/agency-operator/services/entityAlias.service.js
+new file mode 100644
+--- /dev/null
++++ b/backend/src/agency-operator/services/entityAlias.service.js
+@@ -0,0 +1,121 @@
++import { prisma } from "../../prisma.js";
++import { normalizeEntityText } from "./entityResolution.service.js";
++
++const SUPPORTED_ENTITY_TYPES = new Set(["PROJECT", "USER"]);
++
++function bounded(value, max = 240) {
++  return String(value || "").trim().slice(0, max);
++}
++
++function normalizeEntityType(value) {
++  const type = String(value || "").trim().toUpperCase();
++  return SUPPORTED_ENTITY_TYPES.has(type) ? type : null;
++}
++
++function entityTypeFromLabel(value) {
++  const label = normalizeEntityText(value);
++  if (["مشروع", "المشروع", "project"].includes(label)) return "PROJECT";
++  if (["موظف", "الموظف", "مستخدم", "المستخدم", "employee", "user"].includes(label)) return "USER";
++  return null;
++}
++
++export async function findMatchingEntityAliases({ user, workspaceId, entityType, query, limit = 20 }) {
++  const normalizedAlias = normalizeEntityText(query);
++  const type = normalizeEntityType(entityType);
++  if (!user?.id || !workspaceId || !type || !normalizedAlias) return [];
++  return prisma.ramzyEntityAlias.findMany({
++    where: {
++      workspaceId,
++      entityType: type,
++      normalizedAlias,
++      isActive: true,
++      OR: [{ userId: user.id }, { userId: null }],
++    },
++    orderBy: [{ confidence: "desc" }, { updatedAt: "desc" }],
++    take: Math.max(1, Math.min(50, Number(limit) || 20)),
++  });
++}
++
++export async function learnEntityAlias({
++  user,
++  workspaceId,
++  entityType,
++  entityId,
++  canonicalName,
++  alias,
++  confidence = 0.99,
++  source = "EXPLICIT_USER",
++}) {
++  const type = normalizeEntityType(entityType);
++  const normalizedAlias = normalizeEntityText(alias);
++  const normalizedCanonical = normalizeEntityText(canonicalName);
++  if (!user?.id || !workspaceId || !type || !entityId || !normalizedAlias) return null;
++  if (normalizedAlias === normalizedCanonical) return null;
++  const safeConfidence = Math.max(0.9, Math.min(1, Number(confidence) || 0.99));
++  return prisma.ramzyEntityAlias.upsert({
++    where: {
++      workspaceId_userId_entityType_normalizedAlias: {
++        workspaceId,
++        userId: user.id,
++        entityType: type,
++        normalizedAlias,
++      },
++    },
++    create: {
++      workspaceId,
++      userId: user.id,
++      entityType: type,
++      entityId,
++      canonicalName: bounded(canonicalName),
++      alias: bounded(alias),
++      normalizedAlias,
++      confidence: safeConfidence,
++      source,
++      lastUsedAt: new Date(),
++    },
++    update: {
++      entityId,
++      canonicalName: bounded(canonicalName),
++      alias: bounded(alias),
++      confidence: safeConfidence,
++      source,
++      lastUsedAt: new Date(),
++      isActive: true,
++    },
++  });
++}
++
++export function parseExplicitAliasInstruction(message) {
++  const raw = String(message || "").trim();
++  if (!raw) return null;
++
++  const rememberPattern = raw.match(/(?:اعتبر|افتكر|احفظ|remember)\s+(?:ان|إن|انّ|إنّ)?\s*(مشروع|المشروع|project|موظف|الموظف|مستخدم|المستخدم|employee|user)\s+(.+?)\s+(?:هو|يعني|=|means|is)\s+(.+)$/iu);
++  if (rememberPattern) {
++    const entityType = entityTypeFromLabel(rememberPattern[1]);
++    const alias = bounded(rememberPattern[2]);
++    const canonicalQuery = bounded(rememberPattern[3]);
++    return entityType && alias && canonicalQuery ? { entityType, alias, canonicalQuery, mode: "ALIAS_TO_CANONICAL" } : null;
++  }
++
++  const namePattern = raw.match(/(?:سمي|سمّي|سميه|سمّيه|call)\s+(مشروع|المشروع|project|موظف|الموظف|مستخدم|المستخدم|employee|user)\s+(.+?)\s+(?:باسم|as)\s+(.+)$/iu);
++  if (namePattern) {
++    const entityType = entityTypeFromLabel(namePattern[1]);
++    const canonicalQuery = bounded(namePattern[2]);
++    const alias = bounded(namePattern[3]);
++    return entityType && alias && canonicalQuery ? { entityType, alias, canonicalQuery, mode: "CANONICAL_TO_ALIAS" } : null;
++  }
++
++  return null;
++}
++
++export function getAliasLearningConfig() {
++  return {
++    version: "RAMZY_ALIAS_LEARNING_V1",
++    supportedEntityTypes: [...SUPPORTED_ENTITY_TYPES],
++    learningMode: "EXPLICIT_USER_ONLY",
++    workspaceScoped: true,
++    userScoped: true,
++  };
++}
+diff --git a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+--- a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
++++ b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+@@ -3,6 +3,7 @@ import { buildProjectVisibilityWhere } from "../../services/projectAccessScope.service.js";
+ import { getOperationalSnapshot, getTaskContext } from "./agentQueries.service.js";
+ import { buildAgentTaskVisibilityWhere, resolveAgentProjectAccess, resolveAgentWorkspaceAccess } from "../policies/agentAccess.service.js";
+ import { normalizeEntityText, resolveEntityCandidates } from "./entityResolution.service.js";
++import { findMatchingEntityAliases, learnEntityAlias, parseExplicitAliasInstruction } from "./entityAlias.service.js";
+@@ -91,16 +92,9 @@ async function resolveProject(user, settings, query, workspaceId, explicitProjectId = null) {
+   }
+   const candidates = await visibleProjects(user, settings, workspaceId);
+-  const normalized = clean(query);
+-  let aliases = [];
+-  if (normalized && workspaceId) {
+-    aliases = await prisma.ramzyEntityAlias.findMany({
+-      where: { isActive: true, entityType: "PROJECT", normalizedAlias: normalized, OR: [{ workspaceId, userId: null }, { workspaceId, userId: user.id }] },
+-      orderBy: [{ userId: "desc" }, { confidence: "desc" }],
+-      take: 5,
+-    });
+-  }
++  const aliases = await findMatchingEntityAliases({ user, workspaceId, entityType: "PROJECT", query, limit: 10 });
+   const enriched = candidates.map((candidate) => ({
+     ...candidate,
+     aliasMatch: aliases.some((alias) => alias.entityId === candidate.id),
+@@ -124,15 +118,29 @@ async function resolveUser(user, project, query) {
+   const where = { status: "ACTIVE" };
+   const projectIds = project ? [project.id] : [];
+   if (projectIds.length) where.OR = [{ projectMemberships: { some: { projectId: { in: projectIds } } } }, { id: project.projectManagerId || "__none__" }, { id: project.teamLeadId || "__none__" }];
+-  const term = clean(query);
+-  const users = await prisma.user.findMany({ where: { ...where, ...(term ? { AND: [{ OR: [{ name: { contains: term, mode: "insensitive" } }, { email: { contains: term, mode: "insensitive" } }] }] } : {}) }, select: { id: true, name: true, email: true, department: true, jobTitle: true }, take: MAX_USER_CANDIDATES });
+-  return resolveEntityCandidates({
++  const users = await prisma.user.findMany({ where, select: { id: true, name: true, email: true, department: true, jobTitle: true }, take: 100 });
++  const workspaceId = project?.workspaces?.[0]?.id || null;
++  const aliases = await findMatchingEntityAliases({ user, workspaceId, entityType: "USER", query, limit: 20 });
++  const enriched = users.map((candidate) => ({
++    ...candidate,
++    aliasMatch: aliases.some((alias) => alias.entityId === candidate.id),
++  }));
++  const resolution = resolveEntityCandidates({
+     query,
+-    candidates: users,
++    candidates: enriched,
+     fields: ["name", "email"],
+     exactFields: ["name", "email"],
++    aliasField: "aliasMatch",
+     limit: MAX_USER_CANDIDATES,
+     ambiguityDelta: 0.05,
+     ambiguityAutoResolveThreshold: 0.95,
+   });
++  return {
++    ...resolution,
++    aliasUsed: Boolean(resolution.entity?.aliasMatch),
++  };
+ }
+@@ -172,12 +180,9 @@ export function systemIntelligencePromptContext(result) {
+ }
+ 
+ export async function learnExplicitEntityAlias({ user, workspaceId, entityType, entityId, canonicalName, alias, confidence = 0.96, source = "EXPLICIT_USER" }) {
+-  if (!workspaceId || !entityId || !alias || confidence < 0.9) return null;
+-  const normalizedAlias = clean(alias);
+-  if (!normalizedAlias || normalizedAlias === clean(canonicalName)) return null;
+-  return prisma.ramzyEntityAlias.upsert({
+-    where: { workspaceId_userId_entityType_normalizedAlias: { workspaceId, userId: user?.id || null, entityType, normalizedAlias } },
+-    create: { workspaceId, userId: user?.id || null, entityType, entityId, canonicalName: bounded(canonicalName, 240), alias: bounded(alias, 240), normalizedAlias, confidence, source, lastUsedAt: new Date() },
+-    update: { entityId, canonicalName: bounded(canonicalName, 240), alias: bounded(alias, 240), confidence, source, lastUsedAt: new Date(), isActive: true },
+-  });
++  return learnEntityAlias({ user, workspaceId, entityType, entityId, canonicalName, alias, confidence, source });
+ }
+@@ -187,6 +192,57 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+   const previous = conversation.intelligenceContext && typeof conversation.intelligenceContext === "object" ? conversation.intelligenceContext : {};
+   const workspaceId = conversation.workspaceId || null;
++  const aliasInstruction = parseExplicitAliasInstruction(requestText);
++  if (aliasInstruction && workspaceId) {
++    const aliasResolution = aliasInstruction.entityType === "PROJECT"
++      ? await resolveProject(user, settings, aliasInstruction.canonicalQuery, workspaceId, looksLikeId(aliasInstruction.canonicalQuery) ? aliasInstruction.canonicalQuery : null)
++      : await resolveUser(user, null, aliasInstruction.canonicalQuery);
++    if (!aliasResolution?.entity) {
++      const candidates = (aliasResolution?.candidates || []).slice(0, 5);
++      const clarificationRequired = candidates.length > 1;
++      const clarificationQuestion = clarificationRequired
++        ? `لقيت أكتر من نتيجة لـ ${aliasInstruction.canonicalQuery} ومينفعش أحفظ Alias على كيان غير مؤكد.\n${candidates.map((item, index) => `${index + 1}. ${item.name} — ID: ${item.id}`).join("\n")}\nحدد الـID الصحيح الأول.`
++        : `ملقتش كيان مؤكد باسم ${aliasInstruction.canonicalQuery}، لذلك ما حفظتش الاسم البديل.`;
++      const result = {
++        detectedIntent: "ALIAS_LEARN",
++        entities: { project: null, assignee: null },
++        activeContext: previous,
++        live: { aliasLearning: { saved: false, entityType: aliasInstruction.entityType, alias: aliasInstruction.alias, canonicalQuery: aliasInstruction.canonicalQuery } },
++        liveDataFetched: true,
++        clarificationRequired,
++        clarificationQuestion,
++        clarificationCandidates: candidates.map((item) => ({ id: item.id, name: item.name })),
++        metadata: { detectedIntent: "ALIAS_LEARN", aliasLearning: true, aliasSaved: false, clarificationRequired, liveDataFetched: true, systemContextItemCount: 1 },
++      };
++      return { ...result, promptContext: systemIntelligencePromptContext(result) };
++    }
++    const learned = await learnEntityAlias({
++      user,
++      workspaceId,
++      entityType: aliasInstruction.entityType,
++      entityId: aliasResolution.entity.id,
++      canonicalName: aliasResolution.entity.name,
++      alias: aliasInstruction.alias,
++      confidence: 0.99,
++      source: "EXPLICIT_USER",
++    });
++    const result = {
++      detectedIntent: "ALIAS_LEARN",
++      entities: aliasInstruction.entityType === "PROJECT"
++        ? { project: { id: aliasResolution.entity.id, name: aliasResolution.entity.name, confidence: aliasResolution.confidence }, assignee: null }
++        : { project: null, assignee: { id: aliasResolution.entity.id, name: aliasResolution.entity.name, confidence: aliasResolution.confidence } },
++      activeContext: previous,
++      live: { aliasLearning: { saved: Boolean(learned), entityType: aliasInstruction.entityType, entityId: aliasResolution.entity.id, canonicalName: aliasResolution.entity.name, alias: aliasInstruction.alias, source: "EXPLICIT_USER" } },
++      liveDataFetched: true,
++      clarificationRequired: false,
++      clarificationQuestion: null,
++      clarificationCandidates: [],
++      metadata: { detectedIntent: "ALIAS_LEARN", aliasLearning: true, aliasSaved: Boolean(learned), aliasEntityType: aliasInstruction.entityType, liveDataFetched: true, systemContextItemCount: 1 },
++    };
++    return { ...result, promptContext: systemIntelligencePromptContext(result) };
++  }
+   const projectQuery = extractProjectQuery(requestText);
+@@ -210,7 +266,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+   const clarificationQuestion = clarificationRequired
+@@ -218,7 +274,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+     : null;
+   const userQuery = extractUserQuery(requestText);
+-  const assigneeResolution = userQuery && ["TASK_BY_ASSIGNEE", "TASK_OVERDUE", "TASK_BLOCKED", "TASK_SEARCH"].includes(detectedIntent) ? await resolveUser(user, project, userQuery) : null;
++  const assigneeResolution = userQuery && ["TASK_BY_ASSIGNEE", "TASK_OVERDUE", "TASK_BLOCKED", "TASK_SEARCH"].includes(detectedIntent) ? await resolveUser(user, project, userQuery) : null;
