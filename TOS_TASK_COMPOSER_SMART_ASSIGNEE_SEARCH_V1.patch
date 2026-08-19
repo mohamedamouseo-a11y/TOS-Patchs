@@ -1,0 +1,228 @@
+diff --git a/frontend/src/components/ProfessionalTaskBoard.jsx b/frontend/src/components/ProfessionalTaskBoard.jsx
+--- a/frontend/src/components/ProfessionalTaskBoard.jsx
++++ b/frontend/src/components/ProfessionalTaskBoard.jsx
+@@ -2345,4 +2345,55 @@
+   );
+ }
+ 
++function normalizeTaskAssigneeSearchText(value = "") {
++  return String(value || "")
++    .normalize("NFKD")
++    .replace(/[\u064B-\u065F\u0670\u0640]/g, "")
++    .replace(/[إأآٱ]/g, "ا")
++    .replace(/ى/g, "ي")
++    .replace(/ة/g, "ه")
++    .replace(/\s+/g, " ")
++    .trim()
++    .toLowerCase();
++}
++
++function taskAssigneeNearTokenMatch(value, query) {
++  if (value === query) return true;
++  if (Math.abs(value.length - query.length) > 1) return false;
++
++  if (value.length === query.length) {
++    const mismatches = [];
++    for (let index = 0; index < value.length; index += 1) {
++      if (value[index] !== query[index]) mismatches.push(index);
++      if (mismatches.length > 2) return false;
++    }
++    if (mismatches.length <= 1) return true;
++    const [first, second] = mismatches;
++    return second === first + 1 && value[first] === query[second] && value[second] === query[first];
++  }
++
++  const longer = value.length > query.length ? value : query;
++  const shorter = value.length > query.length ? query : value;
++  let longIndex = 0;
++  let shortIndex = 0;
++  let edits = 0;
++  while (longIndex < longer.length && shortIndex < shorter.length) {
++    if (longer[longIndex] === shorter[shortIndex]) {
++      longIndex += 1;
++      shortIndex += 1;
++      continue;
++    }
++    edits += 1;
++    longIndex += 1;
++    if (edits > 1) return false;
++  }
++  return true;
++}
++
++function taskAssigneeSearchTokenMatches(haystack, token) {
++  if (haystack.includes(token)) return true;
++  if (token.length < 4) return false;
++  return haystack.split(/\s+/).some((word) => taskAssigneeNearTokenMatch(word, token));
++}
++
+ function NewTaskComposerModal({ open, lists, initialListId = "", activeBoard, assigneeCandidates = [], canAssignAll = false, currentUserId = "", onClose, onSubmit, busy, ui = getTaskUiText("en"), direction = "ltr" }) {
+@@ -2354,6 +2405,8 @@
+   const [startDate, setStartDate] = useState("");
+   const [dueDate, setDueDate] = useState("");
+   const [assigneeIds, setAssigneeIds] = useState([]);
++  const [assigneeQuery, setAssigneeQuery] = useState("");
++  const [assigneeDepartment, setAssigneeDepartment] = useState("ALL");
+   const [submitted, setSubmitted] = useState(false);
+   useModalFocusTrap(modalRef, titleInputRef, onClose, open ? "new-task" : "new-task-closed");
+ 
+@@ -2366,6 +2419,8 @@
+     setStartDate("");
+     setDueDate("");
+     setAssigneeIds(canAssignAll || !currentUserId ? [] : [currentUserId]);
++    setAssigneeQuery("");
++    setAssigneeDepartment("ALL");
+     setSubmitted(false);
+   }, [open, initialListId, lists, canAssignAll, currentUserId]);
+ 
+@@ -2375,4 +2430,54 @@
+     return () => window.clearTimeout(timer);
+   }, [open]);
+ 
++  const normalizedAssigneeQuery = useMemo(() => normalizeTaskAssigneeSearchText(assigneeQuery), [assigneeQuery]);
++  const assigneeDepartmentOptions = useMemo(() => [...new Set(
++    (assigneeCandidates || [])
++      .map((candidate) => String(candidate?.department || "").trim())
++      .filter(Boolean),
++  )].sort((a, b) => humanizeEnum(a).localeCompare(humanizeEnum(b), undefined, { sensitivity: "base" })), [assigneeCandidates]);
++  const smartAssigneeCandidates = useMemo(() => {
++    const tokens = normalizedAssigneeQuery.split(/\s+/).filter(Boolean);
++    return (assigneeCandidates || [])
++      .map((candidate, index) => {
++        const candidateId = String(candidate?.id || "");
++        if (!candidateId) return null;
++        const name = getPersonLabel(candidate);
++        const email = String(candidate?.email || "");
++        const department = String(candidate?.department || "");
++        const role = String(candidate?.role || "");
++        const jobTitle = String(candidate?.jobTitle || candidate?.position || candidate?.title || "");
++        const normalizedName = normalizeTaskAssigneeSearchText(name);
++        const normalizedEmail = normalizeTaskAssigneeSearchText(email);
++        const normalizedDepartment = normalizeTaskAssigneeSearchText(humanizeEnum(department));
++        const normalizedRole = normalizeTaskAssigneeSearchText(humanizeEnum(role));
++        const normalizedJobTitle = normalizeTaskAssigneeSearchText(jobTitle);
++        const haystack = [normalizedName, normalizedEmail, normalizedDepartment, normalizedRole, normalizedJobTitle].join(" ");
++
++        if (assigneeDepartment !== "ALL" && department !== assigneeDepartment) return null;
++        if (tokens.length && !tokens.every((token) => taskAssigneeSearchTokenMatches(haystack, token))) return null;
++
++        let score = assigneeIds.includes(candidateId) ? 1000 : 0;
++        if (normalizedAssigneeQuery) {
++          if (normalizedName === normalizedAssigneeQuery) score += 500;
++          else if (normalizedName.startsWith(normalizedAssigneeQuery)) score += 350;
++          else if (normalizedName.includes(normalizedAssigneeQuery)) score += 250;
++          if (normalizedEmail.startsWith(normalizedAssigneeQuery)) score += 120;
++          if (normalizedDepartment.includes(normalizedAssigneeQuery)) score += 90;
++          if (normalizedJobTitle.includes(normalizedAssigneeQuery)) score += 80;
++          if (normalizedRole.includes(normalizedAssigneeQuery)) score += 70;
++        }
++
++        return {
++          candidate,
++          candidateId,
++          index,
++          score,
++          meta: [jobTitle, department ? humanizeEnum(department) : "", role ? humanizeEnum(role) : ""].filter(Boolean).join(" · "),
++        };
++      })
++      .filter(Boolean)
++      .sort((a, b) => b.score - a.score || a.index - b.index);
++  }, [assigneeCandidates, assigneeDepartment, assigneeIds, normalizedAssigneeQuery]);
++
+   if (!open) return null;
+@@ -2476,28 +2581,87 @@
+             <div className="flex items-center justify-between gap-3">
+               <div>
+                 <p className="text-xs font-black uppercase tracking-wide text-slate-500 dark:text-zinc-300">{ui.assignee}</p>
+-                <p className="mt-1 text-[11px] font-semibold text-slate-400 dark:text-zinc-500">{canAssignAll ? (direction === "rtl" ? "اختر منفذًا أو أكثر للمهمة." : "Choose one or more task assignees.") : (direction === "rtl" ? "يمكنك إسناد المهمة لنفسك أو لمدير النظام." : "You can assign the task to yourself or the Super Admin.")}</p>
++                <p className="mt-1 text-[11px] font-semibold text-slate-400 dark:text-zinc-500">{canAssignAll ? (direction === "rtl" ? "ابحث واختر منفذًا أو أكثر بسرعة." : "Search and choose one or more assignees quickly.") : (direction === "rtl" ? "يمكنك إسناد المهمة لنفسك أو لمدير النظام." : "You can assign the task to yourself or the Super Admin.")}</p>
+               </div>
+               <span className="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-black text-blue-700 dark:bg-blue-500/10 dark:text-blue-200">{assigneeIds.length}</span>
+             </div>
+-            <div className="mt-3 grid max-h-48 gap-2 overflow-y-auto sm:grid-cols-2">
+-              {assigneeCandidates.map((candidate) => {
+-                const candidateId = String(candidate?.id || "");
+-                if (!candidateId) return null;
++
++            <div className="relative mt-3">
++              <Search size={15} className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-slate-400 ${direction === "rtl" ? "right-3.5" : "left-3.5"}`} />
++              <input
++                type="search"
++                value={assigneeQuery}
++                onChange={(event) => setAssigneeQuery(event.target.value)}
++                placeholder={direction === "rtl" ? "ابحث بالاسم، القسم، الوظيفة أو الصلاحية..." : "Search name, department, title or role..."}
++                aria-label={direction === "rtl" ? "بحث ذكي عن الأعضاء" : "Smart member search"}
++                className={`h-11 w-full rounded-2xl border border-slate-200 bg-white px-10 text-sm font-bold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-300 focus:ring-4 focus:ring-blue-50 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-blue-400/40 dark:focus:ring-blue-500/10`}
++                disabled={busy}
++              />
++              {assigneeQuery && (
++                <button
++                  type="button"
++                  onClick={() => setAssigneeQuery("")}
++                  aria-label={direction === "rtl" ? "مسح البحث" : "Clear search"}
++                  className={`absolute top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 ${direction === "rtl" ? "left-2.5" : "right-2.5"}`}
++                >
++                  <X size={14} />
++                </button>
++              )}
++            </div>
++
++            {canAssignAll && assigneeDepartmentOptions.length > 1 && (
++              <div className="mt-2 flex gap-1.5 overflow-x-auto pb-1">
++                <button
++                  type="button"
++                  onClick={() => setAssigneeDepartment("ALL")}
++                  className={`shrink-0 rounded-full px-3 py-1.5 text-[10px] font-black transition ${assigneeDepartment === "ALL" ? "bg-blue-600 text-white" : "bg-white text-slate-500 ring-1 ring-slate-200 hover:text-blue-600 dark:bg-zinc-950 dark:text-zinc-300 dark:ring-white/10"}`}
++                >
++                  {direction === "rtl" ? "الكل" : "All"}
++                </button>
++                {assigneeDepartmentOptions.map((department) => (
++                  <button
++                    key={department}
++                    type="button"
++                    onClick={() => setAssigneeDepartment(department)}
++                    className={`shrink-0 rounded-full px-3 py-1.5 text-[10px] font-black transition ${assigneeDepartment === department ? "bg-blue-600 text-white" : "bg-white text-slate-500 ring-1 ring-slate-200 hover:text-blue-600 dark:bg-zinc-950 dark:text-zinc-300 dark:ring-white/10"}`}
++                  >
++                    {humanizeEnum(department)}
++                  </button>
++                ))}
++              </div>
++            )}
++
++            <div className="mt-2 flex items-center justify-between text-[10px] font-black text-slate-400 dark:text-zinc-500">
++              <span>{direction === "rtl" ? `أفضل النتائج: ${smartAssigneeCandidates.length}` : `Best matches: ${smartAssigneeCandidates.length}`}</span>
++              {assigneeQuery && <span>{direction === "rtl" ? "مرتبة حسب الصلة" : "Sorted by relevance"}</span>}
++            </div>
++
++            <div className="mt-2 grid max-h-52 gap-2 overflow-y-auto sm:grid-cols-2">
++              {smartAssigneeCandidates.map(({ candidate, candidateId, meta }) => {
+                 const checked = assigneeIds.includes(candidateId);
+                 return (
+-                  <label key={candidateId} className={`flex cursor-pointer items-center gap-2 rounded-2xl border px-3 py-2 text-xs font-black transition ${checked ? "border-emerald-100 bg-emerald-50 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-500/10 dark:text-emerald-100" : "border-white bg-white text-slate-700 hover:border-amber-100 hover:bg-amber-50 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-200"}`}>
++                  <label key={candidateId} className={`flex cursor-pointer items-center gap-2 rounded-2xl border px-3 py-2 text-xs font-black transition ${checked ? "border-emerald-100 bg-emerald-50 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-500/10 dark:text-emerald-100" : "border-white bg-white text-slate-700 hover:border-blue-100 hover:bg-blue-50/70 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:border-blue-400/20 dark:hover:bg-blue-500/10"}`}>
+                     <input
+                       type="checkbox"
+                       checked={checked}
+                       onChange={(event) => setAssigneeIds((current) => event.target.checked ? [...new Set([...current, candidateId])] : current.filter((id) => id !== candidateId))}
+                       disabled={busy}
+                     />
+-                    <span className="min-w-0 flex-1 truncate">{getPersonLabel(candidate)}</span>
++                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-slate-100 text-[10px] font-black text-slate-600 dark:bg-white/10 dark:text-zinc-200">{getInitials(candidate)}</span>
++                    <span className="min-w-0 flex-1">
++                      <span className="block truncate">{getPersonLabel(candidate)}</span>
++                      {meta && <span className="mt-0.5 block truncate text-[9px] font-bold text-slate-400 dark:text-zinc-500">{meta}</span>}
++                    </span>
+                     {String(candidate?.role || "") === "SUPER_ADMIN" && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] text-amber-700 dark:bg-amber-500/20 dark:text-amber-200">{direction === "rtl" ? "مدير النظام" : "Super Admin"}</span>}
+                   </label>
+                 );
+               })}
+-              {!assigneeCandidates.length && <p className="text-xs font-semibold text-slate-400">{ui.noMembers || ui.unassigned}</p>}
++              {!smartAssigneeCandidates.length && (
++                <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-5 text-center text-xs font-bold text-slate-400 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-500 sm:col-span-2">
++                  {assigneeQuery
++                    ? (direction === "rtl" ? "لا يوجد عضو مطابق. جرّب الاسم أو القسم أو الوظيفة." : "No matching member. Try a name, department, title or role.")
++                    : (ui.noMembers || ui.unassigned)}
++                </div>
++              )}
+             </div>
+           </section>
