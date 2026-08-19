@@ -1,0 +1,353 @@
+diff --git a/backend/src/agency-operator/services/multilingualMatching.service.js b/backend/src/agency-operator/services/multilingualMatching.service.js
+new file mode 100644
+--- /dev/null
++++ b/backend/src/agency-operator/services/multilingualMatching.service.js
+@@ -0,0 +1,247 @@
++const ARABIC_RE = /[\u0600-\u06ff]/u;
++const LATIN_RE = /[a-z]/iu;
++const MIN_FUZZY_LENGTH = 4;
++const MIN_PHONETIC_LENGTH = 2;
++
++function uniq(values) {
++  return [...new Set(values.filter(Boolean))];
++}
++
++function basicNormalize(value) {
++  return String(value || "")
++    .normalize("NFKC")
++    .toLowerCase()
++    .replace(/[ًٌٍَُِّْـ]/g, "")
++    .replace(/[أإآٱ]/g, "ا")
++    .replace(/ى/g, "ي")
++    .replace(/ة/g, "ه")
++    .replace(/[ؤئ]/g, "ء")
++    .replace(/[^\p{L}\p{N}\s@._-]/gu, " ")
++    .replace(/\s+/g, " ")
++    .trim();
++}
++
++export function detectEntityScript(value) {
++  const text = String(value || "");
++  const arabic = ARABIC_RE.test(text);
++  const latin = LATIN_RE.test(text);
++  if (arabic && latin) return "MIXED";
++  if (arabic) return "ARABIC";
++  if (latin) return "LATIN";
++  return "OTHER";
++}
++
++function canonicalLatin(value) {
++  return String(value || "")
++    .normalize("NFKD")
++    .toLowerCase()
++    .replace(/[\u0300-\u036f]/g, "")
++    .replace(/5/g, "kh")
++    .replace(/7/g, "h")
++    .replace(/3/g, "")
++    .replace(/2/g, "")
++    .replace(/8/g, "gh")
++    .replace(/9/g, "s")
++    .replace(/6/g, "t")
++    .replace(/kh/g, "x")
++    .replace(/gh/g, "g")
++    .replace(/sh/g, "c")
++    .replace(/th/g, "t")
++    .replace(/dh/g, "d")
++    .replace(/ph/g, "f")
++    .replace(/qu/g, "k")
++    .replace(/[cq]/g, "k")
++    .replace(/g/g, "j")
++    .replace(/[^a-z\s]/g, " ")
++    .replace(/\s+/g, " ")
++    .trim();
++}
++
++function collapseRepeats(value) {
++  return String(value || "").replace(/(.)\1+/g, "$1");
++}
++
++function latinVariants(value) {
++  const text = canonicalLatin(value);
++  if (!text) return { skeletons: [], detailed: [] };
++  const detailed = [];
++  const skeletons = [];
++  for (const word of text.split(/\s+/).filter(Boolean)) {
++    const full = collapseRepeats(word);
++    const noVowels = collapseRepeats(full.replace(/[aeiou]/g, ""));
++    const noVowelsOrSemis = collapseRepeats(full.replace(/[aeiouyw]/g, ""));
++    const terminalLong = collapseRepeats(
++      full
++        .replace(/[aeiou]/g, "")
++        .replace(/i$/g, "y")
++        .replace(/u$/g, "w"),
++    );
++    detailed.push(full);
++    skeletons.push(noVowels, noVowelsOrSemis, terminalLong);
++  }
++  return {
++    skeletons: uniq(skeletons).filter((item) => item.length >= MIN_PHONETIC_LENGTH),
++    detailed: uniq(detailed),
++  };
++}
++
++const ARABIC_CONSONANTS = {
++  ب: "b", ت: "t", ث: "t", ج: "j", ح: "h", خ: "x", د: "d", ذ: "d", ر: "r", ز: "z",
++  س: "s", ش: "c", ص: "s", ض: "d", ط: "t", ظ: "z", ف: "f", ق: "k", ك: "k", ل: "l",
++  م: "m", ن: "n", ه: "h", ة: "h",
++};
++
++function arabicVariants(value) {
++  const text = basicNormalize(value).replace(/[^\u0600-\u06ff\s]/g, " ").replace(/\s+/g, " ").trim();
++  if (!text) return { skeletons: [], detailed: [] };
++  const skeletons = [];
++  const detailed = [];
++  for (const word of text.split(/\s+/).filter(Boolean)) {
++    let consonants = "";
++    let semivowels = "";
++    let longVowels = "";
++    for (const char of word) {
++      if (ARABIC_CONSONANTS[char]) {
++        const mapped = ARABIC_CONSONANTS[char];
++        consonants += mapped;
++        semivowels += mapped;
++        longVowels += mapped;
++        continue;
++      }
++      if (char === "و") {
++        semivowels += "w";
++        longVowels += "u";
++        continue;
++      }
++      if (char === "ي") {
++        semivowels += "y";
++        longVowels += "i";
++        continue;
++      }
++      if (char === "ا") {
++        longVowels += "a";
++        continue;
++      }
++      // Hamza/Ayn and short vowels are intentionally optional in the consonant skeleton.
++    }
++    skeletons.push(collapseRepeats(consonants), collapseRepeats(semivowels));
++    detailed.push(collapseRepeats(longVowels || consonants));
++  }
++  return {
++    skeletons: uniq(skeletons).filter((item) => item.length >= MIN_PHONETIC_LENGTH),
++    detailed: uniq(detailed),
++  };
++}
++
++export function getEntityPhoneticVariants(value) {
++  const script = detectEntityScript(value);
++  if (script === "ARABIC") return { script, ...arabicVariants(value) };
++  if (script === "LATIN") return { script, ...latinVariants(value) };
++  if (script === "MIXED") {
++    const latin = latinVariants(value);
++    const arabic = arabicVariants(value);
++    return { script, skeletons: uniq([...latin.skeletons, ...arabic.skeletons]), detailed: uniq([...latin.detailed, ...arabic.detailed]) };
++  }
++  return { script, skeletons: [], detailed: [] };
++}
++
++function substitutionCost(a, b) {
++  if (a === b) return 0;
++  const pair = `${a}${b}`;
++  if (["xk", "kx"].includes(pair)) return 0.35;
++  if (["hj", "jh", "hg", "gh"].includes(pair)) return 0.75;
++  if (["sz", "zs", "td", "dt"].includes(pair)) return 0.8;
++  return 1;
++}
++
++export function weightedEditSimilarity(left, right) {
++  const a = String(left || "");
++  const b = String(right || "");
++  if (!a || !b) return 0;
++  if (a === b) return 1;
++  const rows = a.length + 1;
++  const cols = b.length + 1;
++  const dp = Array.from({ length: rows }, () => Array(cols).fill(0));
++  for (let i = 0; i < rows; i += 1) dp[i][0] = i;
++  for (let j = 0; j < cols; j += 1) dp[0][j] = j;
++  for (let i = 1; i < rows; i += 1) {
++    for (let j = 1; j < cols; j += 1) {
++      const sub = dp[i - 1][j - 1] + substitutionCost(a[i - 1], b[j - 1]);
++      const del = dp[i - 1][j] + 1;
++      const ins = dp[i][j - 1] + 1;
++      let best = Math.min(sub, del, ins);
++      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
++        best = Math.min(best, dp[i - 2][j - 2] + 0.65);
++      }
++      dp[i][j] = best;
++    }
++  }
++  return Math.max(0, 1 - (dp[a.length][b.length] / Math.max(a.length, b.length)));
++}
++
++function bestSimilarity(leftValues, rightValues) {
++  let best = 0;
++  for (const left of leftValues) {
++    for (const right of rightValues) best = Math.max(best, weightedEditSimilarity(left, right));
++  }
++  return best;
++}
++
++function sameScriptTypoScore(queryNormalized, valueNormalized) {
++  if (queryNormalized.length < MIN_FUZZY_LENGTH || valueNormalized.length < MIN_FUZZY_LENGTH) return null;
++  const similarity = weightedEditSimilarity(queryNormalized, valueNormalized);
++  if (similarity < 0.8) return null;
++  return {
++    score: Math.min(0.88, 0.7 + similarity * 0.2),
++    matchType: "FUZZY_TYPO",
++    similarity,
++  };
++}
++
++export function scoreMultilingualMatch(queryRaw, valueRaw, {
++  queryNormalized = basicNormalize(queryRaw),
++  valueNormalized = basicNormalize(valueRaw),
++} = {}) {
++  if (!queryNormalized || !valueNormalized || queryNormalized.includes("@") || valueNormalized.includes("@")) return null;
++  const query = getEntityPhoneticVariants(queryRaw);
++  const value = getEntityPhoneticVariants(valueRaw);
++  const crossScript = query.script !== value.script && !["OTHER", "MIXED"].includes(query.script) && !["OTHER", "MIXED"].includes(value.script);
++
++  const exactSkeleton = query.skeletons.some((item) => value.skeletons.includes(item));
++  if (exactSkeleton) {
++    const detailedSimilarity = bestSimilarity(query.detailed, value.detailed);
++    return {
++      score: crossScript ? Math.min(0.89, 0.865 + detailedSimilarity * 0.025) : Math.min(0.88, 0.85 + detailedSimilarity * 0.03),
++      matchType: crossScript ? "TRANSLITERATION" : "PHONETIC_EQUIVALENT",
++      similarity: 1,
++      detailedSimilarity,
++    };
++  }
++
++  const phoneticSimilarity = bestSimilarity(query.skeletons, value.skeletons);
++  const detailedSimilarity = bestSimilarity(query.detailed, value.detailed);
++  const combined = phoneticSimilarity * 0.72 + detailedSimilarity * 0.28;
++  if (query.skeletons.length && value.skeletons.length && phoneticSimilarity >= 0.76 && combined >= 0.74) {
++    return {
++      score: Math.min(0.87, 0.69 + combined * 0.21),
++      matchType: crossScript ? "TRANSLITERATION_FUZZY" : "PHONETIC_FUZZY",
++      similarity: combined,
++      detailedSimilarity,
++    };
++  }
++
++  if (!crossScript && query.script === value.script) return sameScriptTypoScore(queryNormalized, valueNormalized);
++  return null;
++}
++
++export function isFuzzyMultilingualMatchType(matchType) {
++  return ["TRANSLITERATION", "TRANSLITERATION_FUZZY", "PHONETIC_EQUIVALENT", "PHONETIC_FUZZY", "FUZZY_TYPO"].includes(String(matchType || ""));
++}
++
++export function getMultilingualMatchingConfig() {
++  return {
++    version: "RAMZY_FUZZY_MULTILINGUAL_V1",
++    providerCalls: 0,
++    strategies: ["TRANSLITERATION", "TRANSLITERATION_FUZZY", "PHONETIC_EQUIVALENT", "PHONETIC_FUZZY", "FUZZY_TYPO"],
++    arabiziDigits: ["2", "3", "5", "6", "7", "8", "9"],
++    minimumTypoSimilarity: 0.8,
++    minimumPhoneticSimilarity: 0.76,
++  };
++}
+diff --git a/backend/src/agency-operator/services/entityResolution.service.js b/backend/src/agency-operator/services/entityResolution.service.js
+--- a/backend/src/agency-operator/services/entityResolution.service.js
++++ b/backend/src/agency-operator/services/entityResolution.service.js
+@@ -1,3 +1,5 @@
++import { isFuzzyMultilingualMatchType, scoreMultilingualMatch } from "./multilingualMatching.service.js";
++
+ const DEFAULT_LIMIT = 8;
+@@ -28,7 +30,7 @@ function candidateValues(candidate, fields) {
+     .filter((entry) => entry.normalized);
+ }
+ 
+-function scoreValue(query, value) {
++function scoreValue(query, value, { queryRaw = query, valueRaw = value, allowMultilingual = true } = {}) {
+   if (!query || !value) return { score: 0, matchType: "NONE" };
+   if (query === value) return { score: 1, matchType: "EXACT" };
+   if (value.startsWith(query)) return { score: 0.9, matchType: "PREFIX" };
+@@ -41,12 +43,19 @@ function scoreValue(query, value) {
+   if (!matches) return { score: 0, matchType: "NONE" };
+-  return {
++  const tokenScore = {
+     score: 0.65 + (matches / queryTokens.length) * 0.2,
+     matchType: "TOKEN_OVERLAP",
+   };
++  if (!allowMultilingual) return tokenScore;
++  const multilingual = scoreMultilingualMatch(queryRaw, valueRaw, { queryNormalized: query, valueNormalized: value });
++  return multilingual && multilingual.score > tokenScore.score ? multilingual : tokenScore;
+ }
+@@ -57,9 +66,15 @@ export function scoreEntityCandidate(query, candidate, {
+   for (const field of fields) {
+     for (const entry of candidateValues(candidate, [field])) {
+-      const scored = scoreValue(normalizedQuery, entry.normalized);
++      const allowMultilingual = field === "name";
++      const scored = scoreValue(normalizedQuery, entry.normalized, { queryRaw: query, valueRaw: entry.raw, allowMultilingual });
+       if (scored.score > best.score) {
+-        best = { ...scored, matchedField: field, matchedValue: entry.raw };
++        best = {
++          ...scored,
++          matchedField: field,
++          matchedValue: entry.raw,
++        };
+       }
+     }
+   }
+@@ -118,6 +133,20 @@ export function resolveEntityCandidates({
+   const top = ranked[0];
+   const close = ranked.filter((candidate) => top.score - candidate.score < ambiguityDelta);
++  if (isFuzzyMultilingualMatchType(top.matchType) && close.length > 1) {
++    return {
++      entity: null,
++      confidence: top.score,
++      matchType: top.matchType,
++      candidates: close,
++      clarificationRequired: true,
++      ambiguityReason: "FUZZY_MULTILINGUAL_TIE",
++    };
++  }
+   if (close.length > 1 && top.score < ambiguityAutoResolveThreshold) {
+@@ -149,7 +178,8 @@ export function getEntityResolutionConfig() {
+   return {
+     version: "RAMZY_ENTITY_RESOLUTION_V1",
+-    strategies: ["EXPLICIT_ID", "EXACT", "ALIAS_COMPAT", "PREFIX", "CONTAINS", "TOKEN_OVERLAP"],
++    strategies: ["EXPLICIT_ID", "EXACT", "ALIAS_COMPAT", "PREFIX", "CONTAINS", "TOKEN_OVERLAP", "TRANSLITERATION", "TRANSLITERATION_FUZZY", "PHONETIC_EQUIVALENT", "PHONETIC_FUZZY", "FUZZY_TYPO"],
+     multilingualNormalization: ["UNICODE_NFKC", "ARABIC_DIACRITICS", "ARABIC_LETTER_NORMALIZATION", "CASE_FOLDING"],
++    fuzzyMultilingualVersion: "RAMZY_FUZZY_MULTILINGUAL_V1",
+   };
+ }
+diff --git a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+--- a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
++++ b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+@@ -6,6 +6,7 @@ import { normalizeEntityText, resolveEntityCandidates } from "./entityResolution.service.js";
+ import { findMatchingEntityAliases, learnEntityAlias, parseExplicitAliasInstruction } from "./entityAlias.service.js";
+ import { buildNextConversationContext, resolveContextReference } from "./contextResolution.service.js";
+ import { resolveSemanticIntent } from "./semanticIntentResolver.service.js";
++import { isFuzzyMultilingualMatchType } from "./multilingualMatching.service.js";
+@@ -169,7 +170,7 @@ function safeEntities(entities) {
+-  return Object.fromEntries(Object.entries(entities).filter(([, value]) => value).map(([key, value]) => [key, { id: value.id, name: value.name, confidence: value.confidence }]));
++  return Object.fromEntries(Object.entries(entities).filter(([, value]) => value).map(([key, value]) => [key, { id: value.id, name: value.name, confidence: value.confidence, matchType: value.matchType || null }]));
+ }
+@@ -339,6 +340,11 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+     semanticOperation: intentResolution.operation || null,
+     semanticActionCapability: intentResolution.actionCapability || null,
+     semanticIntentAmbiguous: Boolean(intentResolution.ambiguous),
++    projectMatchType: projectResolution?.matchType || null,
++    assigneeMatchType: assigneeResolution?.matchType || null,
++    fuzzyMultilingualUsed: Boolean(
++      isFuzzyMultilingualMatchType(projectResolution?.matchType) || isFuzzyMultilingualMatchType(assigneeResolution?.matchType),
++    ),
+     aliasUsed: Boolean(projectResolution?.aliasUsed),
+@@ -356,7 +362,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+   return {
+     detectedIntent,
+-    entities: { project: project ? { id: project.id, name: project.name, confidence: projectResolution.confidence } : null, assignee: assigneeResolution?.entity ? { id: assigneeResolution.entity.id, name: assigneeResolution.entity.name, confidence: assigneeResolution.confidence } : null },
++    entities: { project: project ? { id: project.id, name: project.name, confidence: projectResolution.confidence, matchType: projectResolution.matchType || null } : null, assignee: assigneeResolution?.entity ? { id: assigneeResolution.entity.id, name: assigneeResolution.entity.name, confidence: assigneeResolution.confidence, matchType: assigneeResolution.matchType || null } : null },
+@@ -369,7 +375,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+-    promptContext: systemIntelligencePromptContext({ detectedIntent, intentResolution, activeContext, contextResolution, entities: { project: project ? { id: project.id, name: project.name, confidence: projectResolution.confidence } : null, assignee: assigneeResolution?.entity ? { id: assigneeResolution.entity.id, name: assigneeResolution.entity.name, confidence: assigneeResolution.confidence } : null }, live, clarificationRequired, clarificationQuestion }),
++    promptContext: systemIntelligencePromptContext({ detectedIntent, intentResolution, activeContext, contextResolution, entities: { project: project ? { id: project.id, name: project.name, confidence: projectResolution.confidence, matchType: projectResolution.matchType || null } : null, assignee: assigneeResolution?.entity ? { id: assigneeResolution.entity.id, name: assigneeResolution.entity.name, confidence: assigneeResolution.confidence, matchType: assigneeResolution.matchType || null } : null }, live, clarificationRequired, clarificationQuestion }),
+   };
+ }
