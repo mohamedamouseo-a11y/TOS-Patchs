@@ -1,0 +1,217 @@
+diff --git a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+--- a/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
++++ b/backend/src/agency-operator/services/ramzySystemIntelligence.service.js
+@@ -121,6 +121,55 @@ function formatPublicChoices(entityType, candidates) {
+   }).join("\n");
+ }
+ 
++function escapeMarkdownCell(value) {
++  return String(value ?? "")
++    .replace(/\|/g, "\\|")
++    .replace(/\r?\n/g, " ")
++    .trim();
++}
++
++function displayDate(value) {
++  if (!value) return "—";
++  const date = new Date(value);
++  if (Number.isNaN(date.getTime())) return "—";
++  return date.toISOString().slice(0, 10);
++}
++
++function taskAssigneeLabel(task) {
++  const names = [
++    ...(Array.isArray(task?.assignees) ? task.assignees.map((item) => item?.name) : []),
++    task?.assignee?.name,
++  ].filter(Boolean);
++  return [...new Set(names)].join("، ") || "غير مسندة";
++}
++
++function buildDeterministicProjectResumeResponse({ selectionIndex, project, tasks = [], taskListMeta = {} }) {
++  if (!project?.name) return null;
++  const lines = [
++    `تم اختيار الخيار ${Number(selectionIndex || 0) + 1}: ${escapeMarkdownCell(project.name)}.`,
++    "",
++    "### تفاصيل المشروع",
++    `- **الحالة التشغيلية:** ${escapeMarkdownCell(project.status || "—")}`,
++    `- **المرحلة الحالية:** ${escapeMarkdownCell(project.stage || "—")}`,
++    `- **نسبة الإنجاز:** ${Number.isFinite(Number(project.progress)) ? `${Number(project.progress)}%` : "—"}`,
++    "",
++    `### المهام المفتوحة${Number.isFinite(Number(taskListMeta.totalCount)) ? ` (${Number(taskListMeta.totalCount)})` : ""}`,
++  ];
++  if (!tasks.length) {
++    lines.push("لا توجد مهام مفتوحة ظاهرة في نطاق صلاحياتك لهذا المشروع.");
++    return lines.join("\n");
++  }
++  lines.push("| المهمة | الحالة | المسؤول | تاريخ التسليم | متأخرة |", "|---|---|---|---|---|");
++  const now = Date.now();
++  for (const task of tasks) {
++    const due = task?.dueDate ? new Date(task.dueDate) : null;
++    const overdue = due && !Number.isNaN(due.getTime()) && due.getTime() < now ? "نعم" : "لا";
++    lines.push(`| ${escapeMarkdownCell(task?.title || "—")} | ${escapeMarkdownCell(task?.status || "—")} | ${escapeMarkdownCell(taskAssigneeLabel(task))} | ${displayDate(task?.dueDate)} | ${overdue} |`);
++  }
++  if (taskListMeta.hasMore) {
++    lines.push("", `تم عرض ${Number(taskListMeta.returnedCount || tasks.length)} من ${Number(taskListMeta.totalCount || tasks.length)} مهمة مفتوحة. اطلب باقي المهام لاستكمال القائمة.`);
++  }
++  return lines.join("\n");
++}
++
+ export function classifyRamzyIntent(message, context = {}) {
+   return resolveSemanticIntent({ message, context }).intent;
+ }
+@@ -397,6 +446,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+   const live = {};
+   let liveDataFetched = false;
+   const effectiveProjectId = project?.id || contextualProjectId || conversation.projectId || null;
++  const selectionResolved = Boolean(clarificationSelection && ((selectedProjectId && project?.id === selectedProjectId) || (selectedUserId && assigneeResolution?.entity?.id === selectedUserId) || (selectedTaskId && validatedExplicitTaskId === selectedTaskId)));
+   if (!clarificationRequired && effectiveProjectId && ["PROJECT_LOOKUP", "PROJECT_SUMMARY", "PROJECT_TEAM", "TASK_SEARCH", "TASK_DETAILS", "TASK_OVERDUE", "TASK_BLOCKED", "TASK_BY_ASSIGNEE", "TASK_CREATE", "TASK_UPDATE"].includes(detectedIntent)) {
+     const projectId = effectiveProjectId;
+     if (detectedIntent.startsWith("PROJECT") || detectedIntent === "TASK_CREATE" || detectedIntent === "TASK_UPDATE") {
+@@ -405,6 +455,30 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+       live.project = { ...projectRow, team: projectRow?.projectMemberships?.map((member) => ({ ...member.user, role: member.role })) || [], snapshot: { totals: snapshot.totals, riskProjects: snapshot.riskProjects.slice(0, 3), overdue: snapshot.overdue.slice(0, 10), blocked: snapshot.blocked.slice(0, 10), dueSoon: snapshot.dueSoon.slice(0, 10), workload: snapshot.workload.slice(0, 10) } };
+       liveDataFetched = true;
+     }
++    if (selectionResolved && selectedProjectId && ["PROJECT_LOOKUP", "PROJECT_SUMMARY"].includes(detectedIntent)) {
++      const visibility = await buildAgentTaskVisibilityWhere(user, [projectId], { workspaceId, allowedWorkspaceIds: settings.allowedWorkspaceIds, db: prisma });
++      const openTaskWhere = { projectId, archivedAt: null, status: { notIn: CLOSED_TASKS }, AND: [visibility] };
++      const [totalCount, tasks] = await Promise.all([
++        prisma.task.count({ where: openTaskWhere }),
++        prisma.task.findMany({
++          where: openTaskWhere,
++          select: { id: true, title: true, status: true, priority: true, startDate: true, dueDate: true, blockedReason: true, approvalStatus: true, progress: true, projectId: true, project: { select: { id: true, name: true } }, assignee: { select: { id: true, name: true } }, assignees: { select: { user: { select: { id: true, name: true } } } } },
++          orderBy: [{ dueDate: "asc" }, { updatedAt: "desc" }],
++          take: MAX_TASK_CANDIDATES,
++        }),
++      ]);
++      live.tasks = tasks.map((task) => ({ id: task.id, title: task.title, status: task.status, priority: task.priority, startDate: task.startDate, dueDate: task.dueDate, blockedReason: task.blockedReason, approvalStatus: task.approvalStatus, progress: task.progress, projectId: task.projectId, project: task.project, assignee: task.assignee, assignees: task.assignees.map((entry) => entry.user) }));
++      live.taskListMeta = {
++        source: "POST_CLARIFICATION_PROJECT_OPEN_TASKS",
++        totalCount,
++        returnedCount: tasks.length,
++        hasMore: totalCount > tasks.length,
++      };
++      liveDataFetched = true;
++    }
+     if (["TASK_SEARCH", "TASK_OVERDUE", "TASK_BLOCKED", "TASK_BY_ASSIGNEE", "TASK_DETAILS"].includes(detectedIntent)) {
+       const explicitTaskQuery = extractTaskQuery(requestText);
+       const contextualTaskId = contextResolution.referencedTaskId || null;
+@@ -445,6 +519,10 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+     live.clients = clients;
+     liveDataFetched = true;
+   }
++  const deterministicResponse = selectionResolved && selectedProjectId && ["PROJECT_LOOKUP", "PROJECT_SUMMARY"].includes(detectedIntent) && live.project
++    ? buildDeterministicProjectResumeResponse({ selectionIndex: clarificationSelection.index, project: live.project, tasks: live.tasks || [], taskListMeta: live.taskListMeta || {} })
++    : null;
+   const nextContext = buildNextConversationContext({
+     previous,
+     project,
+@@ -458,10 +536,23 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+     clarificationRequired,
+     contextResolution,
+   });
+   const activeContext = {
+     ...nextContext,
+-    pendingClarification,
++    pendingClarification: clarificationRequired ? pendingClarification : null,
+   };
+-  if (JSON.stringify(activeContext) !== JSON.stringify(previous)) {
++  if (selectionResolved) {
++    activeContext.pendingClarification = null;
++    if (selectedProjectId && project?.id === selectedProjectId) {
++      activeContext.activeProjectId = project.id;
++      activeContext.activeProjectName = project.name || null;
++      activeContext.activeClientId = project.clientId || null;
++    }
++    if (selectedUserId && assigneeResolution?.entity?.id === selectedUserId) {
++      activeContext.activeUserId = assigneeResolution.entity.id;
++      activeContext.activeUserName = assigneeResolution.entity.name || null;
++    }
++    if (selectedTaskId && validatedExplicitTaskId === selectedTaskId) activeContext.activeTaskId = selectedTaskId;
++  }
++  if (JSON.stringify(activeContext) !== JSON.stringify(storedPrevious)) {
+     await prisma.agentConversation.update({ where: { id: conversation.id }, data: { intelligenceContext: activeContext, lastResolvedIntent: detectedIntent } });
+   }
+   const metadata = {
+@@ -493,6 +584,9 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+     clarificationReason: primaryGuard?.reason || null,
+     clarificationChoiceMode: clarificationRequired ? "PRIVATE_INDEX" : (clarificationSelection ? "PRIVATE_INDEX_RESOLVED" : null),
+     clarificationSelectionUsed: Boolean(clarificationSelection),
++    clarificationSelectionResolved: selectionResolved,
++    deterministicResumeResponse: Boolean(deterministicResponse),
++    deterministicTaskCount: Array.isArray(live.tasks) ? live.tasks.length : 0,
+     liveDataFetched,
+     systemContextItemCount: Object.values(live).reduce((count, value) => count + (Array.isArray(value) ? value.length : value ? 1 : 0), 0),
+   };
+@@ -512,6 +606,7 @@ export async function buildRamzySystemIntelligence({ user, conversation, requestText, settings }) {
+       ? { decision: primaryGuard.decision, reason: primaryGuard.reason, entityType: primaryGuard.entityType, candidateCount: clarificationCandidates.length }
+       : { decision: "AUTO_RESOLVE", reason: "NO_BLOCK", entityType: null, candidateCount: 0 },
+     contextResolution,
++    deterministicResponse,
+     intentResolution,
+     metadata,
+     promptContext: systemIntelligencePromptContext({ detectedIntent, intentResolution, activeContext, contextResolution, entities: { project: project ? { id: project.id, name: project.name, confidence: projectResolution.confidence, matchType: projectResolution.matchType || null } : null, assignee: assigneeResolution?.entity ? { id: assigneeResolution.entity.id, name: assigneeResolution.entity.name, confidence: assigneeResolution.confidence, matchType: assigneeResolution.matchType || null } : null }, live, clarificationRequired, clarificationQuestion }),
+diff --git a/backend/src/agency-operator/services/ramzyRuntime.service.js b/backend/src/agency-operator/services/ramzyRuntime.service.js
+--- a/backend/src/agency-operator/services/ramzyRuntime.service.js
++++ b/backend/src/agency-operator/services/ramzyRuntime.service.js
+@@ -296,6 +296,62 @@ export async function runRamzyTurn({
+       return { message: assistantMessage, approvals: [], runId: run.id, fallback: false, memory: memory.stats, systemIntelligence: intelligence.metadata };
+     }
+ 
++    if (String(intelligence.deterministicResponse || "").trim()) {
++      const text = sanitizeUserVisibleInternalIds(intelligence.deterministicResponse, intelligence);
++      if (!text) throw new Error("Deterministic System Intelligence response was empty after sanitization");
++      const deterministicUsage = {
++        providerUsed: "system_intelligence",
++        modelUsed: null,
++        fallback: false,
++        deterministic: true,
++        clarificationResume: Boolean(intelligence.metadata?.clarificationSelectionUsed),
++        memory: { ...memory.stats, persistentMemoryCreated: 0 },
++        systemIntelligence: intelligence.metadata,
++      };
++
++      if (typeof onDelta === "function") onDelta(text);
++
++      const assistantMessage = await prisma.agentMessage.create({
++        data: {
++          conversationId: conversation.id,
++          role: "ASSISTANT",
++          content: text,
++          metadata: {
++            runId: run.id,
++            fallback: false,
++            providerUsed: "system_intelligence",
++            modelUsed: null,
++            usage: deterministicUsage,
++            systemIntelligence: intelligence.metadata,
++          },
++        },
++      });
++      await prisma.agentRun.update({
++        where: { id: run.id },
++        data: {
++          status: "SUCCEEDED",
++          output: { text, messageId: assistantMessage.id, deterministic: true },
++          usage: deterministicUsage,
++          completedAt: new Date(),
++        },
++      });
++      const defaultTitle = !conversation.title || conversation.title === "محادثة جديدة مع رمزي";
++      await prisma.agentConversation.update({
++        where: { id: conversation.id },
++        data: { lastMessageAt: new Date(), ...(defaultTitle ? { title: String(message).slice(0, 80) } : {}) },
++      });
++      io?.to(`user:${user.id}`).emit("ramzy:message", { conversationId: conversation.id, message: assistantMessage, approvals: [] });
++      return {
++        message: assistantMessage,
++        approvals: [],
++        runId: run.id,
++        fallback: false,
++        memory: memory.stats,
++        systemIntelligence: intelligence.metadata,
++      };
++    }
++
+     const prompt = historyPrompt(memory.history, message, `${memoryPromptContext(memory)}${intelligence.promptContext || ""}`);
+     let text = "";
+     let usage = null;
