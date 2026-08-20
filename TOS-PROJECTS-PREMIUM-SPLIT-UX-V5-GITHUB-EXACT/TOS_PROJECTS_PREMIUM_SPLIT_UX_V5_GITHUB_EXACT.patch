@@ -1,0 +1,168 @@
+--- a/frontend/src/pages/ProjectsPage.jsx
++++ b/frontend/src/pages/ProjectsPage.jsx
+@@ -4691,27 +4691,144 @@
+           locale={locale}
+         />
+       ) : (
+-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+-          {paginatedProjects.map((project) => (
+-            <ReferenceProjectsGridCard
+-              key={project.id}
+-              project={project}
+-              user={user}
+-              activeProjectId={activeProjectId}
+-              showArchived={showArchived}
+-              archivingId={archivingId}
+-              restoringId={restoringId}
+-              setActiveProjectId={setActiveProjectId}
+-              onOpenDetails={openDetails}
+-              onOpenTasks={onOpenTasks}
+-              onArchive={archiveSelectedProject}
+-              onRestore={restoreSelectedProject}
+-              ui={ui}
+-              labels={labels}
+-              locale={locale}
+-            />
+-          ))}
+-        </div>
++        {(() => {
++          const selectedProject = paginatedProjects.find((project) => project.id === activeProjectId) || paginatedProjects[0];
++          const selectedSummary = selectedProject ? projectTaskSummary(selectedProject) : null;
++          const selectedProgress = selectedProject ? safeProgress(selectedProject) : 0;
++          const selectedTimeline = selectedProject ? localizedTimelineInfo(selectedProject, locale) : null;
++          const selectedTeamCandidate = selectedProject ? projectActualTeam(selectedProject) : [];
++          const selectedTeam = Array.isArray(selectedTeamCandidate) ? selectedTeamCandidate : [];
++          const selectedManager = selectedTeam.find((member) => ["OWNER", "MANAGER"].includes(String(member?.role || "").toUpperCase())) || selectedTeam[0];
++          const selectedManagerName = selectedManager?.user?.name || selectedManager?.user?.email || selectedManager?.name || ui.unknown;
++          const selectedTaskCount = Math.max(0, Number(selectedSummary?.total ?? selectedProject?.tasksCount ?? 0) || 0);
++          const selectedInitials = String(selectedProject?.name || projectClientName(selectedProject) || "PR")
++            .split(/\s+/)
++            .filter(Boolean)
++            .slice(0, 2)
++            .map((word) => word.charAt(0))
++            .join("")
++            .toUpperCase()
++            .slice(0, 3) || "PR";
++
++          return (
++            <div className="grid gap-4 2xl:grid-cols-[minmax(0,1.22fr)_minmax(390px,.78fr)]">
++              <section className="overflow-hidden rounded-[26px] border border-zinc-200/70 bg-white shadow-[0_18px_55px_rgba(15,23,42,0.055)] ring-1 ring-white/80 dark:border-zinc-800 dark:bg-zinc-950 dark:ring-white/[0.025]">
++                <div className="flex flex-col gap-3 border-b border-zinc-100 bg-gradient-to-r from-white via-white to-amber-50/35 px-4 py-4 dark:border-zinc-800 dark:from-zinc-950 dark:via-zinc-950 dark:to-amber-500/[0.035] lg:flex-row lg:items-center lg:justify-between">
++                  <div>
++                    <h2 className="text-base font-black tracking-[-0.02em] text-zinc-950 dark:text-white">{locale === "ar" ? "قائمة المشاريع" : "Projects list"}</h2>
++                    <p className="mt-1 text-[10px] font-bold text-zinc-400">{locale === "ar" ? "اختر مشروعًا لمعاينة أهم البيانات قبل فتح لوحة المهام." : "Select a project to preview key details before opening the task board."}</p>
++                  </div>
++                  <Badge tone="gold">{ui.pageRange({ start: pageStart, end: pageEnd, total: filteredProjects.length })}</Badge>
++                </div>
++
++                <div className="hidden grid-cols-[minmax(220px,1.45fr)_minmax(100px,.8fr)_92px_120px_72px_104px] gap-3 border-b border-zinc-100 bg-zinc-50/70 px-4 py-2.5 text-[9px] font-black uppercase tracking-wide text-zinc-400 dark:border-zinc-800 dark:bg-white/[0.025] lg:grid">
++                  <span>{ui.tableProject}</span>
++                  <span>{ui.projectManager || (locale === "ar" ? "مدير المشروع" : "Project manager")}</span>
++                  <span>{ui.tableStatus}</span>
++                  <span>{ui.tableProgress}</span>
++                  <span>{ui.tasks}</span>
++                  <span>{ui.lastUpdate || (locale === "ar" ? "آخر تحديث" : "Last update")}</span>
++                </div>
++
++                <div>
++                  {paginatedProjects.map((project) => {
++                    const selected = selectedProject?.id === project.id;
++                    const summary = projectTaskSummary(project);
++                    const progress = safeProgress(project);
++                    const rowTeamCandidate = projectActualTeam(project);
++                    const rowTeam = Array.isArray(rowTeamCandidate) ? rowTeamCandidate : [];
++                    const rowManager = rowTeam.find((member) => ["OWNER", "MANAGER"].includes(String(member?.role || "").toUpperCase())) || rowTeam[0];
++                    const rowManagerName = rowManager?.user?.name || rowManager?.user?.email || rowManager?.name || ui.unknown;
++                    const progressTone = progress >= 75 ? "bg-emerald-500" : progress >= 40 ? "bg-amber-500" : "bg-rose-500";
++                    const updatedAt = project?.updatedAt
++                      ? new Date(project.updatedAt).toLocaleDateString(locale === "ar" ? "ar-EG" : "en-US", { month: "short", day: "numeric" })
++                      : ui.unknown;
++                    const initials = String(project?.name || projectClientName(project) || "PR")
++                      .split(/\s+/).filter(Boolean).slice(0, 2).map((word) => word.charAt(0)).join("").toUpperCase().slice(0, 3) || "PR";
++
++                    return (
++                      <button
++                        key={project.id}
++                        type="button"
++                        onClick={() => setActiveProjectId(project.id)}
++                        className={cn(
++                          "group grid w-full gap-3 border-b border-zinc-100 px-4 py-3.5 text-start transition-all last:border-b-0 hover:bg-zinc-50/80 dark:border-zinc-800 dark:hover:bg-white/[0.035] lg:grid-cols-[minmax(220px,1.45fr)_minmax(100px,.8fr)_92px_120px_72px_104px] lg:items-center",
++                          selected && "bg-gradient-to-r from-amber-50/90 via-white to-white ring-1 ring-inset ring-amber-200/80 shadow-[0_10px_30px_rgba(245,158,11,0.08)] dark:from-amber-500/10 dark:via-zinc-950 dark:to-zinc-950 dark:ring-amber-500/20"
++                        )}
++                      >
++                        <div className="flex min-w-0 items-center gap-3">
++                          <div className={cn("grid h-11 w-11 shrink-0 place-items-center rounded-[15px] bg-gradient-to-br from-zinc-950 to-zinc-700 text-[11px] font-black tracking-[0.08em] text-white shadow-md dark:from-white dark:to-zinc-300 dark:text-zinc-950", selected && "ring-2 ring-amber-300/70")}>{initials}</div>
++                          <div className="min-w-0">
++                            <div className="flex min-w-0 items-center gap-2">
++                              <h3 dir="auto" className="truncate text-[13px] font-black text-zinc-950 dark:text-white">{project.name || ui.projectFallback}</h3>
++                              {selected && <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-black text-amber-800 ring-1 ring-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/20">{locale === "ar" ? "محدد" : "Selected"}</span>}
++                            </div>
++                            <p className="mt-1 truncate text-[10px] font-bold text-zinc-400">{fieldValue(project.type, ui.noType)} · {projectClientName(project) || ui.noClient}</p>
++                          </div>
++                        </div>
++                        <span className="truncate text-[11px] font-black text-zinc-700 dark:text-zinc-300">{rowManagerName}</span>
++                        <div><Badge tone={STATUS_TONES[project.status]}>{labels.status[project.status] || ui.project}</Badge></div>
++                        <div>
++                          <div className="mb-1 flex items-center justify-between text-[9px] font-black text-zinc-400"><span>{progress}%</span><span>{summary?.completed ?? 0}/{summary?.total ?? 0}</span></div>
++                          <div className="h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"><div className={cn("h-full rounded-full transition-all duration-500", progressTone)} style={{ width: `${progress}%` }} /></div>
++                        </div>
++                        <span className="text-[11px] font-black text-zinc-600 dark:text-zinc-300">{summary?.total ?? project.tasksCount ?? 0}</span>
++                        <div className="flex items-center justify-between gap-2"><span className="truncate text-[10px] font-bold text-zinc-500 dark:text-zinc-400">{updatedAt}</span><ChevronRight className={cn("h-4 w-4 shrink-0 text-zinc-300 transition-transform group-hover:translate-x-0.5", locale === "ar" && "rotate-180")} /></div>
++                      </button>
++                    );
++                  })}
++                </div>
++              </section>
++
++              {selectedProject && (
++                <aside className="self-start overflow-hidden rounded-[26px] border border-zinc-200/70 bg-white shadow-[0_18px_55px_rgba(15,23,42,0.07)] ring-1 ring-white/80 dark:border-zinc-800 dark:bg-zinc-950 dark:ring-white/[0.025] 2xl:sticky 2xl:top-4">
++                  <div className="relative overflow-hidden bg-[radial-gradient(circle_at_85%_15%,rgba(245,158,11,0.18),transparent_30%),linear-gradient(135deg,#07111f_0%,#101827_52%,#07111f_100%)] p-5 text-white">
++                    <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(255,255,255,.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.045)_1px,transparent_1px)] [background-size:28px_28px]" />
++                    <div className="relative flex items-start gap-4">
++                      <div className="grid h-20 w-20 shrink-0 place-items-center rounded-[22px] border border-white/10 bg-white/[0.06] text-xl font-black tracking-[0.09em] shadow-2xl backdrop-blur-xl">{selectedInitials}</div>
++                      <div className="min-w-0 flex-1">
++                        <div className="flex flex-wrap items-center justify-between gap-2">
++                          <span className="inline-flex items-center gap-1.5 text-[10px] font-black text-amber-300"><span className="h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_14px_rgba(251,191,36,.8)]" />{locale === "ar" ? "المشروع المحدد" : "Selected project"}</span>
++                          <Badge tone={STATUS_TONES[selectedProject.status]}>{labels.status[selectedProject.status] || ui.project}</Badge>
++                        </div>
++                        <h2 dir="auto" className="mt-3 line-clamp-2 text-2xl font-black leading-tight tracking-[-0.025em]">{selectedProject.name || ui.projectFallback}</h2>
++                        <p className="mt-2 truncate text-[11px] font-bold text-slate-300">{projectClientName(selectedProject) || ui.noClient} · {fieldValue(selectedProject.type, ui.noType)}</p>
++                        <button type="button" onClick={() => openDetails(selectedProject, "overview")} className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-black text-amber-300 transition hover:text-amber-200">{locale === "ar" ? "عرض التفاصيل" : "More"} <ExternalLink size={13} /></button>
++                      </div>
++                    </div>
++                  </div>
++
++                  <div className="grid grid-cols-2 gap-2 border-b border-zinc-100 bg-zinc-50/50 p-3 dark:border-zinc-800 dark:bg-white/[0.025]">
++                    <div className="rounded-[16px] border border-zinc-200/60 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-950"><p className="text-[9px] font-black text-zinc-400">{locale === "ar" ? "مدير المشروع" : "Project manager"}</p><p className="mt-1 truncate text-[11px] font-black text-zinc-950 dark:text-white">{selectedManagerName}</p></div>
++                    <div className="rounded-[16px] border border-zinc-200/60 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-950"><p className="text-[9px] font-black text-zinc-400">{locale === "ar" ? "إجمالي المهام" : "Total tasks"}</p><p className="mt-1 text-[11px] font-black text-zinc-950 dark:text-white">{selectedTaskCount}</p></div>
++                    <div className="rounded-[16px] border border-zinc-200/60 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-950"><p className="text-[9px] font-black text-zinc-400">{locale === "ar" ? "موعد التسليم" : "Due date"}</p><p className="mt-1 truncate text-[11px] font-black text-zinc-950 dark:text-white">{selectedTimeline?.detail || ui.unknown}</p></div>
++                    <div className="rounded-[16px] border border-zinc-200/60 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-950"><p className="text-[9px] font-black text-zinc-400">{locale === "ar" ? "نسبة الإنجاز" : "Progress"}</p><p className="mt-1 text-[11px] font-black text-zinc-950 dark:text-white">{selectedProgress}%</p></div>
++                  </div>
++
++                  <div className="p-4">
++                    <div className="rounded-[20px] border border-zinc-200/60 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
++                      <div className="flex items-center justify-between gap-3">
++                        <div>
++                          <h3 className="text-[13px] font-black text-zinc-950 dark:text-white">{locale === "ar" ? "ملخص المشروع" : "Project overview"}</h3>
++                          <p className="mt-1 text-[9px] font-bold text-zinc-400">{locale === "ar" ? "نظرة سريعة قبل الدخول للتفاصيل الكاملة" : "A quick preview before opening full details"}</p>
++                        </div>
++                        <div className="grid h-14 w-14 place-items-center rounded-full p-1.5" style={{ background: `conic-gradient(#f59e0b ${selectedProgress}%, #f4f4f5 0)` }}><div className="grid h-full w-full place-items-center rounded-full bg-white text-[11px] font-black text-zinc-950 dark:bg-zinc-950 dark:text-white">{selectedProgress}%</div></div>
++                      </div>
++                      <div className="mt-4 grid grid-cols-2 gap-2 text-[10px] font-black">
++                        <div className="rounded-[14px] bg-zinc-50 p-3 text-zinc-600 dark:bg-white/[0.035] dark:text-zinc-300">{locale === "ar" ? "المكتملة" : "Completed"} <b className="float-end text-zinc-950 dark:text-white">{selectedSummary?.completed ?? 0}</b></div>
++                        <div className="rounded-[14px] bg-zinc-50 p-3 text-zinc-600 dark:bg-white/[0.035] dark:text-zinc-300">{locale === "ar" ? "المفتوحة" : "Open"} <b className="float-end text-zinc-950 dark:text-white">{selectedSummary?.open ?? 0}</b></div>
++                      </div>
++                      <div className="mt-4 grid grid-cols-2 gap-2">
++                        <Button type="button" variant="dark" className="h-10 justify-center rounded-[13px] text-[11px] font-black" onClick={() => openDetails(selectedProject, "overview")}>{ui.details}</Button>
++                        {!showArchived && <Button type="button" variant="gold" className="h-10 justify-center rounded-[13px] text-[11px] font-black" onClick={() => { setActiveProjectId(selectedProject.id); onOpenTasks?.(selectedProject.id); }}><FolderKanban size={14} /> {ui.taskBoard}</Button>}
++                      </div>
++                    </div>
++                  </div>
++                </aside>
++              )}
++            </div>
++          );
++        })()}
+           )}
+         </div>
+ 
