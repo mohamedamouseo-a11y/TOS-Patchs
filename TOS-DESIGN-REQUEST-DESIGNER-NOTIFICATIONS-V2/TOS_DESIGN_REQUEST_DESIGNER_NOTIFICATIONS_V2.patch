@@ -1,0 +1,219 @@
+diff --git a/backend/src/routes/tasks.routes.js b/backend/src/routes/tasks.routes.js
+--- a/backend/src/routes/tasks.routes.js
++++ b/backend/src/routes/tasks.routes.js
+@@ -5222,3 +5222,19 @@
+     await logActivity(tx, { taskId: task.id, userId: req.user.id, type: "UPDATED", message: "Design Queue assignment updated", metadata: { fields: Object.keys(data), source: "DESIGN_QUEUE" } });
+-    if (data.assigneeId && data.assigneeId !== designTaskAssigneeIds(task)[0]) await tx.notification.create({ data: { recipientId: data.assigneeId, actorId: req.user.id, type: "DESIGN_TASK_ASSIGNED", title: "تم إسناد طلب تصميم إليك", body: task.title, metadata: { taskId: task.id, projectId: task.projectId, source: "DESIGN_QUEUE" } } });
++    if (data.assigneeId && data.assigneeId !== designTaskAssigneeIds(task)[0]) await tx.notification.create({
++      data: {
++        recipientId: data.assigneeId,
++        actorId: req.user.id,
++        type: "DESIGN_TASK_ASSIGNED",
++        title: "تم إسناد طلب تصميم إليك",
++        body: task.title,
++        metadata: {
++          taskId: task.id,
++          projectId: task.projectId,
++          projectName: task.project?.name || null,
++          title: task.title,
++          source: "DESIGN_QUEUE",
++          url: `/design-queue?taskId=${encodeURIComponent(task.id)}`,
++        },
++      },
++    });
+     if (task.designRequestedById && task.designRequestedById !== req.user.id && data.assigneeId !== designTaskAssigneeIds(task)[0]) await tx.notification.create({ data: { recipientId: task.designRequestedById, actorId: req.user.id, type: "DESIGN_REQUEST_ASSIGNED", title: "تم توزيع طلب التصميم", body: task.title, metadata: { taskId: task.id, projectId: task.projectId, assigneeId: data.assigneeId || null, source: "DESIGN_QUEUE" } } });
+@@ -5229,3 +5245,8 @@
+   pushTaskEventToTcrmSafe(updated, "task.updated", req.user);
+   pushProjectProgressEventToTcrmSafe(updated.projectId, "project.progress.updated", req.user);
++  const previousDesignAssigneeId = designTaskAssigneeIds(task)[0] || null;
++  const assignedDesignerId = designTaskAssigneeIds(updated)[0] || null;
++  if (assignedDesignerId && assignedDesignerId !== previousDesignAssigneeId) {
++    req.app.get("io")?.to(`user:${assignedDesignerId}`).emit("design-request:assigned", { taskId: updated.id });
++  }
+   res.json(safeDesignQueueTask(updated, context, context.viewer || req.user));
+diff --git a/frontend/src/components/layout/Topbar.jsx b/frontend/src/components/layout/Topbar.jsx
+--- a/frontend/src/components/layout/Topbar.jsx
++++ b/frontend/src/components/layout/Topbar.jsx
+@@ -6,2 +6,3 @@
+ import { api } from "../../lib/api";
++import { connectSocket } from "../../lib/socket";
+ import { useRealtimeRefresh } from "../../lib/realtimeStateSync";
+@@ -46,3 +47,12 @@
+     return () => window.clearInterval(timer);
+   }, [user?.id]);
++
++  useEffect(() => {
++    if (!user?.id) return undefined;
++    const socket = connectSocket();
++    const handleDesignAssignment = () => { void loadNotifications(); };
++    socket.on("design-request:assigned", handleDesignAssignment);
++    return () => socket.off("design-request:assigned", handleDesignAssignment);
++  }, [user?.id]);
++
+   useRealtimeRefresh(["notifications", "employeeWork"], loadNotifications, { debounceMs: 250, minIntervalMs: 500 });
+diff --git a/frontend/src/pages/DesignQueuePage.jsx b/frontend/src/pages/DesignQueuePage.jsx
+--- a/frontend/src/pages/DesignQueuePage.jsx
++++ b/frontend/src/pages/DesignQueuePage.jsx
+@@ -71,4 +71,14 @@
+   return user?.name || user?.email || fallback;
+ }
+ 
++function isIndividualDesigner(user) {
++  const role = String(user?.role || "").toUpperCase();
++  if (["SUPER_ADMIN", "ADMIN", "MANAGER", "PROJECT_MANAGER"].includes(role)) return false;
++  return /^(design|designer|graphic design|تصميم)$/.test(String(user?.department || "").trim().toLowerCase());
++}
++
++function notificationTaskId(item) {
++  return String(item?.metadata?.taskId || "").trim();
++}
++
+ function initials(value = "") {
+@@ -209,8 +219,11 @@
+-function TaskCard({ task, onSelect, capacityMode, tr, lang }) {
++function TaskCard({ task, onSelect, capacityMode, tr, lang, isNew = false }) {
+   const overdue = task?.dueDate && !CLOSED_STATUSES.has(task.status) && new Date(task.dueDate) < new Date();
+   return (
+     <button type="button" onClick={() => onSelect(task.id)} className="w-full rounded-2xl border border-zinc-100 bg-white p-3 text-start shadow-sm transition hover:-translate-y-0.5 hover:border-amber-300 hover:shadow-md dark:border-white/10 dark:bg-zinc-950">
+       <div className="flex items-start justify-between gap-2">
+         <div className="min-w-0"><div className="line-clamp-2 text-sm font-black leading-6 text-zinc-950 dark:text-white">{task.title}</div><div className="mt-1 truncate text-[11px] font-bold text-zinc-400">{task.project?.name || tr.common.noProject}</div></div>
+-        <Badge tone={PRIORITY_TONES[task.priority] || "neutral"}>{tr.priority[task.priority] || task.priority}</Badge>
++        <div className="flex shrink-0 flex-col items-end gap-1.5">
++          {isNew && <Badge tone="blue">{lang === "en" ? "New" : "جديد"}</Badge>}
++          <Badge tone={PRIORITY_TONES[task.priority] || "neutral"}>{tr.priority[task.priority] || task.priority}</Badge>
++        </div>
+       </div>
+@@ -231,4 +244,4 @@
+-function KanbanBoard({ columns, onSelectTask, loading, capacityMode, tr, lang }) {
++function KanbanBoard({ columns, onSelectTask, loading, capacityMode, tr, lang, newTaskIds }) {
+   const config = [
+     { id: "unassigned", ...tr.queue.columns.unassigned, accent: "bg-amber-500", soft: "bg-amber-50 dark:bg-amber-400/10" },
+     { id: "assigned", ...tr.queue.columns.assigned, accent: "bg-blue-500", soft: "bg-blue-50 dark:bg-blue-400/10" },
+@@ -245,4 +258,4 @@
+           return (
+             <section key={column.id} className="flex h-full min-w-0 flex-col overflow-hidden rounded-[24px] border border-zinc-100 bg-zinc-50/80 dark:border-white/10 dark:bg-white/[0.03]">
+               <div className="border-b border-zinc-100 bg-white px-3.5 py-3 dark:border-white/10 dark:bg-zinc-950"><div className="flex items-center justify-between gap-2"><div className="flex items-center gap-2"><span className={cn("h-2.5 w-2.5 rounded-full", column.accent)} /><span className="text-sm font-black text-zinc-900 dark:text-white">{column.label}</span></div><span className={cn("rounded-full px-2 py-1 text-[11px] font-black text-zinc-700 dark:text-zinc-200", column.soft)}>{tasks.length}</span></div><div className="mt-1 text-[10px] font-bold text-zinc-400">{column.hint}</div></div>
+-              <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto p-2.5">{tasks.map((task) => <TaskCard key={task.id} task={task} onSelect={onSelectTask} capacityMode={capacityMode} tr={tr} lang={lang} />)}{!tasks.length && <div className="grid min-h-28 place-items-center rounded-2xl border border-dashed border-zinc-200 bg-white/70 px-4 text-center text-xs font-bold text-zinc-400 dark:border-white/10 dark:bg-white/[0.02]">{tr.queue.noColumnTasks}</div>}</div>
++              <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto p-2.5">{tasks.map((task) => <TaskCard key={task.id} task={task} onSelect={onSelectTask} capacityMode={capacityMode} tr={tr} lang={lang} isNew={newTaskIds?.has(String(task.id))} />)}{!tasks.length && <div className="grid min-h-28 place-items-center rounded-2xl border border-dashed border-zinc-200 bg-white/70 px-4 text-center text-xs font-bold text-zinc-400 dark:border-white/10 dark:bg-white/[0.02]">{tr.queue.noColumnTasks}</div>}</div>
+@@ -502,7 +515,9 @@
+ export function DesignQueuePage({ user, projects = [] }) {
+   const { lang, isAr } = usePreferences();
+   const tr = getDesignOperationsT(lang);
++  const designerMode = isIndividualDesigner(user);
+   const [data, setData] = useState({ summary: {}, designers: [], tasks: [], settings: {}, permissions: {} });
+   const [projectOptions, setProjectOptions] = useState(() => mergeDesignQueueProjectOptions([], projects));
+-  const [filters, setFilters] = useState({ projectId: "all", status: "all", assignee: "all", lifecycle: "active" });
++  const [filters, setFilters] = useState({ projectId: "all", status: "all", assignee: designerMode && user?.id ? user.id : "all", lifecycle: "active" });
++  const [newTaskIds, setNewTaskIds] = useState(() => new Set());
+   const [query, setQuery] = useState("");
+@@ -580,8 +595,14 @@
+         const openTaskId = preserveModal ? selectedTaskIdRef.current : "";
+-        const [payload, refreshedDetails] = await Promise.all([
++        const [payload, refreshedDetails, notifications] = await Promise.all([
+           api.tasks.designQueue(nextFilters),
+           openTaskId ? api.tasks.designQueueDetails(openTaskId).catch(() => null) : Promise.resolve(null),
++          api.users.notifications().catch(() => []),
+         ]);
+         const nextData = { summary: payload?.summary || {}, designers: payload?.designers || [], tasks: payload?.tasks || [], settings: payload?.settings || {}, permissions: payload?.permissions || {}, leadership: payload?.leadership || {} };
++        const unreadAssignedTaskIds = new Set((notifications || [])
++          .filter((item) => !item?.readAt && item?.type === "DESIGN_TASK_ASSIGNED")
++          .map(notificationTaskId)
++          .filter(Boolean));
++        setNewTaskIds(unreadAssignedTaskIds);
+         setData(nextData);
+         setProjectOptions((current) => mergeDesignQueueProjectOptions(current, [
+@@ -622,3 +643,10 @@
+-  useEffect(() => { loadQueue(); }, []);
++  useEffect(() => {
++    const requestedTaskId = typeof window !== "undefined"
++      ? String(new URLSearchParams(window.location.search).get("taskId") || "").trim()
++      : "";
++    loadQueue().then(() => {
++      if (requestedTaskId) void openTask(requestedTaskId);
++    });
++  }, []);
+ 
+   useEffect(() => {
+@@ -664,3 +692,13 @@
+   async function openTask(taskId) {
+     setSelectedTaskId(taskId); setSelectedTaskDetails(null); setDetailsOpen(true); setDetailsLoading(true);
++    setNewTaskIds((current) => {
++      const next = new Set(current);
++      next.delete(String(taskId));
++      return next;
++    });
++    void api.users.notifications()
++      .then((items) => Promise.all((items || [])
++        .filter((item) => !item?.readAt && item?.type === "DESIGN_TASK_ASSIGNED" && notificationTaskId(item) === String(taskId))
++        .map((item) => api.users.markNotificationRead(item.id).catch(() => null))))
++      .catch(() => {});
+     window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+@@ -783,3 +821,3 @@
+           <Field as="select" value={filters.status} onChange={(event) => updateFilters({ status: event.target.value })}>{STATUS_OPTIONS.map((status) => <option key={status} value={status}>{status === "all" ? tr.queue.filters.statuses : tr.status[status]}</option>)}</Field>
+-          <Field as="select" value={filters.assignee} onChange={(event) => updateFilters({ assignee: event.target.value })}><option value="all">{tr.queue.filters.assignees}</option><option value="unassigned">{tr.queue.stats.unassigned}</option>{data.designers.map((designer) => <option key={designer.id} value={designer.id}>{designerLabel(designer, tr.common.designer)}</option>)}</Field>
++          <Field as="select" value={filters.assignee} onChange={(event) => updateFilters({ assignee: event.target.value })}><option value="all">{tr.queue.filters.assignees}</option>{designerMode && user?.id && <option value={user.id}>{isAr ? "مهامي" : "My tasks"}</option>}<option value="unassigned">{tr.queue.stats.unassigned}</option>{data.designers.filter((designer) => !designerMode || designer.id !== user?.id).map((designer) => <option key={designer.id} value={designer.id}>{designerLabel(designer, tr.common.designer)}</option>)}</Field>
+           <Field as="select" value={filters.lifecycle} onChange={(event) => updateFilters({ lifecycle: event.target.value })}><option value="active">{tr.queue.filters.active}</option><option value="archived">{tr.queue.filters.archived}</option><option value="rejected">{tr.queue.filters.rejected}</option><option value="all">{tr.queue.filters.all}</option></Field>
+@@ -792,3 +830,3 @@
+         <div className="flex items-center justify-between gap-3 border-b border-zinc-100 px-4 py-3 dark:border-white/10"><div><div className="text-sm font-black text-zinc-950 dark:text-white">{tr.queue.boardTitle}</div><div className="mt-1 text-[10px] font-bold text-zinc-400">{tr.queue.boardHint}</div></div><div className="flex items-center gap-1 text-[10px] font-bold text-zinc-400"><Gauge size={14} /> {settings.capacityMode === "TASKS" ? tr.queue.capacity.byTasks : tr.queue.capacity.byHours}</div></div>
+-        <div className="h-[calc(100%-65px)] min-h-0"><KanbanBoard columns={kanbanColumns} onSelectTask={openTask} loading={loading} capacityMode={settings.capacityMode} tr={tr} lang={lang} /></div>
++        <div className="h-[calc(100%-65px)] min-h-0"><KanbanBoard columns={kanbanColumns} onSelectTask={openTask} loading={loading} capacityMode={settings.capacityMode} tr={tr} lang={lang} newTaskIds={newTaskIds} /></div>
+       </Card>
+diff --git a/frontend/src/components/layout/Sidebar.jsx b/frontend/src/components/layout/Sidebar.jsx
+--- a/frontend/src/components/layout/Sidebar.jsx
++++ b/frontend/src/components/layout/Sidebar.jsx
+@@ -32,2 +32,5 @@
+ import { canManageUsers } from "../../lib/permissions";
++import { api } from "../../lib/api";
++import { connectSocket } from "../../lib/socket";
+ import { pathForPage } from "../../lib/pageRoutes";
++import { useRealtimeRefresh } from "../../lib/realtimeStateSync";
+@@ -205,4 +208,5 @@
+   const [activeSettingsSection, setActiveSettingsSection] = useState(readSettingsSectionFromLocation);
+   const [collapsedTooltip, setCollapsedTooltip] = useState(null);
++  const [designUnreadCount, setDesignUnreadCount] = useState(0);
+ 
+   const { lang } = usePreferences();
+@@ -217,4 +221,33 @@
+   const settingsSubnavItems = getSettingsSubnavItemsForUser(user, lang);
+ 
++  async function loadDesignUnreadCount() {
++    if (!user?.id || !getNavItemAccess("designQueue", user)) {
++      setDesignUnreadCount(0);
++      return;
++    }
++    try {
++      const notifications = await api.users.notifications();
++      setDesignUnreadCount((notifications || []).filter((item) => !item?.readAt && item?.type === "DESIGN_TASK_ASSIGNED").length);
++    } catch {
++      setDesignUnreadCount(0);
++    }
++  }
++
++  useEffect(() => {
++    loadDesignUnreadCount();
++    const timer = window.setInterval(loadDesignUnreadCount, 60000);
++    return () => window.clearInterval(timer);
++  }, [user?.id]);
++
++  useEffect(() => {
++    if (!user?.id) return undefined;
++    const socket = connectSocket();
++    const handleDesignAssignment = () => { void loadDesignUnreadCount(); };
++    socket.on("design-request:assigned", handleDesignAssignment);
++    return () => socket.off("design-request:assigned", handleDesignAssignment);
++  }, [user?.id]);
++
++  useRealtimeRefresh(["notifications", "tasks", "employeeWork"], loadDesignUnreadCount, { debounceMs: 250, minIntervalMs: 500 });
++
+   useEffect(() => {
+     if (active === "settings") {
+@@ -444,4 +477,8 @@
+                   <SubIcon size={15} className={cn("shrink-0", subSelected ? "text-amber-600" : "text-slate-400 group-hover/sub:text-slate-600")} />
+                   <span className="truncate">{subItem.label}</span>
+-                  <span className={cn("ms-auto h-1.5 w-1.5 rounded-full", subSelected ? "bg-amber-500" : "bg-slate-300")} />
++                  {subItem.id === "designQueue" && designUnreadCount > 0 ? (
++                    <span className="ms-auto grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1 text-[10px] font-black text-white">{designUnreadCount > 9 ? "9+" : designUnreadCount}</span>
++                  ) : (
++                    <span className={cn("ms-auto h-1.5 w-1.5 rounded-full", subSelected ? "bg-amber-500" : "bg-slate-300")} />
++                  )}
+                 </a>
