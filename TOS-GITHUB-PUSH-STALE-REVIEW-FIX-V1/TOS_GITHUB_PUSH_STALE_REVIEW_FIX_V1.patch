@@ -1,0 +1,44 @@
+--- a/frontend/src/components/GithubAdvancedAdmin.jsx
++++ b/frontend/src/components/GithubAdvancedAdmin.jsx
+@@ -205,20 +205,26 @@
+       const reviewedPreview = nextOperation.result?.preview || null;
+       setPreview(reviewedPreview);
+       setReviewedAction(reviewedPreview && nextOperation.status === "SUCCESS" ? nextOperation.action : null);
+       setReviewOperationId(reviewedPreview && nextOperation.status === "SUCCESS" ? nextOperation.id : null);
+     }
++    if (nextOperation.kind === "execute") {
++      setPreview(null);
++      setReviewedAction(null);
++      setReviewOperationId(null);
++    }
+     if (nextOperation.status === "SUCCESS") {
+       const localWarnings = Array.isArray(nextOperation.result?.warnings) ? nextOperation.result.warnings.filter(Boolean) : [];
+       setMessage(localWarnings.length
+         ? "تم رفع الكود إلى GitHub بنجاح، مع تحذيرات في خطوات الإغلاق المحلية فقط."
+         : (nextOperation.stepAr || "اكتملت العملية بنجاح."));
+       setError("");
+       await loadStatus();
+     } else {
+       setError(nextOperation.error || nextOperation.stepAr || "توقفت العملية.");
+       setMessage("");
++      if (nextOperation.kind === "execute") await loadStatus();
+     }
+   }, [clearTimer, loadStatus]);
+ 
+   const pollOperation = useCallback(async (operationId) => {
+     clearTimer();
+--- a/backend/src/services/githubAdvanced.service.js
++++ b/backend/src/services/githubAdvanced.service.js
+@@ -1136,11 +1136,11 @@
+       await runGitRaw(repoPath, ["reset", "--mixed", pushedSha], { timeout: 60_000 });
+     });
+   }
+ 
+   await runPostPushStep(operationId, warnings, "Refresh local remote-tracking branch", () =>
+-    runAuthenticatedGit(repoPath, ["fetch", selected.cloneUrl, `${branch}:refs/remotes/${remoteName}/${branch}`], settings, { timeout: 180_000 }),
++    runGitRaw(repoPath, ["update-ref", `refs/remotes/${remoteName}/${branch}`, verification.remoteSha], { timeout: 15_000 }),
+   );
+   await runPostPushStep(operationId, warnings, "Set local upstream branch", async () => {
+     const result = await runGitRaw(repoPath, ["branch", "--set-upstream-to", `${remoteName}/${branch}`, branch], { timeout: 15_000, allowFailure: true });
+     if (result.code !== 0) throw new AppError(result.stderr || "Unable to set local upstream branch", 409);
+   });
