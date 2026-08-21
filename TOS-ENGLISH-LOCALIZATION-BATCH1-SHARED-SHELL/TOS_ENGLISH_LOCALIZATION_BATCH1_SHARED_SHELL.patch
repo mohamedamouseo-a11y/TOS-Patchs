@@ -1,0 +1,178 @@
+diff --git a/frontend/src/components/layout/Topbar.jsx b/frontend/src/components/layout/Topbar.jsx
+--- a/frontend/src/components/layout/Topbar.jsx
++++ b/frontend/src/components/layout/Topbar.jsx
+@@ -9,8 +9,18 @@
+-const roleLabels = {
+-  SUPER_ADMIN: "مدير النظام",
+-  ADMIN: "مدير",
+-  MANAGER: "قائد فريق",
+-  PROJECT_MANAGER: "مدير مشروع",
+-  TEAM_MEMBER: "عضو فريق",
+-  CLIENT: "عميل",
++const roleLabels = {
++  ar: {
++    SUPER_ADMIN: "مدير النظام",
++    ADMIN: "مدير",
++    MANAGER: "قائد فريق",
++    PROJECT_MANAGER: "مدير مشروع",
++    TEAM_MEMBER: "عضو فريق",
++    CLIENT: "عميل",
++  },
++  en: {
++    SUPER_ADMIN: "System Admin",
++    ADMIN: "Admin",
++    MANAGER: "Team Lead",
++    PROJECT_MANAGER: "Project Manager",
++    TEAM_MEMBER: "Team Member",
++    CLIENT: "Client",
++  },
+ };
+@@ -18,5 +30,5 @@
+-function initials(name = "مستخدم") {
+-  const clean = String(name || "مستخدم").trim();
++function initials(name = "User") {
++  const clean = String(name || "User").trim();
+   const parts = clean.includes("@") ? [clean[0]] : clean.split(/\s+/);
+-  return parts.map((part) => part[0]).join("").slice(0, 2).toUpperCase() || "م";
++  return parts.map((part) => part[0]).join("").slice(0, 2).toUpperCase() || "U";
+ }
+@@ -24,3 +36,3 @@
+-function roleLabel(role, fallback) {
+-  return roleLabels[role] || fallback || "حساب مستخدم";
++function roleLabel(role, fallback, lang = "ar") {
++  return roleLabels[lang]?.[role] || fallback || (lang === "en" ? "User account" : "حساب مستخدم");
+ }
+@@ -31,4 +43,5 @@
+   const { isDark, toggleTheme, lang, toggleLang } = usePreferences();
+   const tr = useT(lang);
+-  const displayName = user?.name || user?.email || "مستخدم";
++  const isEnglish = lang === "en";
++  const displayName = user?.name || user?.email || (isEnglish ? "User" : "مستخدم");
+   const [notifications, setNotifications] = useState([]);
+@@ -78,4 +91,4 @@
+           onClick={onProfileClick}
+           className="tos-premium-user-chip hidden min-w-0 items-center gap-3 rounded-2xl border border-zinc-200 bg-white/80 px-3 py-2 text-right shadow-sm transition hover:-translate-y-0.5 hover:bg-amber-50 dark:border-white/10 dark:bg-zinc-900/70 dark:hover:bg-zinc-800 lg:flex"
+-          title="فتح الملف الشخصي"
++          title={isEnglish ? "Open profile" : "فتح الملف الشخصي"}
+         >
+@@ -90,3 +103,3 @@
+             <p className="truncate text-sm font-black text-zinc-800 dark:text-zinc-100">{displayName}</p>
+-            <p className="truncate text-xs font-bold text-zinc-400 dark:text-zinc-500">{roleLabel(user?.role, tr.userAccount)}</p>
++            <p className="truncate text-xs font-bold text-zinc-400 dark:text-zinc-500">{roleLabel(user?.role, tr.userAccount, lang)}</p>
+           </div>
+@@ -102,4 +115,5 @@
+             onClick={() => setNotificationsOpen((value) => !value)}
+             className="relative grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-zinc-200 bg-white text-zinc-600 shadow-sm transition hover:-translate-y-0.5 hover:bg-amber-50 dark:border-white/10 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+-            title="الإشعارات"
++            title={isEnglish ? "Notifications" : "الإشعارات"}
++            aria-label={isEnglish ? "Notifications" : "الإشعارات"}
+           >
+@@ -112,4 +126,4 @@
+           {notificationsOpen && (
+-            <div className="absolute left-0 top-12 z-50 w-[320px] overflow-hidden rounded-3xl border border-zinc-100 bg-white text-right shadow-2xl dark:border-white/10 dark:bg-zinc-900">
+-              <div className="border-b border-zinc-100 px-4 py-3 text-sm font-black text-zinc-950 dark:border-white/10 dark:text-white">الإشعارات</div>
++            <div dir={isEnglish ? "ltr" : "rtl"} className={`absolute left-0 top-12 z-50 w-[320px] overflow-hidden rounded-3xl border border-zinc-100 bg-white shadow-2xl dark:border-white/10 dark:bg-zinc-900 ${isEnglish ? "text-left" : "text-right"}`}>
++              <div className="border-b border-zinc-100 px-4 py-3 text-sm font-black text-zinc-950 dark:border-white/10 dark:text-white">{isEnglish ? "Notifications" : "الإشعارات"}</div>
+               <div className="max-h-80 overflow-y-auto p-2">
+@@ -116,3 +130,3 @@
+                 {notifications.length ? notifications.slice(0, 8).map((item) => (
+-                  <button key={item.id} type="button" onClick={() => openNotification(item)} className="mb-1 block w-full rounded-2xl p-3 text-right transition hover:bg-zinc-50 dark:hover:bg-white/[0.04]">
++                  <button key={item.id} type="button" onClick={() => openNotification(item)} className={`mb-1 block w-full rounded-2xl p-3 transition hover:bg-zinc-50 dark:hover:bg-white/[0.04] ${isEnglish ? "text-left" : "text-right"}`}>
+                     <div className="flex items-start justify-between gap-2">
+@@ -126,3 +140,3 @@
+                   </button>
+-                )) : <p className="p-4 text-center text-xs font-bold text-zinc-400">لا توجد إشعارات.</p>}
++                )) : <p className="p-4 text-center text-xs font-bold text-zinc-400">{isEnglish ? "No notifications." : "لا توجد إشعارات."}</p>}
+               </div>
+diff --git a/frontend/src/components/RamzyAssistant.jsx b/frontend/src/components/RamzyAssistant.jsx
+--- a/frontend/src/components/RamzyAssistant.jsx
++++ b/frontend/src/components/RamzyAssistant.jsx
+@@ -5,4 +5,5 @@
+ import { api } from "../lib/api";
+ import { getErrorMessage } from "../lib/errors";
+ import { getSocket } from "../lib/socket";
++import { usePreferences } from "../contexts/PreferencesContext";
+ 
+@@ -294,2 +295,4 @@
+ export function RamzyAssistant({ user, projectId = "" }) {
++  const { lang } = usePreferences();
++  const isEnglish = lang === "en";
+   const [status, setStatus] = useState(null);
+@@ -643,2 +646,2 @@
+   return (
+-    <div className="ramzy-assistant-root" dir="rtl">
++    <div className="ramzy-assistant-root" dir={isEnglish ? "ltr" : "rtl"}>
+@@ -653,2 +656,2 @@
+           role="dialog"
+-          aria-label="محادثة رمزي"
++          aria-label={isEnglish ? "Ramzy conversation" : "محادثة رمزي"}
+@@ -658,4 +661,4 @@
+             <div className="ramzy-panel-identity">
+-              <img src="/ramzy-avatar.png" alt="رمزي" />
+-              <div><strong>رمزي</strong><span><i className="ramzy-online-dot" />مساعدك الذكي في نظام TOS</span></div>
++              <img src="/ramzy-avatar.png" alt={isEnglish ? "Ramzy" : "رمزي"} />
++              <div><strong>{isEnglish ? "Ramzy" : "رمزي"}</strong><span><i className="ramzy-online-dot" />{isEnglish ? "Your smart assistant in TOS" : "مساعدك الذكي في نظام TOS"}</span></div>
+             </div>
+@@ -663,6 +666,6 @@
+             <div className="ramzy-panel-controls">
+-              <button type="button" title="محادثة جديدة" onClick={createConversation}><Plus size={17} /></button>
+-              <button type="button" title="سجل المحادثات" aria-pressed={historyOpen} onClick={() => setHistoryOpen((value) => !value)}><History size={17} /></button>
+-              <button type="button" title="تصغير" onClick={() => setMinimized(true)}><Minus size={17} /></button>
+-              <button type="button" title="إغلاق" onClick={() => setOpen(false)}><X size={17} /></button>
++              <button type="button" title={isEnglish ? "New conversation" : "محادثة جديدة"} onClick={createConversation}><Plus size={17} /></button>
++              <button type="button" title={isEnglish ? "Conversation history" : "سجل المحادثات"} aria-pressed={historyOpen} onClick={() => setHistoryOpen((value) => !value)}><History size={17} /></button>
++              <button type="button" title={isEnglish ? "Minimize" : "تصغير"} onClick={() => setMinimized(true)}><Minus size={17} /></button>
++              <button type="button" title={isEnglish ? "Close" : "إغلاق"} onClick={() => setOpen(false)}><X size={17} /></button>
+             </div>
+@@ -674,3 +677,3 @@
+             <select className="ramzy-history-select" value={conversationId} onChange={(event) => { loadConversation(event.target.value); setHistoryOpen(false); }}>
+-              {conversations.map((conversation) => <option key={conversation.id} value={conversation.id}>{conversation.title || "محادثة مع رمزي"}</option>)}
++              {conversations.map((conversation) => <option key={conversation.id} value={conversation.id}>{conversation.title || (isEnglish ? "Conversation with Ramzy" : "محادثة مع رمزي")}</option>)}
+             </select>
+@@ -683,4 +686,4 @@
+                 <Sparkles size={25} />
+-                <strong>أنا رمزي، مساعدك التشغيلي</strong>
+-                <p>هرتب لك الأولويات، أراجع التأخير والـSLA، وأقترح إجراءات تحتاج اعتمادك.</p>
++                <strong>{isEnglish ? "I'm Ramzy, your operations assistant" : "أنا رمزي، مساعدك التشغيلي"}</strong>
++                <p>{isEnglish ? "I can prioritize work, review delays and SLAs, and suggest actions that need your approval." : "هرتب لك الأولويات، أراجع التأخير والـSLA، وأقترح إجراءات تحتاج اعتمادك."}</p>
+                 <div className="ramzy-suggestions">{SUGGESTIONS.map((text) => <button type="button" key={text} onClick={() => sendMessage(text)}>{text}</button>)}</div>
+@@ -696,1 +699,1 @@
+-            {loading && <div className="ramzy-typing"><LoaderCircle className="animate-spin" size={17} /> رمزي بيراجع النظام... <button type="button" onClick={stopGeneration} title="إيقاف الرد"><Square size={13} /> إيقاف</button></div>}
++            {loading && <div className="ramzy-typing"><LoaderCircle className="animate-spin" size={17} /> {isEnglish ? "Ramzy is reviewing the system..." : "رمزي بيراجع النظام..."} <button type="button" onClick={stopGeneration} title={isEnglish ? "Stop response" : "إيقاف الرد"}><Square size={13} /> {isEnglish ? "Stop" : "إيقاف"}</button></div>}
+@@ -702,7 +705,7 @@
+           <footer className="ramzy-composer">
+-            <textarea ref={composerRef} aria-label="رسالة إلى رمزي" value={input} onChange={(event) => setInput(event.target.value)} onInput={handleComposerInput} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); sendMessage(); } }} placeholder="اسأل رمزي عن المهام والمشاريع..." rows={1} />
+-            {(listening || voiceStatus) && <div className={`ramzy-voice-status${listening ? " is-listening" : ""}`} role="status" aria-live="polite">{listening ? "جاري الاستماع... كلامك يتحول للبرومبت مباشرة" : voiceStatus}</div>}
++            <textarea ref={composerRef} aria-label={isEnglish ? "Message Ramzy" : "رسالة إلى رمزي"} value={input} onChange={(event) => setInput(event.target.value)} onInput={handleComposerInput} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); sendMessage(); } }} placeholder={isEnglish ? "Ask Ramzy about tasks and projects..." : "اسأل رمزي عن المهام والمشاريع..."} rows={1} />
++            {(listening || voiceStatus) && <div className={`ramzy-voice-status${listening ? " is-listening" : ""}`} role="status" aria-live="polite">{listening ? (isEnglish ? "Listening... your speech is being added to the prompt" : "جاري الاستماع... كلامك يتحول للبرومبت مباشرة") : voiceStatus}</div>}
+             <div className="ramzy-composer-actions">
+-              <button type="button" className={`ramzy-mic-button${listening ? " is-listening" : ""}`} aria-label={listening ? "إيقاف الإملاء الصوتي" : "الإملاء الصوتي"} title={listening ? "إيقاف الإملاء الصوتي" : "الإملاء الصوتي بالعربية أو الإنجليزية"} disabled={typeof window !== "undefined" && !window.SpeechRecognition && !window.webkitSpeechRecognition} onClick={startVoiceRecognition}>{listening ? <MicOff size={19} /> : <Mic size={19} />}</button>
+-              <button type="button" className="ramzy-send-button" aria-label="إرسال الرسالة" disabled={!input.trim() || loading} onClick={() => sendMessage()}><Send size={18} /></button>
++              <button type="button" className={`ramzy-mic-button${listening ? " is-listening" : ""}`} aria-label={listening ? (isEnglish ? "Stop voice dictation" : "إيقاف الإملاء الصوتي") : (isEnglish ? "Voice dictation" : "الإملاء الصوتي")} title={listening ? (isEnglish ? "Stop voice dictation" : "إيقاف الإملاء الصوتي") : (isEnglish ? "Voice dictation in Arabic or English" : "الإملاء الصوتي بالعربية أو الإنجليزية")} disabled={typeof window !== "undefined" && !window.SpeechRecognition && !window.webkitSpeechRecognition} onClick={startVoiceRecognition}>{listening ? <MicOff size={19} /> : <Mic size={19} />}</button>
++              <button type="button" className="ramzy-send-button" aria-label={isEnglish ? "Send message" : "إرسال الرسالة"} disabled={!input.trim() || loading} onClick={() => sendMessage()}><Send size={18} /></button>
+             </div>
+@@ -713,3 +716,3 @@
+         <button type="button" className="ramzy-minimized" style={minimizedStyle} onClick={() => setMinimized(false)}>
+-          <MessageCircle size={18} /> فتح رمزي
++          <MessageCircle size={18} /> {isEnglish ? "Open Ramzy" : "فتح رمزي"}
+         </button>
+@@ -724,5 +727,5 @@
+-        {greeting && !open && <div className="ramzy-greeting"><span>يومك سعيد يا بطل تميز</span></div>}
+-        {!greeting && !open && <div className="ramzy-launcher-label"><strong>رمزي</strong><small>مساعدك الذكي</small></div>}
++        {greeting && !open && <div className="ramzy-greeting"><span>{isEnglish ? "Have a great day" : "يومك سعيد يا بطل تميز"}</span></div>}
++        {!greeting && !open && <div className="ramzy-launcher-label"><strong>{isEnglish ? "Ramzy" : "رمزي"}</strong><small>{isEnglish ? "Your smart assistant" : "مساعدك الذكي"}</small></div>}
+         <div className="ramzy-launcher-avatar-wrap">
+-          <button className="ramzy-launcher-close" type="button" title="إغلاق رمزي" onClick={() => { streamControllerRef.current?.abort(); setOpen(false); setHidden(true); }}><X size={15} /></button>
++          <button className="ramzy-launcher-close" type="button" title={isEnglish ? "Close Ramzy" : "إغلاق رمزي"} onClick={() => { streamControllerRef.current?.abort(); setOpen(false); setHidden(true); }}><X size={15} /></button>
+           <button
+@@ -741,7 +744,7 @@
+             onPointerCancel={(event) => finishLauncherPointer(event, true)}
+             onDragStart={(event) => event.preventDefault()}
+-            aria-label="فتح رمزي أو سحبه لتحريك الأيقونة"
++            aria-label={isEnglish ? "Open Ramzy or drag to move the icon" : "فتح رمزي أو سحبه لتحريك الأيقونة"}
+             aria-grabbed={dragging}
+-            title="اضغط لفتح رمزي أو اسحب لتحريك الأيقونة"
++            title={isEnglish ? "Click to open Ramzy or drag to move the icon" : "اضغط لفتح رمزي أو اسحب لتحريك الأيقونة"}
+           >
+-            <span className="ramzy-avatar-ring"><img src="/ramzy-avatar.png" alt="رمزي" draggable="false" /><i /></span>
++            <span className="ramzy-avatar-ring"><img src="/ramzy-avatar.png" alt={isEnglish ? "Ramzy" : "رمزي"} draggable="false" /><i /></span>
