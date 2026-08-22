@@ -1,0 +1,12 @@
+diff --git a/frontend/src/App.jsx b/frontend/src/App.jsx
+--- a/frontend/src/App.jsx
++++ b/frontend/src/App.jsx
+@@ -946,7 +946,7 @@
+       case "team":     return { title: tr.nav.team,     subtitle: tr.pageSub.team };
+       case "permissions": return { title: tr.nav.permissions || "الصلاحيات", subtitle: tr.pageSub.permissions || "إدارة صلاحيات النظام والوصول" };
+       case "workHub":  return { title: tr.nav.workHub || "THRS", subtitle: tr.pageSub.workHub || "نظام تميّز لإدارة شؤون الموظفين" };
+-      case "profile":  return { title: "الملف الشخصي", subtitle: "إدارة بيانات الحساب الشخصية" };
++      case "profile":  return { title: isAr ? "الملف الشخصي" : "Profile", subtitle: isAr ? "إدارة بيانات الحساب الشخصية" : "Manage personal account details" };
+       case "clients":  return { title: tr.nav.clients,  subtitle: tr.pageSub.clients };
+       case "auditLog": return { title: tr.nav.auditLog || "سجل النظام", subtitle: tr.pageSub.auditLog || "أحداث الشات والصلاحيات والمشاريع والمهام" };
+       case "settings": return { title: tr.nav.settings, subtitle: tr.pageSub.settings };
