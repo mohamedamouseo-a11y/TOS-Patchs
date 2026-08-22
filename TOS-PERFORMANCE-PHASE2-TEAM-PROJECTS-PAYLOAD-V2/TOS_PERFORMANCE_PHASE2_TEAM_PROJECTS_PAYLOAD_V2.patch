@@ -1,0 +1,14 @@
+diff --git a/frontend/src/pages/TeamPage.jsx b/frontend/src/pages/TeamPage.jsx
+--- a/frontend/src/pages/TeamPage.jsx
++++ b/frontend/src/pages/TeamPage.jsx
+@@ -1553,9 +1553,9 @@ export function TeamPage({ user, inviteSignal = 0 }) {
+   async function load() {
+     try {
+       setError("");
+       setLoading(true);
+-      const [usersResult, projectsResult, departmentsResult] = await Promise.allSettled([api.users.list(), api.projects.list(), api.users.departments()]);
++      const [usersResult, projectsResult, departmentsResult] = await Promise.allSettled([api.users.list(), api.projects.list({ summary: true }), api.users.departments()]);
+ 
+       if (usersResult.status === "fulfilled") {
+         setUsers(usersResult.value || []);
+       } else {
