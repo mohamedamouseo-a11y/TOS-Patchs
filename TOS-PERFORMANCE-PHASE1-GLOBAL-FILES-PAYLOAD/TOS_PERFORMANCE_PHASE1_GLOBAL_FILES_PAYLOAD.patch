@@ -1,0 +1,98 @@
+diff --git a/backend/src/routes/files.routes.js b/backend/src/routes/files.routes.js
+--- a/backend/src/routes/files.routes.js
++++ b/backend/src/routes/files.routes.js
+@@ -22,6 +22,15 @@ const fileInclude = {
+   message: true,
+ };
+ 
++const fileSummarySelect = {
++  id: true,
++  name: true,
++  projectId: true,
++  createdAt: true,
++  updatedAt: true,
++  project: { select: { id: true, name: true, type: true } },
++};
++
+ function uniqueRooms(rooms = []) {
+   return [...new Set(rooms.filter(Boolean))];
+ }
+@@ -463,6 +472,17 @@ function safeFile(file) {
+   };
+ }
+ 
++function safeFileSummary(file) {
++  return {
++    id: file.id,
++    name: decodePossiblyMojibakeFilename(file.name, "uploaded-file"),
++    projectId: file.projectId || null,
++    project: file.project ? { id: file.project.id, name: file.project.name, type: file.project.type } : null,
++    updatedAt: file.updatedAt || null,
++    createdAt: file.createdAt,
++  };
++}
++
+ function safeDriveDeleteFailureFile(file) {
+   const safe = safeFile(file);
+   const deletedFileLabel = safe.taskId
+@@ -545,6 +565,7 @@ function pipeDriveStream(download, res, next) {
+ router.get("/", asyncHandler(async (req, res) => {
+   const projectId = optionalString(req.query.projectId);
+   const conversationId = optionalString(req.query.conversationId);
++  const summary = String(req.query.summary || "") === "1";
+   if (projectId && conversationId) throw new AppError("Use either projectId or conversationId, not both", 400);
+ 
+   if (projectId) await assertProjectAccess(req.user, projectId);
+@@ -581,12 +602,12 @@ router.get("/", asyncHandler(async (req, res) => {
+ 
+   const files = await prisma.file.findMany({
+     where,
+-    include: fileInclude,
++    ...(summary ? { select: fileSummarySelect } : { include: fileInclude }),
+     orderBy: { createdAt: "desc" },
+     take: 200,
+   });
+ 
+-  res.json(files.map(safeFile));
++  res.json(files.map(summary ? safeFileSummary : safeFile));
+ }));
+ 
+ 
+diff --git a/frontend/src/lib/api.js b/frontend/src/lib/api.js
+--- a/frontend/src/lib/api.js
++++ b/frontend/src/lib/api.js
+@@ -451,6 +451,7 @@ export const api = {
+       } else {
+         if (filters?.projectId) params.set("projectId", filters.projectId);
+         if (filters?.conversationId) params.set("conversationId", filters.conversationId);
++        if (filters?.summary) params.set("summary", "1");
+       }
+       const query = params.toString();
+       return request(`/api/files${query ? `?${query}` : ""}`);
+diff --git a/frontend/src/App.jsx b/frontend/src/App.jsx
+--- a/frontend/src/App.jsx
++++ b/frontend/src/App.jsx
+@@ -844,7 +844,7 @@ function MainApp({ user, initialActivePage }) {
+ 
+   async function loadFiles() {
+     try {
+-      setRecentFiles(await api.files.list());
++      setRecentFiles(await api.files.list({ summary: true }));
+     } catch (err) {
+       setRecentFiles([]);
+       setBackgroundError(getErrorMessage(err, tr.loadFilesErr ?? "تعذر تحميل آخر الملفات."));
+@@ -904,9 +904,12 @@ function MainApp({ user, initialActivePage }) {
+ 
+   useRealtimeRefresh(["projects", "tasks", "dashboard", "integrations", "meetings"], () => reload({ showLoading: false }), { debounceMs: 350, minIntervalMs: 800 });
+   useRealtimeRefresh(["clients"], () => loadClients(), { debounceMs: 350, minIntervalMs: 800 });
+-  useRealtimeRefresh(["files"], () => loadFiles(), { debounceMs: 350, minIntervalMs: 800, scope: { projectId: activeProjectId } });
++  useRealtimeRefresh(["files"], () => {
++    if (active === "dashboard") loadFiles();
++  }, { debounceMs: 350, minIntervalMs: 800, scope: { projectId: activeProjectId } });
+ 
+-  useEffect(() => { loadClients(); loadFiles(); }, []);
++  useEffect(() => { loadClients(); }, []);
++  useEffect(() => { if (active === "dashboard") loadFiles(); }, [active]);
+ 
+   useEffect(() => {
+     if (active === "workHub" && !hasWorkHubAccess) {
