@@ -70,6 +70,11 @@ new_closed = 'new Date("2026-08-28T07:00:00Z")'
 if advanced_test.count(old_open) != 1 or advanced_test.count(old_closed) != 1:
     raise SystemExit("ERROR: expected SLA Advanced business-window test anchors")
 advanced_test = advanced_test.replace(old_open, new_open, 1).replace(old_closed, new_closed, 1)
+old_minutes = 'expect(getBusinessMinutesLate("2026-08-21", mondayNoonUtc, base)).toBe(180);'
+new_minutes = 'expect(getBusinessMinutesLate("2026-08-21", mondayNoonUtc, base)).toBe(660);'
+if advanced_test.count(old_minutes) != 1:
+    raise SystemExit(f"ERROR: expected one SLA Advanced business-minutes assertion, found {advanced_test.count(old_minutes)}")
+advanced_test = advanced_test.replace(old_minutes, new_minutes, 1)
 mod.NEW_FILES["server/slaAdvanced.test.ts"] = advanced_test
 
 # Harden the generated migration executor: load .env and execute one SQL statement at a time.
