@@ -26,13 +26,14 @@ export async function createSlaAlertOnce(data: Omit<InsertAlert, "id">) {
     throw new Error("SLA alerts require employeeId for deduplication.");
   }
 
+  const type = data.type ?? "system";
   const existing = await db
     .select({ id: alerts.id })
     .from(alerts)
     .where(
       and(
         eq(alerts.employeeId, data.employeeId),
-        eq(alerts.type, data.type),
+        eq(alerts.type, type),
         eq(alerts.title, data.title),
       ),
     )
