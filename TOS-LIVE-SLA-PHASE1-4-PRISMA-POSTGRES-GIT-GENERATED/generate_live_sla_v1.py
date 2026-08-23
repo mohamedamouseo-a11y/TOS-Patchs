@@ -13,14 +13,47 @@ from pathlib import Path
 CONFIG_COMMIT = "9a75e1501d1554ca66170989583e1c21ad679af1"
 CONFIG_BASE = f"https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/{CONFIG_COMMIT}/TOS-LIVE-SLA-PHASE1-4-PRISMA-POSTGRES-GIT-GENERATED"
 CONFIG_PARTS = [f"config.part{index:02d}" for index in range(4)]
+EXPECTED_PART_LENGTHS = [7000, 7000, 7000, 6148]
 
 
 def load_config():
-    encoded = "".join(
+    parts = [
         urllib.request.urlopen(f"{CONFIG_BASE}/{name}", timeout=30).read().decode("utf-8").strip()
         for name in CONFIG_PARTS
-    )
-    return json.loads(zlib.decompress(base64.b64decode(encoded)).decode("utf-8"))
+    ]
+
+    # config.part00 in the pinned config commit accidentally contains the first
+    # 2825 characters of config.part01 appended to its intended 7000-character
+    # payload. Repair only that exact, verifiable overlap. Refuse any other
+    # shape so config corruption cannot be silently accepted.
+    if len(parts[0]) > EXPECTED_PART_LENGTHS[0]:
+        extra = parts[0][EXPECTED_PART_LENGTHS[0]:]
+        if not extra or not parts[1].startswith(extra):
+            raise RuntimeError(
+                f"Unexpected config.part00 overflow: length={len(parts[0])}; overlap verification failed"
+            )
+        parts[0] = parts[0][:EXPECTED_PART_LENGTHS[0]]
+
+    actual_lengths = [len(part) for part in parts]
+    if actual_lengths != EXPECTED_PART_LENGTHS:
+        raise RuntimeError(
+            f"Unexpected config part lengths: {actual_lengths}; expected {EXPECTED_PART_LENGTHS}"
+        )
+
+    encoded = "".join(parts)
+    if len(encoded) % 4 != 0:
+        raise RuntimeError(f"Invalid base64 config length: {len(encoded)}")
+
+    try:
+        compressed = base64.b64decode(encoded, validate=True)
+        decoded = zlib.decompress(compressed).decode("utf-8")
+        cfg = json.loads(decoded)
+    except Exception as exc:
+        raise RuntimeError(f"Unable to decode pinned SLA config after overlap repair: {exc}") from exc
+
+    if not isinstance(cfg, dict) or not cfg.get("base_head"):
+        raise RuntimeError("Decoded SLA config is missing required base_head")
+    return cfg
 
 
 def run(args, cwd, check=True):
