@@ -10,8 +10,8 @@ trap 'rm -f "$TMP_GENERATOR"' EXIT
 
 curl -fsSL "$GENERATOR_URL" -o "$TMP_GENERATOR"
 
-# Harden the generated DB migration runner: execute statements individually
-# over the existing DATABASE_URL instead of enabling multipleStatements.
+# Harden the generated DB migration runner: load local env and execute SQL
+# statements individually over the existing DATABASE_URL.
 python3 - "$TMP_GENERATOR" <<'PY'
 from pathlib import Path
 import sys
@@ -51,7 +51,8 @@ try {
   await connection.end();
 }
 '''
-new = '''import fs from "node:fs";
+new = '''import "dotenv/config";
+import fs from "node:fs";
 import path from "node:path";
 import mysql from "mysql2/promise";
 
