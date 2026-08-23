@@ -5,7 +5,7 @@ ROOT="${1:-/var/www/TOS}"
 OUT="${2:-/var/tmp/TOS_SLA_FOUNDATION_PHASE1.patch}"
 GEN="/var/tmp/generate_sla_foundation_phase1.py"
 
-GEN_URL="https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/d4e860df1a41b97ed97b536abadd420c6e6ab8f1/TOS-SLA-FOUNDATION-PHASE1-GIT-GENERATED/generate_sla_foundation_phase1.py"
+GEN_URL="https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/9b217d405c8d026e5cd25ee49c2796101a0d3c95/TOS-SLA-FOUNDATION-PHASE1-GIT-GENERATED/generate_sla_foundation_phase1.py"
 
 rm -f "$GEN" "$OUT"
 curl -fL "$GEN_URL" -o "$GEN"
