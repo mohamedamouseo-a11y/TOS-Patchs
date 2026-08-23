@@ -95,7 +95,34 @@ replacement = repr(new)
 count = source.count(needle)
 if count != 1:
     raise SystemExit(f"ERROR: expected exactly one Phase 4 migration-script payload, found {count}")
-path.write_text(source.replace(needle, replacement, 1))
+source = source.replace(needle, replacement, 1)
+
+# Cairo/Egypt operational defaults use Sunday-Thursday.
+workweek_replacements = [
+    (
+        'name: "Default SLA",\\n  scopeType: "company",\\n  departmentId: null,\\n  clientId: null,\\n  timezone: process.env.SLA_TIMEZONE || "Africa/Cairo",\\n  businessDays: "1,2,3,4,5",\\n',
+        'name: "Default SLA",\\n  scopeType: "company",\\n  departmentId: null,\\n  clientId: null,\\n  timezone: process.env.SLA_TIMEZONE || "Africa/Cairo",\\n  businessDays: "1,2,3,4,7",\\n',
+    ),
+    (
+        '`businessDays` varchar(32) NOT NULL DEFAULT \\'1,2,3,4,5\\',\\n',
+        '`businessDays` varchar(32) NOT NULL DEFAULT \\'1,2,3,4,7\\',\\n',
+    ),
+    (
+        'businessDays: varchar("businessDays", { length: 32 }).default("1,2,3,4,5").notNull(),\\n',
+        'businessDays: varchar("businessDays", { length: 32 }).default("1,2,3,4,7").notNull(),\\n',
+    ),
+    (
+        'businessDays: [1, 2, 3, 4, 5],\\n  businessStart: "09:00",\\n',
+        'businessDays: [1, 2, 3, 4, 7],\\n  businessStart: "09:00",\\n',
+    ),
+]
+for old_text, new_text in workweek_replacements:
+    count = source.count(old_text)
+    if count != 1:
+        raise SystemExit(f"ERROR: expected exactly one Cairo workweek anchor, found {count}: {old_text[:60]}")
+    source = source.replace(old_text, new_text, 1)
+
+path.write_text(source)
 PY
 
 python3 "$TMP_GENERATOR" "$REPO" "$OUTPUT"
