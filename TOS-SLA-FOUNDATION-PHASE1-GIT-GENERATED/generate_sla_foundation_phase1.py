@@ -371,6 +371,8 @@ def main():
             dst.parent.mkdir(parents=True, exist_ok=True)
             dst.write_text(content, encoding="utf-8", newline="\n")
 
+        run(["git", "add", "-N", "--", *NEW_FILES.keys()], tmp)
+
         proc = subprocess.run(
             ["git", "diff", "--binary", "--full-index", "--", TARGET_INDEX, TARGET_AI, *NEW_FILES.keys()],
             cwd=tmp,
