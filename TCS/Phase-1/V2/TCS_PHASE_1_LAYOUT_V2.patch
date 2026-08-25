@@ -1,0 +1,16 @@
+diff --git a/client/src/components/DashboardLayout.tsx b/client/src/components/DashboardLayout.tsx
+--- a/client/src/components/DashboardLayout.tsx
++++ b/client/src/components/DashboardLayout.tsx
+@@ -34,3 +34,4 @@
+ import HelpChatWidget from "./HelpChatWidget";
+ import { AIChatSidebar } from "./AIChatSidebar";
++import TcsChat from "./TcsChat";
+ import { cn } from "@/lib/utils";
+diff --git a/client/src/components/DashboardLayout.tsx b/client/src/components/DashboardLayout.tsx
+--- a/client/src/components/DashboardLayout.tsx
++++ b/client/src/components/DashboardLayout.tsx
+@@ -689,3 +689,4 @@
+         <AIChatSidebar isOpen={showChat} onClose={() => setShowChat(false)} />
++        <TcsChat />
+         <HelpChatWidget />
+       </SidebarInset>
