@@ -1,0 +1,67 @@
+diff --git a/frontend/src/i18n/translations.js b/frontend/src/i18n/translations.js
+--- a/frontend/src/i18n/translations.js
++++ b/frontend/src/i18n/translations.js
+@@ -2,20 +2,20 @@ export const translations = {
+   ar: {
+     nav: {
+       dashboard: "الرئيسية", teamPerformance: "أداء الفريق", projects: "المشاريع", tasks: "المهام", myWorkspace: "مساحة مهامي", designQueue: "طلبات التصميم",
+-      chat: "الدردشة", files: "الملفات", workHub: "THRS", team: "الفريق", permissions: "الصلاحيات",
++      chat: "TCS", files: "الملفات", workHub: "THRS", team: "الفريق", permissions: "الصلاحيات",
+       clients: "العملاء", auditLog: "سجل النظام", settings: "الإعدادات", tws: "TWS",
+     },
+     pageSub: {
+       projects: "كل حملات الشركة",
+       teamPerformance: "متابعة أداء المستخدمين والتاسكات والوقت",
+       designQueue: "توزيع طلبات التصميم بدون تغيير بورد المشروع",
+-      tasks: "اختر مشروع", myWorkspace: "مهامك الشخصية من كل المشاريع بترتيبك الخاص", chat: "اختر مشروع",
++      tasks: "اختر مشروع", myWorkspace: "مهامك الشخصية من كل المشاريع بترتيبك الخاص", chat: "TCS — Tamayouz Chat System",
+       files: "التخزين السحابي مخفي",
+       workHub: "نظام تميّز لإدارة شؤون الموظفين",
+       team: "إدارة أعضاء الفريق والأقسام",
+       permissions: "إدارة صلاحيات النظام والوصول",
+       clients: "إدارة حسابات العملاء",
+-      auditLog: "أحداث الشات والصلاحيات والمشاريع",
++      auditLog: "أحداث TCS والصلاحيات والمشاريع",
+       settings: "إدارة النظام والتخزين",
+       tws: "مستندات وجداول وعروض تميّز — بدون Google أو OnlyOffice",
+@@ -38,7 +38,7 @@ export const translations = {
+     liveData: "من قاعدة البيانات",
+     uploadedFiles: "ملفات مرفوعة",
+     driveNote: "مخزنة سحابيًا",
+-    realtimeChat: "الشات",
++    realtimeChat: "TCS — Tamayouz Chat System",
+     socketNote: "Socket.IO مفعل",
+     activeProjectsTitle: "المشاريع النشطة",
+     latestFiles: "آخر الملفات",
+@@ -150,20 +150,20 @@ export const translations = {
+   en: {
+     nav: {
+       dashboard: "Dashboard", teamPerformance: "Team Performance", projects: "Projects", tasks: "Tasks", myWorkspace: "My Workspace", designQueue: "Design Queue",
+-      chat: "Chat", files: "Files", workHub: "THRS", team: "Team", permissions: "Permissions",
++      chat: "TCS", files: "Files", workHub: "THRS", team: "Team", permissions: "Permissions",
+       clients: "Clients", auditLog: "Audit Log", settings: "Settings", tws: "TWS",
+     },
+     pageSub: {
+       projects: "All company campaigns",
+       teamPerformance: "Track users, tasks, projects, and time",
+       designQueue: "Route design requests without changing the project board",
+-      tasks: "Select a project", myWorkspace: "Your assigned tasks across projects in your own order", chat: "Select a project",
++      tasks: "Select a project", myWorkspace: "Your assigned tasks across projects in your own order", chat: "TCS — Tamayouz Chat System",
+       files: "Cloud storage",
+       workHub: "Tamiyouz Human Resources System",
+       team: "Manage team members and departments",
+       permissions: "Manage system access and permissions",
+       clients: "Manage client accounts",
+-      auditLog: "Chat, permissions, projects and tasks events",
++      auditLog: "TCS, permissions, projects and tasks events",
+       settings: "System and storage management",
+       tws: "Tamiyouz Docs, Sheets and Slides — no Google, no OnlyOffice",
+@@ -186,7 +186,7 @@ export const translations = {
+     liveData: "Real database data",
+     uploadedFiles: "Uploaded Files",
+     driveNote: "Stored securely",
+-    realtimeChat: "Chat",
++    realtimeChat: "TCS — Tamayouz Chat System",
+     socketNote: "Socket.IO enabled",
+     activeProjectsTitle: "Active Projects",
+     latestFiles: "Recent Files",
