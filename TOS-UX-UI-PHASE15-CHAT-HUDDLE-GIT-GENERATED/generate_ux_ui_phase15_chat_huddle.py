@@ -14,6 +14,7 @@ HUDDLE_END = "\n\nfunction MessageFiles("
 
 REPLACEMENTS = [('rounded-3xl bg-zinc-950', 'rounded-2xl bg-zinc-950', 2),
  ('h-28 w-full object-cover', 'h-24 w-full object-cover', 2),
+ ('dir="rtl">', 'dir={huddleLang === "en" ? "ltr" : "rtl"}>', 1),
  ('fixed inset-x-3 bottom-3 z-40 sm:inset-x-auto sm:left-6 sm:w-[360px]',
   'fixed inset-x-2.5 bottom-2.5 z-40 sm:inset-x-auto sm:left-5 sm:w-[340px]',
   1),
