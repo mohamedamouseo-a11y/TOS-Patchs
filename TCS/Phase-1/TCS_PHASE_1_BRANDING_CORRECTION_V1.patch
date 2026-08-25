@@ -1,0 +1,22 @@
+diff --git a/drizzle/schema.ts b/drizzle/schema.ts
+--- a/drizzle/schema.ts
++++ b/drizzle/schema.ts
+@@
+-// TACS — Tamayouz Chat System
++// TCS — Tamayouz Chat System
+ // Phase 1: direct messaging foundation
+ // =============================================
+diff --git a/client/src/components/TacsChat.tsx b/client/src/components/TacsChat.tsx
+--- a/client/src/components/TacsChat.tsx
++++ b/client/src/components/TacsChat.tsx
+@@
+-        aria-label="Open TACS chat"
+-        title="TACS — Tamayouz Chat System"
++        aria-label="Open TCS chat"
++        title="TCS — Tamayouz Chat System"
+@@
+-                    {activeConversationId ? activePeer?.name || activePeer?.email || "Conversation" : "TACS"}
++                    {activeConversationId ? activePeer?.name || activePeer?.email || "Conversation" : "TCS"}
+@@
+-              <Button variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label="Close TACS">
++              <Button variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label="Close TCS">
