@@ -1,0 +1,116 @@
+diff --git a/client/src/components/TcsChat.tsx b/client/src/components/TcsChat.tsx
+new file mode 100644
+--- /dev/null
++++ b/client/src/components/TcsChat.tsx
+@@ -0,0 +1,111 @@
++import { useEffect, useMemo, useRef, useState } from "react";
++import { AnimatePresence, motion } from "framer-motion";
++import { ArrowLeft, Loader2, MessageCircle, Search, Send, X } from "lucide-react";
++import { useAuth } from "@/_core/hooks/useAuth";
++import { Avatar, AvatarFallback } from "@/components/ui/avatar";
++import { Badge } from "@/components/ui/badge";
++import { Button } from "@/components/ui/button";
++import { Input } from "@/components/ui/input";
++import { ScrollArea } from "@/components/ui/scroll-area";
++import { trpc } from "@/lib/trpc";
++import { cn } from "@/lib/utils";
++
++const initials = (value?: string | null) => (value || "T").split(" ").filter(Boolean).slice(0, 2).map(part => part[0]?.toUpperCase()).join("");
++
++export default function TcsChat() {
++  const { user, isAuthenticated } = useAuth();
++  const [open, setOpen] = useState(false);
++  const [conversationId, setConversationId] = useState<number | null>(null);
++  const [search, setSearch] = useState("");
++  const [draft, setDraft] = useState("");
++  const bottomRef = useRef<HTMLDivElement | null>(null);
++
++  const conversations = trpc.tcs.list.useQuery(undefined, { enabled: isAuthenticated, refetchInterval: open ? 3000 : 7000 });
++  const directory = trpc.tcs.directory.useQuery(undefined, { enabled: isAuthenticated && open });
++  const unread = trpc.tcs.unreadTotal.useQuery(undefined, { enabled: isAuthenticated, refetchInterval: 5000 });
++  const messages = trpc.tcs.messages.useQuery({ conversationId: conversationId || 0 }, {
++    enabled: isAuthenticated && open && Boolean(conversationId),
++    refetchInterval: conversationId ? 2000 : false,
++  });
++
++  const openDirect = trpc.tcs.openDirect.useMutation({ onSuccess: async data => {
++    setConversationId(data.conversationId);
++    await conversations.refetch();
++  }});
++  const send = trpc.tcs.send.useMutation({ onSuccess: async () => {
++    setDraft("");
++    await Promise.all([messages.refetch(), conversations.refetch(), unread.refetch()]);
++  }});
++  const markRead = trpc.tcs.markRead.useMutation({ onSuccess: () => {
++    void conversations.refetch();
++    void unread.refetch();
++  }});
++
++  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages.data?.length, send.isPending]);
++  useEffect(() => {
++    if (open && conversationId && messages.data) markRead.mutate({ conversationId });
++    // eslint-disable-next-line react-hooks/exhaustive-deps
++  }, [open, conversationId, messages.data?.length]);
++
++  const people = useMemo(() => {
++    const q = search.trim().toLowerCase();
++    return (directory.data ?? []).filter(person => !q || [person.name, person.email, person.position, person.departmentName]
++      .filter(Boolean).some(value => String(value).toLowerCase().includes(q)));
++  }, [directory.data, search]);
++
++  const active = (conversations.data ?? []).find(item => item.conversationId === conversationId);
++  const peer = active?.members.find(member => member.id !== user?.id);
++  if (!isAuthenticated || !user) return null;
++
++  const handleSend = () => {
++    const content = draft.trim();
++    if (content && conversationId && !send.isPending) send.mutate({ conversationId, content });
++  };
++
++  return <>
++    <Button type="button" size="icon" className="fixed bottom-24 right-6 z-50 h-14 w-14 rounded-full shadow-xl"
++      onClick={() => setOpen(value => !value)} aria-label="Open TCS chat" title="TCS — Tamayouz Chat System">
++      {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
++      {(unread.data?.count ?? 0) > 0 && <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold leading-4 text-white">{Math.min(unread.data?.count ?? 0, 99)}</span>}
++    </Button>
++
++    <AnimatePresence>{open && <motion.aside initial={{ x: "100%", opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: "100%", opacity: 0 }}
++      transition={{ type: "spring", stiffness: 320, damping: 32 }} className="fixed inset-y-0 right-0 z-[60] flex w-full max-w-[420px] flex-col border-l bg-background shadow-2xl">
++      <div className="flex h-16 items-center justify-between border-b px-4">
++        <div className="flex min-w-0 items-center gap-3">
++          {conversationId ? <Button variant="ghost" size="icon" onClick={() => setConversationId(null)}><ArrowLeft className="h-5 w-5" /></Button>
++            : <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground"><MessageCircle className="h-5 w-5" /></div>}
++          <div className="min-w-0"><h2 className="truncate font-semibold">{conversationId ? peer?.name || peer?.email || "Conversation" : "TCS"}</h2>
++            <p className="truncate text-xs text-muted-foreground">{conversationId ? peer?.position || peer?.departmentName || "Tamayouz team" : "Tamayouz Chat System"}</p></div>
++        </div>
++        <Button variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label="Close TCS"><X className="h-5 w-5" /></Button>
++      </div>
++
++      {conversationId ? <>
++        <ScrollArea className="flex-1 px-4 py-4">{messages.isLoading ? <div className="flex h-40 items-center justify-center"><Loader2 className="h-5 w-5 animate-spin" /></div>
++          : <div className="space-y-3">{(messages.data ?? []).map(message => {
++            const mine = message.senderId === user.id;
++            return <div key={message.id} className={cn("flex", mine ? "justify-end" : "justify-start")}><div className={cn("max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm", mine ? "rounded-br-md bg-primary text-primary-foreground" : "rounded-bl-md bg-muted text-foreground")}>
++              {!mine && <div className="mb-1 text-[11px] font-semibold opacity-70">{message.senderName}</div>}
++              <div className="whitespace-pre-wrap break-words">{message.content}</div><div className="mt-1 text-right text-[10px] opacity-60">{new Date(message.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
++            </div></div>;
++          })}<div ref={bottomRef} /></div>}</ScrollArea>
++        <div className="border-t p-3"><div className="flex items-end gap-2"><Input value={draft} onChange={event => setDraft(event.target.value)}
++          onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); handleSend(); } }} placeholder="Type a message..." maxLength={4000} autoFocus />
++          <Button size="icon" onClick={handleSend} disabled={!draft.trim() || send.isPending}>{send.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}</Button></div></div>
++      </> : <ScrollArea className="flex-1"><div className="space-y-5 p-4">
++        <div className="relative"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input value={search} onChange={event => setSearch(event.target.value)} placeholder="Search team..." className="pl-9" /></div>
++        {(conversations.data ?? []).length > 0 && <section><div className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Recent</div><div className="space-y-1">{(conversations.data ?? []).map(item => {
++          const itemPeer = item.members.find(member => member.id !== user.id);
++          return <button key={item.conversationId} type="button" onClick={() => setConversationId(item.conversationId)} className="flex w-full items-center gap-3 rounded-xl p-2.5 text-left hover:bg-muted">
++            <Avatar className="h-10 w-10"><AvatarFallback>{initials(itemPeer?.name || itemPeer?.email)}</AvatarFallback></Avatar><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-2"><span className="truncate text-sm font-medium">{itemPeer?.name || itemPeer?.email || "Conversation"}</span>{item.unreadCount > 0 && <Badge className="h-5 min-w-5 justify-center px-1.5">{item.unreadCount}</Badge>}</div><p className="truncate text-xs text-muted-foreground">{item.latestMessage?.content || "Start the conversation"}</p></div>
++          </button>;
++        })}</div></section>}
++        <section><div className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Team</div><div className="space-y-1">{directory.isLoading ? <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin" /></div>
++          : people.length ? people.map(person => <button key={person.id} type="button" onClick={() => openDirect.mutate({ targetUserId: person.id })} className="flex w-full items-center gap-3 rounded-xl p-2.5 text-left hover:bg-muted">
++            <Avatar className="h-10 w-10"><AvatarFallback>{initials(person.name || person.email)}</AvatarFallback></Avatar><div className="min-w-0 flex-1"><div className="truncate text-sm font-medium">{person.name || person.email || `User ${person.id}`}</div><div className="truncate text-xs text-muted-foreground">{[person.position, person.departmentName].filter(Boolean).join(" · ") || person.role}</div></div>
++          </button>) : <p className="py-8 text-center text-sm text-muted-foreground">No team members found.</p>}</div></section>
++      </div></ScrollArea>}
++    </motion.aside>}</AnimatePresence>
++  </>;
++}
