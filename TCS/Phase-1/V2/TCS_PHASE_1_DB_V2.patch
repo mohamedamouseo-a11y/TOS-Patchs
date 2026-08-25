@@ -1,0 +1,66 @@
+diff --git a/drizzle/schema.ts b/drizzle/schema.ts
+--- a/drizzle/schema.ts
++++ b/drizzle/schema.ts
+@@ -202,6 +202,62 @@
+   createdAt: timestamp("createdAt").defaultNow().notNull(),
+ });
+ 
++
++// =============================================
++// TCS — Tamayouz Chat System
++// Phase 1: direct messaging foundation
++// =============================================
++
++export const tcsConversations = mysqlTable(
++  "tcs_conversations",
++  {
++    id: int("id").autoincrement().primaryKey(),
++    type: mysqlEnum("type", ["direct", "group"]).default("direct").notNull(),
++    title: varchar("title", { length: 191 }),
++    directKey: varchar("directKey", { length: 64 }),
++    createdBy: int("createdBy").notNull().references(() => users.id, { onDelete: "cascade" }),
++    createdAt: timestamp("createdAt").defaultNow().notNull(),
++    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
++  },
++  (table) => ({
++    directKeyUnique: uniqueIndex("tcs_conversations_direct_key_unique").on(table.directKey),
++    updatedIdx: index("tcs_conversations_updated_idx").on(table.updatedAt),
++  }),
++);
++
++export const tcsConversationMembers = mysqlTable(
++  "tcs_conversation_members",
++  {
++    id: int("id").autoincrement().primaryKey(),
++    conversationId: int("conversationId").notNull().references(() => tcsConversations.id, { onDelete: "cascade" }),
++    userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
++    lastReadAt: timestamp("lastReadAt"),
++    joinedAt: timestamp("joinedAt").defaultNow().notNull(),
++  },
++  (table) => ({
++    conversationUserUnique: uniqueIndex("tcs_members_conversation_user_unique").on(table.conversationId, table.userId),
++    userIdx: index("tcs_members_user_idx").on(table.userId),
++  }),
++);
++
++export const tcsMessages = mysqlTable(
++  "tcs_messages",
++  {
++    id: int("id").autoincrement().primaryKey(),
++    conversationId: int("conversationId").notNull().references(() => tcsConversations.id, { onDelete: "cascade" }),
++    senderId: int("senderId").notNull().references(() => users.id, { onDelete: "cascade" }),
++    content: text("content").notNull(),
++    messageType: mysqlEnum("messageType", ["text", "system"]).default("text").notNull(),
++    createdAt: timestamp("createdAt").defaultNow().notNull(),
++    editedAt: timestamp("editedAt"),
++    deletedAt: timestamp("deletedAt"),
++  },
++  (table) => ({
++    conversationCreatedIdx: index("tcs_messages_conversation_created_idx").on(table.conversationId, table.createdAt),
++    senderIdx: index("tcs_messages_sender_idx").on(table.senderId),
++  }),
++);
++
+ // =============================================
+ // Client Area Tables (NEW)
+ // =============================================
