@@ -1,0 +1,699 @@
+diff --git a/drizzle/schema.ts b/drizzle/schema.ts
+--- a/drizzle/schema.ts
++++ b/drizzle/schema.ts
+@@
+ export const chatMessages = mysqlTable("chat_messages", {
+   id: int("id").autoincrement().primaryKey(),
+   userId: int("userId").notNull(), // FK to users.id
+   role: mysqlEnum("role", ["user", "assistant"]).notNull(),
+   content: text("content").notNull(),
+   createdAt: timestamp("createdAt").defaultNow().notNull(),
+ });
++
++// =============================================
++// TACS — Tamayouz Chat System
++// Phase 1: direct messaging foundation
++// =============================================
++
++export const tacsConversations = mysqlTable(
++  "tacs_conversations",
++  {
++    id: int("id").autoincrement().primaryKey(),
++    type: mysqlEnum("type", ["direct", "group"]).default("direct").notNull(),
++    title: varchar("title", { length: 191 }),
++    directKey: varchar("directKey", { length: 64 }),
++    createdBy: int("createdBy").notNull().references(() => users.id, { onDelete: "cascade" }),
++    createdAt: timestamp("createdAt").defaultNow().notNull(),
++    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
++  },
++  (table) => ({
++    directKeyUnique: uniqueIndex("tacs_conversations_direct_key_unique").on(table.directKey),
++    updatedIdx: index("tacs_conversations_updated_idx").on(table.updatedAt),
++  }),
++);
++
++export const tacsConversationMembers = mysqlTable(
++  "tacs_conversation_members",
++  {
++    id: int("id").autoincrement().primaryKey(),
++    conversationId: int("conversationId")
++      .notNull()
++      .references(() => tacsConversations.id, { onDelete: "cascade" }),
++    userId: int("userId")
++      .notNull()
++      .references(() => users.id, { onDelete: "cascade" }),
++    lastReadAt: timestamp("lastReadAt"),
++    joinedAt: timestamp("joinedAt").defaultNow().notNull(),
++  },
++  (table) => ({
++    conversationUserUnique: uniqueIndex("tacs_members_conversation_user_unique").on(
++      table.conversationId,
++      table.userId,
++    ),
++    userIdx: index("tacs_members_user_idx").on(table.userId),
++  }),
++);
++
++export const tacsMessages = mysqlTable(
++  "tacs_messages",
++  {
++    id: int("id").autoincrement().primaryKey(),
++    conversationId: int("conversationId")
++      .notNull()
++      .references(() => tacsConversations.id, { onDelete: "cascade" }),
++    senderId: int("senderId")
++      .notNull()
++      .references(() => users.id, { onDelete: "cascade" }),
++    content: text("content").notNull(),
++    messageType: mysqlEnum("messageType", ["text", "system"]).default("text").notNull(),
++    createdAt: timestamp("createdAt").defaultNow().notNull(),
++    editedAt: timestamp("editedAt"),
++    deletedAt: timestamp("deletedAt"),
++  },
++  (table) => ({
++    conversationCreatedIdx: index("tacs_messages_conversation_created_idx").on(
++      table.conversationId,
++      table.createdAt,
++    ),
++    senderIdx: index("tacs_messages_sender_idx").on(table.senderId),
++  }),
++);
+ 
+ // =============================================
+ // Client Area Tables (NEW)
+ // =============================================
+diff --git a/server/tacsRouter.ts b/server/tacsRouter.ts
+new file mode 100644
+--- /dev/null
++++ b/server/tacsRouter.ts
+@@
++import { TRPCError } from "@trpc/server";
++import { and, asc, desc, eq, gt, ne } from "drizzle-orm";
++import { z } from "zod";
++import { protectedProcedure, router } from "./_core/trpc";
++import { getDb } from "./db";
++import {
++  departments,
++  employees,
++  tacsConversationMembers,
++  tacsConversations,
++  tacsMessages,
++  users,
++} from "../drizzle/schema";
++
++async function assertMember(userId: number, conversationId: number) {
++  const db = await getDb();
++  const rows = await db
++    .select({ id: tacsConversationMembers.id })
++    .from(tacsConversationMembers)
++    .where(
++      and(
++        eq(tacsConversationMembers.conversationId, conversationId),
++        eq(tacsConversationMembers.userId, userId),
++      ),
++    )
++    .limit(1);
++
++  if (!rows[0]) {
++    throw new TRPCError({ code: "FORBIDDEN", message: "You are not a member of this conversation." });
++  }
++}
++
++async function getConversationMembers(conversationId: number) {
++  const db = await getDb();
++  return db
++    .select({
++      id: users.id,
++      name: users.name,
++      email: users.email,
++      role: users.role,
++      position: employees.position,
++      departmentName: departments.name,
++    })
++    .from(tacsConversationMembers)
++    .innerJoin(users, eq(tacsConversationMembers.userId, users.id))
++    .leftJoin(employees, eq(employees.userId, users.id))
++    .leftJoin(departments, eq(departments.id, employees.departmentId))
++    .where(eq(tacsConversationMembers.conversationId, conversationId));
++}
++
++export const tacsRouter = router({
++  directory: protectedProcedure.query(async ({ ctx }) => {
++    const db = await getDb();
++    const rows = await db
++      .select({
++        id: users.id,
++        name: users.name,
++        email: users.email,
++        role: users.role,
++        position: employees.position,
++        departmentName: departments.name,
++        isActive: employees.isActive,
++      })
++      .from(users)
++      .leftJoin(employees, eq(employees.userId, users.id))
++      .leftJoin(departments, eq(departments.id, employees.departmentId));
++
++    return rows.filter((row) => row.id !== ctx.user.id && row.isActive !== false);
++  }),
++
++  list: protectedProcedure.query(async ({ ctx }) => {
++    const db = await getDb();
++    const memberships = await db
++      .select({
++        conversationId: tacsConversationMembers.conversationId,
++        lastReadAt: tacsConversationMembers.lastReadAt,
++        type: tacsConversations.type,
++        title: tacsConversations.title,
++        updatedAt: tacsConversations.updatedAt,
++      })
++      .from(tacsConversationMembers)
++      .innerJoin(tacsConversations, eq(tacsConversationMembers.conversationId, tacsConversations.id))
++      .where(eq(tacsConversationMembers.userId, ctx.user.id))
++      .orderBy(desc(tacsConversations.updatedAt));
++
++    return Promise.all(
++      memberships.map(async (membership) => {
++        const [members, latestRows, unreadRows] = await Promise.all([
++          getConversationMembers(membership.conversationId),
++          db
++            .select({
++              id: tacsMessages.id,
++              senderId: tacsMessages.senderId,
++              content: tacsMessages.content,
++              createdAt: tacsMessages.createdAt,
++            })
++            .from(tacsMessages)
++            .where(
++              and(
++                eq(tacsMessages.conversationId, membership.conversationId),
++                eq(tacsMessages.messageType, "text"),
++              ),
++            )
++            .orderBy(desc(tacsMessages.createdAt))
++            .limit(1),
++          membership.lastReadAt
++            ? db
++                .select({ id: tacsMessages.id })
++                .from(tacsMessages)
++                .where(
++                  and(
++                    eq(tacsMessages.conversationId, membership.conversationId),
++                    ne(tacsMessages.senderId, ctx.user.id),
++                    gt(tacsMessages.createdAt, membership.lastReadAt),
++                  ),
++                )
++            : db
++                .select({ id: tacsMessages.id })
++                .from(tacsMessages)
++                .where(
++                  and(
++                    eq(tacsMessages.conversationId, membership.conversationId),
++                    ne(tacsMessages.senderId, ctx.user.id),
++                  ),
++                ),
++        ]);
++
++        return {
++          ...membership,
++          members,
++          latestMessage: latestRows[0] ?? null,
++          unreadCount: unreadRows.length,
++        };
++      }),
++    );
++  }),
++
++  unreadTotal: protectedProcedure.query(async ({ ctx }) => {
++    const db = await getDb();
++    const memberships = await db
++      .select({
++        conversationId: tacsConversationMembers.conversationId,
++        lastReadAt: tacsConversationMembers.lastReadAt,
++      })
++      .from(tacsConversationMembers)
++      .where(eq(tacsConversationMembers.userId, ctx.user.id));
++
++    let count = 0;
++    for (const membership of memberships) {
++      const conditions = [
++        eq(tacsMessages.conversationId, membership.conversationId),
++        ne(tacsMessages.senderId, ctx.user.id),
++      ];
++      if (membership.lastReadAt) conditions.push(gt(tacsMessages.createdAt, membership.lastReadAt));
++      const rows = await db.select({ id: tacsMessages.id }).from(tacsMessages).where(and(...conditions));
++      count += rows.length;
++    }
++    return { count };
++  }),
++
++  openDirect: protectedProcedure
++    .input(z.object({ targetUserId: z.number().int().positive() }))
++    .mutation(async ({ ctx, input }) => {
++      if (input.targetUserId === ctx.user.id) {
++        throw new TRPCError({ code: "BAD_REQUEST", message: "You cannot start a chat with yourself." });
++      }
++
++      const db = await getDb();
++      const target = await db
++        .select({ id: users.id })
++        .from(users)
++        .where(eq(users.id, input.targetUserId))
++        .limit(1);
++      if (!target[0]) throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
++
++      const directKey = [ctx.user.id, input.targetUserId].sort((a, b) => a - b).join(":");
++      let conversation = (
++        await db
++          .select({ id: tacsConversations.id })
++          .from(tacsConversations)
++          .where(eq(tacsConversations.directKey, directKey))
++          .limit(1)
++      )[0];
++
++      if (!conversation) {
++        try {
++          const result = await db.insert(tacsConversations).values({
++            type: "direct",
++            directKey,
++            createdBy: ctx.user.id,
++          });
++          conversation = { id: result[0].insertId };
++        } catch {
++          conversation = (
++            await db
++              .select({ id: tacsConversations.id })
++              .from(tacsConversations)
++              .where(eq(tacsConversations.directKey, directKey))
++              .limit(1)
++          )[0];
++        }
++      }
++
++      if (!conversation) {
++        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Could not create conversation." });
++      }
++
++      for (const userId of [ctx.user.id, input.targetUserId]) {
++        const member = await db
++          .select({ id: tacsConversationMembers.id })
++          .from(tacsConversationMembers)
++          .where(
++            and(
++              eq(tacsConversationMembers.conversationId, conversation.id),
++              eq(tacsConversationMembers.userId, userId),
++            ),
++          )
++          .limit(1);
++        if (!member[0]) {
++          await db.insert(tacsConversationMembers).values({
++            conversationId: conversation.id,
++            userId,
++            lastReadAt: userId === ctx.user.id ? new Date() : null,
++          });
++        }
++      }
++
++      return { conversationId: conversation.id };
++    }),
++
++  messages: protectedProcedure
++    .input(z.object({ conversationId: z.number().int().positive() }))
++    .query(async ({ ctx, input }) => {
++      await assertMember(ctx.user.id, input.conversationId);
++      const db = await getDb();
++      return db
++        .select({
++          id: tacsMessages.id,
++          conversationId: tacsMessages.conversationId,
++          senderId: tacsMessages.senderId,
++          senderName: users.name,
++          content: tacsMessages.content,
++          createdAt: tacsMessages.createdAt,
++          editedAt: tacsMessages.editedAt,
++        })
++        .from(tacsMessages)
++        .innerJoin(users, eq(users.id, tacsMessages.senderId))
++        .where(
++          and(
++            eq(tacsMessages.conversationId, input.conversationId),
++            eq(tacsMessages.messageType, "text"),
++          ),
++        )
++        .orderBy(asc(tacsMessages.createdAt))
++        .limit(250);
++    }),
++
++  send: protectedProcedure
++    .input(
++      z.object({
++        conversationId: z.number().int().positive(),
++        content: z.string().trim().min(1).max(4000),
++      }),
++    )
++    .mutation(async ({ ctx, input }) => {
++      await assertMember(ctx.user.id, input.conversationId);
++      const db = await getDb();
++      const result = await db.insert(tacsMessages).values({
++        conversationId: input.conversationId,
++        senderId: ctx.user.id,
++        content: input.content,
++        messageType: "text",
++      });
++      await db
++        .update(tacsConversations)
++        .set({ updatedAt: new Date() })
++        .where(eq(tacsConversations.id, input.conversationId));
++      return { id: result[0].insertId };
++    }),
++
++  markRead: protectedProcedure
++    .input(z.object({ conversationId: z.number().int().positive() }))
++    .mutation(async ({ ctx, input }) => {
++      await assertMember(ctx.user.id, input.conversationId);
++      const db = await getDb();
++      await db
++        .update(tacsConversationMembers)
++        .set({ lastReadAt: new Date() })
++        .where(
++          and(
++            eq(tacsConversationMembers.conversationId, input.conversationId),
++            eq(tacsConversationMembers.userId, ctx.user.id),
++          ),
++        );
++      return { success: true } as const;
++    }),
++});
+diff --git a/server/routers.ts b/server/routers.ts
+--- a/server/routers.ts
++++ b/server/routers.ts
+@@
+ import { getDeveloperHubStatus, saveDeveloperHubConfig } from "./developerHub";
++import { tacsRouter } from "./tacsRouter";
+@@
+ export const appRouter = router({
+   system: systemRouter,
++  tacs: tacsRouter,
+ 
+   auth: router({
+diff --git a/client/src/components/TacsChat.tsx b/client/src/components/TacsChat.tsx
+new file mode 100644
+--- /dev/null
++++ b/client/src/components/TacsChat.tsx
+@@
++import { useEffect, useMemo, useRef, useState } from "react";
++import { AnimatePresence, motion } from "framer-motion";
++import { ArrowLeft, Loader2, MessageCircle, Search, Send, X } from "lucide-react";
++import { useAuth } from "@/_core/hooks/useAuth";
++import { Avatar, AvatarFallback } from "@/components/ui/avatar";
++import { Badge } from "@/components/ui/badge";
++import { Button } from "@/components/ui/button";
++import { Input } from "@/components/ui/input";
++import { ScrollArea } from "@/components/ui/scroll-area";
++import { trpc } from "@/lib/trpc";
++import { cn } from "@/lib/utils";
++
++function initials(value?: string | null) {
++  return (value || "T")
++    .split(" ")
++    .filter(Boolean)
++    .slice(0, 2)
++    .map((part) => part[0]?.toUpperCase())
++    .join("");
++}
++
++export default function TacsChat() {
++  const { user, isAuthenticated } = useAuth();
++  const [open, setOpen] = useState(false);
++  const [activeConversationId, setActiveConversationId] = useState<number | null>(null);
++  const [search, setSearch] = useState("");
++  const [draft, setDraft] = useState("");
++  const bottomRef = useRef<HTMLDivElement | null>(null);
++
++  const conversationsQuery = trpc.tacs.list.useQuery(undefined, {
++    enabled: isAuthenticated,
++    refetchInterval: open ? 3000 : 7000,
++  });
++  const directoryQuery = trpc.tacs.directory.useQuery(undefined, { enabled: isAuthenticated && open });
++  const unreadQuery = trpc.tacs.unreadTotal.useQuery(undefined, {
++    enabled: isAuthenticated,
++    refetchInterval: 5000,
++  });
++  const messagesQuery = trpc.tacs.messages.useQuery(
++    { conversationId: activeConversationId || 0 },
++    {
++      enabled: isAuthenticated && open && Boolean(activeConversationId),
++      refetchInterval: activeConversationId ? 2000 : false,
++    },
++  );
++
++  const openDirect = trpc.tacs.openDirect.useMutation({
++    onSuccess: async ({ conversationId }) => {
++      setActiveConversationId(conversationId);
++      await conversationsQuery.refetch();
++    },
++  });
++  const sendMessage = trpc.tacs.send.useMutation({
++    onSuccess: async () => {
++      setDraft("");
++      await Promise.all([messagesQuery.refetch(), conversationsQuery.refetch(), unreadQuery.refetch()]);
++    },
++  });
++  const markRead = trpc.tacs.markRead.useMutation({
++    onSuccess: () => {
++      void conversationsQuery.refetch();
++      void unreadQuery.refetch();
++    },
++  });
++
++  useEffect(() => {
++    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
++  }, [messagesQuery.data?.length, sendMessage.isPending]);
++
++  useEffect(() => {
++    if (!open || !activeConversationId || !messagesQuery.data) return;
++    markRead.mutate({ conversationId: activeConversationId });
++    // eslint-disable-next-line react-hooks/exhaustive-deps
++  }, [open, activeConversationId, messagesQuery.data?.length]);
++
++  const filteredPeople = useMemo(() => {
++    const value = search.trim().toLowerCase();
++    if (!value) return directoryQuery.data ?? [];
++    return (directoryQuery.data ?? []).filter((person) =>
++      [person.name, person.email, person.position, person.departmentName]
++        .filter(Boolean)
++        .some((field) => String(field).toLowerCase().includes(value)),
++    );
++  }, [directoryQuery.data, search]);
++
++  const activeConversation = (conversationsQuery.data ?? []).find(
++    (conversation) => conversation.conversationId === activeConversationId,
++  );
++  const activePeer = activeConversation?.members.find((member) => member.id !== user?.id);
++
++  if (!isAuthenticated || !user) return null;
++
++  const handleSend = () => {
++    const content = draft.trim();
++    if (!content || !activeConversationId || sendMessage.isPending) return;
++    sendMessage.mutate({ conversationId: activeConversationId, content });
++  };
++
++  return (
++    <>
++      <Button
++        type="button"
++        size="icon"
++        className="fixed bottom-24 right-6 z-50 h-14 w-14 rounded-full shadow-xl"
++        onClick={() => setOpen((value) => !value)}
++        aria-label="Open TACS chat"
++        title="TACS — Tamayouz Chat System"
++      >
++        {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
++        {(unreadQuery.data?.count ?? 0) > 0 ? (
++          <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold leading-4 text-white">
++            {Math.min(unreadQuery.data?.count ?? 0, 99)}
++          </span>
++        ) : null}
++      </Button>
++
++      <AnimatePresence>
++        {open ? (
++          <motion.aside
++            initial={{ x: "100%", opacity: 0 }}
++            animate={{ x: 0, opacity: 1 }}
++            exit={{ x: "100%", opacity: 0 }}
++            transition={{ type: "spring", stiffness: 320, damping: 32 }}
++            className="fixed inset-y-0 right-0 z-[60] flex w-full max-w-[420px] flex-col border-l bg-background shadow-2xl"
++          >
++            <div className="flex h-16 items-center justify-between border-b px-4">
++              <div className="flex min-w-0 items-center gap-3">
++                {activeConversationId ? (
++                  <Button variant="ghost" size="icon" onClick={() => setActiveConversationId(null)}>
++                    <ArrowLeft className="h-5 w-5" />
++                  </Button>
++                ) : (
++                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
++                    <MessageCircle className="h-5 w-5" />
++                  </div>
++                )}
++                <div className="min-w-0">
++                  <h2 className="truncate font-semibold">
++                    {activeConversationId ? activePeer?.name || activePeer?.email || "Conversation" : "TACS"}
++                  </h2>
++                  <p className="truncate text-xs text-muted-foreground">
++                    {activeConversationId
++                      ? activePeer?.position || activePeer?.departmentName || "Tamayouz team"
++                      : "Tamayouz Chat System"}
++                  </p>
++                </div>
++              </div>
++              <Button variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label="Close TACS">
++                <X className="h-5 w-5" />
++              </Button>
++            </div>
++
++            {activeConversationId ? (
++              <>
++                <ScrollArea className="flex-1 px-4 py-4">
++                  {messagesQuery.isLoading ? (
++                    <div className="flex h-40 items-center justify-center">
++                      <Loader2 className="h-5 w-5 animate-spin" />
++                    </div>
++                  ) : (
++                    <div className="space-y-3">
++                      {(messagesQuery.data ?? []).map((message) => {
++                        const mine = message.senderId === user.id;
++                        return (
++                          <div key={message.id} className={cn("flex", mine ? "justify-end" : "justify-start")}>
++                            <div
++                              className={cn(
++                                "max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm",
++                                mine
++                                  ? "rounded-br-md bg-primary text-primary-foreground"
++                                  : "rounded-bl-md bg-muted text-foreground",
++                              )}
++                            >
++                              {!mine ? <div className="mb-1 text-[11px] font-semibold opacity-70">{message.senderName}</div> : null}
++                              <div className="whitespace-pre-wrap break-words">{message.content}</div>
++                              <div className="mt-1 text-right text-[10px] opacity-60">
++                                {new Date(message.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
++                              </div>
++                            </div>
++                          </div>
++                        );
++                      })}
++                      <div ref={bottomRef} />
++                    </div>
++                  )}
++                </ScrollArea>
++
++                <div className="border-t p-3">
++                  <div className="flex items-end gap-2">
++                    <Input
++                      value={draft}
++                      onChange={(event) => setDraft(event.target.value)}
++                      onKeyDown={(event) => {
++                        if (event.key === "Enter" && !event.shiftKey) {
++                          event.preventDefault();
++                          handleSend();
++                        }
++                      }}
++                      placeholder="Type a message..."
++                      maxLength={4000}
++                      autoFocus
++                    />
++                    <Button size="icon" onClick={handleSend} disabled={!draft.trim() || sendMessage.isPending}>
++                      {sendMessage.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
++                    </Button>
++                  </div>
++                </div>
++              </>
++            ) : (
++              <ScrollArea className="flex-1">
++                <div className="space-y-5 p-4">
++                  <div className="relative">
++                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
++                    <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search team..." className="pl-9" />
++                  </div>
++
++                  {(conversationsQuery.data ?? []).length > 0 ? (
++                    <section>
++                      <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Recent</div>
++                      <div className="space-y-1">
++                        {(conversationsQuery.data ?? []).map((conversation) => {
++                          const peer = conversation.members.find((member) => member.id !== user.id);
++                          return (
++                            <button
++                              key={conversation.conversationId}
++                              type="button"
++                              onClick={() => setActiveConversationId(conversation.conversationId)}
++                              className="flex w-full items-center gap-3 rounded-xl p-2.5 text-left hover:bg-muted"
++                            >
++                              <Avatar className="h-10 w-10">
++                                <AvatarFallback>{initials(peer?.name || peer?.email)}</AvatarFallback>
++                              </Avatar>
++                              <div className="min-w-0 flex-1">
++                                <div className="flex items-center justify-between gap-2">
++                                  <span className="truncate text-sm font-medium">{peer?.name || peer?.email || "Conversation"}</span>
++                                  {conversation.unreadCount > 0 ? <Badge className="h-5 min-w-5 justify-center px-1.5">{conversation.unreadCount}</Badge> : null}
++                                </div>
++                                <p className="truncate text-xs text-muted-foreground">{conversation.latestMessage?.content || "Start the conversation"}</p>
++                              </div>
++                            </button>
++                          );
++                        })}
++                      </div>
++                    </section>
++                  ) : null}
++
++                  <section>
++                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Team</div>
++                    <div className="space-y-1">
++                      {directoryQuery.isLoading ? (
++                        <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin" /></div>
++                      ) : filteredPeople.length > 0 ? (
++                        filteredPeople.map((person) => (
++                          <button
++                            key={person.id}
++                            type="button"
++                            onClick={() => openDirect.mutate({ targetUserId: person.id })}
++                            className="flex w-full items-center gap-3 rounded-xl p-2.5 text-left hover:bg-muted"
++                          >
++                            <Avatar className="h-10 w-10">
++                              <AvatarFallback>{initials(person.name || person.email)}</AvatarFallback>
++                            </Avatar>
++                            <div className="min-w-0 flex-1">
++                              <div className="truncate text-sm font-medium">{person.name || person.email || `User ${person.id}`}</div>
++                              <div className="truncate text-xs text-muted-foreground">
++                                {[person.position, person.departmentName].filter(Boolean).join(" · ") || person.role}
++                              </div>
++                            </div>
++                          </button>
++                        ))
++                      ) : (
++                        <p className="py-8 text-center text-sm text-muted-foreground">No team members found.</p>
++                      )}
++                    </div>
++                  </section>
++                </div>
++              </ScrollArea>
++            )}
++          </motion.aside>
++        ) : null}
++      </AnimatePresence>
++    </>
++  );
++}
+diff --git a/client/src/components/DashboardLayout.tsx b/client/src/components/DashboardLayout.tsx
+--- a/client/src/components/DashboardLayout.tsx
++++ b/client/src/components/DashboardLayout.tsx
+@@
+ import HelpChatWidget from "./HelpChatWidget";
+ import { AIChatSidebar } from "./AIChatSidebar";
++import TacsChat from "./TacsChat";
+@@
+         <AIChatSidebar isOpen={showChat} onClose={() => setShowChat(false)} />
++        <TacsChat />
+         <HelpChatWidget />
+       </SidebarInset>
