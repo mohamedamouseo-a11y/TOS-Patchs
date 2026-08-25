@@ -1,0 +1,22 @@
+diff --git a/server/auth.logout.test.ts b/server/auth.logout.test.ts
+--- a/server/auth.logout.test.ts
++++ b/server/auth.logout.test.ts
+@@ -35,6 +35,7 @@
+       clearCookie: (name: string, options: Record<string, unknown>) => {
+         clearedCookies.push({ name, options });
+       },
++      append: () => {},
+     } as TrpcContext["res"],
+   };
+ 
+diff --git a/server/tos.test.ts b/server/tos.test.ts
+--- a/server/tos.test.ts
++++ b/server/tos.test.ts
+@@ -35,6 +35,7 @@
+       clearCookie: (name: string, options: Record<string, unknown>) => {
+         clearedCookies.push({ name, options });
+       },
++      append: () => {},
+     } as TrpcContext["res"],
+   };
+ 
