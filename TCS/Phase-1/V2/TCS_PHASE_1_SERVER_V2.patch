@@ -1,0 +1,205 @@
+diff --git a/server/tcsRouter.ts b/server/tcsRouter.ts
+new file mode 100644
+--- /dev/null
++++ b/server/tcsRouter.ts
+@@ -0,0 +1,182 @@
++import { TRPCError } from "@trpc/server";
++import { and, asc, desc, eq, gt, ne } from "drizzle-orm";
++import { z } from "zod";
++import { protectedProcedure, router } from "./_core/trpc";
++import { getDb } from "./db";
++import {
++  departments,
++  employees,
++  tcsConversationMembers,
++  tcsConversations,
++  tcsMessages,
++  users,
++} from "../drizzle/schema";
++
++async function assertMember(userId: number, conversationId: number) {
++  const db = await getDb();
++  const row = await db
++    .select({ id: tcsConversationMembers.id })
++    .from(tcsConversationMembers)
++    .where(and(eq(tcsConversationMembers.conversationId, conversationId), eq(tcsConversationMembers.userId, userId)))
++    .limit(1);
++  if (!row[0]) throw new TRPCError({ code: "FORBIDDEN", message: "You are not a member of this conversation." });
++}
++
++async function members(conversationId: number) {
++  const db = await getDb();
++  return db
++    .select({
++      id: users.id,
++      name: users.name,
++      email: users.email,
++      role: users.role,
++      position: employees.position,
++      departmentName: departments.name,
++    })
++    .from(tcsConversationMembers)
++    .innerJoin(users, eq(tcsConversationMembers.userId, users.id))
++    .leftJoin(employees, eq(employees.userId, users.id))
++    .leftJoin(departments, eq(departments.id, employees.departmentId))
++    .where(eq(tcsConversationMembers.conversationId, conversationId));
++}
++
++export const tcsRouter = router({
++  directory: protectedProcedure.query(async ({ ctx }) => {
++    const db = await getDb();
++    const rows = await db
++      .select({
++        id: users.id,
++        name: users.name,
++        email: users.email,
++        role: users.role,
++        position: employees.position,
++        departmentName: departments.name,
++        isActive: employees.isActive,
++      })
++      .from(users)
++      .leftJoin(employees, eq(employees.userId, users.id))
++      .leftJoin(departments, eq(departments.id, employees.departmentId));
++    return rows.filter(row => row.id !== ctx.user.id && row.isActive !== false);
++  }),
++
++  list: protectedProcedure.query(async ({ ctx }) => {
++    const db = await getDb();
++    const rows = await db
++      .select({
++        conversationId: tcsConversationMembers.conversationId,
++        lastReadAt: tcsConversationMembers.lastReadAt,
++        type: tcsConversations.type,
++        title: tcsConversations.title,
++        updatedAt: tcsConversations.updatedAt,
++      })
++      .from(tcsConversationMembers)
++      .innerJoin(tcsConversations, eq(tcsConversationMembers.conversationId, tcsConversations.id))
++      .where(eq(tcsConversationMembers.userId, ctx.user.id))
++      .orderBy(desc(tcsConversations.updatedAt));
++
++    return Promise.all(rows.map(async row => {
++      const [people, latest, unread] = await Promise.all([
++        members(row.conversationId),
++        db.select({ id: tcsMessages.id, senderId: tcsMessages.senderId, content: tcsMessages.content, createdAt: tcsMessages.createdAt })
++          .from(tcsMessages)
++          .where(and(eq(tcsMessages.conversationId, row.conversationId), eq(tcsMessages.messageType, "text")))
++          .orderBy(desc(tcsMessages.createdAt)).limit(1),
++        db.select({ id: tcsMessages.id }).from(tcsMessages).where(and(
++          eq(tcsMessages.conversationId, row.conversationId),
++          ne(tcsMessages.senderId, ctx.user.id),
++          ...(row.lastReadAt ? [gt(tcsMessages.createdAt, row.lastReadAt)] : []),
++        )),
++      ]);
++      return { ...row, members: people, latestMessage: latest[0] ?? null, unreadCount: unread.length };
++    }));
++  }),
++
++  unreadTotal: protectedProcedure.query(async ({ ctx }) => {
++    const db = await getDb();
++    const rows = await db.select({ conversationId: tcsConversationMembers.conversationId, lastReadAt: tcsConversationMembers.lastReadAt })
++      .from(tcsConversationMembers).where(eq(tcsConversationMembers.userId, ctx.user.id));
++    let count = 0;
++    for (const row of rows) {
++      const unread = await db.select({ id: tcsMessages.id }).from(tcsMessages).where(and(
++        eq(tcsMessages.conversationId, row.conversationId),
++        ne(tcsMessages.senderId, ctx.user.id),
++        ...(row.lastReadAt ? [gt(tcsMessages.createdAt, row.lastReadAt)] : []),
++      ));
++      count += unread.length;
++    }
++    return { count };
++  }),
++
++  openDirect: protectedProcedure
++    .input(z.object({ targetUserId: z.number().int().positive() }))
++    .mutation(async ({ ctx, input }) => {
++      if (input.targetUserId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "You cannot chat with yourself." });
++      const db = await getDb();
++      const target = await db.select({ id: users.id }).from(users).where(eq(users.id, input.targetUserId)).limit(1);
++      if (!target[0]) throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
++
++      const directKey = [ctx.user.id, input.targetUserId].sort((a, b) => a - b).join(":");
++      let conversation = (await db.select({ id: tcsConversations.id }).from(tcsConversations).where(eq(tcsConversations.directKey, directKey)).limit(1))[0];
++      if (!conversation) {
++        try {
++          const result = await db.insert(tcsConversations).values({ type: "direct", directKey, createdBy: ctx.user.id });
++          conversation = { id: result[0].insertId };
++        } catch {
++          conversation = (await db.select({ id: tcsConversations.id }).from(tcsConversations).where(eq(tcsConversations.directKey, directKey)).limit(1))[0];
++        }
++      }
++      if (!conversation) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Could not create conversation." });
++
++      for (const userId of [ctx.user.id, input.targetUserId]) {
++        const exists = await db.select({ id: tcsConversationMembers.id }).from(tcsConversationMembers)
++          .where(and(eq(tcsConversationMembers.conversationId, conversation.id), eq(tcsConversationMembers.userId, userId))).limit(1);
++        if (!exists[0]) await db.insert(tcsConversationMembers).values({
++          conversationId: conversation.id,
++          userId,
++          lastReadAt: userId === ctx.user.id ? new Date() : null,
++        });
++      }
++      return { conversationId: conversation.id };
++    }),
++
++  messages: protectedProcedure
++    .input(z.object({ conversationId: z.number().int().positive() }))
++    .query(async ({ ctx, input }) => {
++      await assertMember(ctx.user.id, input.conversationId);
++      const db = await getDb();
++      return db.select({
++        id: tcsMessages.id,
++        conversationId: tcsMessages.conversationId,
++        senderId: tcsMessages.senderId,
++        senderName: users.name,
++        content: tcsMessages.content,
++        createdAt: tcsMessages.createdAt,
++        editedAt: tcsMessages.editedAt,
++      }).from(tcsMessages)
++        .innerJoin(users, eq(users.id, tcsMessages.senderId))
++        .where(and(eq(tcsMessages.conversationId, input.conversationId), eq(tcsMessages.messageType, "text")))
++        .orderBy(asc(tcsMessages.createdAt)).limit(250);
++    }),
++
++  send: protectedProcedure
++    .input(z.object({ conversationId: z.number().int().positive(), content: z.string().trim().min(1).max(4000) }))
++    .mutation(async ({ ctx, input }) => {
++      await assertMember(ctx.user.id, input.conversationId);
++      const db = await getDb();
++      const result = await db.insert(tcsMessages).values({ conversationId: input.conversationId, senderId: ctx.user.id, content: input.content, messageType: "text" });
++      await db.update(tcsConversations).set({ updatedAt: new Date() }).where(eq(tcsConversations.id, input.conversationId));
++      return { id: result[0].insertId };
++    }),
++
++  markRead: protectedProcedure
++    .input(z.object({ conversationId: z.number().int().positive() }))
++    .mutation(async ({ ctx, input }) => {
++      await assertMember(ctx.user.id, input.conversationId);
++      const db = await getDb();
++      await db.update(tcsConversationMembers).set({ lastReadAt: new Date() }).where(and(
++        eq(tcsConversationMembers.conversationId, input.conversationId),
++        eq(tcsConversationMembers.userId, ctx.user.id),
++      ));
++      return { success: true } as const;
++    }),
++});
+diff --git a/server/routers.ts b/server/routers.ts
+--- a/server/routers.ts
++++ b/server/routers.ts
+@@ -54,4 +54,5 @@
+ import { answerHelpQuestion } from "./helpCenterAI";
+ import { getDeveloperHubStatus, saveDeveloperHubConfig } from "./developerHub";
++import { tcsRouter } from "./tcsRouter";
+ import {
+   addFeedback as addHelpFeedback,
+diff --git a/server/routers.ts b/server/routers.ts
+--- a/server/routers.ts
++++ b/server/routers.ts
+@@ -311,4 +311,5 @@
+ export const appRouter = router({
+   system: systemRouter,
++  tcs: tcsRouter,
+ 
+   auth: router({
