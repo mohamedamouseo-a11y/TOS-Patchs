@@ -1,7 +1,7 @@
 diff --git a/frontend/src/i18n/translations.js b/frontend/src/i18n/translations.js
 --- a/frontend/src/i18n/translations.js
 +++ b/frontend/src/i18n/translations.js
-@@ -2,20 +2,20 @@ export const translations = {
+@@ -2,19 +2,19 @@ export const translations = {
    ar: {
      nav: {
        dashboard: "الرئيسية", teamPerformance: "أداء الفريق", projects: "المشاريع", tasks: "المهام", myWorkspace: "مساحة مهامي", designQueue: "طلبات التصميم",
@@ -33,7 +33,7 @@ diff --git a/frontend/src/i18n/translations.js b/frontend/src/i18n/translations.
      socketNote: "Socket.IO مفعل",
      activeProjectsTitle: "المشاريع النشطة",
      latestFiles: "آخر الملفات",
-@@ -150,20 +150,20 @@ export const translations = {
+@@ -150,19 +150,19 @@ export const translations = {
    en: {
      nav: {
        dashboard: "Dashboard", teamPerformance: "Team Performance", projects: "Projects", tasks: "Tasks", myWorkspace: "My Workspace", designQueue: "Design Queue",
