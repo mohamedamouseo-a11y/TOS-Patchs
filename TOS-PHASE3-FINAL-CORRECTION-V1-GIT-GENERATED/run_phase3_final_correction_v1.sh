@@ -18,7 +18,8 @@ git apply --check "$PATCH_FILE"
 git apply "$PATCH_FILE"
 
 # Remove generated PM2 artifacts from Git tracking only. Runtime files remain on disk.
-git rm --cached --ignore-unmatch backend/.pm2/module_conf.json backend/.pm2/touch || true
+# -f is intentional because runtime files may have changed after the last commit.
+git rm -f --cached --ignore-unmatch backend/.pm2/module_conf.json backend/.pm2/touch || true
 
 node --check backend/src/routes/tasks.routes.js
 npm --prefix frontend run build
