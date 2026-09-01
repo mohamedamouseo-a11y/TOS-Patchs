@@ -36,6 +36,7 @@ echo "PHASE7_BASELINE_PRESENT=PASS"
 
 python3 "$PATCH_DIR/01_phase8_schema.py" "$REPO"
 python3 "$PATCH_DIR/02_phase8_backend.py" "$REPO"
+python3 "$PATCH_DIR/02b_phase8_backend_hardening.py" "$REPO"
 python3 "$PATCH_DIR/03_phase8_api.py" "$REPO"
 python3 "$PATCH_DIR/04_phase8_component.py" "$REPO"
 python3 "$PATCH_DIR/05_phase8_dashboard.py" "$REPO"
@@ -57,10 +58,14 @@ grep -q '/reports/team-performance/workforce/forecast' backend/src/routes/tasks.
 grep -q '/reports/team-performance/workforce/capacity-plans' backend/src/routes/tasks.routes.js
 grep -q 'RULE_BASED_OPERATIONAL_FORECAST' backend/src/routes/tasks.routes.js
 grep -q 'assertNoOverlappingCapacityPlan' backend/src/routes/tasks.routes.js
+grep -q 'performanceScore != null && Number(performanceScore) < 50' backend/src/routes/tasks.routes.js
+grep -q 'Workforce employee not found' backend/src/routes/tasks.routes.js
 grep -q 'tasksByUser' backend/src/routes/tasks.routes.js
 grep -q 'actionsByUser' backend/src/routes/tasks.routes.js
 echo "BACKEND_WORKFORCE_CONTRACT=PASS"
 echo "WORKFORCE_CAPACITY_OVERLAP_GUARD=PASS"
+echo "WORKFORCE_ACCESS_HARDENING=PASS"
+echo "NO_ACTIVITY_OUTLOOK_HARDENING=PASS"
 echo "WORKFORCE_BULK_AGGREGATION=PASS"
 
 grep -q 'workforceForecast:' frontend/src/lib/api.js
