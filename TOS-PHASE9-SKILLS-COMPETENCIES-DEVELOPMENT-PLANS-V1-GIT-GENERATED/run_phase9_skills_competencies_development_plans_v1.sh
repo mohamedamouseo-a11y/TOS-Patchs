@@ -35,6 +35,7 @@ echo "PHASE8_BASELINE_PRESENT=PASS"
 
 python3 "$PATCH_DIR/01_phase9_schema.py" "$REPO"
 python3 "$PATCH_DIR/02_phase9_backend.py" "$REPO"
+python3 "$PATCH_DIR/02b_phase9_backend_hardening.py" "$REPO"
 python3 "$PATCH_DIR/03_phase9_api.py" "$REPO"
 python3 "$PATCH_DIR/04_phase9_component.py" "$REPO"
 python3 "$PATCH_DIR/05_phase9_dashboard.py" "$REPO"
@@ -65,9 +66,11 @@ grep -q '/reports/team-performance/skills/assessments' backend/src/routes/tasks.
 grep -q '/reports/team-performance/development-plans' backend/src/routes/tasks.routes.js
 grep -q 'requirementPrecedence: \["EMPLOYEE", "JOB_TITLE", "DEPARTMENT"\]' backend/src/routes/tasks.routes.js
 grep -q 'coverage: "Requirements met / effective required skills' backend/src/routes/tasks.routes.js
+grep -q '__phase9_hidden_draft__' backend/src/routes/tasks.routes.js
 echo "BACKEND_SKILLS_CONTRACT=PASS"
 echo "SKILL_REQUIREMENT_PRECEDENCE=PASS"
 echo "SKILL_COVERAGE_SEPARATE_FROM_SCORE=PASS"
+echo "EMPLOYEE_DEVELOPMENT_DRAFT_PRIVACY=PASS"
 
 grep -q 'skillsMatrix:' frontend/src/lib/api.js
 grep -q 'developmentPlans:' frontend/src/lib/api.js
