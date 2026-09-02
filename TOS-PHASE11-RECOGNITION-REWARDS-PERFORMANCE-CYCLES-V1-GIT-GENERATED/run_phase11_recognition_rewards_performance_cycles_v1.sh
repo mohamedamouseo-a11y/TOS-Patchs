@@ -37,6 +37,7 @@ echo "PHASE10_BASELINE_PRESENT=PASS"
 
 python3 "$PATCH_DIR/01_phase11_schema.py" "$REPO"
 python3 "$PATCH_DIR/02_phase11_backend.py" "$REPO"
+python3 "$PATCH_DIR/02b_phase11_date_boundary_hardening.py" "$REPO"
 python3 "$PATCH_DIR/03_phase11_api.py" "$REPO"
 python3 "$PATCH_DIR/04_phase11_component.py" "$REPO"
 python3 "$PATCH_DIR/05_phase11_dashboard.py" "$REPO"
@@ -80,6 +81,10 @@ grep -q 'snapshotPerformanceScore' backend/src/routes/tasks.routes.js
 grep -q 'snapshotTargetAchievement' backend/src/routes/tasks.routes.js
 grep -q 'buildRecognitionPerformanceSnapshot' backend/src/routes/tasks.routes.js
 echo "PERFORMANCE_CONTEXT_SNAPSHOT=PASS"
+
+grep -q 'function recognitionBoundaryDate' backend/src/routes/tasks.routes.js
+grep -q 'date.setUTCHours(23, 59, 59, 999)' backend/src/routes/tasks.routes.js
+echo "RECOGNITION_DATE_BOUNDARY_HARDENING=PASS"
 
 grep -q 'recognitionOverview:' frontend/src/lib/api.js
 grep -q 'createRecognitionCycle:' frontend/src/lib/api.js
