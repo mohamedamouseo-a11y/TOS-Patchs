@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT=/var/www/TOS
 PATCH_DIR="$(cd "$(dirname "$0")" && pwd)"
-EXPECTED_HEAD="8b29fd2ec2c96ce422b927711310b35fe6c52c61"
+EXPECTED_HEAD="495201cfa490f643d9e28252eb523a4e278f385c"
 
 cd "$ROOT"
 
@@ -13,24 +13,17 @@ if [[ "$HEAD" != "$EXPECTED_HEAD" ]]; then
   exit 1
 fi
 
-python3 - <<'PY'
-import subprocess, sys
-expected = {
- ' M frontend/src/components/layout/Topbar.jsx',
- ' M frontend/src/components/performance/ExecutiveCommandCenter.jsx',
- ' M frontend/src/pages/TeamPerformanceDashboard.jsx',
- '?? frontend/src/components/layout/premiumHeaderDark.css',
- '?? frontend/src/components/performance/PerformanceDisclosure.jsx',
- '?? frontend/src/components/performance/PerformancePeriodControl.jsx',
- '?? frontend/src/components/performance/teamPerformancePremiumDark.css',
-}
-actual = set(filter(None, subprocess.check_output(['git','status','--short'], text=True).splitlines()))
-if actual != expected:
-    print('PHASE2_REFINEMENT_ERROR=UNEXPECTED_PREEXISTING_STATUS')
-    print('\n'.join(sorted(actual)))
-    sys.exit(1)
-print('PREEXISTING_PHASE1_PHASE2_HEADER_STATE=CONFIRMED')
-PY
+# Safely remove only the exact known residue from the failed Dashboard V2 patch.
+python3 "$PATCH_DIR/00_cleanup_failed_dashboard_v2.py"
+
+if [[ -n "$(git status --short)" ]]; then
+  echo 'PHASE2_REFINEMENT_ERROR=WORKTREE_NOT_CLEAN_AFTER_SAFE_CLEANUP'
+  git status --short
+  exit 1
+fi
+
+echo 'PREEXISTING_PHASE1_PHASE2_HEADER_STATE=COMMITTED_IN_BASELINE'
+echo 'PHASE2_REFINEMENT_BASELINE=CONFIRMED'
 
 python3 "$PATCH_DIR/01_phase2_refinement.py"
 python3 "$PATCH_DIR/02_phase2_control_hardening.py"
@@ -72,14 +65,9 @@ python3 - <<'PY'
 import subprocess, sys
 expected = {
  ' M backend/src/routes/tasks.routes.js',
- ' M frontend/src/components/layout/Topbar.jsx',
- ' M frontend/src/components/performance/ExecutiveCommandCenter.jsx',
+ ' M frontend/src/components/performance/PerformancePeriodControl.jsx',
  ' M frontend/src/pages/TeamPerformanceDashboard.jsx',
- '?? frontend/src/components/layout/premiumHeaderDark.css',
  '?? frontend/src/components/performance/ArchivedPerformanceMembers.jsx',
- '?? frontend/src/components/performance/PerformanceDisclosure.jsx',
- '?? frontend/src/components/performance/PerformancePeriodControl.jsx',
- '?? frontend/src/components/performance/teamPerformancePremiumDark.css',
 }
 actual = set(filter(None, subprocess.check_output(['git','status','--short'], text=True).splitlines()))
 if actual != expected:
