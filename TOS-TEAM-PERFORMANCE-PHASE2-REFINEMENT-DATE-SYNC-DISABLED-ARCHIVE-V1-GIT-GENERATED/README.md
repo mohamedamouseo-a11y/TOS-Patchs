@@ -1,5 +1,20 @@
 # TOS Team Performance — Phase 2 Refinement V1
 
+## Baseline
+
+Expected TOS HEAD:
+
+`495201cfa490f643d9e28252eb523a4e278f385c`
+
+This commit already contains the approved Premium Header, Team Performance Phase 1, Executive Snapshot refinement, Premium Dark Mode, and Phase 2 Professional Date & Comparison work.
+
+The runner also contains a guarded cleanup for the exact residue left by the failed `Phase 01 Dashboard V2` attempt:
+
+- modified `frontend/src/main.jsx` containing only the import of `./styles/dashboard-github-reference.css`
+- untracked `frontend/src/styles/dashboard-github-reference.css`
+
+If anything differs from that exact residue, the runner stops instead of deleting or resetting unrelated work.
+
 ## Purpose
 
 This patch refines the already-applied Team Performance Phase 2 and adds the disabled-member archive behavior requested for live reporting.
@@ -8,44 +23,30 @@ This patch refines the already-applied Team Performance Phase 2 and adds the dis
 
 ### Date / Compare refinement
 
-- Preset periods now populate the visible **From** and **To** date inputs.
-- Editing either date switches the reporting period to **Custom** while preserving the other boundary.
-- Current-period and comparison-period labels always reflect the actual calculated ranges.
-- The selected preset has a stronger visual active state.
+- Preset periods populate the visible **From** and **To** inputs.
+- Editing either date switches to **Custom** while preserving the other boundary.
+- Current-period and comparison-period labels reflect the actual ranges.
+- Only the selected preset has the premium active state.
 - Existing comparison modes remain: Previous period, Previous month, Previous year, Custom comparison, Off.
 
 ### Disabled members
 
 `UserStatus.DISABLED` employees are historical only.
 
-They are excluded from:
+They are excluded from live Team Performance, ranking, the five KPIs, comparison, Intelligence, Targets live scope, Reviews live scope, Workforce, Skills, Talent/Succession, Recognition live management, Executive Command Center aggregation, and standard live exports.
 
-- live Team Performance employee list
-- ranking
-- the 5 live KPIs
-- comparison cohort
-- Performance Intelligence
-- Targets live summary/config scope
-- Reviews live scope
-- Workforce Planning live scope
-- Skills live scope
-- Talent/Succession live scope
-- Recognition live management scope
-- Executive Command Center aggregation
-- standard Team Performance exports
+Historical records are not deleted. The main Team Performance endpoint returns accessible disabled historical rows separately as `archivedByUser`.
 
-Their records are **not deleted**. The main Team Performance endpoint calculates their historical metrics for the selected period and returns them as `archivedByUser`.
+The frontend shows **Archived Members**, collapsed by default. Archived rows have no live rank and do not affect live management metrics.
 
-The frontend shows a separate **Archived Members** disclosure, collapsed by default, with historical score/tasks/hours/overdue/disabled date. Archived rows have no live rank and do not affect any live management metric.
-
-`PENDING` users also do not participate in live performance reporting; they are not treated as archived employees.
+`PENDING` users are excluded from both live and archived performance cohorts.
 
 ## Data safety
 
 - No schema change.
 - No migration.
 - No user deletion.
-- No performance history deletion.
+- No performance-history deletion.
 - No score-formula change.
 - No RBAC widening.
 
@@ -53,14 +54,9 @@ The frontend shows a separate **Archived Members** disclosure, collapsed by defa
 
 ```text
  M backend/src/routes/tasks.routes.js
- M frontend/src/components/layout/Topbar.jsx
- M frontend/src/components/performance/ExecutiveCommandCenter.jsx
+ M frontend/src/components/performance/PerformancePeriodControl.jsx
  M frontend/src/pages/TeamPerformanceDashboard.jsx
-?? frontend/src/components/layout/premiumHeaderDark.css
 ?? frontend/src/components/performance/ArchivedPerformanceMembers.jsx
-?? frontend/src/components/performance/PerformanceDisclosure.jsx
-?? frontend/src/components/performance/PerformancePeriodControl.jsx
-?? frontend/src/components/performance/teamPerformancePremiumDark.css
 ```
 
 ## Apply
@@ -69,4 +65,4 @@ The frontend shows a separate **Archived Members** disclosure, collapsed by defa
 bash run_phase2_refinement_v1.sh
 ```
 
-The runner builds the frontend and validates the exact working-tree scope. It does **not** commit or push TOS.
+The runner performs the guarded failed-patch cleanup when applicable, builds the frontend, and validates the exact working-tree scope. It does **not** commit or push TOS.
