@@ -32,8 +32,9 @@ grep -Fq -- '--tp-gold: #d9a441;' "$CSS_FILE"
 grep -Fq 'Tables: remove beige/light sheet appearance' "$CSS_FILE"
 grep -Fq 'Active segmented controls: premium gold instead of white inversion' "$CSS_FILE"
 
-# Dark-mode-only guard: CSS must not define a light-mode root selector.
-if grep -Eq '(^|[,{[:space:]])\.tos-team-performance-premium[[:space:]]*\{' "$CSS_FILE"; then
+# Dark-mode-only guard: no selector may begin directly with the page scope class.
+# Every Team Performance selector in this stylesheet must be rooted by html.dark.
+if grep -Eq '^[[:space:]]*\.tos-team-performance-premium([[:space:]:.{,#>]|$)' "$CSS_FILE"; then
   echo "ERROR: found an unscoped Team Performance CSS rule that could affect light mode." >&2
   exit 4
 fi
