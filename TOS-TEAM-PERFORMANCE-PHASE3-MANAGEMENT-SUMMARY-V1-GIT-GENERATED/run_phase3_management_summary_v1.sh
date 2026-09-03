@@ -22,6 +22,7 @@ fi
 echo "PREEXISTING_WORKING_TREE=CLEAN"
 
 python3 "$PATCH_DIR/01_phase3_management_summary.py"
+python3 "$PATCH_DIR/02_phase3_style_hardening.py"
 
 DASHBOARD="frontend/src/pages/TeamPerformanceDashboard.jsx"
 SUMMARY="frontend/src/components/performance/ManagementSummary.jsx"
@@ -35,6 +36,11 @@ grep -q 'Overdue pressure' "$SUMMARY"
 grep -q 'Focus now' "$SUMMARY"
 grep -q 'does not create a new score' "$SUMMARY"
 grep -q 'onOpenEmployee={openEmployee}' "$DASHBOARD"
+
+if grep -q 'dark:border-white/8' "$SUMMARY"; then
+  echo 'PHASE3_MANAGEMENT_SUMMARY_ERROR=STYLE_HARDENING_FAILED'
+  exit 1
+fi
 
 # Guardrails: Phase 3 is frontend-only and must not alter score/business logic.
 if git status --short | grep -E '^( M|M |A | D|D |\?\?) backend/'; then
