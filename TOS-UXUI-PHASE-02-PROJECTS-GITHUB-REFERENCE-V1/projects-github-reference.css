@@ -1,0 +1,206 @@
+/* TOS UX/UI Phase 02 — Projects screen only
+   Reference: GithubAdvancedAdmin premium warm-light / slate-dark language.
+   Scope is intentionally limited to .tos-projects-ui03. */
+
+.tos-projects-ui03 {
+  --tos-projects-light-surface: #fffefc;
+  --tos-projects-light-surface-2: #fbf7ef;
+  --tos-projects-light-soft: #fbf7ee;
+  --tos-projects-light-border: #e7d7b6;
+  --tos-projects-light-border-soft: #efe4ce;
+  --tos-projects-light-text: #261b0d;
+  --tos-projects-light-text-2: #302314;
+  --tos-projects-light-muted: #82745e;
+  --tos-projects-dark-surface: #22323e;
+  --tos-projects-dark-surface-2: #1d2b36;
+  --tos-projects-dark-soft: #263844;
+  --tos-projects-dark-soft-2: #334755;
+  --tos-projects-dark-border: rgba(203, 213, 225, 0.14);
+  --tos-projects-dark-text: #f4f6f8;
+  --tos-projects-dark-text-2: #e9edf1;
+  --tos-projects-dark-muted: #aebbc6;
+  position: relative;
+  isolation: isolate;
+  color: var(--tos-projects-light-text);
+}
+
+.tos-projects-ui03::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(217, 174, 91, 0.10), transparent 22%),
+    radial-gradient(circle at 92% 4%, rgba(75, 107, 130, 0.055), transparent 24%);
+}
+
+/* Portfolio statistic row. */
+.tos-projects-ui03 > .grid:first-child > * {
+  border-color: var(--tos-projects-light-border) !important;
+  background: linear-gradient(180deg, var(--tos-projects-light-surface) 0%, var(--tos-projects-light-surface-2) 100%) !important;
+  box-shadow: 0 18px 54px rgba(80, 55, 16, 0.075), inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+/* Primary neutral surfaces inside Projects only. */
+.tos-projects-ui03 .tos-premium-card {
+  border-color: var(--tos-projects-light-border) !important;
+  background: linear-gradient(180deg, var(--tos-projects-light-surface) 0%, var(--tos-projects-light-surface-2) 100%) !important;
+  color: var(--tos-projects-light-text) !important;
+  box-shadow: 0 18px 52px rgba(80, 55, 16, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.58) !important;
+}
+
+/* Neutral nested panels/rows; semantic status colors remain untouched. */
+.tos-projects-ui03 [class~="bg-white"],
+.tos-projects-ui03 [class*="bg-white/"],
+.tos-projects-ui03 [class~="bg-zinc-50"],
+.tos-projects-ui03 [class*="bg-zinc-50/"],
+.tos-projects-ui03 [class~="bg-zinc-100"] {
+  border-color: var(--tos-projects-light-border-soft) !important;
+}
+
+.tos-projects-ui03 [class~="bg-zinc-50"],
+.tos-projects-ui03 [class*="bg-zinc-50/"] {
+  background-color: rgba(251, 247, 238, 0.82) !important;
+}
+
+.tos-projects-ui03 .tos-premium-field,
+.tos-projects-ui03 input[type="search"],
+.tos-projects-ui03 input[type="text"],
+.tos-projects-ui03 input[type="email"],
+.tos-projects-ui03 input[type="number"],
+.tos-projects-ui03 input[type="date"],
+.tos-projects-ui03 select,
+.tos-projects-ui03 textarea {
+  border-color: var(--tos-projects-light-border) !important;
+  background-color: #fffefc !important;
+  color: var(--tos-projects-light-text) !important;
+}
+
+.tos-projects-ui03 input::placeholder,
+.tos-projects-ui03 textarea::placeholder {
+  color: #978a74 !important;
+}
+
+/* Text contrast. */
+.tos-projects-ui03 [class*="text-zinc-950"],
+.tos-projects-ui03 [class*="text-zinc-900"],
+.tos-projects-ui03 [class*="text-zinc-800"] {
+  color: var(--tos-projects-light-text) !important;
+}
+
+.tos-projects-ui03 [class*="text-zinc-700"],
+.tos-projects-ui03 [class*="text-zinc-600"] {
+  color: var(--tos-projects-light-text-2) !important;
+}
+
+.tos-projects-ui03 [class*="text-zinc-500"],
+.tos-projects-ui03 [class*="text-zinc-400"] {
+  color: var(--tos-projects-light-muted) !important;
+}
+
+/* Gold becomes the shared interaction accent instead of mixed yellow/red hover language. */
+.tos-projects-ui03 button[class*="hover:border-amber"]:hover,
+.tos-projects-ui03 [class*="hover:border-amber"]:hover {
+  border-color: #d9ae5b !important;
+}
+
+.tos-projects-ui03 button[class*="hover:bg-amber"]:hover,
+.tos-projects-ui03 [class*="hover:bg-amber"]:hover {
+  background-color: #fff8e8 !important;
+}
+
+/* Command center hero: match the GitHub reference slate instead of near-black/brown. */
+.tos-projects-ui03 [class*="from-zinc-950"][class*="via-zinc-900"][class*="to-amber-950"] {
+  background:
+    radial-gradient(circle at 6% 4%, rgba(217, 174, 91, 0.15), transparent 34%),
+    linear-gradient(135deg, #22323e 0%, #1d2b36 100%) !important;
+}
+
+/* Pagination/filter/control bars get the same calm premium surface. */
+.tos-projects-ui03 [class*="backdrop-blur"],
+.tos-projects-ui03 [class*="shadow-[0_12px_34px"],
+.tos-projects-ui03 [class*="shadow-[0_12px_36px"] {
+  border-color: var(--tos-projects-light-border) !important;
+}
+
+/* Dark mode: no white-card leaks. */
+html.dark .tos-projects-ui03 {
+  color: var(--tos-projects-dark-text);
+}
+
+html.dark .tos-projects-ui03::before {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(217, 174, 91, 0.07), transparent 24%),
+    radial-gradient(circle at 94% 4%, rgba(92, 126, 151, 0.08), transparent 26%);
+}
+
+html.dark .tos-projects-ui03 > .grid:first-child > *,
+html.dark .tos-projects-ui03 .tos-premium-card {
+  border-color: var(--tos-projects-dark-border) !important;
+  background: linear-gradient(180deg, var(--tos-projects-dark-surface) 0%, var(--tos-projects-dark-surface-2) 100%) !important;
+  color: var(--tos-projects-dark-text) !important;
+  box-shadow: 0 18px 48px rgba(4, 10, 18, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+}
+
+html.dark .tos-projects-ui03 [class~="bg-white"],
+html.dark .tos-projects-ui03 [class*="bg-white/"],
+html.dark .tos-projects-ui03 [class~="bg-zinc-50"],
+html.dark .tos-projects-ui03 [class*="bg-zinc-50/"],
+html.dark .tos-projects-ui03 [class~="bg-zinc-100"],
+html.dark .tos-projects-ui03 [class~="bg-zinc-900"],
+html.dark .tos-projects-ui03 [class*="bg-zinc-900/"] {
+  border-color: rgba(203, 213, 225, 0.12) !important;
+  background-color: var(--tos-projects-dark-soft) !important;
+  background-image: none !important;
+}
+
+html.dark .tos-projects-ui03 .tos-premium-field,
+html.dark .tos-projects-ui03 input[type="search"],
+html.dark .tos-projects-ui03 input[type="text"],
+html.dark .tos-projects-ui03 input[type="email"],
+html.dark .tos-projects-ui03 input[type="number"],
+html.dark .tos-projects-ui03 input[type="date"],
+html.dark .tos-projects-ui03 select,
+html.dark .tos-projects-ui03 textarea {
+  border-color: rgba(203, 213, 225, 0.14) !important;
+  background-color: var(--tos-projects-dark-soft) !important;
+  color: var(--tos-projects-dark-text) !important;
+}
+
+html.dark .tos-projects-ui03 input::placeholder,
+html.dark .tos-projects-ui03 textarea::placeholder {
+  color: #91a0ad !important;
+}
+
+html.dark .tos-projects-ui03 [class*="text-zinc-950"],
+html.dark .tos-projects-ui03 [class*="text-zinc-900"],
+html.dark .tos-projects-ui03 [class*="text-zinc-800"],
+html.dark .tos-projects-ui03 [class*="text-zinc-700"] {
+  color: var(--tos-projects-dark-text) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="text-zinc-600"],
+html.dark .tos-projects-ui03 [class*="text-zinc-500"],
+html.dark .tos-projects-ui03 [class*="text-zinc-400"],
+html.dark .tos-projects-ui03 [class*="text-zinc-300"] {
+  color: var(--tos-projects-dark-muted) !important;
+}
+
+html.dark .tos-projects-ui03 button[class*="hover:bg-amber"]:hover,
+html.dark .tos-projects-ui03 [class*="hover:bg-amber"]:hover {
+  background-color: var(--tos-projects-dark-soft-2) !important;
+}
+
+html.dark .tos-projects-ui03 button[class*="hover:border-amber"]:hover,
+html.dark .tos-projects-ui03 [class*="hover:border-amber"]:hover {
+  border-color: rgba(217, 174, 91, 0.38) !important;
+}
+
+/* Keep explicitly semantic alert/status blocks readable. */
+html.dark .tos-projects-ui03 [class*="bg-red-"],
+html.dark .tos-projects-ui03 [class*="bg-emerald-"],
+html.dark .tos-projects-ui03 [class*="bg-blue-"],
+html.dark .tos-projects-ui03 [class*="bg-amber-"] {
+  background-image: none;
+}
