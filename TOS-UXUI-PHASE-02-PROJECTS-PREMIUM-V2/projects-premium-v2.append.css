@@ -1,0 +1,261 @@
+/* TOS_PHASE02_PROJECTS_PREMIUM_V2_START
+   Premium visual refinement for Projects only.
+   Keeps business logic untouched and stays scoped to .tos-projects-ui03. */
+
+.tos-projects-ui03 {
+  --tos-projects-premium-gold: #d5a84b;
+  --tos-projects-premium-gold-deep: #9a6a16;
+  --tos-projects-premium-ink: #1f170d;
+  --tos-projects-premium-shadow: 0 28px 80px rgba(78, 55, 18, 0.10);
+  --tos-projects-premium-shadow-soft: 0 14px 42px rgba(78, 55, 18, 0.075);
+}
+
+/* Ambient page polish. */
+.tos-projects-ui03::after {
+  content: "";
+  position: absolute;
+  inset: -18px -22px auto;
+  height: 260px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 10% 8%, rgba(213, 168, 75, .15), transparent 30%),
+    radial-gradient(circle at 88% 2%, rgba(80, 106, 124, .08), transparent 26%);
+  filter: blur(2px);
+}
+
+/* KPI cards: more depth, cleaner chrome, soft lift. */
+.tos-projects-ui03 > .grid:first-child > * {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px !important;
+  box-shadow: var(--tos-projects-premium-shadow-soft), inset 0 1px 0 rgba(255,255,255,.92) !important;
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+
+.tos-projects-ui03 > .grid:first-child > *::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(118deg, rgba(255,255,255,.45), transparent 36%, transparent 70%, rgba(213,168,75,.045));
+}
+
+.tos-projects-ui03 > .grid:first-child > *:hover {
+  transform: translateY(-3px);
+  border-color: rgba(213,168,75,.72) !important;
+  box-shadow: 0 24px 66px rgba(78,55,18,.13), inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+/* Main working surfaces become executive cards rather than flat panels. */
+.tos-projects-ui03 .tos-premium-card {
+  border-radius: 28px !important;
+  box-shadow: var(--tos-projects-premium-shadow), inset 0 1px 0 rgba(255,255,255,.82) !important;
+  backdrop-filter: blur(18px);
+}
+
+/* Search / filter command bar. */
+.tos-projects-ui03 .tos-premium-card:has(input[type="search"]) {
+  position: relative;
+  overflow: visible;
+  border-color: rgba(213,168,75,.42) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.97), rgba(251,247,239,.94)) !important;
+  box-shadow: 0 24px 72px rgba(78,55,18,.105), inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+.tos-projects-ui03 .tos-premium-card:has(input[type="search"])::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  border-radius: 28px 0 0 28px;
+  background: linear-gradient(180deg, #f2cd78, var(--tos-projects-premium-gold), var(--tos-projects-premium-gold-deep));
+  box-shadow: 0 0 20px rgba(213,168,75,.28);
+}
+
+/* Inputs should feel expensive, not like default form controls. */
+.tos-projects-ui03 .tos-premium-field,
+.tos-projects-ui03 input[type="search"],
+.tos-projects-ui03 input[type="text"],
+.tos-projects-ui03 input[type="email"],
+.tos-projects-ui03 input[type="number"],
+.tos-projects-ui03 input[type="date"],
+.tos-projects-ui03 select,
+.tos-projects-ui03 textarea {
+  border-radius: 15px !important;
+  box-shadow: inset 0 1px 2px rgba(69,51,25,.035), 0 1px 0 rgba(255,255,255,.9) !important;
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.tos-projects-ui03 .tos-premium-field:focus,
+.tos-projects-ui03 input:focus,
+.tos-projects-ui03 select:focus,
+.tos-projects-ui03 textarea:focus {
+  outline: none !important;
+  border-color: rgba(213,168,75,.82) !important;
+  box-shadow: 0 0 0 4px rgba(213,168,75,.10), inset 0 1px 2px rgba(69,51,25,.03) !important;
+}
+
+/* Filter sub-panels. */
+.tos-projects-ui03 [class*="rounded-[20px]"][class*="border-zinc-200/70"],
+.tos-projects-ui03 [class*="rounded-[18px]"][class*="border-zinc-200/70"] {
+  border-color: rgba(213,168,75,.34) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.68), 0 8px 26px rgba(78,55,18,.045) !important;
+}
+
+/* Project list and details rail read as two deliberate premium columns. */
+.tos-projects-ui03 [class*="xl:grid-cols-"][class*="minmax(0,1fr)"] > * {
+  transition: box-shadow .2s ease, border-color .2s ease;
+}
+
+/* Project rows: subtle hover, clearer selected state. */
+.tos-projects-ui03 [class*="divide-y"] > button,
+.tos-projects-ui03 [class*="divide-y"] > div {
+  transition: background .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+
+.tos-projects-ui03 [class*="divide-y"] > button:hover,
+.tos-projects-ui03 [class*="divide-y"] > div:hover {
+  background: linear-gradient(90deg, rgba(255,252,245,.96), rgba(251,247,239,.88)) !important;
+}
+
+/* Selected project / dark hero gets a luxury navy treatment. */
+.tos-projects-ui03 [class*="from-zinc-950"][class*="via-zinc-900"][class*="to-amber-950"],
+.tos-projects-ui03 [class*="bg-zinc-950"][class*="text-white"] {
+  background:
+    radial-gradient(circle at 16% 8%, rgba(213,168,75,.16), transparent 36%),
+    radial-gradient(circle at 92% 92%, rgba(97,129,154,.10), transparent 34%),
+    linear-gradient(145deg, #1c2b36 0%, #17242e 58%, #111b23 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 26px 70px rgba(7,13,20,.20) !important;
+}
+
+/* Buttons: stronger hierarchy and premium tactile feel. */
+.tos-projects-ui03 button {
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
+}
+
+.tos-projects-ui03 button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.tos-projects-ui03 button[class*="bg-amber"],
+.tos-projects-ui03 button[class*="from-amber"] {
+  box-shadow: 0 10px 26px rgba(213,168,75,.20), inset 0 1px 0 rgba(255,255,255,.32) !important;
+}
+
+/* Pills, badges and small controls get cleaner radii. */
+.tos-projects-ui03 [class*="rounded-full"],
+.tos-projects-ui03 [class*="rounded-xl"] {
+  text-rendering: geometricPrecision;
+}
+
+/* Pagination becomes an executive footer rail. */
+.tos-projects-ui03 > [class*="rounded-[24px]"]:last-child,
+.tos-projects-ui03 > [class*="rounded-[26px]"]:last-child {
+  border-color: rgba(213,168,75,.40) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(251,247,239,.90)) !important;
+  box-shadow: 0 16px 44px rgba(78,55,18,.075), inset 0 1px 0 rgba(255,255,255,.85) !important;
+}
+
+/* Typography refinement. */
+.tos-projects-ui03 h1,
+.tos-projects-ui03 h2,
+.tos-projects-ui03 h3,
+.tos-projects-ui03 h4 {
+  letter-spacing: -0.018em;
+}
+
+.tos-projects-ui03 .tos-kicker {
+  letter-spacing: .16em;
+  color: #9a7631 !important;
+}
+
+/* Dark premium system. */
+html.dark .tos-projects-ui03 {
+  --tos-projects-premium-shadow: 0 30px 84px rgba(2,7,12,.34);
+  --tos-projects-premium-shadow-soft: 0 18px 52px rgba(2,7,12,.28);
+}
+
+html.dark .tos-projects-ui03::after {
+  background:
+    radial-gradient(circle at 8% 6%, rgba(213,168,75,.085), transparent 30%),
+    radial-gradient(circle at 90% 2%, rgba(101,135,160,.09), transparent 28%);
+}
+
+html.dark .tos-projects-ui03 > .grid:first-child > * {
+  border-color: rgba(203,213,225,.14) !important;
+  background:
+    linear-gradient(180deg, rgba(36,53,66,.98), rgba(28,43,54,.98)) !important;
+  box-shadow: var(--tos-projects-premium-shadow-soft), inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+html.dark .tos-projects-ui03 > .grid:first-child > *::after {
+  background: linear-gradient(118deg, rgba(255,255,255,.025), transparent 34%, transparent 72%, rgba(213,168,75,.035));
+}
+
+html.dark .tos-projects-ui03 > .grid:first-child > *:hover {
+  border-color: rgba(213,168,75,.34) !important;
+  box-shadow: 0 24px 68px rgba(2,7,12,.38), inset 0 1px 0 rgba(255,255,255,.055) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-premium-card {
+  background:
+    linear-gradient(180deg, rgba(35,52,64,.98), rgba(27,42,53,.98)) !important;
+  border-color: rgba(203,213,225,.13) !important;
+  box-shadow: var(--tos-projects-premium-shadow), inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-premium-card:has(input[type="search"]) {
+  border-color: rgba(213,168,75,.26) !important;
+  background:
+    linear-gradient(180deg, rgba(36,53,66,.99), rgba(29,44,55,.99)) !important;
+  box-shadow: 0 28px 82px rgba(2,7,12,.38), inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-premium-field,
+html.dark .tos-projects-ui03 input[type="search"],
+html.dark .tos-projects-ui03 input[type="text"],
+html.dark .tos-projects-ui03 input[type="email"],
+html.dark .tos-projects-ui03 input[type="number"],
+html.dark .tos-projects-ui03 input[type="date"],
+html.dark .tos-projects-ui03 select,
+html.dark .tos-projects-ui03 textarea {
+  background: rgba(20,31,40,.72) !important;
+  border-color: rgba(203,213,225,.14) !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.18), 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-premium-field:focus,
+html.dark .tos-projects-ui03 input:focus,
+html.dark .tos-projects-ui03 select:focus,
+html.dark .tos-projects-ui03 textarea:focus {
+  border-color: rgba(213,168,75,.62) !important;
+  box-shadow: 0 0 0 4px rgba(213,168,75,.08), inset 0 1px 2px rgba(0,0,0,.16) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="divide-y"] > button:hover,
+html.dark .tos-projects-ui03 [class*="divide-y"] > div:hover {
+  background: linear-gradient(90deg, rgba(49,70,83,.90), rgba(40,59,71,.90)) !important;
+}
+
+html.dark .tos-projects-ui03 > [class*="rounded-[24px]"]:last-child,
+html.dark .tos-projects-ui03 > [class*="rounded-[26px]"]:last-child {
+  border-color: rgba(213,168,75,.24) !important;
+  background: linear-gradient(180deg, rgba(35,52,64,.98), rgba(28,43,54,.98)) !important;
+  box-shadow: 0 18px 54px rgba(2,7,12,.30), inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-kicker {
+  color: #d9ae5b !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-projects-ui03 *,
+  .tos-projects-ui03 *::before,
+  .tos-projects-ui03 *::after {
+    transition-duration: .01ms !important;
+  }
+}
+
+/* TOS_PHASE02_PROJECTS_PREMIUM_V2_END */
