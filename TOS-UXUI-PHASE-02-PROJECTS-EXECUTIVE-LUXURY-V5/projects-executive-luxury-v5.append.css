@@ -1,0 +1,164 @@
+/* TOS Phase 02 Projects Executive Luxury V5 — visual refinement only */
+.tos-projects-ui03 { --tos-phase02-projects-v5: 205; }
+
+/* Light: remove the loud solid-gold selected row and use champagne selection. */
+.tos-projects-ui03 [class*="divide-y"] > [class*="border-amber"][class*="bg-amber"] {
+  background: linear-gradient(90deg, rgba(246,226,175,.78) 0%, rgba(255,252,245,.98) 22%, rgba(255,254,250,.98) 100%) !important;
+  color: #241a0d !important;
+  border-color: rgba(197,145,45,.55) !important;
+  box-shadow: inset 4px 0 0 #d6aa52, 0 10px 26px rgba(121,82,20,.07) !important;
+}
+
+.tos-projects-ui03 [class*="divide-y"] > [class*="border-amber"][class*="bg-amber"] [class*="text-white"] {
+  color: #241a0d !important;
+}
+
+/* Quieter, more architectural workspace in light mode. */
+.tos-projects-ui03 .tos-premium-card:has([class*="divide-y"]) {
+  box-shadow: 0 30px 74px rgba(77,54,20,.075), inset 0 1px 0 rgba(255,255,255,.86) !important;
+}
+
+/* ---------- DARK MODE FINAL LUXURY PASS ---------- */
+html.dark .tos-projects-ui03 {
+  --tos-exec-v5-canvas: #0a0f13;
+  --tos-exec-v5-panel: #111a21;
+  --tos-exec-v5-panel-2: #16222b;
+  --tos-exec-v5-panel-3: #1c2b35;
+  --tos-exec-v5-line: rgba(194,207,218,.105);
+  --tos-exec-v5-gold: #ddb65e;
+  --tos-exec-v5-gold-soft: rgba(221,182,94,.14);
+}
+
+/* Reduce the blue cast: graphite first, slate second. */
+html.dark .tos-projects-ui03 .tos-premium-card {
+  background: linear-gradient(180deg, rgba(20,31,39,.985), rgba(12,20,26,.992)) !important;
+  border-color: var(--tos-exec-v5-line) !important;
+  box-shadow: 0 34px 92px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.035), inset 0 -1px 0 rgba(0,0,0,.28) !important;
+}
+
+/* KPI cards feel like instrument tiles, not generic cards. */
+html.dark .tos-projects-ui03 > .grid:first-child > * {
+  background: linear-gradient(145deg, rgba(22,33,41,.985), rgba(10,17,22,.995)) !important;
+  border-color: rgba(194,207,218,.115) !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+html.dark .tos-projects-ui03 > .grid:first-child > *::after {
+  background: linear-gradient(120deg, rgba(255,255,255,.02), transparent 38%, transparent 74%, rgba(221,182,94,.025)) !important;
+}
+
+/* Command bar gets a hairline champagne edge rather than a heavy gold box. */
+html.dark .tos-projects-ui03 .tos-premium-card:has(input[type="search"]) {
+  background: linear-gradient(145deg, rgba(22,34,43,.995), rgba(10,18,24,.995)) !important;
+  border-color: rgba(221,182,94,.16) !important;
+  box-shadow: 0 30px 82px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-premium-card:has(input[type="search"])::before {
+  background: linear-gradient(90deg, transparent 3%, rgba(236,199,114,.62) 24%, rgba(221,182,94,.22) 62%, transparent 97%) !important;
+}
+
+/* Black-glass controls with better contrast. */
+html.dark .tos-projects-ui03 .tos-premium-field,
+html.dark .tos-projects-ui03 input[type="search"],
+html.dark .tos-projects-ui03 input[type="text"],
+html.dark .tos-projects-ui03 input[type="email"],
+html.dark .tos-projects-ui03 input[type="number"],
+html.dark .tos-projects-ui03 input[type="date"],
+html.dark .tos-projects-ui03 select,
+html.dark .tos-projects-ui03 textarea {
+  background: linear-gradient(180deg, rgba(7,12,16,.88), rgba(10,17,22,.92)) !important;
+  border-color: rgba(180,194,206,.14) !important;
+  color: #f3f6f8 !important;
+}
+
+/* Project list becomes a deeper work surface. */
+html.dark .tos-projects-ui03 .tos-premium-card:has([class*="divide-y"]) {
+  background: linear-gradient(180deg, rgba(15,24,31,.995), rgba(9,16,21,.995)) !important;
+  border-color: rgba(194,207,218,.10) !important;
+  box-shadow: 0 34px 86px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,.028) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="divide-y"] > button,
+html.dark .tos-projects-ui03 [class*="divide-y"] > div {
+  background: rgba(255,255,255,.008) !important;
+  border-color: rgba(194,207,218,.07) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="divide-y"] > button:hover,
+html.dark .tos-projects-ui03 [class*="divide-y"] > div:hover {
+  background: linear-gradient(90deg, rgba(221,182,94,.055), rgba(22,34,43,.58) 24%, rgba(12,20,26,.70)) !important;
+  box-shadow: inset 2px 0 0 rgba(221,182,94,.34) !important;
+}
+
+/* Key fix: selected row is graphite + champagne rail, never a solid mustard bar. */
+html.dark .tos-projects-ui03 [class*="divide-y"] > [class*="border-amber"][class*="bg-amber"] {
+  background:
+    radial-gradient(circle at 0% 50%, rgba(221,182,94,.10), transparent 24%),
+    linear-gradient(90deg, rgba(28,39,45,.98), rgba(15,24,31,.995) 30%, rgba(10,17,22,.995)) !important;
+  border-color: rgba(221,182,94,.26) !important;
+  color: #f7f8f9 !important;
+  box-shadow: inset 4px 0 0 #ddb65e, 0 10px 30px rgba(0,0,0,.22), 0 0 0 1px rgba(221,182,94,.025) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="divide-y"] > [class*="border-amber"][class*="bg-amber"] [class*="text-white"],
+html.dark .tos-projects-ui03 [class*="divide-y"] > [class*="border-amber"][class*="bg-amber"] [class*="text-zinc-950"],
+html.dark .tos-projects-ui03 [class*="divide-y"] > [class*="border-amber"][class*="bg-amber"] [class*="text-zinc-900"] {
+  color: #f5f7f8 !important;
+}
+
+/* Inspector rail: clearer separation and more private-banking / executive-console feel. */
+html.dark .tos-projects-ui03 [class*="bg-zinc-950"][class*="text-white"],
+html.dark .tos-projects-ui03 [class*="from-zinc-950"][class*="via-zinc-900"] {
+  background:
+    linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px),
+    radial-gradient(circle at 8% 8%, rgba(221,182,94,.13), transparent 31%),
+    linear-gradient(145deg, #08111d 0%, #0b1622 52%, #080f17 100%) !important;
+  background-size: 32px 32px, 32px 32px, auto, auto !important;
+  border-color: rgba(221,182,94,.18) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), inset 0 0 42px rgba(221,182,94,.018) !important;
+}
+
+/* Nested inspector metrics use separated panes, not one continuous blue block. */
+html.dark .tos-projects-ui03 [class~="bg-zinc-50"],
+html.dark .tos-projects-ui03 [class*="bg-zinc-50/"],
+html.dark .tos-projects-ui03 [class~="bg-white"],
+html.dark .tos-projects-ui03 [class*="bg-white/"] {
+  background-color: rgba(8,15,20,.56) !important;
+  border-color: rgba(194,207,218,.09) !important;
+}
+
+/* Premium primary actions: champagne, brighter label, restrained glow. */
+html.dark .tos-projects-ui03 button[class*="bg-amber"],
+html.dark .tos-projects-ui03 button[class*="from-amber"] {
+  color: #171108 !important;
+  background-image: linear-gradient(135deg, #f0cf7a 0%, #d9ae58 48%, #ad7926 100%) !important;
+  border-color: rgba(240,207,122,.38) !important;
+  box-shadow: 0 12px 28px rgba(221,182,94,.15), inset 0 1px 0 rgba(255,255,255,.34) !important;
+}
+
+/* Secondary dark buttons stay premium graphite with visible text. */
+html.dark .tos-projects-ui03 button:not([class*="bg-amber"]):not([class*="from-amber"]):not(:disabled) {
+  border-color: rgba(194,207,218,.12);
+}
+
+/* Pagination is quieter and more floating. */
+html.dark .tos-projects-ui03 > [class*="rounded-[24px]"]:last-child,
+html.dark .tos-projects-ui03 > [class*="rounded-[26px]"]:last-child {
+  background: linear-gradient(180deg, rgba(14,23,29,.98), rgba(8,14,19,.995)) !important;
+  border-color: rgba(221,182,94,.13) !important;
+  box-shadow: 0 22px 56px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+/* Slightly stronger information hierarchy. */
+html.dark .tos-projects-ui03 h2,
+html.dark .tos-projects-ui03 h3,
+html.dark .tos-projects-ui03 h4 {
+  color: #f7f8f9 !important;
+  text-shadow: 0 1px 0 rgba(0,0,0,.26);
+}
+
+html.dark .tos-projects-ui03 .tos-kicker {
+  color: #dfba67 !important;
+}
