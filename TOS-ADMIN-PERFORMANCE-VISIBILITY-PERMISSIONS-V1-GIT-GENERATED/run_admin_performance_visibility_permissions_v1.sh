@@ -5,6 +5,10 @@ TOS=/var/www/TOS
 PATCH_DIR=/var/www/TOS-Patchs/TOS-ADMIN-PERFORMANCE-VISIBILITY-PERMISSIONS-V1-GIT-GENERATED
 EXPECTED_HEAD=7e8ec8c7856ce41724f493886ebe050381ecc4d8
 
+normalize_status() {
+  printf '%s\n' "$1" | sed '/^[[:space:]]*$/d' | sort
+}
+
 cd "$TOS"
 
 HEAD_NOW="$(git rev-parse HEAD)"
@@ -23,7 +27,7 @@ EXPECTED_PRE_STATUS=$(cat <<'EOF'
 EOF
 )
 ACTUAL_PRE_STATUS="$(git status --short)"
-if [[ "$ACTUAL_PRE_STATUS" != "$EXPECTED_PRE_STATUS" ]]; then
+if [[ "$(normalize_status "$ACTUAL_PRE_STATUS")" != "$(normalize_status "$EXPECTED_PRE_STATUS")" ]]; then
   echo "ADMIN_PERFORMANCE_PERMISSIONS_ERROR=UNEXPECTED_PRE_STATUS"
   printf '%s\n' "$ACTUAL_PRE_STATUS"
   exit 1
@@ -114,7 +118,7 @@ EXPECTED_POST_STATUS=$(cat <<'EOF'
 EOF
 )
 ACTUAL_POST_STATUS="$(git status --short)"
-if [[ "$ACTUAL_POST_STATUS" != "$EXPECTED_POST_STATUS" ]]; then
+if [[ "$(normalize_status "$ACTUAL_POST_STATUS")" != "$(normalize_status "$EXPECTED_POST_STATUS")" ]]; then
   echo "ADMIN_PERFORMANCE_PERMISSIONS_ERROR=UNEXPECTED_POST_STATUS"
   printf '%s\n' "$ACTUAL_POST_STATUS"
   exit 1
