@@ -18,11 +18,26 @@ if [[ "$HEAD_NOW" != "$EXPECTED_HEAD" ]]; then
   exit 1
 fi
 
-if [[ -n "$(git status --short)" ]]; then
-  echo "PHASE6_5_FIX_ERROR=WORKTREE_NOT_CLEAN"
-  git status --short
+# Accept either a clean pushed baseline or the exact known four-file Phase 6.5 worktree.
+EXPECTED_DIRTY_STATUS=$(cat <<'EOF'
+ M frontend/src/App.jsx
+ M frontend/src/components/RamzyAssistant.jsx
+ M frontend/src/components/performance/TeamPerformanceHelpCenter.jsx
+ M frontend/src/pages/TeamPerformanceDashboard.jsx
+EOF
+)
+PRE_STATUS="$(git status --short)"
+if [[ -n "$PRE_STATUS" ]] && [[ "$(normalize_status "$PRE_STATUS")" != "$(normalize_status "$EXPECTED_DIRTY_STATUS")" ]]; then
+  echo "PHASE6_5_FIX_ERROR=UNEXPECTED_PRE_STATUS"
+  printf '%s\n' "$PRE_STATUS"
   exit 1
 fi
+
+# Validate that the pre-fix Phase 6.5 implementation is really present before touching files.
+grep -q 'tos:help-navigate' frontend/src/App.jsx || { echo "PHASE6_5_FIX_ERROR=PRE_APP_BRIDGE_MISSING"; exit 1; }
+grep -q 'tos:ramzy-help' frontend/src/components/RamzyAssistant.jsx || { echo "PHASE6_5_FIX_ERROR=PRE_RAMZY_BRIDGE_MISSING"; exit 1; }
+grep -q 'key: "performance-decline"' frontend/src/components/performance/TeamPerformanceHelpCenter.jsx || { echo "PHASE6_5_FIX_ERROR=PRE_HELP_WORKFLOWS_MISSING"; exit 1; }
+grep -q 'phase1-targets' frontend/src/components/performance/TeamPerformanceHelpCenter.jsx || { echo "PHASE6_5_FIX_ERROR=PRE_FIX_ANCHOR_STATE_NOT_FOUND"; exit 1; }
 
 python3 "$PATCH_DIR/01_phase6_5_deep_link_ramzy_draft_fix.py"
 
@@ -104,6 +119,7 @@ fi
 
 echo "PHASE_6_5_CORRECTION=PASS"
 echo "BASELINE_HEAD=$HEAD_NOW"
+echo "PRE_STATUS_ACCEPTED=YES"
 echo "DEEP_LINK_TARGETS=PASS"
 echo "CLOSED_DISCLOSURE_OPEN=PASS"
 echo "CROSS_PAGE_SCROLL_RETRY=PASS"
