@@ -1,0 +1,401 @@
+/* Phase 02 Projects — Ultra Premium Black Titanium V6
+   Dark-first visual refinement. Presentation only; no business logic. */
+
+.tos-projects-ui03 {
+  --tos-projects-ultra-premium-v6-runtime: 1;
+  --v6-canvas: #080b0e;
+  --v6-surface-0: #0b1014;
+  --v6-surface-1: #0e151b;
+  --v6-surface-2: #131d24;
+  --v6-surface-3: #18252e;
+  --v6-titanium-line: rgba(214, 224, 232, .12);
+  --v6-titanium-line-strong: rgba(214, 224, 232, .20);
+  --v6-text: #f7f9fa;
+  --v6-text-secondary: #c4cdd4;
+  --v6-text-muted: #89969f;
+  --v6-gold: #d8b466;
+  --v6-gold-bright: #f0ce83;
+  --v6-gold-deep: #956b24;
+  --v6-shadow-main: 0 24px 70px rgba(0,0,0,.35);
+  --v6-shadow-float: 0 32px 100px rgba(0,0,0,.48);
+}
+
+/* LIGHT: calm porcelain / ivory, not yellow-heavy. */
+.tos-projects-ui03 {
+  --v6-light-canvas: #f6f5f1;
+  --v6-light-card: #fffefc;
+  --v6-light-nested: #f8f5ee;
+  --v6-light-line: #e5dac5;
+  --v6-light-text: #201b14;
+  --v6-light-muted: #746958;
+}
+
+.tos-projects-ui03::before {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(216,180,102,.09), transparent 26%),
+    radial-gradient(circle at 94% 2%, rgba(120,133,143,.055), transparent 26%) !important;
+}
+
+.tos-projects-ui03 .tos-premium-card {
+  border-color: var(--v6-light-line) !important;
+  background: linear-gradient(180deg, rgba(255,254,252,.985), rgba(248,245,238,.965)) !important;
+  box-shadow: 0 20px 58px rgba(72,53,28,.075), inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+
+.tos-projects-ui03 > .grid:first-child > * {
+  border-radius: 28px !important;
+  border-color: var(--v6-light-line) !important;
+  background: linear-gradient(150deg, #fffefc 0%, #faf7f1 100%) !important;
+  box-shadow: 0 16px 44px rgba(72,53,28,.07), inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+/* Light selected row: ivory + champagne rail instead of full mustard fill. */
+.tos-projects-ui03 [class*="divide-y"] > button[class*="border-amber"],
+.tos-projects-ui03 [class*="divide-y"] > div[class*="border-amber"] {
+  position: relative;
+  background: linear-gradient(90deg, rgba(216,180,102,.115), rgba(255,254,252,.98) 20%, rgba(248,245,238,.96)) !important;
+  color: var(--v6-light-text) !important;
+  box-shadow: inset 3px 0 0 var(--v6-gold), 0 0 0 1px rgba(216,180,102,.08) !important;
+}
+
+.tos-projects-ui03 [class*="divide-y"] > button[class*="border-amber"] *,
+.tos-projects-ui03 [class*="divide-y"] > div[class*="border-amber"] * {
+  text-shadow: none !important;
+}
+
+/* Executive toolbar hierarchy. */
+.tos-projects-ui03 .tos-premium-card:has(input[type="search"]) {
+  border-radius: 30px !important;
+  border-color: rgba(216,180,102,.32) !important;
+  box-shadow: 0 22px 68px rgba(72,53,28,.085), inset 0 1px 0 rgba(255,255,255,.94) !important;
+}
+
+.tos-projects-ui03 .tos-premium-card:has(input[type="search"]) button[class*="bg-amber"],
+.tos-projects-ui03 .tos-premium-card:has(input[type="search"]) button[class*="from-amber"] {
+  color: #17120a !important;
+  background: linear-gradient(135deg, #f3d482 0%, #ddb45c 50%, #b9852b 100%) !important;
+  border-color: rgba(156,106,28,.42) !important;
+  box-shadow: 0 10px 28px rgba(183,133,43,.18), inset 0 1px 0 rgba(255,255,255,.46) !important;
+}
+
+/* ====================================================================== */
+/* DARK MODE — BLACK TITANIUM + CHAMPAGNE                                 */
+/* ====================================================================== */
+
+html.dark .tos-projects-ui03 {
+  color: var(--v6-text) !important;
+}
+
+html.dark .tos-projects-ui03::before {
+  inset: -44px -40px;
+  background:
+    radial-gradient(circle at 7% 0%, rgba(216,180,102,.105), transparent 25%),
+    radial-gradient(circle at 94% 1%, rgba(179,197,209,.055), transparent 26%),
+    linear-gradient(180deg, rgba(8,11,14,.55), rgba(8,11,14,0) 38%) !important;
+}
+
+html.dark .tos-projects-ui03::after {
+  height: 340px;
+  background:
+    radial-gradient(circle at 13% 0%, rgba(240,206,131,.075), transparent 30%),
+    radial-gradient(circle at 87% 3%, rgba(117,142,159,.06), transparent 32%) !important;
+  filter: blur(16px) !important;
+  opacity: .8 !important;
+}
+
+/* KPI: titanium cards; semantics stay in halo/edge, not full fills. */
+html.dark .tos-projects-ui03 > .grid:first-child > * {
+  min-height: 112px;
+  background:
+    linear-gradient(145deg, rgba(19,29,36,.98), rgba(10,16,21,.995)) !important;
+  border-color: var(--v6-titanium-line) !important;
+  box-shadow:
+    0 24px 64px rgba(0,0,0,.34),
+    inset 0 1px 0 rgba(255,255,255,.055),
+    inset 0 -1px 0 rgba(0,0,0,.34) !important;
+}
+
+html.dark .tos-projects-ui03 > .grid:first-child > *::after {
+  background:
+    linear-gradient(122deg, rgba(255,255,255,.025), transparent 36%, transparent 72%, rgba(216,180,102,.025)) !important;
+}
+
+html.dark .tos-projects-ui03 > .grid:first-child > *:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(216,180,102,.26) !important;
+  box-shadow: 0 30px 78px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.065) !important;
+}
+
+/* Three clearly separated dark levels. */
+html.dark .tos-projects-ui03 .tos-premium-card {
+  color: var(--v6-text) !important;
+  background: linear-gradient(180deg, rgba(14,21,27,.985), rgba(10,16,21,.995)) !important;
+  border-color: var(--v6-titanium-line) !important;
+  box-shadow: var(--v6-shadow-main), inset 0 1px 0 rgba(255,255,255,.04) !important;
+  backdrop-filter: blur(20px) saturate(108%) !important;
+}
+
+/* Command bar becomes a distinct raised titanium layer. */
+html.dark .tos-projects-ui03 .tos-premium-card:has(input[type="search"]) {
+  background: linear-gradient(145deg, rgba(19,29,36,.995), rgba(11,18,23,.995)) !important;
+  border-color: rgba(216,180,102,.20) !important;
+  box-shadow: 0 30px 82px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-premium-card:has(input[type="search"])::before {
+  height: 1px !important;
+  width: 100% !important;
+  inset: 0 0 auto 0 !important;
+  border-radius: 30px 30px 0 0 !important;
+  background: linear-gradient(90deg, transparent, rgba(240,206,131,.62) 24%, rgba(216,180,102,.22) 62%, transparent) !important;
+  box-shadow: 0 0 18px rgba(216,180,102,.12) !important;
+}
+
+/* Black-glass controls with explicit readable foregrounds. */
+html.dark .tos-projects-ui03 .tos-premium-field,
+html.dark .tos-projects-ui03 input[type="search"],
+html.dark .tos-projects-ui03 input[type="text"],
+html.dark .tos-projects-ui03 input[type="email"],
+html.dark .tos-projects-ui03 input[type="number"],
+html.dark .tos-projects-ui03 input[type="date"],
+html.dark .tos-projects-ui03 select,
+html.dark .tos-projects-ui03 textarea {
+  background: linear-gradient(180deg, #0a1015 0%, #0d151b 100%) !important;
+  border-color: rgba(214,224,232,.16) !important;
+  color: #eef3f6 !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.018) !important;
+}
+
+html.dark .tos-projects-ui03 input::placeholder,
+html.dark .tos-projects-ui03 textarea::placeholder {
+  color: #7f8c95 !important;
+  opacity: 1 !important;
+}
+
+html.dark .tos-projects-ui03 .tos-premium-field:focus,
+html.dark .tos-projects-ui03 input:focus,
+html.dark .tos-projects-ui03 select:focus,
+html.dark .tos-projects-ui03 textarea:focus {
+  outline: none !important;
+  border-color: rgba(240,206,131,.58) !important;
+  box-shadow: 0 0 0 3px rgba(216,180,102,.075), 0 0 24px rgba(216,180,102,.035), inset 0 1px 2px rgba(0,0,0,.35) !important;
+}
+
+/* Filter trays: lighter titanium than inputs so fields do not disappear. */
+html.dark .tos-projects-ui03 [class*="rounded-[20px]"][class*="border-zinc-200/70"],
+html.dark .tos-projects-ui03 [class*="rounded-[18px]"][class*="border-zinc-200/70"] {
+  background: linear-gradient(180deg, rgba(19,29,36,.82), rgba(14,22,28,.88)) !important;
+  border-color: rgba(214,224,232,.10) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+/* Text contrast audit. Do not let core UI sink into graphite. */
+html.dark .tos-projects-ui03 [class*="text-zinc-950"],
+html.dark .tos-projects-ui03 [class*="text-zinc-900"],
+html.dark .tos-projects-ui03 [class*="text-zinc-800"],
+html.dark .tos-projects-ui03 [class*="text-zinc-700"] {
+  color: var(--v6-text) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="text-zinc-600"],
+html.dark .tos-projects-ui03 [class*="text-zinc-500"] {
+  color: var(--v6-text-secondary) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="text-zinc-400"],
+html.dark .tos-projects-ui03 [class*="text-zinc-300"] {
+  color: #9eabb4 !important;
+}
+
+html.dark .tos-projects-ui03 small,
+html.dark .tos-projects-ui03 [class*="text-[10px]"],
+html.dark .tos-projects-ui03 [class*="text-[11px]"] {
+  opacity: 1 !important;
+}
+
+/* Section / field labels specifically lifted for dark mode readability. */
+html.dark .tos-projects-ui03 label > span:first-child,
+html.dark .tos-projects-ui03 .tos-kicker,
+html.dark .tos-projects-ui03 [class*="uppercase"][class*="tracking"] {
+  color: #aeb9c1 !important;
+}
+
+html.dark .tos-projects-ui03 .tos-kicker {
+  color: #d9bb78 !important;
+}
+
+/* Project list reads as a data workspace, not one flat slab. */
+html.dark .tos-projects-ui03 [class*="divide-y"] {
+  border-color: rgba(214,224,232,.075) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="divide-y"] > button,
+html.dark .tos-projects-ui03 [class*="divide-y"] > div {
+  background: rgba(11,17,22,.48) !important;
+  border-color: rgba(214,224,232,.06) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="divide-y"] > button:hover,
+html.dark .tos-projects-ui03 [class*="divide-y"] > div:hover {
+  transform: none !important;
+  background: linear-gradient(90deg, rgba(216,180,102,.045), rgba(19,30,38,.78) 18%, rgba(13,21,27,.78)) !important;
+  box-shadow: inset 2px 0 0 rgba(216,180,102,.30) !important;
+}
+
+/* Selected row: graphite + champagne rail/glow. Never a gold slab. */
+html.dark .tos-projects-ui03 [class*="divide-y"] > button[class*="border-amber"],
+html.dark .tos-projects-ui03 [class*="divide-y"] > div[class*="border-amber"] {
+  background: linear-gradient(90deg, rgba(216,180,102,.095), rgba(19,30,38,.96) 18%, rgba(10,17,22,.985) 100%) !important;
+  border-color: rgba(216,180,102,.22) !important;
+  color: var(--v6-text) !important;
+  box-shadow: inset 3px 0 0 var(--v6-gold-bright), 0 0 24px rgba(216,180,102,.045) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="divide-y"] > button[class*="border-amber"] [class*="text-zinc"],
+html.dark .tos-projects-ui03 [class*="divide-y"] > div[class*="border-amber"] [class*="text-zinc"] {
+  color: #eef3f6 !important;
+}
+
+/* Avatar / monogram tiles: titanium; selected state uses only a gold edge. */
+html.dark .tos-projects-ui03 [class*="grid"][class*="place-items-center"][class*="bg-zinc-950"],
+html.dark .tos-projects-ui03 [class*="grid"][class*="place-items-center"][class*="dark:bg-white"] {
+  background: linear-gradient(145deg, #1b2831 0%, #10181e 100%) !important;
+  color: #f4f7f9 !important;
+  border-color: rgba(214,224,232,.12) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 8px 20px rgba(0,0,0,.22) !important;
+}
+
+/* Status pills remain semantic but readable. */
+html.dark .tos-projects-ui03 [class*="bg-emerald"] {
+  color: #75edc0 !important;
+  border-color: rgba(52,211,153,.25) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="bg-red"] {
+  color: #ff9a9a !important;
+  border-color: rgba(248,113,113,.25) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="bg-amber"]:not(button) {
+  color: #f0ce83 !important;
+  border-color: rgba(216,180,102,.22) !important;
+}
+
+/* Selected-project inspector: floating near-black navy control panel. */
+html.dark .tos-projects-ui03 [class*="from-zinc-950"][class*="via-zinc-900"][class*="to-amber-950"],
+html.dark .tos-projects-ui03 [class*="bg-zinc-950"][class*="text-white"] {
+  color: #f7f9fa !important;
+  background:
+    linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px),
+    radial-gradient(circle at 12% 8%, rgba(240,206,131,.11), transparent 30%),
+    linear-gradient(145deg, #09111e 0%, #0b1724 52%, #080f16 100%) !important;
+  background-size: 30px 30px, 30px 30px, auto, auto !important;
+  border-color: rgba(216,180,102,.18) !important;
+  box-shadow: var(--v6-shadow-float), inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+/* Inspector nested metrics are separate glass tiles. */
+html.dark .tos-projects-ui03 [class~="bg-zinc-50"],
+html.dark .tos-projects-ui03 [class*="bg-zinc-50/"],
+html.dark .tos-projects-ui03 [class~="bg-white"],
+html.dark .tos-projects-ui03 [class*="bg-white/"] {
+  background-color: rgba(14,24,31,.70) !important;
+  border-color: rgba(214,224,232,.10) !important;
+}
+
+/* Primary CTA: champagne metal. Fix hidden New Project / primary action text. */
+html.dark .tos-projects-ui03 button[class*="bg-amber"],
+html.dark .tos-projects-ui03 button[class*="from-amber"] {
+  color: #17120a !important;
+  background: linear-gradient(135deg, #f3d482 0%, #d8b466 52%, #ad7828 100%) !important;
+  border-color: rgba(240,206,131,.40) !important;
+  box-shadow: 0 12px 30px rgba(216,180,102,.16), inset 0 1px 0 rgba(255,255,255,.44), inset 0 -1px 0 rgba(93,62,13,.24) !important;
+  text-shadow: none !important;
+}
+
+html.dark .tos-projects-ui03 button[class*="bg-amber"] *,
+html.dark .tos-projects-ui03 button[class*="from-amber"] * {
+  color: #17120a !important;
+}
+
+html.dark .tos-projects-ui03 button[class*="bg-amber"]:hover:not(:disabled),
+html.dark .tos-projects-ui03 button[class*="from-amber"]:hover:not(:disabled) {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 16px 38px rgba(216,180,102,.22), 0 0 0 1px rgba(240,206,131,.08), inset 0 1px 0 rgba(255,255,255,.48) !important;
+}
+
+/* Secondary buttons: titanium, clear label, no accidental dark-on-dark text. */
+html.dark .tos-projects-ui03 button:not([class*="bg-amber"]):not([class*="from-amber"]) {
+  border-color: rgba(214,224,232,.13) !important;
+}
+
+html.dark .tos-projects-ui03 button:not([class*="bg-amber"]):not([class*="from-amber"]):not(:disabled) {
+  color: #e9eef2 !important;
+}
+
+html.dark .tos-projects-ui03 button:disabled {
+  color: #64727c !important;
+  opacity: .58 !important;
+}
+
+/* Keep semantic active status green even when nested in selected row. */
+html.dark .tos-projects-ui03 [class*="text-emerald"] {
+  color: #6ee7b7 !important;
+}
+html.dark .tos-projects-ui03 [class*="text-red"] {
+  color: #fca5a5 !important;
+}
+html.dark .tos-projects-ui03 [class*="text-amber"] {
+  color: #e8c777 !important;
+}
+
+/* Pagination footer: floating command rail with obvious active page. */
+html.dark .tos-projects-ui03 > [class*="rounded-[24px]"]:last-child,
+html.dark .tos-projects-ui03 > [class*="rounded-[26px]"]:last-child {
+  background: linear-gradient(180deg, rgba(15,23,29,.98), rgba(9,15,20,.99)) !important;
+  border-color: rgba(216,180,102,.14) !important;
+  box-shadow: 0 22px 60px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.03) !important;
+}
+
+html.dark .tos-projects-ui03 > [class*="rounded-[24px]"]:last-child button,
+html.dark .tos-projects-ui03 > [class*="rounded-[26px]"]:last-child button {
+  min-width: 38px;
+}
+
+/* Typography hierarchy: fewer "everything-black" collisions and clearer metadata. */
+.tos-projects-ui03 h1,
+.tos-projects-ui03 h2,
+.tos-projects-ui03 h3,
+.tos-projects-ui03 h4 {
+  letter-spacing: -.015em !important;
+}
+
+html.dark .tos-projects-ui03 h1,
+html.dark .tos-projects-ui03 h2,
+html.dark .tos-projects-ui03 h3,
+html.dark .tos-projects-ui03 h4 {
+  color: #f8fafb !important;
+}
+
+html.dark .tos-projects-ui03 p,
+html.dark .tos-projects-ui03 span,
+html.dark .tos-projects-ui03 td,
+html.dark .tos-projects-ui03 th {
+  text-rendering: optimizeLegibility;
+}
+
+/* Arabic legibility in dense rows and inspector summaries. */
+html.dark .tos-projects-ui03 [dir="rtl"],
+html.dark .tos-projects-ui03 [dir="auto"] {
+  line-height: 1.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-projects-ui03 *,
+  .tos-projects-ui03 *::before,
+  .tos-projects-ui03 *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
