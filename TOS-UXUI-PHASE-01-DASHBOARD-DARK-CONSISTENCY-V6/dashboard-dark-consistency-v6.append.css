@@ -1,0 +1,76 @@
+/* TOS_PHASE01_DASHBOARD_DARK_CONSISTENCY_V6_START
+   Robust Dashboard dark-mode scoping using a dedicated page class.
+   This avoids relying on Tailwind arbitrary-class attribute selectors. */
+
+.dark .tos-dashboard-page .tos-premium-card {
+  border-color: rgba(203, 213, 225, 0.14) !important;
+  background-color: #1d2b36 !important;
+  background-image:
+    radial-gradient(circle at 92% -32%, rgba(217, 174, 91, 0.055), transparent 30%),
+    linear-gradient(180deg, #22323e 0%, #1d2b36 100%) !important;
+  color: #f4f6f8 !important;
+  box-shadow:
+    0 16px 42px rgba(4, 10, 18, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+}
+
+.dark .tos-dashboard-page .tos-premium-card [class*="text-zinc-950"],
+.dark .tos-dashboard-page .tos-premium-card [class*="text-zinc-900"],
+.dark .tos-dashboard-page .tos-premium-card [class*="text-zinc-800"],
+.dark .tos-dashboard-page .tos-premium-card [class*="text-zinc-700"] {
+  color: #f4f6f8 !important;
+}
+
+.dark .tos-dashboard-page .tos-premium-card [class*="text-zinc-600"],
+.dark .tos-dashboard-page .tos-premium-card [class*="text-zinc-500"],
+.dark .tos-dashboard-page .tos-premium-card [class*="text-zinc-400"],
+.dark .tos-dashboard-page .tos-premium-card [class*="text-zinc-300"] {
+  color: #aebbc6 !important;
+}
+
+.dark .tos-dashboard-page .tos-premium-card [class*="border-zinc-200/60"],
+.dark .tos-dashboard-page .tos-premium-card [class*="border-zinc-100"],
+.dark .tos-dashboard-page .tos-premium-card button.group,
+.dark .tos-dashboard-page .tos-premium-card button[class*="rounded-3xl"] {
+  border-color: rgba(203, 213, 225, 0.12) !important;
+  background-color: #263844 !important;
+  background-image: none !important;
+  color: #e9edf1 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025) !important;
+}
+
+.dark .tos-dashboard-page .tos-premium-card [class*="border-zinc-200/60"]:hover,
+.dark .tos-dashboard-page .tos-premium-card [class*="border-zinc-100"]:hover,
+.dark .tos-dashboard-page .tos-premium-card button.group:hover,
+.dark .tos-dashboard-page .tos-premium-card button[class*="rounded-3xl"]:hover {
+  border-color: rgba(217, 174, 91, 0.34) !important;
+  background-color: #334755 !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.17) !important;
+}
+
+.dark .tos-dashboard-page .tos-premium-card [class*="bg-white"],
+.dark .tos-dashboard-page .tos-premium-card [class*="bg-zinc-50"] {
+  background-color: #263844 !important;
+}
+
+.dark .tos-dashboard-page .tos-premium-card .h-3.overflow-hidden.rounded-full {
+  background-color: #314653 !important;
+}
+
+.dark .tos-dashboard-page .tos-premium-card [style*="conic-gradient"] > div {
+  background-color: #1a2934 !important;
+  color: #f4f6f8 !important;
+}
+
+.dark .tos-dashboard-page > div:last-child .tos-premium-card button {
+  border-color: rgba(203, 213, 225, 0.12) !important;
+  background-color: #263844 !important;
+  color: #e9edf1 !important;
+}
+
+.dark .tos-dashboard-page > div:last-child .tos-premium-card button:hover {
+  border-color: rgba(217, 174, 91, 0.34) !important;
+  background-color: #334755 !important;
+}
+
+/* TOS_PHASE01_DASHBOARD_DARK_CONSISTENCY_V6_END */
