@@ -1,0 +1,295 @@
+/* TOS_PHASE02_PROJECTS_EXECUTIVE_LUXURY_V3_START
+   Dark-first Executive Luxury refinement for Projects only.
+   Business logic untouched. Scope limited to .tos-projects-ui03. */
+
+.tos-projects-ui03 {
+  --tos-exec-gold: #d6aa52;
+  --tos-exec-gold-bright: #f0c86d;
+  --tos-exec-gold-deep: #8c641e;
+  --tos-exec-graphite: #0f1419;
+  --tos-exec-slate-1: #16212a;
+  --tos-exec-slate-2: #1b2a35;
+  --tos-exec-slate-3: #223541;
+  --tos-exec-line: rgba(203, 213, 225, .12);
+}
+
+/* Light remains elegant and calm; V3 is intentionally dark-first. */
+.tos-projects-ui03 > .grid:first-child > * {
+  border-radius: 30px !important;
+}
+
+.tos-projects-ui03 .tos-premium-card:has(input[type="search"]) {
+  border-radius: 30px !important;
+}
+
+.tos-projects-ui03 button[class*="bg-amber"],
+.tos-projects-ui03 button[class*="from-amber"] {
+  background-image: linear-gradient(135deg, #f2c85f 0%, #d9a83e 52%, #b47a1c 100%) !important;
+  border-color: rgba(174, 116, 25, .55) !important;
+}
+
+/* ---------- DARK MODE: EXECUTIVE LUXURY ---------- */
+html.dark .tos-projects-ui03 {
+  color: #f5f7f9;
+}
+
+/* Deep graphite canvas with controlled ambient gold, not flat blue. */
+html.dark .tos-projects-ui03::before {
+  inset: -32px -36px;
+  background:
+    radial-gradient(circle at 7% 2%, rgba(214,170,82,.115), transparent 26%),
+    radial-gradient(circle at 92% 0%, rgba(74,111,137,.10), transparent 28%),
+    linear-gradient(180deg, rgba(10,14,18,.18), rgba(10,14,18,0)) !important;
+}
+
+html.dark .tos-projects-ui03::after {
+  inset: -30px -30px auto;
+  height: 320px;
+  background:
+    radial-gradient(circle at 16% 0%, rgba(214,170,82,.09), transparent 28%),
+    radial-gradient(circle at 84% 4%, rgba(94,131,157,.09), transparent 30%);
+  filter: blur(10px);
+  opacity: .9;
+}
+
+/* KPI strip: individual executive glass cards with semantic halos. */
+html.dark .tos-projects-ui03 > .grid:first-child > * {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    linear-gradient(145deg, rgba(28,42,53,.96), rgba(16,25,32,.98)) !important;
+  border-color: rgba(203,213,225,.12) !important;
+  box-shadow:
+    0 28px 70px rgba(0,0,0,.34),
+    inset 0 1px 0 rgba(255,255,255,.055),
+    inset 0 -1px 0 rgba(0,0,0,.30) !important;
+}
+
+html.dark .tos-projects-ui03 > .grid:first-child > *::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(120deg, rgba(255,255,255,.025), transparent 40%),
+    radial-gradient(circle at 100% 0%, rgba(214,170,82,.055), transparent 36%);
+}
+
+html.dark .tos-projects-ui03 > .grid:first-child > *:nth-child(1) {
+  box-shadow: 0 28px 70px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.055), inset 3px 0 0 rgba(248,113,113,.42) !important;
+}
+html.dark .tos-projects-ui03 > .grid:first-child > *:nth-child(2) {
+  box-shadow: 0 28px 70px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.055), inset 3px 0 0 rgba(245,158,11,.45) !important;
+}
+html.dark .tos-projects-ui03 > .grid:first-child > *:nth-child(3) {
+  box-shadow: 0 28px 70px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.055), inset 3px 0 0 rgba(52,211,153,.42) !important;
+}
+html.dark .tos-projects-ui03 > .grid:first-child > *:nth-child(4) {
+  box-shadow: 0 28px 70px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.055), inset 3px 0 0 rgba(167,139,250,.42) !important;
+}
+
+html.dark .tos-projects-ui03 > .grid:first-child > *:hover {
+  transform: translateY(-4px) scale(1.006);
+  border-color: rgba(214,170,82,.30) !important;
+  box-shadow: 0 34px 88px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+
+/* Main work surfaces: darker graphite glass, clearer hierarchy. */
+html.dark .tos-projects-ui03 .tos-premium-card {
+  background:
+    linear-gradient(180deg, rgba(26,39,49,.975), rgba(17,27,35,.985)) !important;
+  border-color: var(--tos-exec-line) !important;
+  box-shadow:
+    0 34px 90px rgba(0,0,0,.38),
+    inset 0 1px 0 rgba(255,255,255,.04),
+    inset 0 -1px 0 rgba(0,0,0,.25) !important;
+  backdrop-filter: blur(22px) saturate(112%);
+}
+
+/* Executive command bar. */
+html.dark .tos-projects-ui03 .tos-premium-card:has(input[type="search"]) {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(145deg, rgba(31,47,59,.99), rgba(18,29,37,.99)) !important;
+  border-color: rgba(214,170,82,.22) !important;
+  box-shadow:
+    0 36px 92px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 0 0 1px rgba(214,170,82,.025) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-premium-card:has(input[type="search"])::before {
+  width: 100%;
+  height: 1px;
+  inset: 0 0 auto 0;
+  border-radius: 30px 30px 0 0;
+  background: linear-gradient(90deg, transparent 2%, rgba(240,200,109,.75) 22%, rgba(214,170,82,.30) 58%, transparent 96%);
+  box-shadow: 0 0 18px rgba(214,170,82,.18);
+}
+
+/* Inputs become black-glass controls. */
+html.dark .tos-projects-ui03 .tos-premium-field,
+html.dark .tos-projects-ui03 input[type="search"],
+html.dark .tos-projects-ui03 input[type="text"],
+html.dark .tos-projects-ui03 input[type="email"],
+html.dark .tos-projects-ui03 input[type="number"],
+html.dark .tos-projects-ui03 input[type="date"],
+html.dark .tos-projects-ui03 select,
+html.dark .tos-projects-ui03 textarea {
+  background:
+    linear-gradient(180deg, rgba(9,15,20,.78), rgba(13,21,27,.82)) !important;
+  border-color: rgba(176,190,202,.18) !important;
+  color: #f4f7f9 !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,.42),
+    inset 0 0 0 1px rgba(255,255,255,.015),
+    0 1px 0 rgba(255,255,255,.02) !important;
+}
+
+html.dark .tos-projects-ui03 input::placeholder,
+html.dark .tos-projects-ui03 textarea::placeholder {
+  color: #81909d !important;
+}
+
+html.dark .tos-projects-ui03 .tos-premium-field:focus,
+html.dark .tos-projects-ui03 input:focus,
+html.dark .tos-projects-ui03 select:focus,
+html.dark .tos-projects-ui03 textarea:focus {
+  border-color: rgba(240,200,109,.62) !important;
+  box-shadow:
+    0 0 0 4px rgba(214,170,82,.075),
+    0 0 24px rgba(214,170,82,.05),
+    inset 0 1px 2px rgba(0,0,0,.36) !important;
+}
+
+/* Filter inner trays: distinct layer instead of same-color slab. */
+html.dark .tos-projects-ui03 [class*="rounded-[20px]"][class*="border-zinc-200/70"],
+html.dark .tos-projects-ui03 [class*="rounded-[18px]"][class*="border-zinc-200/70"] {
+  background:
+    linear-gradient(180deg, rgba(12,20,26,.60), rgba(16,26,33,.70)) !important;
+  border-color: rgba(203,213,225,.10) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 12px 34px rgba(0,0,0,.18) !important;
+}
+
+/* Project list: darker, cleaner, less blue, more trading-desk/executive feel. */
+html.dark .tos-projects-ui03 [class*="divide-y"] {
+  border-color: rgba(203,213,225,.09) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="divide-y"] > button,
+html.dark .tos-projects-ui03 [class*="divide-y"] > div {
+  border-color: rgba(203,213,225,.075) !important;
+  background: rgba(15,24,31,.28) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="divide-y"] > button:hover,
+html.dark .tos-projects-ui03 [class*="divide-y"] > div:hover {
+  transform: translateX(2px);
+  background:
+    linear-gradient(90deg, rgba(214,170,82,.08), rgba(31,48,60,.74) 24%, rgba(22,35,44,.68)) !important;
+  box-shadow: inset 2px 0 0 rgba(214,170,82,.42) !important;
+}
+
+/* Any explicitly selected/amber-bordered project row becomes a premium selection state. */
+html.dark .tos-projects-ui03 [class*="border-amber"] {
+  box-shadow: inset 3px 0 0 rgba(240,200,109,.78), 0 0 0 1px rgba(214,170,82,.07) !important;
+}
+
+html.dark .tos-projects-ui03 [class*="border-amber"][class*="bg-amber"],
+html.dark .tos-projects-ui03 [class*="border-amber"][class*="bg-white"] {
+  background:
+    linear-gradient(90deg, rgba(214,170,82,.105), rgba(27,43,54,.94) 22%, rgba(18,29,37,.96)) !important;
+}
+
+/* Selected project hero: near-black navy with luxury grid and champagne glow. */
+html.dark .tos-projects-ui03 [class*="from-zinc-950"][class*="via-zinc-900"][class*="to-amber-950"],
+html.dark .tos-projects-ui03 [class*="bg-zinc-950"][class*="text-white"] {
+  position: relative;
+  background:
+    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px),
+    radial-gradient(circle at 12% 10%, rgba(240,200,109,.17), transparent 34%),
+    radial-gradient(circle at 90% 88%, rgba(63,98,125,.14), transparent 38%),
+    linear-gradient(145deg, #0b1422 0%, #0e1a29 48%, #0b121b 100%) !important;
+  background-size: 28px 28px, 28px 28px, auto, auto, auto !important;
+  border-color: rgba(214,170,82,.22) !important;
+  box-shadow:
+    0 32px 84px rgba(0,0,0,.46),
+    inset 0 1px 0 rgba(255,255,255,.055),
+    inset 0 0 48px rgba(214,170,82,.025) !important;
+}
+
+/* Nested metrics on inspector: separate pieces of glass. */
+html.dark .tos-projects-ui03 [class~="bg-zinc-50"],
+html.dark .tos-projects-ui03 [class*="bg-zinc-50/"],
+html.dark .tos-projects-ui03 [class~="bg-white"],
+html.dark .tos-projects-ui03 [class*="bg-white/"] {
+  background-color: rgba(13,22,29,.56) !important;
+  border-color: rgba(203,213,225,.10) !important;
+}
+
+/* Primary actions look like champagne metal; secondary actions stay graphite. */
+html.dark .tos-projects-ui03 button[class*="bg-amber"],
+html.dark .tos-projects-ui03 button[class*="from-amber"] {
+  color: #17120a !important;
+  background-image: linear-gradient(135deg, #f3d07a 0%, #d9ad52 50%, #b78127 100%) !important;
+  border-color: rgba(244,208,122,.48) !important;
+  box-shadow:
+    0 14px 32px rgba(214,170,82,.16),
+    inset 0 1px 0 rgba(255,255,255,.38),
+    inset 0 -1px 0 rgba(101,66,14,.22) !important;
+}
+
+html.dark .tos-projects-ui03 button[class*="bg-amber"]:hover:not(:disabled),
+html.dark .tos-projects-ui03 button[class*="from-amber"]:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow:
+    0 18px 42px rgba(214,170,82,.24),
+    0 0 0 1px rgba(240,200,109,.12),
+    inset 0 1px 0 rgba(255,255,255,.42) !important;
+}
+
+/* Footer/pagination = floating command rail. */
+html.dark .tos-projects-ui03 > [class*="rounded-[24px]"]:last-child,
+html.dark .tos-projects-ui03 > [class*="rounded-[26px]"]:last-child {
+  background:
+    linear-gradient(180deg, rgba(22,34,43,.96), rgba(14,23,30,.98)) !important;
+  border-color: rgba(214,170,82,.16) !important;
+  box-shadow: 0 24px 64px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.03) !important;
+}
+
+/* Kicker + metadata: champagne accents, brighter primary text. */
+html.dark .tos-projects-ui03 .tos-kicker {
+  color: #e2bd68 !important;
+  text-shadow: 0 0 18px rgba(214,170,82,.10);
+}
+
+html.dark .tos-projects-ui03 [class*="text-zinc-950"],
+html.dark .tos-projects-ui03 [class*="text-zinc-900"],
+html.dark .tos-projects-ui03 [class*="text-zinc-800"] {
+  color: #f5f7f9 !important;
+}
+
+html.dark .tos-projects-ui03 [class*="text-zinc-500"],
+html.dark .tos-projects-ui03 [class*="text-zinc-400"] {
+  color: #98a8b5 !important;
+}
+
+/* Subtle custom scrollbar inside dense project content. */
+html.dark .tos-projects-ui03 * {
+  scrollbar-color: rgba(214,170,82,.34) rgba(255,255,255,.025);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-projects-ui03 *,
+  .tos-projects-ui03 *::before,
+  .tos-projects-ui03 *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
+
+/* TOS_PHASE02_PROJECTS_EXECUTIVE_LUXURY_V3_END */
