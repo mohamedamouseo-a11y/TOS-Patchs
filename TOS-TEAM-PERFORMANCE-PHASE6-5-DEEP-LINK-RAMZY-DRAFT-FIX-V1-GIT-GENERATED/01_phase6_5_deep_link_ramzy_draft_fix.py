@@ -14,28 +14,46 @@ def save(path, text):
     path.write_text(text, encoding="utf-8")
 
 
-def replace_once(text, old, new, label):
+def replace_if_needed(text, old, new, label):
+    if new in text:
+        return text
     count = text.count(old)
+    if count == 1:
+        return text.replace(old, new, 1)
+    raise SystemExit(f"PHASE6_5_FIX_ERROR={label}_MATCH_COUNT_{count}")
+
+
+def ensure_workflow_action(text, key, anchor, label_key):
+    marker = f'key: "{key}"'
+    start = text.find(marker)
+    if start < 0:
+        raise SystemExit(f"PHASE6_5_FIX_ERROR=WORKFLOW_{key}_NOT_FOUND")
+    next_start = text.find('\n    {\n      key: ', start + len(marker))
+    end = next_start if next_start >= 0 else len(text)
+    block = text[start:end]
+    desired = f'action: {{ page: "teamPerformance", anchor: "{anchor}", labelKey: "{label_key}" }}'
+    if desired in block:
+        return text
+    pattern = re.compile(r'action: \{ page: "teamPerformance", anchor: "[^"]*", labelKey: "[^"]*" \}')
+    updated, count = pattern.subn(desired, block, count=1)
     if count != 1:
-        raise SystemExit(f"PHASE6_5_FIX_ERROR={label}_MATCH_COUNT_{count}")
-    return text.replace(old, new, 1)
+        raise SystemExit(f"PHASE6_5_FIX_ERROR=WORKFLOW_{key}_ACTION_NOT_FOUND")
+    return text[:start] + updated + text[end:]
 
 
-def wrap_component(text, component, dom_id):
+def ensure_component_wrapper(text, component, dom_id):
+    if f'id="{dom_id}"' in text:
+        return text
     pattern = re.compile(rf"(?ms)^      <{re.escape(component)}\n.*?^      />$")
     match = pattern.search(text)
     if not match:
         raise SystemExit(f"PHASE6_5_FIX_ERROR={component}_BLOCK_NOT_FOUND")
     block = match.group(0)
-    if f'id="{dom_id}"' in text:
-        raise SystemExit(f"PHASE6_5_FIX_ERROR={dom_id}_ALREADY_EXISTS")
     wrapped = f'      <div id="{dom_id}">\n{block}\n      </div>'
     return text[:match.start()] + wrapped + text[match.end():]
 
 
-# -----------------------------------------------------------------------------
-# App.jsx — make cross-page section scrolling resilient and open disclosures.
-# -----------------------------------------------------------------------------
+# App.jsx — resilient cross-page navigation + open closed disclosures.
 app_path, app = load("frontend/src/App.jsx")
 old_bridge = '''function HelpNavigateBridge({ setActive, setActiveProjectId }) {
   useEffect(() => {
@@ -91,8 +109,9 @@ new_bridge = '''function HelpNavigateBridge({ setActive }) {
   }, [setActive]);
   return null;
 }'''
-app = replace_once(app, old_bridge, new_bridge, "APP_BRIDGE")
-app = replace_once(
+if "function scrollToSection(section, attempt = 0)" not in app:
+    app = replace_if_needed(app, old_bridge, new_bridge, "APP_BRIDGE")
+app = replace_if_needed(
     app,
     '<HelpNavigateBridge setActive={setActive} setActiveProjectId={setActiveProjectId} />',
     '<HelpNavigateBridge setActive={setActive} />',
@@ -101,9 +120,7 @@ app = replace_once(
 save(app_path, app)
 
 
-# -----------------------------------------------------------------------------
-# Help Center — repair invalid anchors, improve action labels/localization.
-# -----------------------------------------------------------------------------
+# Help Center — normalize labels, anchors, and Arabic wording.
 help_path, help_text = load("frontend/src/components/performance/TeamPerformanceHelpCenter.jsx")
 old_labels = '''    summary: ["فتح الملخص الإداري", "Open management summary"],
     executive: ["فتح مركز القيادة", "Open Executive Command Center"],
@@ -119,9 +136,10 @@ new_labels = '''    summary: ["فتح الملخص الإداري", "Open manage
     executive: ["فتح مركز القيادة", "Open Executive Command Center"],
     archive: ["فتح الأرشيف", "Open archive"],
     permissions: ["فتح الصلاحيات", "Open permissions"],'''
-help_text = replace_once(help_text, old_labels, new_labels, "HELP_ACTION_LABELS")
+if 'goals: ["فتح الأهداف", "Open goals"]' not in help_text:
+    help_text = replace_if_needed(help_text, old_labels, new_labels, "HELP_ACTION_LABELS")
 
-replacements = [
+arabic_replacements = [
     (
         'tx("افتح الموظف أو الـDrill-down عندما تحتاج السبب وراء الرقم.", "Open employee detail or drill-down when you need the reason behind a number.")',
         'tx("افتح تفاصيل الموظف أو التفاصيل المتعمقة عندما تحتاج السبب وراء الرقم.", "Open employee detail or drill-down when you need the reason behind a number.")',
@@ -132,45 +150,24 @@ replacements = [
         'tx("افتح التفاصيل المتعمقة وراجع المهمة والموعد والحالة والنشاط.", "Open drill-down and review the task, due date, status, and activity.")',
         "HELP_AR_DRILLDOWN_OVERDUE",
     ),
-    (
-        'action: { page: "teamPerformance", anchor: "phase1-targets", labelKey: "teamPerformance" }',
-        'action: { page: "teamPerformance", anchor: "phase1-goals-disclosure", labelKey: "goals" }',
-        "HELP_GOALS_ANCHOR",
-    ),
-    (
-        'action: { page: "teamPerformance", anchor: "phase4-workforce", labelKey: "teamPerformance" }',
-        'action: { page: "teamPerformance", anchor: "team-performance-workforce", labelKey: "workforce" }',
-        "HELP_WORKFORCE_ANCHOR",
-    ),
-    (
-        'action: { page: "teamPerformance", anchor: "phase4-reviews", labelKey: "teamPerformance" }',
-        'action: { page: "teamPerformance", anchor: "team-performance-reviews", labelKey: "reviews" }',
-        "HELP_REVIEWS_ANCHOR",
-    ),
-    (
-        'action: { page: "teamPerformance", anchor: "phase4-skills", labelKey: "teamPerformance" }',
-        'action: { page: "teamPerformance", anchor: "team-performance-skills", labelKey: "skills" }',
-        "HELP_SKILLS_ANCHOR",
-    ),
-    (
-        'action: { page: "teamPerformance", anchor: "phase4-talent", labelKey: "teamPerformance" }',
-        'action: { page: "teamPerformance", anchor: "team-performance-talent", labelKey: "talent" }',
-        "HELP_TALENT_ANCHOR",
-    ),
-    (
-        'action: { page: "teamPerformance", anchor: "phase4-recognition", labelKey: "teamPerformance" }',
-        'action: { page: "teamPerformance", anchor: "team-performance-recognition", labelKey: "recognition" }',
-        "HELP_RECOGNITION_ANCHOR",
-    ),
 ]
-for old, new, label in replacements:
-    help_text = replace_once(help_text, old, new, label)
+for old, new, label in arabic_replacements:
+    if old in help_text:
+        help_text = replace_if_needed(help_text, old, new, label)
+
+for key, anchor, label_key in [
+    ("goals", "phase1-goals-disclosure", "goals"),
+    ("workforce", "team-performance-workforce", "workforce"),
+    ("reviews", "team-performance-reviews", "reviews"),
+    ("skills", "team-performance-skills", "skills"),
+    ("talent", "team-performance-talent", "talent"),
+    ("recognition", "team-performance-recognition", "recognition"),
+]:
+    help_text = ensure_workflow_action(help_text, key, anchor, label_key)
 save(help_path, help_text)
 
 
-# -----------------------------------------------------------------------------
-# Team Performance — provide stable IDs for individual deep-dive modules.
-# -----------------------------------------------------------------------------
+# Team Performance — stable module targets, safe to re-run.
 dashboard_path, dashboard = load("frontend/src/pages/TeamPerformanceDashboard.jsx")
 for component, dom_id in [
     ("PerformanceReviewsPanel", "team-performance-reviews"),
@@ -179,20 +176,19 @@ for component, dom_id in [
     ("TalentSuccessionPanel", "team-performance-talent"),
     ("RecognitionRewardsPanel", "team-performance-recognition"),
 ]:
-    dashboard = wrap_component(dashboard, component, dom_id)
+    dashboard = ensure_component_wrapper(dashboard, component, dom_id)
 save(dashboard_path, dashboard)
 
 
-# -----------------------------------------------------------------------------
-# Ramzy — preserve draft AND keep the Help Center prompt recoverable.
-# -----------------------------------------------------------------------------
+# Ramzy — preserve draft and keep Help Center suggestion recoverable, safe to re-run.
 ramzy_path, ramzy = load("frontend/src/components/RamzyAssistant.jsx")
-ramzy = replace_once(
-    ramzy,
-    '  const [input, setInput] = useState("");\n  const [loading, setLoading] = useState(false);',
-    '  const [input, setInput] = useState("");\n  const [helpSuggestion, setHelpSuggestion] = useState(null);\n  const [loading, setLoading] = useState(false);',
-    "RAMZY_SUGGESTION_STATE",
-)
+if "const [helpSuggestion, setHelpSuggestion]" not in ramzy:
+    ramzy = replace_if_needed(
+        ramzy,
+        '  const [input, setInput] = useState("");\n  const [loading, setLoading] = useState(false);',
+        '  const [input, setInput] = useState("");\n  const [helpSuggestion, setHelpSuggestion] = useState(null);\n  const [loading, setLoading] = useState(false);',
+        "RAMZY_SUGGESTION_STATE",
+    )
 
 old_ramzy_bridge = '''  // Phase 6.5 — Help Center bridge
   useEffect(() => {
@@ -236,12 +232,14 @@ new_ramzy_bridge = '''  // Phase 6.5 — Help Center bridge
     window.addEventListener("tos:ramzy-help", handleRamzyHelp);
     return () => window.removeEventListener("tos:ramzy-help", handleRamzyHelp);
   }, [input]);'''
-ramzy = replace_once(ramzy, old_ramzy_bridge, new_ramzy_bridge, "RAMZY_BRIDGE")
+if "setHelpSuggestion({" not in ramzy:
+    ramzy = replace_if_needed(ramzy, old_ramzy_bridge, new_ramzy_bridge, "RAMZY_BRIDGE")
 
-ramzy = replace_once(
-    ramzy,
-    '  function handleComposerInput(event) {',
-    '''  function applyHelpSuggestion() {
+if "function applyHelpSuggestion()" not in ramzy:
+    ramzy = replace_if_needed(
+        ramzy,
+        '  function handleComposerInput(event) {',
+        '''  function applyHelpSuggestion() {
     const prompt = String(helpSuggestion?.prompt || "").trim();
     if (!prompt) return;
     setInput(prompt);
@@ -250,20 +248,23 @@ ramzy = replace_once(
   }
 
   function handleComposerInput(event) {''',
-    "RAMZY_APPLY_SUGGESTION",
-)
+        "RAMZY_APPLY_SUGGESTION",
+    )
 
-ramzy = replace_once(
-    ramzy,
-    '    if (!content || loading || sendLockRef.current) return;\n    sendLockRef.current = true;',
-    '    if (!content || loading || sendLockRef.current) return;\n    setHelpSuggestion(null);\n    sendLockRef.current = true;',
-    "RAMZY_SEND_CLEAR_SUGGESTION",
-)
+send_marker = '    if (!content || loading || sendLockRef.current) return;\n    setHelpSuggestion(null);\n    sendLockRef.current = true;'
+if send_marker not in ramzy:
+    ramzy = replace_if_needed(
+        ramzy,
+        '    if (!content || loading || sendLockRef.current) return;\n    sendLockRef.current = true;',
+        send_marker,
+        "RAMZY_SEND_CLEAR_SUGGESTION",
+    )
 
-ramzy = replace_once(
-    ramzy,
-    '          <footer className="ramzy-composer">\n            <textarea',
-    '''          <footer className="ramzy-composer">
+if "Use Help Center question" not in ramzy:
+    ramzy = replace_if_needed(
+        ramzy,
+        '          <footer className="ramzy-composer">\n            <textarea',
+        '''          <footer className="ramzy-composer">
             {helpSuggestion?.prompt ? (
               <div className="mb-2 flex items-center justify-between gap-2 rounded-xl border border-amber-300/50 bg-amber-50 px-3 py-2 text-xs font-bold text-amber-900 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-100" role="status">
                 <span>{isEnglish ? "A Help Center question is ready." : "يوجد سؤال مقترح من مركز المساعدة."}</span>
@@ -274,8 +275,8 @@ ramzy = replace_once(
               </div>
             ) : null}
             <textarea''',
-    "RAMZY_SUGGESTION_UI",
-)
+        "RAMZY_SUGGESTION_UI",
+    )
 save(ramzy_path, ramzy)
 
 print("PHASE6_5_DEEP_LINK_RAMZY_DRAFT_FIX=PASS")
