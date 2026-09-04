@@ -1,0 +1,342 @@
+/* Phase 03 — Tasks Couture Executive V4
+   Strong visual escalation after V3 review.
+   Presentation only; no task/business behavior changes. */
+
+.tos-tasks-page {
+  --tos-tasks-couture-v4-runtime: 1;
+  --v4-gold: #d5ad55;
+  --v4-gold-hi: #f2d995;
+  --v4-gold-deep: #8b621d;
+  --v4-ivory: #fffdf8;
+  --v4-porcelain: #f4efe6;
+  --v4-obsidian: #070a0d;
+  --v4-titanium: #101820;
+  --v4-titanium-raised: #16222b;
+  --v4-platinum: #f5f7f9;
+  --v4-platinum-soft: #b8c4cc;
+}
+
+/* ====================================================================== */
+/* ACTIVE BOARD — EXECUTIVE CANVAS                                       */
+/* ====================================================================== */
+html:not(.dark) .tos-tasks-system-theme-v15 {
+  background:
+    radial-gradient(circle at 8% -8%, rgba(213,173,85,.14), transparent 28%),
+    radial-gradient(circle at 95% 3%, rgba(148,163,184,.09), transparent 24%),
+    linear-gradient(180deg, #faf8f3 0%, #f4efe7 48%, #eee8df 100%) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 {
+  background:
+    radial-gradient(circle at 8% -6%, rgba(213,173,85,.09), transparent 28%),
+    radial-gradient(circle at 93% 2%, rgba(81,103,119,.11), transparent 24%),
+    linear-gradient(180deg, #050709 0%, #080b0e 46%, #090d10 100%) !important;
+}
+
+/* ====================================================================== */
+/* WORKSPACE TOOLS — COMMAND DECK                                        */
+/* ====================================================================== */
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-management-card {
+  border: 1px solid rgba(159,119,47,.24) !important;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(213,173,85,.10), transparent 34%),
+    linear-gradient(155deg, rgba(255,255,255,.98), rgba(250,246,238,.98)) !important;
+  box-shadow:
+    0 22px 54px rgba(75,51,18,.09),
+    inset 0 1px 0 rgba(255,255,255,.98) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-management-card {
+  border: 1px solid rgba(204,214,221,.12) !important;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(213,173,85,.06), transparent 34%),
+    linear-gradient(155deg, #131e25 0%, #0d151b 62%, #091015 100%) !important;
+  box-shadow:
+    0 26px 64px rgba(0,0,0,.40),
+    inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-management-card [class*="bg-amber-50"],
+html.dark .tos-tasks-system-theme-v15 .tos-management-card [class*="bg-amber-500"] {
+  color: #f1d895 !important;
+  border-color: rgba(213,173,85,.22) !important;
+  background: linear-gradient(180deg, rgba(213,173,85,.11), rgba(213,173,85,.045)) !important;
+}
+
+/* ====================================================================== */
+/* KPI RINGS — JEWEL INSTRUMENTS                                         */
+/* ====================================================================== */
+.tos-tasks-system-theme-v15 [style*="conic-gradient"] {
+  filter: drop-shadow(0 10px 22px rgba(44,31,10,.09));
+}
+
+html.dark .tos-tasks-system-theme-v15 [style*="conic-gradient"] {
+  filter: drop-shadow(0 12px 28px rgba(0,0,0,.40));
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 [style*="conic-gradient"] > div {
+  background:
+    radial-gradient(circle at 34% 24%, rgba(255,255,255,.98), transparent 34%),
+    linear-gradient(145deg, #fffefa 0%, #f6f1e9 100%) !important;
+  border: 1px solid rgba(183,145,72,.18) !important;
+  box-shadow: inset 0 1px 0 #fff, inset 0 -8px 18px rgba(83,61,25,.035) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 [style*="conic-gradient"] > div {
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,.075), transparent 30%),
+    linear-gradient(145deg, #1a2730 0%, #101820 58%, #070b0e 100%) !important;
+  border: 1px solid rgba(255,255,255,.085) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    inset 0 -12px 22px rgba(0,0,0,.20) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 [style*="conic-gradient"] > div,
+html.dark .tos-tasks-system-theme-v15 [style*="conic-gradient"] > div * {
+  color: #fff !important;
+  opacity: 1 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,.42) !important;
+}
+
+/* ====================================================================== */
+/* BOARD SHELL — COUTURE FRAME                                           */
+/* ====================================================================== */
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-task-board-content > section,
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-task-board-content section[class*="rounded-[24px]"] {
+  border-color: rgba(165,126,54,.24) !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-task-board-content section[class*="rounded-[24px]"][class*="bg-white"] {
+  background:
+    linear-gradient(180deg, rgba(255,254,250,.99) 0%, rgba(248,243,234,.985) 100%) !important;
+  box-shadow:
+    0 30px 72px rgba(72,49,19,.10),
+    inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-task-board-content section[class*="rounded-[24px]"][class*="bg-white"] {
+  border-color: rgba(204,214,221,.12) !important;
+  background:
+    radial-gradient(circle at 92% 0%, rgba(213,173,85,.045), transparent 30%),
+    linear-gradient(180deg, #111b22 0%, #0b1217 100%) !important;
+  box-shadow:
+    0 34px 86px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+
+/* ====================================================================== */
+/* KANBAN COLUMNS — LAYERED TITANIUM / PORCELAIN                         */
+/* ====================================================================== */
+.tos-tasks-system-theme-v15 .tos-modern-board-column {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 24px !important;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-modern-board-column::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  z-index: 0;
+  width: 100%;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(213,173,85,.78), transparent);
+  opacity: .72;
+}
+
+.tos-tasks-system-theme-v15 .tos-modern-board-column > * {
+  position: relative;
+  z-index: 1;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-board-column {
+  border: 1px solid rgba(171,133,60,.24) !important;
+  background:
+    radial-gradient(circle at 86% 0%, rgba(213,173,85,.08), transparent 30%),
+    linear-gradient(180deg, rgba(255,254,250,.98) 0%, rgba(246,241,232,.96) 100%) !important;
+  box-shadow:
+    0 20px 46px rgba(76,53,21,.075),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-board-column:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(171,133,60,.38) !important;
+  box-shadow: 0 28px 64px rgba(76,53,21,.11), inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column {
+  border: 1px solid rgba(203,213,225,.115) !important;
+  background:
+    radial-gradient(circle at 88% 0%, rgba(213,173,85,.05), transparent 30%),
+    linear-gradient(180deg, #131e25 0%, #0d151a 58%, #090e12 100%) !important;
+  box-shadow:
+    0 24px 58px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(213,173,85,.26) !important;
+  box-shadow: 0 32px 74px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+/* Column header = compact executive metal plaque */
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-column-header {
+  border: 1px solid rgba(172,134,61,.21) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.99), rgba(249,245,237,.99)) !important;
+  box-shadow: 0 10px 24px rgba(71,50,20,.065), inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-column-header {
+  border: 1px solid rgba(203,213,225,.105) !important;
+  background:
+    linear-gradient(180deg, #18242c 0%, #111a20 100%) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-column-header [class*="text-slate-900"] {
+  color: #f7f8f9 !important;
+}
+
+/* ====================================================================== */
+/* TASK CARDS — RAISED EXECUTIVE CARDS                                   */
+/* ====================================================================== */
+.tos-tasks-system-theme-v15 .tos-modern-task-card {
+  border-radius: 20px !important;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-task-card {
+  border: 1px solid rgba(181,151,91,.25) !important;
+  background:
+    linear-gradient(180deg, #fff 0%, #fffcf7 100%) !important;
+  box-shadow:
+    0 12px 28px rgba(65,46,21,.07),
+    inset 0 1px 0 rgba(255,255,255,.98) !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-task-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(182,138,53,.42) !important;
+  box-shadow: 0 20px 42px rgba(66,46,18,.12), inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-task-card {
+  border: 1px solid rgba(203,213,225,.11) !important;
+  background:
+    radial-gradient(circle at 95% 0%, rgba(213,173,85,.035), transparent 30%),
+    linear-gradient(180deg, #18242c 0%, #111a20 100%) !important;
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-task-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(213,173,85,.27) !important;
+  box-shadow: 0 22px 50px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+/* Titles: remove legacy blue-hover feel, keep luxury hierarchy */
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-task-card h3,
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-task-card:hover h3 {
+  color: #1c160f !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-task-card h3,
+html.dark .tos-tasks-system-theme-v15 .tos-modern-task-card:hover h3 {
+  color: #f7f8fa !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-task-card [class*="text-zinc-400"],
+html.dark .tos-tasks-system-theme-v15 .tos-modern-task-card [class*="text-slate-500"] {
+  color: #aeb9c1 !important;
+}
+
+/* ====================================================================== */
+/* PRIMARY BOARD ACTIONS — CHAMPAGNE HARDWARE                             */
+/* ====================================================================== */
+.tos-tasks-system-theme-v15 .tos-modern-column-header button[class*="bg-blue-600"] {
+  color: #1a1208 !important;
+  border: 1px solid rgba(124,86,25,.42) !important;
+  background:
+    linear-gradient(145deg, #f2d995 0%, #ddb65e 52%, #a97525 100%) !important;
+  box-shadow:
+    0 8px 18px rgba(160,110,31,.22),
+    inset 0 1px 0 rgba(255,255,255,.58) !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-modern-column-header button[class*="bg-blue-600"]:hover {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+
+/* Project details button joins premium metal language */
+.tos-tasks-system-theme-v15 button[class*="border-amber-200"][class*="bg-amber-50"] {
+  border-color: rgba(166,122,44,.34) !important;
+  color: #51370f !important;
+  background: linear-gradient(180deg, #fff9e9, #f2dfae) !important;
+  box-shadow: 0 8px 20px rgba(116,80,25,.10), inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 button[class*="border-amber-200"][class*="bg-amber-50"],
+html.dark .tos-tasks-system-theme-v15 button[class*="border-amber-400"] {
+  border-color: rgba(213,173,85,.28) !important;
+  color: #f1d895 !important;
+  background: linear-gradient(180deg, rgba(213,173,85,.12), rgba(213,173,85,.055)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+/* ====================================================================== */
+/* EMPTY STATES / FOOTNOTE                                                */
+/* ====================================================================== */
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-empty-state {
+  border-color: rgba(181,151,91,.28) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(213,173,85,.065), transparent 35%),
+    linear-gradient(180deg, rgba(255,255,255,.78), rgba(250,247,241,.72)) !important;
+  box-shadow: inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-empty-state {
+  border-color: rgba(203,213,225,.10) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(213,173,85,.035), transparent 35%),
+    linear-gradient(180deg, rgba(18,28,35,.72), rgba(9,14,18,.72)) !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-modern-board-grid + div[class*="bg-blue-50"] {
+  border: 1px solid rgba(213,173,85,.18) !important;
+  color: #765316 !important;
+  background: linear-gradient(180deg, rgba(255,249,232,.88), rgba(244,230,194,.78)) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-grid + div[class*="bg-blue-50"] {
+  border-color: rgba(213,173,85,.16) !important;
+  color: #d9be7c !important;
+  background: linear-gradient(180deg, rgba(213,173,85,.075), rgba(213,173,85,.035)) !important;
+}
+
+/* ====================================================================== */
+/* MICRO DETAIL                                                           */
+/* ====================================================================== */
+.tos-tasks-system-theme-v15 .tos-modern-board-column,
+.tos-tasks-system-theme-v15 .tos-modern-task-card,
+.tos-tasks-system-theme-v15 .tos-management-card {
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-tasks-system-theme-v15 .tos-modern-board-column,
+  .tos-tasks-system-theme-v15 .tos-modern-task-card,
+  .tos-tasks-system-theme-v15 .tos-modern-column-header button {
+    transform: none !important;
+    transition: none !important;
+  }
+}
