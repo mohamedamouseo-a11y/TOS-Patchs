@@ -105,9 +105,13 @@ html.dark .tos-task-details-modal .tos-task-more-details-button:hover {
   border-radius: 12px !important;
 }
 
-/* The default side summary shows only the essential assignee count. */
+/* Side rail: only assignee detail belongs to the minimal layer. Project/activity wait behind More details. */
 .tos-task-details-modal .tos-task-side-rail[data-more-details="false"] .tos-task-side-rail-summary {
   grid-template-columns: 1fr !important;
+}
+
+.tos-task-details-modal .tos-task-side-rail[data-more-details="false"][data-expanded="true"] > section:not(:first-of-type) {
+  display: none !important;
 }
 
 /* Description should feel like the workspace, not a nested dashboard card. */
