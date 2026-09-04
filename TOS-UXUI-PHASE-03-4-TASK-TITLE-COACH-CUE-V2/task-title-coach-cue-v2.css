@@ -1,0 +1,15 @@
+/* Phase 03.4 — Task Title Auto-Fit + First-Time Coach Cue V2
+   Recovery for environments where lucide-react does not export HandPointer.
+   Keeps V1 UX, replaces the icon dependency with an inline vector hand. */
+
+.tos-task-details-modal {
+  --tos-task-title-coach-cue-v2-runtime: 1;
+}
+
+.tos-task-details-modal .tos-task-coach-pointer > svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+  overflow: visible;
+  stroke: currentColor;
+}
