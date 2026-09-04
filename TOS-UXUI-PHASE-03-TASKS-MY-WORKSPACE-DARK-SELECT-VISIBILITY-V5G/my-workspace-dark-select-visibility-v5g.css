@@ -1,0 +1,54 @@
+/* Phase 03 — Tasks / My Workspace Dark Native Select Visibility V5G
+   Consolidated screenshot-driven fix for Windows/Chrome native select popups.
+   Dark mode only. Presentation only. */
+
+.tos-my-workspace {
+  --tos-my-workspace-dark-select-v5g-runtime: 1;
+}
+
+html.dark .tos-my-workspace select {
+  color-scheme: dark !important;
+  color: #f8fafc !important;
+  background: #10161b !important;
+  background-color: #10161b !important;
+  border-color: rgba(226, 232, 240, 0.28) !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  forced-color-adjust: none;
+}
+
+html.dark .tos-my-workspace select:hover {
+  border-color: rgba(214, 173, 82, 0.44) !important;
+  background-color: #141b21 !important;
+}
+
+html.dark .tos-my-workspace select:focus,
+html.dark .tos-my-workspace select:focus-visible {
+  color: #ffffff !important;
+  background-color: #151c22 !important;
+  border-color: rgba(214, 173, 82, 0.78) !important;
+  box-shadow: 0 0 0 3px rgba(214, 173, 82, 0.14) !important;
+  outline: none !important;
+}
+
+html.dark .tos-my-workspace select option,
+html.dark .tos-my-workspace select optgroup {
+  color-scheme: dark !important;
+  color: #f8fafc !important;
+  background: #171b20 !important;
+  background-color: #171b20 !important;
+  -webkit-text-fill-color: #f8fafc !important;
+}
+
+html.dark .tos-my-workspace select option:checked,
+html.dark .tos-my-workspace select option:hover {
+  color: #111318 !important;
+  background: #e2bf63 !important;
+  background-color: #e2bf63 !important;
+  -webkit-text-fill-color: #111318 !important;
+}
+
+html.dark .tos-my-workspace select option:disabled {
+  color: #8d99a3 !important;
+  background-color: #171b20 !important;
+  -webkit-text-fill-color: #8d99a3 !important;
+}
