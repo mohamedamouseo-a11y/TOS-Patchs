@@ -1,0 +1,146 @@
+/* Phase 02 Projects — Light Contrast Final V12
+   Screenshot-driven light-mode correction on reviewed Couture Contrast V11.
+   Presentation only; no business logic. Dark mode intentionally untouched. */
+
+.tos-projects-ui03 {
+  --tos-projects-light-contrast-v12-runtime: 1;
+}
+
+/* ====================================================================== */
+/* LIGHT MODE ONLY — NUMBERS / LETTERS / SMALL BOX CONTENT                */
+/* ====================================================================== */
+
+/* Project row monogram tiles: force readable white glyphs on dark tiles. */
+html:not(.dark) .tos-projects-ui03 .tos-project-list-row > div:first-child > div:first-child {
+  color: #ffffff !important;
+  background: linear-gradient(145deg, #1d2b34 0%, #0b1116 100%) !important;
+  border: 1px solid rgba(215,181,106,.22) !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,.28) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 7px 18px rgba(18,24,28,.16) !important;
+  opacity: 1 !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-list-row--selected > div:first-child > div:first-child {
+  color: #fffdf7 !important;
+  border-color: rgba(215,181,106,.62) !important;
+  box-shadow: 0 0 0 2px rgba(215,181,106,.10), inset 0 1px 0 rgba(255,255,255,.08), 0 8px 20px rgba(18,24,28,.18) !important;
+}
+
+/* Inspector dark hero in LIGHT mode must retain a deliberate high-contrast palette. */
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:first-child {
+  color: #f8fafc !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:first-child h1,
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:first-child h2,
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:first-child h3 {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.25) !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:first-child p,
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:first-child [class*="text-slate-"],
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:first-child [class*="text-zinc-300"],
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:first-child [class*="text-zinc-400"] {
+  color: #dbe4ea !important;
+  opacity: 1 !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:first-child [class*="text-amber"] {
+  color: #f3d995 !important;
+  opacity: 1 !important;
+}
+
+/* Inspector avatar/initials: the letters were visually sinking into the navy tile. */
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:first-child [class*="h-16"][class*="w-16"][class*="place-items-center"] {
+  color: #ffffff !important;
+  background: linear-gradient(145deg, #22303b 0%, #111923 100%) !important;
+  border-color: rgba(243,217,149,.58) !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.32) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 10px 24px rgba(0,0,0,.24) !important;
+  opacity: 1 !important;
+}
+
+/* Four inspector metric boxes: labels and values both need explicit readable ink. */
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:nth-child(2) > div {
+  color: #17120d !important;
+  background: linear-gradient(180deg, #ffffff 0%, #fbf8f2 100%) !important;
+  border-color: #d8cfbf !important;
+  box-shadow: inset 0 1px 0 #fff, 0 7px 20px rgba(62,45,23,.045) !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:nth-child(2) > div p:first-child {
+  color: #4f4639 !important;
+  font-size: 10.5px !important;
+  line-height: 1.35 !important;
+  font-weight: 800 !important;
+  opacity: 1 !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:nth-child(2) > div p:last-child {
+  color: #17120d !important;
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+  font-weight: 900 !important;
+  opacity: 1 !important;
+}
+
+/* Project overview circular/square percentage: force the number to white on graphite. */
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector [style*="conic-gradient"] > div {
+  color: #ffffff !important;
+  background: linear-gradient(145deg, #1c2932 0%, #0b1116 100%) !important;
+  font-size: 11.5px !important;
+  font-weight: 900 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.30) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08) !important;
+  opacity: 1 !important;
+}
+
+/* Overview mini boxes: keep their labels and numbers visibly distinct. */
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:last-child [class*="bg-zinc-50"],
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:last-child [class*="bg-white"] {
+  color: #3d352b !important;
+  opacity: 1 !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:last-child b,
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:last-child strong {
+  color: #17120d !important;
+  opacity: 1 !important;
+}
+
+/* Filter/select boxes: values and labels must never look disabled in Light Mode. */
+html:not(.dark) .tos-projects-ui03 .tos-projects-filters-shell label {
+  color: #453d33 !important;
+  font-weight: 850 !important;
+  opacity: 1 !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-projects-filters-shell select,
+html:not(.dark) .tos-projects-ui03 .tos-projects-filters-shell input {
+  color: #1e1913 !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
+/* Tiny table numbers / dates / metadata: one last legibility lift. */
+html:not(.dark) .tos-projects-ui03 .tos-project-list-shell [class*="text-zinc-400"],
+html:not(.dark) .tos-projects-ui03 .tos-project-list-shell [class*="text-zinc-500"] {
+  color: #5b5144 !important;
+  opacity: 1 !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-list-shell [class*="text-[9px]"],
+html:not(.dark) .tos-projects-ui03 .tos-project-list-shell [class*="text-[10px]"],
+html:not(.dark) .tos-projects-ui03 .tos-project-list-shell [class*="text-[11px]"] {
+  opacity: 1 !important;
+}
+
+/* Page counters / badges: avoid beige-on-beige. */
+html:not(.dark) .tos-projects-ui03 [class*="text-amber-700"],
+html:not(.dark) .tos-projects-ui03 [class*="text-amber-800"] {
+  color: #7b5215 !important;
+}
+
+/* Keep dark mode untouched by design. */
