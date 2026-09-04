@@ -1,0 +1,151 @@
+/* Phase 03.4 — Task Title Auto-Fit + First-Time Coach Cue V1
+   Fixes the real title clipping cause and adds a clear, finite onboarding cue.
+   Presentation / discoverability only. */
+
+.tos-task-details-modal {
+  --tos-task-title-coach-cue-v1-runtime: 1;
+}
+
+/* The title is now a textarea that visually behaves like a single title field,
+   but can naturally wrap when Arabic/English content is long. */
+.tos-task-details-modal .tos-task-title-autofit {
+  field-sizing: content;
+  box-sizing: border-box;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 2.45rem;
+  max-height: 5.9rem;
+  resize: none !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  font-size: clamp(1.12rem, 1.25vw, 1.55rem) !important;
+  line-height: 1.28 !important;
+  letter-spacing: -0.018em !important;
+  padding-block: .38rem !important;
+  scrollbar-width: thin;
+}
+
+@media (min-width: 1600px) {
+  .tos-task-details-modal .tos-task-title-autofit {
+    font-size: clamp(1.22rem, 1.28vw, 1.72rem) !important;
+    max-height: 6.45rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  .tos-task-details-modal .tos-task-title-autofit {
+    font-size: clamp(1.08rem, 2.8vw, 1.38rem) !important;
+    max-height: 6.2rem;
+  }
+}
+
+/* The old Phase 03.3 pulse must stop permanently after a cue is learned. */
+.tos-task-details-modal .tos-task-more-details-button[data-coach-active="false"],
+.tos-task-details-modal .tos-task-side-rail-toggle[data-coach-active="false"],
+.tos-task-details-modal .tos-task-more-details-button[data-coach-active="false"] > svg,
+.tos-task-details-modal .tos-task-side-rail-toggle[data-coach-active="false"] > svg {
+  animation: none !important;
+}
+
+.tos-task-details-modal .tos-task-more-details-button,
+.tos-task-details-modal .tos-task-side-rail-toggle {
+  position: relative;
+  overflow: visible !important;
+}
+
+/* Clear first-use visual teacher: a real vector hand, not an emoji.
+   It approaches the control three times, then fades away. */
+@keyframes tos-task-coach-hand-v1 {
+  0%, 7% {
+    opacity: 0;
+    transform: translate3d(-12px, 8px, 0) rotate(-16deg) scale(.84);
+  }
+  13% {
+    opacity: 1;
+    transform: translate3d(-8px, 5px, 0) rotate(-16deg) scale(.96);
+  }
+  23% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(-9deg) scale(1.06);
+  }
+  31% {
+    opacity: 1;
+    transform: translate3d(-3px, 2px, 0) rotate(-12deg) scale(1);
+  }
+  42%, 100% {
+    opacity: 0;
+    transform: translate3d(-8px, 5px, 0) rotate(-14deg) scale(.92);
+  }
+}
+
+@keyframes tos-task-coach-ring-v1 {
+  0%, 12%, 100% { box-shadow: 0 8px 20px rgba(15,23,42,.12), 0 0 0 0 rgba(217,165,55,.24); }
+  23% { box-shadow: 0 10px 28px rgba(15,23,42,.16), 0 0 0 8px rgba(217,165,55,0); }
+}
+
+.tos-task-details-modal .tos-task-coach-pointer {
+  position: absolute;
+  z-index: 70;
+  inset-inline-start: -38px;
+  top: 50%;
+  display: grid;
+  width: 31px;
+  height: 31px;
+  place-items: center;
+  border: 1px solid rgba(217,165,55,.42);
+  border-radius: 999px;
+  background: rgba(255,251,235,.98);
+  color: #a16207;
+  pointer-events: none;
+  transform-origin: center;
+  animation: tos-task-coach-hand-v1 2.15s ease-in-out 3 both,
+             tos-task-coach-ring-v1 2.15s ease-in-out 3 both;
+  filter: drop-shadow(0 5px 10px rgba(15,23,42,.12));
+}
+
+html.dark .tos-task-details-modal .tos-task-coach-pointer {
+  border-color: rgba(230,197,111,.40);
+  background: rgba(35,30,20,.98);
+  color: #f1cf73;
+  filter: drop-shadow(0 7px 14px rgba(0,0,0,.35));
+}
+
+/* Side rail is close to the viewport edge on some layouts: keep its cue inside. */
+.tos-task-details-modal .tos-task-side-rail-toggle .tos-task-coach-pointer {
+  inset-inline-start: auto;
+  inset-inline-end: -36px;
+}
+
+/* Slightly strengthen the closed control while the teaching cue is active. */
+.tos-task-details-modal .tos-task-more-details-button[data-coach-active="true"],
+.tos-task-details-modal .tos-task-side-rail-toggle[data-coach-active="true"] {
+  border-color: rgba(217,165,55,.34) !important;
+}
+
+html.dark .tos-task-details-modal .tos-task-more-details-button[data-coach-active="true"],
+html.dark .tos-task-details-modal .tos-task-side-rail-toggle[data-coach-active="true"] {
+  border-color: rgba(230,197,111,.30) !important;
+}
+
+@media (max-width: 639px) {
+  .tos-task-details-modal .tos-task-coach-pointer {
+    inset-inline-start: 8px;
+    top: -22px;
+  }
+
+  .tos-task-details-modal .tos-task-side-rail-toggle .tos-task-coach-pointer {
+    inset-inline-end: 8px;
+    top: -22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-task-details-modal .tos-task-coach-pointer {
+    animation: none !important;
+    opacity: 1;
+    transform: translate3d(0, -50%, 0) rotate(-10deg) scale(1);
+  }
+}
