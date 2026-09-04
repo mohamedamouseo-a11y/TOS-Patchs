@@ -1,0 +1,80 @@
+/* Phase 02 Projects — Light Visibility Lock V15
+   Final screenshot-driven correction after V14.
+   Fixes the two elements still visually overridden in Light Mode:
+   1) inspector Active badge contrast
+   2) Project overview progress gauge shape/value
+   Presentation only; dark mode intentionally untouched. */
+
+.tos-projects-ui03 {
+  --tos-projects-light-visibility-v15-runtime: 1;
+}
+
+/* ---------------------------------------------------------------------- */
+/* LIGHT ONLY — INSPECTOR ACTIVE STATUS                                   */
+/* Use an ID anchor so legacy broad badge rules cannot wash this out.     */
+/* ---------------------------------------------------------------------- */
+html:not(.dark) body #root #tos-project-inspector-status-anchor .tos-premium-badge {
+  color: #ffffff !important;
+  background: linear-gradient(145deg, #138267 0%, #08624f 58%, #064b3e 100%) !important;
+  border: 1px solid rgba(4, 92, 72, .62) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    0 8px 20px rgba(7, 96, 75, .18) !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,.16) !important;
+  opacity: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: 0 !important;
+}
+
+/* ---------------------------------------------------------------------- */
+/* LIGHT ONLY — PROJECT OVERVIEW TRUE CIRCULAR GAUGE                      */
+/* ID specificity intentionally outranks legacy [style*=conic-gradient].  */
+/* Dynamic percentage is provided through --tos-project-progress.         */
+/* ---------------------------------------------------------------------- */
+html:not(.dark) body #root #tos-project-overview-progress {
+  width: 66px !important;
+  height: 66px !important;
+  min-width: 66px !important;
+  min-height: 66px !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: 5px !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(151, 107, 34, .42) !important;
+  background: conic-gradient(
+    from -90deg,
+    #f0ca78 0%,
+    #d8ad55 var(--tos-project-progress, 0%),
+    #e9e2d7 var(--tos-project-progress, 0%),
+    #e9e2d7 100%
+  ) !important;
+  box-shadow:
+    0 14px 30px rgba(86, 59, 20, .16),
+    0 0 0 4px rgba(216, 173, 85, .075),
+    inset 0 1px 0 rgba(255,255,255,.92) !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+html:not(.dark) body #root #tos-project-overview-progress-value {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  border-radius: 50% !important;
+  color: #ffffff !important;
+  background:
+    radial-gradient(circle at 34% 24%, rgba(255,255,255,.10), transparent 26%),
+    linear-gradient(145deg, #273740 0%, #142028 55%, #090e12 100%) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+  letter-spacing: -.01em !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.42) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    inset 0 -8px 16px rgba(0,0,0,.16) !important;
+  opacity: 1 !important;
+}
+
+/* Dark mode deliberately untouched. */
