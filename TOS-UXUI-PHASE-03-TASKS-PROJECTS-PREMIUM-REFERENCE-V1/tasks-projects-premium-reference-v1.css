@@ -1,0 +1,283 @@
+/* Phase 03 — Tasks / Projects Premium Reference V1
+   Presentation only. Uses Phase 02 Projects as the visual benchmark.
+   Covers both Tasks project gateway and active task-board states. */
+
+.tos-tasks-page {
+  --tos-tasks-projects-reference-v1-runtime: 1;
+  --tasks-champagne: #d8b466;
+  --tasks-champagne-hi: #f0cf87;
+  --tasks-champagne-deep: #9a6c22;
+  --tasks-ivory: #fffefb;
+  --tasks-porcelain: #f6f3ed;
+  --tasks-ink: #17130e;
+  --tasks-ink-soft: #51483c;
+  --tasks-obsidian: #080b0e;
+  --tasks-graphite: #0d1318;
+  --tasks-titanium: #131d24;
+  --tasks-titanium-raised: #19262f;
+  --tasks-platinum: #f3f6f8;
+  --tasks-platinum-soft: #c8d2d9;
+}
+
+/* ====================================================================== */
+/* PAGE CANVAS                                                            */
+/* ====================================================================== */
+html:not(.dark) .tos-tasks-page {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(216,180,102,.10), transparent 25%),
+    radial-gradient(circle at 94% 4%, rgba(148,163,184,.08), transparent 24%),
+    linear-gradient(180deg, #f8f6f1 0%, #f3efe8 100%) !important;
+  color: var(--tasks-ink) !important;
+}
+
+html.dark .tos-tasks-page {
+  background:
+    radial-gradient(circle at 7% 0%, rgba(216,180,102,.075), transparent 25%),
+    radial-gradient(circle at 95% 3%, rgba(148,163,184,.055), transparent 22%),
+    linear-gradient(180deg, #070a0d 0%, #0a0e12 100%) !important;
+  color: var(--tasks-platinum) !important;
+}
+
+/* ====================================================================== */
+/* TASKS PROJECT GATEWAY — LIGHT                                          */
+/* ====================================================================== */
+html:not(.dark) .tos-tasks-entry-v6 > div > section:first-child > div {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(175,137,61,.26) !important;
+  border-radius: 28px !important;
+  background:
+    radial-gradient(circle at 85% 10%, rgba(216,180,102,.10), transparent 34%),
+    linear-gradient(150deg, #fffefa 0%, #fbf7f0 58%, #f2ece1 100%) !important;
+  box-shadow: 0 22px 52px rgba(71,51,24,.09), inset 0 1px 0 #fff !important;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease !important;
+}
+
+html:not(.dark) .tos-tasks-entry-v6 > div > section:first-child > div:hover {
+  transform: translateY(-2px);
+  border-color: rgba(175,137,61,.42) !important;
+  box-shadow: 0 28px 66px rgba(71,51,24,.13), inset 0 1px 0 #fff !important;
+}
+
+html:not(.dark) .tos-tasks-entry-v6 section[class*="rounded-[34px]"] {
+  border-color: rgba(182,151,91,.28) !important;
+  background: linear-gradient(180deg, rgba(255,254,251,.99), rgba(249,245,237,.985)) !important;
+  box-shadow: 0 30px 78px rgba(67,48,23,.11), inset 0 1px 0 #fff !important;
+}
+
+html:not(.dark) .tos-tasks-entry-v6 [class*="text-slate-950"],
+html:not(.dark) .tos-tasks-entry-v6 [class*="text-slate-900"],
+html:not(.dark) .tos-tasks-entry-v6 [class*="text-slate-800"] {
+  color: #19140e !important;
+}
+
+html:not(.dark) .tos-tasks-entry-v6 [class*="text-slate-700"],
+html:not(.dark) .tos-tasks-entry-v6 [class*="text-slate-600"] {
+  color: #443b31 !important;
+}
+
+html:not(.dark) .tos-tasks-entry-v6 [class*="text-slate-500"] {
+  color: #5a5043 !important;
+}
+
+html:not(.dark) .tos-tasks-entry-v6 [class*="text-slate-400"] {
+  color: #74695b !important;
+  opacity: 1 !important;
+}
+
+html:not(.dark) .tos-tasks-entry-v6 input,
+html:not(.dark) .tos-tasks-entry-v6 select {
+  color: #201a13 !important;
+  border-color: #d9d0c4 !important;
+  background: linear-gradient(180deg, #fff, #fdfbf8) !important;
+  box-shadow: inset 0 1px 2px rgba(44,33,19,.035) !important;
+}
+
+html:not(.dark) .tos-tasks-entry-v6 button[class*="bg-amber-50/60"] {
+  background: linear-gradient(90deg, rgba(216,180,102,.16), #fffefa 12%, #faf6ee 100%) !important;
+  box-shadow: inset 3px 0 0 var(--tasks-champagne) !important;
+}
+
+html:not(.dark) .tos-tasks-entry-v6 button[class*="from-amber-500"] {
+  color: #171108 !important;
+  border: 1px solid rgba(151,104,30,.35) !important;
+  background: linear-gradient(135deg, #f3dc9a 0%, #dfb95f 48%, #b9822c 100%) !important;
+  box-shadow: 0 14px 34px rgba(174,123,36,.18), inset 0 1px 0 rgba(255,255,255,.55) !important;
+}
+
+/* ====================================================================== */
+/* TASKS PROJECT GATEWAY — DARK                                           */
+/* ====================================================================== */
+html.dark .tos-tasks-entry-v6 > div > section:first-child > div {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(203,213,225,.13) !important;
+  border-radius: 28px !important;
+  background:
+    radial-gradient(circle at 84% 8%, rgba(216,180,102,.09), transparent 34%),
+    linear-gradient(150deg, #16222a 0%, #10181e 58%, #0b1116 100%) !important;
+  box-shadow: 0 28px 70px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.055) !important;
+}
+
+html.dark .tos-tasks-entry-v6 section[class*="rounded-[34px]"] {
+  border-color: rgba(203,213,225,.12) !important;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(216,180,102,.05), transparent 30%),
+    linear-gradient(180deg, #111a20 0%, #0c1217 100%) !important;
+  box-shadow: 0 34px 90px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+html.dark .tos-tasks-entry-v6 [class*="rounded"][class*="border"][class*="bg-white"] {
+  border-color: rgba(203,213,225,.11) !important;
+  background: linear-gradient(180deg, #162129 0%, #11191f 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035), 0 12px 34px rgba(0,0,0,.18) !important;
+}
+
+html.dark .tos-tasks-entry-v6 [class*="bg-slate-50"] {
+  background-color: #0d1419 !important;
+}
+
+html.dark .tos-tasks-entry-v6 [class*="border-slate-100"],
+html.dark .tos-tasks-entry-v6 [class*="border-slate-200"] {
+  border-color: rgba(203,213,225,.11) !important;
+}
+
+html.dark .tos-tasks-entry-v6 [class*="divide-slate-100"] > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(203,213,225,.08) !important;
+}
+
+html.dark .tos-tasks-entry-v6 [class*="text-slate-950"],
+html.dark .tos-tasks-entry-v6 [class*="text-slate-900"],
+html.dark .tos-tasks-entry-v6 [class*="text-slate-800"] {
+  color: #f4f7f9 !important;
+}
+
+html.dark .tos-tasks-entry-v6 [class*="text-slate-700"],
+html.dark .tos-tasks-entry-v6 [class*="text-slate-600"] {
+  color: #d1d9df !important;
+}
+
+html.dark .tos-tasks-entry-v6 [class*="text-slate-500"] {
+  color: #aeb9c1 !important;
+}
+
+html.dark .tos-tasks-entry-v6 [class*="text-slate-400"] {
+  color: #8f9ca5 !important;
+  opacity: 1 !important;
+}
+
+html.dark .tos-tasks-entry-v6 input,
+html.dark .tos-tasks-entry-v6 select {
+  color: #eef3f6 !important;
+  border-color: rgba(203,213,225,.15) !important;
+  background: linear-gradient(180deg, #0b1116, #0e161c) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+html.dark .tos-tasks-entry-v6 button[class*="bg-amber-50/60"] {
+  background: linear-gradient(90deg, rgba(216,180,102,.10), #162129 10%, #10181e 100%) !important;
+  box-shadow: inset 3px 0 0 var(--tasks-champagne), 0 10px 26px rgba(0,0,0,.18) !important;
+}
+
+html.dark .tos-tasks-entry-v6 button[class*="from-amber-500"] {
+  color: #161008 !important;
+  border: 1px solid rgba(243,217,149,.42) !important;
+  background: linear-gradient(135deg, #f1d78f 0%, #d8ad55 52%, #a97627 100%) !important;
+  box-shadow: 0 16px 38px rgba(164,113,34,.22), inset 0 1px 0 rgba(255,255,255,.42) !important;
+}
+
+/* ====================================================================== */
+/* ACTIVE TASK BOARD — MATERIAL SYSTEM                                    */
+/* ====================================================================== */
+.tos-tasks-system-theme-v15 .tos-tasks-page-shell {
+  position: relative;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 [class*="rounded-[32px]"][class*="border"],
+html:not(.dark) .tos-tasks-system-theme-v15 [class*="rounded-[28px]"][class*="border"],
+html:not(.dark) .tos-tasks-system-theme-v15 [class*="rounded-[24px]"][class*="border"] {
+  border-color: rgba(181,145,71,.24) !important;
+  box-shadow: 0 20px 56px rgba(66,48,24,.08), inset 0 1px 0 rgba(255,255,255,.85) !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 [class*="text-slate-400"] {
+  color: #70665a !important;
+  opacity: 1 !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 [class*="text-slate-500"] {
+  color: #584f43 !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 [class*="rounded"][class*="border"][class*="bg-white"] {
+  border-color: rgba(203,213,225,.115) !important;
+  background: linear-gradient(180deg, #151f27 0%, #10181e 100%) !important;
+  box-shadow: 0 20px 54px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 [class*="bg-slate-50"] {
+  background-color: #0c1318 !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 [class*="border-slate-100"],
+html.dark .tos-tasks-system-theme-v15 [class*="border-slate-200"] {
+  border-color: rgba(203,213,225,.105) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 [class*="text-slate-950"],
+html.dark .tos-tasks-system-theme-v15 [class*="text-slate-900"],
+html.dark .tos-tasks-system-theme-v15 [class*="text-slate-800"] {
+  color: #f4f7f9 !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 [class*="text-slate-700"],
+html.dark .tos-tasks-system-theme-v15 [class*="text-slate-600"] {
+  color: #d1d9df !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 [class*="text-slate-500"] {
+  color: #aeb9c1 !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 [class*="text-slate-400"] {
+  color: #8e9ba4 !important;
+  opacity: 1 !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 input,
+html.dark .tos-tasks-system-theme-v15 select,
+html.dark .tos-tasks-system-theme-v15 textarea {
+  color: #eef3f6 !important;
+  border-color: rgba(203,213,225,.14) !important;
+  background: linear-gradient(180deg, #0b1116, #0f171d) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 button[class*="from-amber"],
+html.dark .tos-tasks-system-theme-v15 button[class*="bg-amber-500"] {
+  color: #171108 !important;
+  border-color: rgba(243,217,149,.40) !important;
+  background: linear-gradient(135deg, #f1d78f 0%, #d8ad55 52%, #a97627 100%) !important;
+  box-shadow: 0 14px 34px rgba(164,113,34,.20), inset 0 1px 0 rgba(255,255,255,.42) !important;
+}
+
+/* ====================================================================== */
+/* ACCESSIBILITY / MOTION                                                 */
+/* ====================================================================== */
+.tos-tasks-page button:focus-visible,
+.tos-tasks-page input:focus-visible,
+.tos-tasks-page select:focus-visible,
+.tos-tasks-page textarea:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(216,180,102,.16) !important;
+  border-color: rgba(216,180,102,.62) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-tasks-page *,
+  .tos-tasks-page *::before,
+  .tos-tasks-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
