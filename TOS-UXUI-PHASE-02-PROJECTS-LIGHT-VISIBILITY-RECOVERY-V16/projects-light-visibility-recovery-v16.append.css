@@ -1,0 +1,50 @@
+/* Phase 02 Projects — Light Visibility Recovery V16
+   Recovery after stale/mismatched V15 guard.
+   Light mode only; presentation only; dark mode untouched. */
+
+.tos-projects-ui03 {
+  --tos-projects-light-visibility-v16-runtime: 1;
+}
+
+/* Inspector Active badge: explicit high-contrast semantic green. */
+html:not(.dark) body #root #tos-project-inspector-status-anchor .tos-premium-badge,
+html:not(.dark) body #root .tos-projects-ui03 .tos-project-inspector-status {
+  color: #ffffff !important;
+  background: linear-gradient(145deg, #15866a 0%, #08705a 52%, #055243 100%) !important;
+  border: 1px solid rgba(5, 91, 72, .72) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.24), 0 8px 18px rgba(5,91,72,.16) !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,.16) !important;
+  opacity: 1 !important;
+  font-weight: 900 !important;
+}
+
+/* Project Overview gauge: force a true circle and readable percentage. */
+html:not(.dark) body #root #tos-project-overview-progress,
+html:not(.dark) body #root .tos-projects-ui03 .tos-project-overview-progress {
+  width: 66px !important;
+  height: 66px !important;
+  min-width: 66px !important;
+  min-height: 66px !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: 5px !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(151,107,34,.42) !important;
+  box-shadow: 0 14px 30px rgba(86,59,20,.16), 0 0 0 4px rgba(216,173,85,.075), inset 0 1px 0 rgba(255,255,255,.92) !important;
+  overflow: hidden !important;
+}
+
+html:not(.dark) body #root #tos-project-overview-progress-value,
+html:not(.dark) body #root .tos-projects-ui03 .tos-project-overview-progress-value {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  color: #ffffff !important;
+  background: radial-gradient(circle at 34% 24%, rgba(255,255,255,.10), transparent 26%), linear-gradient(145deg, #273740 0%, #142028 55%, #090e12 100%) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.42) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.10), inset 0 -8px 16px rgba(0,0,0,.16) !important;
+  opacity: 1 !important;
+}
