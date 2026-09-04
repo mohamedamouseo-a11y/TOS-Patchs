@@ -1,0 +1,75 @@
+/* Phase 03 — Tasks Flagship Signature V5RR
+   Recovery fallback for task-card styling when the legacy .tos-modern-task-card
+   class is absent but the stable card layout data anchor is present. */
+
+.tos-tasks-page {
+  --tos-tasks-flagship-v5rr-runtime: 1;
+}
+
+.tos-tasks-system-theme-v15 article:has([data-tos-task-card-layout-polish="v1"]) {
+  position: relative;
+  border-radius: 22px !important;
+  overflow: hidden;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease !important;
+}
+
+.tos-tasks-system-theme-v15 article:has([data-tos-task-card-layout-polish="v1"])::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(244,222,160,.86), rgba(195,144,50,.55), transparent 90%);
+  opacity: .62;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 article:has([data-tos-task-card-layout-polish="v1"]) {
+  border-color: rgba(171,133,61,.28) !important;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(214,173,82,.075), transparent 28%),
+    linear-gradient(180deg, #ffffff 0%, #fffaf2 100%) !important;
+  box-shadow:
+    0 16px 36px rgba(67,47,22,.09),
+    inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 article:has([data-tos-task-card-layout-polish="v1"]) {
+  border-color: rgba(214,222,228,.12) !important;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(214,173,82,.05), transparent 28%),
+    linear-gradient(180deg, #19262f 0%, #10191f 100%) !important;
+  box-shadow:
+    0 18px 40px rgba(0,0,0,.36),
+    inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 article:has([data-tos-task-card-layout-polish="v1"]):hover {
+  transform: translateY(-4px) scale(1.004) !important;
+  border-color: rgba(164,119,39,.46) !important;
+  box-shadow: 0 28px 58px rgba(67,47,22,.15), inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 article:has([data-tos-task-card-layout-polish="v1"]):hover {
+  transform: translateY(-4px) scale(1.004) !important;
+  border-color: rgba(214,173,82,.31) !important;
+  box-shadow: 0 30px 64px rgba(0,0,0,.56), inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+.tos-tasks-system-theme-v15 article:has([data-tos-task-card-layout-polish="v1"]) h3 {
+  letter-spacing: -.012em;
+}
+
+html.dark .tos-tasks-system-theme-v15 article:has([data-tos-task-card-layout-polish="v1"]) h3 {
+  color: #fbfcfd !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.30);
+}
+
+html.dark .tos-tasks-system-theme-v15 article:has([data-tos-task-card-layout-polish="v1"]) p[class*="text-zinc-400"],
+html.dark .tos-tasks-system-theme-v15 article:has([data-tos-task-card-layout-polish="v1"]) p[class*="text-slate-500"] {
+  color: #b9c4cb !important;
+}
+
+.tos-tasks-system-theme-v15 article:has([data-tos-task-card-layout-polish="v1"]) button[class*="border-amber"] {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.38), 0 5px 12px rgba(93,65,22,.055);
+}
