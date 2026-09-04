@@ -1,0 +1,88 @@
+/* Phase 03.3 — Task Title Fit + Disclosure Cue V1
+   Final visual polish for the minimal Task Details view.
+   Presentation only: title legibility + premium discoverability motion. */
+
+.tos-task-details-modal {
+  --tos-task-title-disclosure-cue-v1-runtime: 1;
+}
+
+/* Long task titles must stay visually inside the executive summary instead of feeling cropped. */
+.tos-task-details-modal .tos-task-title-input {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  font-size: clamp(1.05rem, 1.08vw, 1.34rem) !important;
+  line-height: 1.18 !important;
+  letter-spacing: -0.018em !important;
+  padding-inline: .45rem !important;
+  text-overflow: clip !important;
+}
+
+@media (min-width: 1600px) {
+  .tos-task-details-modal .tos-task-title-input {
+    font-size: clamp(1.16rem, 1.08vw, 1.45rem) !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .tos-task-details-modal .tos-task-title-input {
+    font-size: clamp(1.02rem, 2.5vw, 1.28rem) !important;
+  }
+}
+
+/* Premium attention cue: quiet pulse every few seconds while details are closed. */
+@keyframes tos-details-cue-pulse-v1 {
+  0%, 72%, 100% {
+    transform: translateY(0);
+    box-shadow: 0 5px 18px rgba(15, 23, 42, .045);
+  }
+  78% {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(217, 165, 55, .12), 0 0 0 0 rgba(217, 165, 55, .08);
+  }
+  84% {
+    transform: translateY(0);
+    box-shadow: 0 6px 20px rgba(217, 165, 55, .08), 0 0 0 7px rgba(217, 165, 55, 0);
+  }
+}
+
+@keyframes tos-details-chevron-cue-v1 {
+  0%, 72%, 100% { transform: translateY(0); }
+  77% { transform: translateY(2px); }
+  81% { transform: translateY(-1px); }
+  85% { transform: translateY(0); }
+}
+
+.tos-task-details-modal .tos-task-more-details-button[aria-expanded="false"],
+.tos-task-details-modal .tos-task-side-rail-toggle[aria-expanded="false"] {
+  animation: tos-details-cue-pulse-v1 4.8s ease-in-out infinite;
+  will-change: transform, box-shadow;
+}
+
+.tos-task-details-modal .tos-task-more-details-button[aria-expanded="false"] > svg,
+.tos-task-details-modal .tos-task-side-rail-toggle[aria-expanded="false"] > svg {
+  animation: tos-details-chevron-cue-v1 4.8s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Expanded state is calm: the motion is purely a discoverability hint. */
+.tos-task-details-modal .tos-task-more-details-button[aria-expanded="true"],
+.tos-task-details-modal .tos-task-side-rail-toggle[aria-expanded="true"],
+.tos-task-details-modal .tos-task-more-details-button[aria-expanded="true"] > svg,
+.tos-task-details-modal .tos-task-side-rail-toggle[aria-expanded="true"] > svg {
+  animation: none !important;
+}
+
+html.dark .tos-task-details-modal .tos-task-more-details-button[aria-expanded="false"],
+html.dark .tos-task-details-modal .tos-task-side-rail-toggle[aria-expanded="false"] {
+  --tos-detail-cue-dark: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-task-details-modal .tos-task-more-details-button,
+  .tos-task-details-modal .tos-task-side-rail-toggle,
+  .tos-task-details-modal .tos-task-more-details-button > svg,
+  .tos-task-details-modal .tos-task-side-rail-toggle > svg {
+    animation: none !important;
+    transition: none !important;
+  }
+}
