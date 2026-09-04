@@ -1,0 +1,144 @@
+/* Phase 03.2 — Task Details Minimal View V1
+   Default = calm essentials. More details reveals the secondary operational layer.
+   Presentation only; no task data or workflow behavior changes. */
+
+.tos-task-details-modal {
+  --tos-task-details-minimal-v1-runtime: 1;
+}
+
+/* Minimal workspace gives the content column more breathing room. */
+@media (min-width: 1280px) {
+  .tos-task-details-modal .tos-task-details-layout:has(.tos-task-main-column[data-more-details="false"]) {
+    grid-template-columns: 190px minmax(0, 1fr) !important;
+  }
+
+  .tos-task-details-modal .tos-task-details-layout:has(.tos-task-side-rail[data-expanded="true"]) {
+    grid-template-columns: 300px minmax(0, 1fr) !important;
+  }
+}
+
+/* Hide the secondary layer by default. */
+.tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-progress-compact,
+.tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-start-date-card,
+.tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-execution-time-card,
+.tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-header-description,
+.tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-id-badge {
+  display: none !important;
+}
+
+/* Status + Priority + Due date stay immediately available. */
+@media (min-width: 1024px) {
+  .tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-summary-controls {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+.tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-summary-compact {
+  padding-block: 11px !important;
+}
+
+.tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-summary-compact input[class*="text-3xl"] {
+  font-size: clamp(1.5rem, 2.1vw, 2.05rem) !important;
+}
+
+/* One deliberate disclosure control between essentials and the work area. */
+.tos-task-details-modal .tos-task-more-details-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -2px;
+}
+
+.tos-task-details-modal .tos-task-more-details-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 7px 12px;
+  border: 1px solid rgba(148, 163, 184, .22);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, .86);
+  color: #475569;
+  font-size: 11px;
+  font-weight: 900;
+  box-shadow: 0 5px 18px rgba(15, 23, 42, .045);
+  transition: transform .18s ease, border-color .18s ease, background .18s ease, color .18s ease;
+}
+
+.tos-task-details-modal .tos-task-more-details-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(217, 165, 55, .38);
+  background: #fffbeb;
+  color: #a16207;
+}
+
+html.dark .tos-task-details-modal .tos-task-more-details-button {
+  border-color: rgba(255, 255, 255, .10);
+  background: rgba(17, 25, 32, .92);
+  color: #c6d0d7;
+  box-shadow: 0 8px 24px rgba(0,0,0,.20);
+}
+
+html.dark .tos-task-details-modal .tos-task-more-details-button:hover {
+  border-color: rgba(230, 197, 111, .28);
+  background: rgba(230, 197, 111, .08);
+  color: #efd17d;
+}
+
+/* In minimal mode tabs are intentionally reduced to Overview + Checklist by JSX.
+   Keep the rail visually quiet because it now has only two primary destinations. */
+.tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-detail-tabs {
+  display: inline-flex;
+  align-self: flex-end;
+  width: auto;
+  max-width: 100%;
+  padding: 4px !important;
+  border-radius: 16px !important;
+}
+
+.tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-detail-tabs > div {
+  gap: 4px !important;
+}
+
+.tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-detail-tabs button {
+  padding: 7px 10px !important;
+  border-radius: 12px !important;
+}
+
+/* The default side summary shows only the essential assignee count. */
+.tos-task-details-modal .tos-task-side-rail[data-more-details="false"] .tos-task-side-rail-summary {
+  grid-template-columns: 1fr !important;
+}
+
+/* Description should feel like the workspace, not a nested dashboard card. */
+.tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-description-panel {
+  padding: 11px !important;
+}
+
+.tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-description-panel > .mb-3 {
+  margin-bottom: 8px !important;
+}
+
+.tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-description-panel > .mb-3 > span {
+  display: none !important;
+}
+
+@media (max-width: 1023px) {
+  .tos-task-details-modal .tos-task-summary-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  .tos-task-details-modal .tos-task-main-column[data-more-details="false"] .tos-task-summary-controls {
+    grid-template-columns: 1fr !important;
+  }
+
+  .tos-task-details-modal .tos-task-more-details-row {
+    justify-content: stretch;
+  }
+
+  .tos-task-details-modal .tos-task-more-details-button {
+    width: 100%;
+  }
+}
