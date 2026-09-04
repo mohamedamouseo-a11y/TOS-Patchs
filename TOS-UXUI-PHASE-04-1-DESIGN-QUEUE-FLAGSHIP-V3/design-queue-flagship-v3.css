@@ -1,0 +1,380 @@
+/* Phase 04.1 — Design Queue Flagship V3
+   Visual-only single-screen layer on top of Phase 04 V2. */
+
+:root {
+  --tos-dq-v3-runtime: 1;
+  --tos-dq-v3-gold: #d8b35a;
+  --tos-dq-v3-gold-soft: rgba(216,179,90,.16);
+  --tos-dq-v3-line: rgba(216,179,90,.16);
+  --tos-dq-v3-obsidian: #090a0c;
+  --tos-dq-v3-titanium: #111216;
+  --tos-dq-v3-elevated: #17191e;
+  --tos-dq-v3-text: #f5f5f4;
+  --tos-dq-v3-muted: #9fa3ad;
+}
+
+/* ---------------- Shared flagship shell ---------------- */
+.tos-core-design-queue-premium {
+  gap: 1rem !important;
+  padding: 1rem !important;
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between,
+.tos-core-design-queue-premium > .overflow-hidden.p-0,
+.tos-core-design-queue-premium > .p-3,
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] {
+  border-radius: 26px !important;
+  border: 1px solid rgba(216,179,90,.14) !important;
+}
+
+/* ---------------- KPI command deck ---------------- */
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between {
+  position: relative;
+  overflow: hidden;
+  gap: .8rem !important;
+  padding: .95rem 1rem !important;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(216,179,90,.13), transparent 24%),
+    linear-gradient(145deg, rgba(255,253,248,.98), rgba(248,244,234,.92)) !important;
+  box-shadow: 0 22px 58px rgba(53,43,20,.08) !important;
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.72);
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div {
+  position: relative;
+  min-width: 128px !important;
+  flex: 1 1 130px !important;
+  border-radius: 20px;
+  padding: .78rem .7rem .7rem;
+  transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease;
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,.48);
+  box-shadow: 0 14px 34px rgba(62,48,20,.07);
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div .relative.grid.h-16.w-16 {
+  height: 4.4rem !important;
+  width: 4.4rem !important;
+  filter: drop-shadow(0 10px 16px rgba(30,24,12,.10));
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div .relative.grid.h-16.w-16 > div {
+  height: 3rem !important;
+  width: 3rem !important;
+  font-size: 1rem !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.72), 0 8px 20px rgba(38,30,16,.08) !important;
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div > div:nth-child(2) {
+  margin-top: .45rem !important;
+  font-size: .72rem !important;
+  letter-spacing: -.015em;
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div > div:nth-child(3) {
+  margin-top: .16rem !important;
+  font-size: .58rem !important;
+  opacity: .78;
+}
+
+/* ---------------- Designer capacity executive strip ---------------- */
+.tos-core-design-queue-premium > .overflow-hidden.p-0 {
+  position: relative;
+  overflow: hidden !important;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.97), rgba(250,247,239,.95)) !important;
+  box-shadow: 0 18px 44px rgba(49,39,18,.06) !important;
+}
+
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child {
+  min-height: 76px;
+  padding: 1rem 1.25rem !important;
+}
+
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child::before {
+  content: "";
+  width: 4px;
+  height: 34px;
+  border-radius: 999px;
+  margin-inline-end: .85rem;
+  background: linear-gradient(180deg, #f4d989, #b98a2b);
+  box-shadow: 0 0 0 1px rgba(216,179,90,.10), 0 8px 18px rgba(185,138,43,.18);
+}
+
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child > div:first-child {
+  flex: 1;
+}
+
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child .text-sm {
+  font-size: .9rem !important;
+}
+
+/* ---------------- Filters as executive command bar ---------------- */
+.tos-core-design-queue-premium > .p-3 {
+  padding: .82rem !important;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.98), rgba(250,247,240,.94)) !important;
+  box-shadow: 0 16px 40px rgba(48,38,18,.055) !important;
+}
+
+.tos-core-design-queue-premium > .p-3 > .grid {
+  gap: .6rem !important;
+  align-items: stretch;
+}
+
+.tos-core-design-queue-premium > .p-3 :is(input,select) {
+  min-height: 44px !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(120,113,98,.18) !important;
+  background: rgba(255,255,255,.72) !important;
+  font-weight: 750 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+}
+
+.tos-core-design-queue-premium > .p-3 button {
+  min-height: 44px !important;
+  border-radius: 14px !important;
+  padding-inline: 1rem !important;
+}
+
+.tos-core-design-queue-premium > .p-3 > .mt-2\.5 {
+  margin-top: .65rem !important;
+  padding-top: .65rem !important;
+}
+
+/* ---------------- Board frame ---------------- */
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] {
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(216,179,90,.06), transparent 24%),
+    linear-gradient(180deg, rgba(255,255,255,.98), rgba(250,248,242,.96)) !important;
+  box-shadow: 0 24px 60px rgba(42,34,18,.075) !important;
+}
+
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between {
+  min-height: 66px;
+  padding: .9rem 1.2rem !important;
+  border-bottom-color: rgba(216,179,90,.16) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,253,247,.35));
+}
+
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between .text-sm {
+  font-size: .95rem !important;
+  letter-spacing: -.02em;
+}
+
+/* ---------------- Columns ---------------- */
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div {
+  gap: .7rem !important;
+}
+
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div {
+  border-radius: 22px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(120,113,98,.14) !important;
+  background: rgba(255,255,255,.64) !important;
+  box-shadow: 0 12px 28px rgba(35,29,17,.045);
+}
+
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div > div:first-child {
+  min-height: 58px;
+  padding: .78rem .85rem !important;
+  background: rgba(255,255,255,.78) !important;
+  backdrop-filter: blur(12px);
+}
+
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(1) { box-shadow: inset 0 3px 0 #d9a441, 0 12px 28px rgba(35,29,17,.045); }
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(2) { box-shadow: inset 0 3px 0 #5b8def, 0 12px 28px rgba(35,29,17,.045); }
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(3) { box-shadow: inset 0 3px 0 #8b5cf6, 0 12px 28px rgba(35,29,17,.045); }
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(4) { box-shadow: inset 0 3px 0 #f97316, 0 12px 28px rgba(35,29,17,.045); }
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(5) { box-shadow: inset 0 3px 0 #10b981, 0 12px 28px rgba(35,29,17,.045); }
+
+/* ---------------- Request cards ---------------- */
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] {
+  position: relative;
+  border-radius: 18px !important;
+  padding: .82rem !important;
+  border: 1px solid rgba(120,113,98,.14) !important;
+  background:
+    linear-gradient(160deg, rgba(255,255,255,.98), rgba(250,248,243,.98)) !important;
+  box-shadow: 0 8px 20px rgba(35,29,17,.045) !important;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease !important;
+}
+
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\]::before {
+  content: "";
+  position: absolute;
+  inset-block: 10px;
+  inset-inline-start: 0;
+  width: 3px;
+  border-radius: 0 999px 999px 0;
+  background: linear-gradient(180deg, rgba(216,179,90,.95), rgba(216,179,90,.24));
+  opacity: .72;
+}
+
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\]:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(216,179,90,.36) !important;
+  box-shadow: 0 14px 32px rgba(42,33,16,.09) !important;
+}
+
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] .line-clamp-2 {
+  font-size: .92rem !important;
+  line-height: 1.45 !important;
+  letter-spacing: -.018em;
+}
+
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] .mt-2\.5.flex.flex-wrap {
+  row-gap: .4rem !important;
+  column-gap: .6rem !important;
+}
+
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] .border-t {
+  border-top-color: rgba(120,113,98,.12) !important;
+}
+
+/* ---------------- Dark flagship treatment ---------------- */
+html.dark .tos-core-design-queue-premium {
+  --dq-surface-1: #0a0b0d;
+  --dq-surface-2: #101216;
+  --dq-surface-3: #15171c;
+  --dq-line: rgba(216,179,90,.15);
+}
+
+html.dark .tos-core-design-queue-premium > .flex.flex-wrap.justify-between {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(216,179,90,.11), transparent 28%),
+    linear-gradient(145deg, rgba(17,18,22,.99), rgba(8,9,11,.99)) !important;
+  border-color: rgba(216,179,90,.18) !important;
+  box-shadow: 0 24px 64px rgba(0,0,0,.36) !important;
+}
+
+html.dark .tos-core-design-queue-premium > .flex.flex-wrap.justify-between::after {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+html.dark .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:hover {
+  background: rgba(255,255,255,.025);
+  box-shadow: 0 16px 34px rgba(0,0,0,.24);
+}
+
+html.dark .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div .relative.grid.h-16.w-16 > div {
+  background: #0b0c0e !important;
+  color: #fafaf9 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 10px 24px rgba(0,0,0,.30) !important;
+}
+
+html.dark .tos-core-design-queue-premium > .overflow-hidden.p-0,
+html.dark .tos-core-design-queue-premium > .p-3,
+html.dark .tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] {
+  background:
+    radial-gradient(circle at 16% 0%, rgba(216,179,90,.045), transparent 24%),
+    linear-gradient(145deg, rgba(18,19,23,.99), rgba(9,10,12,.99)) !important;
+  border-color: rgba(216,179,90,.15) !important;
+  box-shadow: 0 24px 58px rgba(0,0,0,.30) !important;
+}
+
+html.dark .tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child {
+  background: linear-gradient(90deg, rgba(216,179,90,.035), transparent 42%) !important;
+}
+
+html.dark .tos-core-design-queue-premium > .p-3 :is(input,select) {
+  background: linear-gradient(180deg, #17191e, #121318) !important;
+  border-color: rgba(255,255,255,.095) !important;
+  color: #f5f5f4 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 5px 14px rgba(0,0,0,.18);
+}
+
+html.dark .tos-core-design-queue-premium > .p-3 :is(input,select):hover {
+  border-color: rgba(216,179,90,.22) !important;
+}
+
+html.dark .tos-core-design-queue-premium > .p-3 button {
+  background: linear-gradient(180deg, #202228, #16181c) !important;
+  border-color: rgba(216,179,90,.14) !important;
+  color: #f5f5f4 !important;
+}
+
+html.dark .tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between {
+  background: linear-gradient(180deg, rgba(255,255,255,.018), rgba(255,255,255,0));
+  border-bottom-color: rgba(216,179,90,.12) !important;
+}
+
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div {
+  background: linear-gradient(180deg, #111317, #0c0e11) !important;
+  border-color: rgba(255,255,255,.075) !important;
+  box-shadow: 0 16px 36px rgba(0,0,0,.20);
+}
+
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div > div:first-child {
+  background: linear-gradient(180deg, #181a20, #121419) !important;
+  border-bottom: 1px solid rgba(255,255,255,.055);
+}
+
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(1) { box-shadow: inset 0 3px 0 #d7a33e, 0 16px 36px rgba(0,0,0,.20); }
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(2) { box-shadow: inset 0 3px 0 #4f82e8, 0 16px 36px rgba(0,0,0,.20); }
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(3) { box-shadow: inset 0 3px 0 #8b5cf6, 0 16px 36px rgba(0,0,0,.20); }
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(4) { box-shadow: inset 0 3px 0 #f97316, 0 16px 36px rgba(0,0,0,.20); }
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(5) { box-shadow: inset 0 3px 0 #10b981, 0 16px 36px rgba(0,0,0,.20); }
+
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(216,179,90,.035), transparent 30%),
+    linear-gradient(160deg, #15171b, #0e1013) !important;
+  border-color: rgba(255,255,255,.075) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.018), 0 10px 24px rgba(0,0,0,.20) !important;
+}
+
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\]:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(216,179,90,.28) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 18px 34px rgba(0,0,0,.30) !important;
+}
+
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\]::before {
+  opacity: .88;
+}
+
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] :is(.text-zinc-950,.text-zinc-900,.text-zinc-800) {
+  color: #f7f7f5 !important;
+}
+
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] :is(.text-zinc-500,.text-zinc-400) {
+  color: #9a9ea8 !important;
+}
+
+@media (max-width: 1180px) {
+  .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div {
+    min-width: 108px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .tos-core-design-queue-premium {
+    padding: .65rem !important;
+  }
+  .tos-core-design-queue-premium > .flex.flex-wrap.justify-between {
+    padding: .72rem !important;
+  }
+  .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div {
+    flex: 1 1 44% !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-core-design-queue-premium * {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
