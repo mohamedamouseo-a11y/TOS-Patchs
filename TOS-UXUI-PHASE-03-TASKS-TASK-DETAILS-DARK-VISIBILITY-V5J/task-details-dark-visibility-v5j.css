@@ -1,0 +1,88 @@
+/* Phase 03 — Task Details Dark Visibility V5J
+   Screenshot-driven final contrast sweep after V5I.
+   Dark mode only. Presentation only. */
+
+.tos-task-details-modal {
+  --tos-task-details-dark-visibility-v5j-runtime: 1;
+}
+
+/* Native controls: dates/status/priority must never render dark text on dark surfaces. */
+html.dark .tos-task-details-modal input:not([type="checkbox"]):not([type="radio"]),
+html.dark .tos-task-details-modal select,
+html.dark .tos-task-details-modal textarea {
+  color: #eef3f6 !important;
+  -webkit-text-fill-color: #eef3f6 !important;
+  caret-color: #e6c56f !important;
+}
+
+html.dark .tos-task-details-modal input[type="date"],
+html.dark .tos-task-details-modal input[type="datetime-local"],
+html.dark .tos-task-details-modal input[type="time"],
+html.dark .tos-task-details-modal select {
+  color-scheme: dark !important;
+  background-color: #0d151b !important;
+  border-color: rgba(203, 213, 225, .18) !important;
+}
+
+html.dark .tos-task-details-modal input[type="date"]::-webkit-calendar-picker-indicator,
+html.dark .tos-task-details-modal input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+html.dark .tos-task-details-modal input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.35) !important;
+  opacity: .9 !important;
+}
+
+html.dark .tos-task-details-modal select option,
+html.dark .tos-task-details-modal select optgroup {
+  color: #f8fafc !important;
+  background: #141b21 !important;
+  background-color: #141b21 !important;
+  -webkit-text-fill-color: #f8fafc !important;
+}
+
+/* Saved description CTA was nearly black-on-black in the screenshot. */
+html.dark .tos-task-details-modal button[class*="to-amber-600"] {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(230, 197, 111, .34) !important;
+  background: linear-gradient(135deg, #171b1f 0%, #29231a 58%, #a87325 100%) !important;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .08) !important;
+}
+
+html.dark .tos-task-details-modal button[class*="to-amber-600"]:hover:not(:disabled) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: linear-gradient(135deg, #20262b 0%, #352b1b 56%, #bd8930 100%) !important;
+}
+
+html.dark .tos-task-details-modal button[class*="to-amber-600"]:disabled {
+  color: rgba(248, 250, 252, .62) !important;
+  -webkit-text-fill-color: rgba(248, 250, 252, .62) !important;
+}
+
+/* Secondary copy in Assignee / Project / Activity / editor footer was too dim. */
+html.dark .tos-task-details-modal [class*="text-slate-400"],
+html.dark .tos-task-details-modal [class*="text-zinc-500"] {
+  color: #9ba8b2 !important;
+  opacity: 1 !important;
+}
+
+html.dark .tos-task-details-modal [class*="text-slate-500"],
+html.dark .tos-task-details-modal [class*="text-zinc-400"] {
+  color: #b5c0c8 !important;
+  opacity: 1 !important;
+}
+
+html.dark .tos-task-details-modal input::placeholder,
+html.dark .tos-task-details-modal textarea::placeholder {
+  color: #84919c !important;
+  -webkit-text-fill-color: #84919c !important;
+  opacity: 1 !important;
+}
+
+/* Preserve readable muted/disabled states rather than making them disappear. */
+html.dark .tos-task-details-modal input:disabled,
+html.dark .tos-task-details-modal select:disabled,
+html.dark .tos-task-details-modal textarea:disabled,
+html.dark .tos-task-details-modal button:disabled {
+  opacity: .72 !important;
+}
