@@ -1,0 +1,506 @@
+/* Phase 03 — Tasks Flagship Signature V5
+   Major screenshot-driven visual escalation after V4.
+   Presentation only. */
+
+.tos-tasks-page {
+  --tos-tasks-flagship-v5-runtime: 1;
+  --v5-gold: #d6ad52;
+  --v5-gold-hi: #f4dea0;
+  --v5-gold-mid: #c39032;
+  --v5-gold-deep: #6f4a12;
+  --v5-ivory: #fffdf7;
+  --v5-porcelain: #f5efe4;
+  --v5-ink: #17120b;
+  --v5-obsidian: #05080a;
+  --v5-black-titanium: #0b1116;
+  --v5-titanium: #111a21;
+  --v5-titanium-hi: #18252e;
+  --v5-platinum: #f7f9fa;
+  --v5-platinum-soft: #b9c5cc;
+}
+
+/* ====================================================================== */
+/* PAGE / FLAGSHIP CANVAS                                                 */
+/* ====================================================================== */
+html:not(.dark) .tos-tasks-system-theme-v15 {
+  background:
+    radial-gradient(ellipse at 10% -4%, rgba(214,173,82,.18), transparent 28%),
+    radial-gradient(ellipse at 92% 2%, rgba(126,145,158,.09), transparent 24%),
+    linear-gradient(180deg, #fbf9f4 0%, #f4efe7 45%, #ece5db 100%) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 {
+  background:
+    radial-gradient(ellipse at 10% -6%, rgba(214,173,82,.105), transparent 27%),
+    radial-gradient(ellipse at 92% 1%, rgba(76,103,119,.12), transparent 25%),
+    linear-gradient(180deg, #030506 0%, #070a0d 46%, #090d10 100%) !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-tasks-page-shell {
+  position: relative;
+}
+
+.tos-tasks-system-theme-v15 .tos-tasks-page-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0 7% auto 7%;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(214,173,82,.58), transparent);
+  opacity: .48;
+}
+
+/* ====================================================================== */
+/* WORKSPACE TOOLS — SIGNATURE COMMAND DECK                              */
+/* ====================================================================== */
+.tos-tasks-system-theme-v15 .tos-workspace-management-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 30px !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-workspace-management-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+}
+
+.tos-tasks-system-theme-v15 .tos-workspace-management-panel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 7%;
+  width: 86%;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(244,222,160,.76), rgba(195,144,50,.72), transparent);
+  opacity: .82;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-workspace-management-panel {
+  border: 1px solid rgba(154,111,36,.28) !important;
+  background:
+    radial-gradient(circle at 86% -8%, rgba(214,173,82,.17), transparent 30%),
+    linear-gradient(150deg, rgba(255,255,255,.99) 0%, #fbf7ef 58%, #f1e8d9 100%) !important;
+  box-shadow:
+    0 34px 82px rgba(79,54,20,.12),
+    0 8px 22px rgba(79,54,20,.055),
+    inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-workspace-management-panel {
+  border: 1px solid rgba(220,227,232,.13) !important;
+  background:
+    radial-gradient(circle at 88% -10%, rgba(214,173,82,.09), transparent 31%),
+    radial-gradient(circle at 3% 100%, rgba(78,102,117,.08), transparent 25%),
+    linear-gradient(150deg, #152129 0%, #0c1419 58%, #070c0f 100%) !important;
+  box-shadow:
+    0 38px 92px rgba(0,0,0,.48),
+    0 10px 26px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-workspace-management-panel > div:first-child {
+  margin: -2px -2px 12px;
+  padding: 14px 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(170,129,52,.15);
+  background: linear-gradient(135deg, rgba(255,255,255,.78), rgba(246,238,224,.70));
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-workspace-management-panel > div:first-child {
+  margin: -2px -2px 12px;
+  padding: 14px 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.065);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.tos-tasks-system-theme-v15 .tos-workspace-management-grid {
+  gap: 12px !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-management-card {
+  border-radius: 24px !important;
+  border-color: rgba(170,130,54,.23) !important;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(214,173,82,.09), transparent 29%),
+    linear-gradient(160deg, #fff 0%, #fcf8f0 100%) !important;
+  box-shadow:
+    0 18px 42px rgba(73,50,19,.075),
+    inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-management-card {
+  border-radius: 24px !important;
+  border-color: rgba(214,222,228,.105) !important;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(214,173,82,.055), transparent 30%),
+    linear-gradient(160deg, #152129 0%, #0d151a 62%, #091014 100%) !important;
+  box-shadow:
+    0 20px 48px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+/* selected workspace / board rows become restrained metal plates */
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-management-card [class*="border-amber-200"][class*="bg-amber-50"] {
+  border-color: rgba(151,105,29,.31) !important;
+  background:
+    linear-gradient(120deg, rgba(244,222,160,.34), rgba(255,253,247,.98) 36%, rgba(244,236,220,.98)) !important;
+  box-shadow: inset 3px 0 0 rgba(195,144,50,.70), 0 10px 26px rgba(109,76,24,.07) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-management-card [class*="border-amber-200"][class*="bg-amber-50"] {
+  border-color: rgba(214,173,82,.24) !important;
+  background:
+    linear-gradient(120deg, rgba(214,173,82,.10), #16222a 34%, #0d151a 100%) !important;
+  box-shadow: inset 3px 0 0 rgba(214,173,82,.68), 0 12px 28px rgba(0,0,0,.18) !important;
+}
+
+/* ====================================================================== */
+/* KPI DECK — FLOATING INSTRUMENT PODS                                   */
+/* ====================================================================== */
+.tos-tasks-system-theme-v15 .tos-task-kpi-deck {
+  gap: 14px !important;
+  padding: 6px 4px 12px;
+}
+
+.tos-tasks-system-theme-v15 .tos-task-kpi-deck > * {
+  position: relative;
+  border-radius: 24px;
+  padding: 12px 8px 11px;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-task-kpi-deck > * {
+  border: 1px solid rgba(174,137,67,.18);
+  background:
+    radial-gradient(circle at 50% -10%, rgba(214,173,82,.09), transparent 48%),
+    linear-gradient(180deg, rgba(255,255,255,.91), rgba(250,246,238,.84));
+  box-shadow: 0 18px 42px rgba(73,50,20,.065), inset 0 1px 0 #fff;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-task-kpi-deck > * {
+  border: 1px solid rgba(210,220,226,.095);
+  background:
+    radial-gradient(circle at 50% -8%, rgba(214,173,82,.055), transparent 48%),
+    linear-gradient(180deg, rgba(20,31,38,.92), rgba(9,15,19,.88));
+  box-shadow: 0 20px 46px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+.tos-tasks-system-theme-v15 .tos-task-kpi-deck > *:hover {
+  transform: translateY(-3px);
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-task-kpi-deck > *:hover {
+  border-color: rgba(174,137,67,.32);
+  box-shadow: 0 26px 56px rgba(73,50,20,.10), inset 0 1px 0 #fff;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-task-kpi-deck > *:hover {
+  border-color: rgba(214,173,82,.21);
+  box-shadow: 0 28px 60px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.tos-tasks-system-theme-v15 .tos-task-kpi-deck [style*="conic-gradient"] {
+  transform: scale(1.04);
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-task-kpi-deck [style*="conic-gradient"] > div,
+html.dark .tos-tasks-system-theme-v15 .tos-task-kpi-deck [style*="conic-gradient"] > div * {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,.48) !important;
+}
+
+/* ====================================================================== */
+/* KANBAN SHELL — FLAGSHIP FRAME                                         */
+/* ====================================================================== */
+.tos-tasks-system-theme-v15 .tos-task-kanban-shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 30px !important;
+  padding: 16px !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-task-kanban-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0 8% auto 8%;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(244,222,160,.70), rgba(195,144,50,.70), transparent);
+  opacity: .82;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-task-kanban-shell {
+  border: 1px solid rgba(154,111,36,.28) !important;
+  background:
+    radial-gradient(circle at 95% 0%, rgba(214,173,82,.11), transparent 28%),
+    linear-gradient(180deg, rgba(255,254,250,.99), rgba(244,238,228,.985)) !important;
+  box-shadow:
+    0 36px 88px rgba(72,49,19,.12),
+    0 10px 28px rgba(72,49,19,.05),
+    inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-task-kanban-shell {
+  border: 1px solid rgba(214,222,228,.115) !important;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(214,173,82,.06), transparent 28%),
+    linear-gradient(180deg, #10191f 0%, #090f13 100%) !important;
+  box-shadow:
+    0 40px 96px rgba(0,0,0,.50),
+    0 12px 30px rgba(0,0,0,.20),
+    inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-task-kanban-hero {
+  margin: -4px -4px 14px !important;
+  padding: 14px 14px 16px !important;
+  border-radius: 22px !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-task-kanban-hero {
+  border: 1px solid rgba(176,138,63,.18) !important;
+  background: linear-gradient(135deg, rgba(255,255,255,.88), rgba(246,239,225,.78)) !important;
+  box-shadow: inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-task-kanban-hero {
+  border: 1px solid rgba(255,255,255,.065) !important;
+  background: linear-gradient(135deg, rgba(255,255,255,.035), rgba(255,255,255,.012)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+/* Design request action loses generic purple and joins the flagship system. */
+.tos-tasks-system-theme-v15 .tos-task-kanban-hero button[class*="bg-violet-600"] {
+  color: #1a1208 !important;
+  border: 1px solid rgba(119,81,20,.40) !important;
+  background: linear-gradient(145deg, #f4dea0 0%, #d8ae54 54%, #a16f22 100%) !important;
+  box-shadow: 0 10px 24px rgba(140,94,25,.18), inset 0 1px 0 rgba(255,255,255,.55) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-task-kanban-hero button[class*="bg-violet-600"] {
+  color: #171007 !important;
+  border-color: rgba(244,222,160,.38) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.28), 0 0 0 1px rgba(214,173,82,.07) !important;
+}
+
+/* ====================================================================== */
+/* BOARD GRID / COLUMNS — SCULPTED MATERIAL                              */
+/* ====================================================================== */
+.tos-tasks-system-theme-v15 .tos-modern-board-grid {
+  gap: 12px !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-modern-board-column {
+  min-height: 390px !important;
+  border-radius: 26px !important;
+  padding: 11px !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-modern-board-column::before {
+  height: 3px !important;
+  background: linear-gradient(90deg, transparent 5%, rgba(214,173,82,.82) 34%, rgba(244,222,160,.92) 50%, rgba(214,173,82,.74) 66%, transparent 95%) !important;
+  opacity: .72 !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-modern-board-column::after {
+  content: "";
+  position: absolute;
+  inset: 48px 8px 8px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 20px;
+  opacity: .55;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-board-column {
+  border-color: rgba(165,124,50,.27) !important;
+  background:
+    radial-gradient(circle at 88% 0%, rgba(214,173,82,.11), transparent 27%),
+    linear-gradient(180deg, #fffefa 0%, #f8f2e8 55%, #f1eadf 100%) !important;
+  box-shadow:
+    0 24px 58px rgba(72,49,19,.09),
+    inset 0 1px 0 #fff,
+    inset 0 -28px 60px rgba(108,78,32,.025) !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-board-column::after {
+  border: 1px solid rgba(173,136,66,.08);
+  background: radial-gradient(circle at 50% 0%, rgba(255,255,255,.66), transparent 58%);
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column {
+  border-color: rgba(210,220,226,.12) !important;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(214,173,82,.065), transparent 27%),
+    linear-gradient(180deg, #152129 0%, #0d151a 56%, #080d11 100%) !important;
+  box-shadow:
+    0 28px 66px rgba(0,0,0,.38),
+    inset 0 1px 0 rgba(255,255,255,.04),
+    inset 0 -32px 70px rgba(0,0,0,.16) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column::after {
+  border: 1px solid rgba(255,255,255,.025);
+  background: radial-gradient(circle at 50% 0%, rgba(255,255,255,.025), transparent 58%);
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-board-column:hover {
+  transform: translateY(-4px) !important;
+  border-color: rgba(165,124,50,.43) !important;
+  box-shadow: 0 34px 76px rgba(72,49,19,.14), inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column:hover {
+  transform: translateY(-4px) !important;
+  border-color: rgba(214,173,82,.30) !important;
+  box-shadow: 0 38px 86px rgba(0,0,0,.54), inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+/* Column header as an inset metal nameplate */
+.tos-tasks-system-theme-v15 .tos-modern-column-header {
+  border-radius: 18px !important;
+  padding: 11px !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-column-header {
+  border-color: rgba(163,120,45,.25) !important;
+  background:
+    linear-gradient(145deg, #ffffff 0%, #f7efdf 100%) !important;
+  box-shadow:
+    0 12px 28px rgba(81,55,19,.085),
+    inset 0 1px 0 #fff,
+    inset 0 -1px 0 rgba(153,111,38,.06) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-column-header {
+  border-color: rgba(214,222,228,.12) !important;
+  background:
+    linear-gradient(145deg, #1b2932 0%, #10191f 100%) !important;
+  box-shadow:
+    0 14px 32px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.045),
+    inset 0 -1px 0 rgba(0,0,0,.20) !important;
+}
+
+/* ====================================================================== */
+/* TASK CARDS — SIGNATURE RAISED CARDS                                   */
+/* ====================================================================== */
+.tos-tasks-system-theme-v15 .tos-modern-task-card {
+  position: relative;
+  border-radius: 22px !important;
+  overflow: hidden;
+}
+
+.tos-tasks-system-theme-v15 .tos-modern-task-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(244,222,160,.86), rgba(195,144,50,.55), transparent 90%);
+  opacity: .62;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-task-card {
+  border-color: rgba(171,133,61,.28) !important;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(214,173,82,.075), transparent 28%),
+    linear-gradient(180deg, #ffffff 0%, #fffaf2 100%) !important;
+  box-shadow:
+    0 16px 36px rgba(67,47,22,.09),
+    inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-task-card {
+  border-color: rgba(214,222,228,.12) !important;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(214,173,82,.05), transparent 28%),
+    linear-gradient(180deg, #19262f 0%, #10191f 100%) !important;
+  box-shadow:
+    0 18px 40px rgba(0,0,0,.36),
+    inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-task-card:hover {
+  transform: translateY(-4px) scale(1.004) !important;
+  border-color: rgba(164,119,39,.46) !important;
+  box-shadow: 0 28px 58px rgba(67,47,22,.15), inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-task-card:hover {
+  transform: translateY(-4px) scale(1.004) !important;
+  border-color: rgba(214,173,82,.31) !important;
+  box-shadow: 0 30px 64px rgba(0,0,0,.56), inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-modern-task-card h3 {
+  letter-spacing: -.012em;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-task-card h3 {
+  color: #fbfcfd !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.30);
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-task-card p[class*="text-zinc-400"],
+html.dark .tos-tasks-system-theme-v15 .tos-modern-task-card p[class*="text-slate-500"] {
+  color: #b9c4cb !important;
+}
+
+/* Action hardware */
+.tos-tasks-system-theme-v15 .tos-modern-column-header button[class*="bg-blue-600"] {
+  color: #171006 !important;
+  border: 1px solid rgba(115,77,18,.44) !important;
+  background: linear-gradient(145deg, #f4dea0 0%, #ddb45a 52%, #a36f21 100%) !important;
+  box-shadow: 0 10px 22px rgba(143,96,25,.22), inset 0 1px 0 rgba(255,255,255,.62) !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-modern-task-card button[class*="border-amber"] {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.38), 0 5px 12px rgba(93,65,22,.055);
+}
+
+/* ====================================================================== */
+/* EMPTY STATES / FOOTNOTE                                               */
+/* ====================================================================== */
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-empty-state {
+  border-color: rgba(170,132,60,.24) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(214,173,82,.08), transparent 50%),
+    linear-gradient(180deg, rgba(255,255,255,.74), rgba(248,242,232,.68)) !important;
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 40px rgba(137,99,38,.025) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-empty-state {
+  border-color: rgba(214,173,82,.13) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(214,173,82,.04), transparent 50%),
+    linear-gradient(180deg, rgba(19,30,37,.72), rgba(8,14,18,.72)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025), inset 0 0 48px rgba(0,0,0,.12) !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-task-kanban-shell > div:last-child[class*="bg-blue-50"] {
+  border: 1px solid rgba(174,132,52,.18) !important;
+  color: #6d4b12 !important;
+  background: linear-gradient(90deg, rgba(244,222,160,.18), rgba(255,255,255,.50), rgba(244,222,160,.18)) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-task-kanban-shell > div:last-child[class*="bg-blue-50"] {
+  border-color: rgba(214,173,82,.13) !important;
+  color: #e4c775 !important;
+  background: linear-gradient(90deg, rgba(214,173,82,.06), rgba(255,255,255,.018), rgba(214,173,82,.06)) !important;
+}
+
+@media (max-width: 1279px) {
+  .tos-tasks-system-theme-v15 .tos-task-kpi-deck > * { padding: 10px 6px; }
+  .tos-tasks-system-theme-v15 .tos-task-kanban-shell { padding: 12px !important; }
+}
