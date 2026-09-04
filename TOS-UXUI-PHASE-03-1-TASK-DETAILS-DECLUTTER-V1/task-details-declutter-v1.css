@@ -1,0 +1,256 @@
+/* Phase 03.1 — Task Details Declutter V1
+   Presentation-first density reduction for the full-screen Task Details workspace.
+   Keeps all task capabilities while reducing always-visible visual weight. */
+
+.tos-task-details-modal {
+  --tos-task-details-declutter-v1-runtime: 1;
+}
+
+/* Main workspace: give the task itself more room and keep the side rail intentionally narrow. */
+@media (min-width: 1280px) {
+  .tos-task-details-modal .tos-task-details-layout {
+    grid-template-columns: 238px minmax(0, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  .tos-task-details-modal .tos-task-details-layout:has(.tos-task-side-rail[data-expanded="true"]) {
+    grid-template-columns: 300px minmax(0, 1fr) !important;
+  }
+}
+
+.tos-task-details-modal .tos-task-main-column {
+  gap: 12px !important;
+}
+
+/* Compact executive summary: preserve title/status/priority/dates/time without the oversized card feel. */
+.tos-task-details-modal .tos-task-summary-compact {
+  padding: 13px 14px !important;
+  border-radius: 22px !important;
+}
+
+.tos-task-details-modal .tos-task-summary-compact > div {
+  gap: 12px !important;
+}
+
+.tos-task-details-modal .tos-task-summary-compact input[class*="text-3xl"] {
+  font-size: clamp(1.45rem, 2vw, 2rem) !important;
+  line-height: 1.15 !important;
+}
+
+.tos-task-details-modal .tos-task-summary-compact p[class*="border-r-"] {
+  margin-top: 8px !important;
+  line-height: 1.55 !important;
+}
+
+.tos-task-details-modal .tos-task-summary-compact [class*="mt-4"][class*="rounded-[20px]"] {
+  margin-top: 9px !important;
+  padding: 10px 12px !important;
+}
+
+/* Progress becomes an instrument strip instead of a second hero panel. */
+.tos-task-details-modal .tos-task-progress-compact {
+  padding: 13px 14px !important;
+  border-radius: 22px !important;
+}
+
+.tos-task-details-modal .tos-task-progress-compact > .mb-5 {
+  margin-bottom: 8px !important;
+}
+
+.tos-task-details-modal .tos-task-progress-compact > .mb-5 h3 {
+  font-size: 1.05rem !important;
+}
+
+.tos-task-details-modal .tos-task-progress-compact > .mb-5 p {
+  display: none !important;
+}
+
+@media (min-width: 1024px) {
+  .tos-task-details-modal .tos-task-progress-compact > div:nth-child(2) {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 9px !important;
+    align-items: stretch !important;
+  }
+
+  .tos-task-details-modal .tos-task-progress-compact > div:nth-child(2) > .space-y-4 {
+    display: contents !important;
+  }
+
+  .tos-task-details-modal .tos-task-progress-compact > div:nth-child(2) > .flex {
+    min-height: 76px !important;
+    transform: scale(.82);
+    transform-origin: center;
+  }
+}
+
+.tos-task-details-modal .tos-task-progress-compact [class*="rounded-[24px]"] {
+  min-height: 76px !important;
+  padding: 9px 10px !important;
+  border-radius: 16px !important;
+}
+
+.tos-task-details-modal .tos-task-progress-compact span[class*="h-12"][class*="w-12"] {
+  width: 2rem !important;
+  height: 2rem !important;
+  border-radius: 11px !important;
+}
+
+.tos-task-details-modal .tos-task-progress-compact p[class*="text-3xl"],
+.tos-task-details-modal .tos-task-progress-compact p[class*="text-2xl"] {
+  margin-top: 2px !important;
+  font-size: 1.25rem !important;
+}
+
+.tos-task-details-modal .tos-task-progress-compact > .mt-6 {
+  margin-top: 9px !important;
+}
+
+/* Existing tabs become the primary information architecture. */
+.tos-task-details-modal .tos-task-detail-tabs {
+  top: 8px !important;
+  padding: 6px !important;
+  border-radius: 20px !important;
+}
+
+.tos-task-details-modal .tos-task-detail-tabs button {
+  padding: 8px 12px !important;
+  border-radius: 14px !important;
+}
+
+/* Side rail: collapsed by default, one-click expansion for people/project/activity detail. */
+.tos-task-details-modal .tos-task-side-rail {
+  gap: 10px !important;
+  transition: width .2s ease, opacity .2s ease;
+}
+
+.tos-task-details-modal .tos-task-side-rail-head {
+  position: sticky;
+  top: 8px;
+  z-index: 35;
+  border: 1px solid rgba(148, 163, 184, .18);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .94);
+  padding: 9px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .06);
+  backdrop-filter: blur(14px);
+}
+
+html.dark .tos-task-details-modal .tos-task-side-rail-head {
+  border-color: rgba(255,255,255,.10);
+  background: rgba(13, 19, 24, .94);
+  box-shadow: 0 10px 28px rgba(0,0,0,.24);
+}
+
+.tos-task-details-modal .tos-task-side-rail-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-radius: 13px;
+  padding: 8px 9px;
+  font-size: 11px;
+  font-weight: 900;
+  color: #334155;
+  background: #f8fafc;
+  transition: background .18s ease, color .18s ease;
+}
+
+html.dark .tos-task-details-modal .tos-task-side-rail-toggle {
+  color: #e7edf2;
+  background: #111920;
+}
+
+.tos-task-details-modal .tos-task-side-rail-summary {
+  margin-top: 7px;
+  display: grid;
+  gap: 5px;
+}
+
+.tos-task-details-modal .tos-task-side-rail-summary span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 10px;
+  padding: 6px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  background: rgba(248,250,252,.9);
+}
+
+html.dark .tos-task-details-modal .tos-task-side-rail-summary span {
+  color: #aeb9c1;
+  background: rgba(255,255,255,.045);
+}
+
+.tos-task-details-modal .tos-task-side-rail[data-expanded="false"] > section {
+  display: none !important;
+}
+
+.tos-task-details-modal .tos-task-side-rail[data-expanded="true"] > .tos-task-side-rail-head {
+  position: static;
+}
+
+/* Description is the default work area, not another oversized card. */
+.tos-task-details-modal .tos-task-description-panel {
+  padding: 13px !important;
+  border-radius: 22px !important;
+}
+
+.tos-task-details-modal .tos-task-description-panel .tos-task-rich-editor-content {
+  min-height: 320px !important;
+}
+
+/* Decluttered advanced editor: everyday tools first, extended controls behind More. */
+.tos-task-details-modal .tos-task-editor-toolbar {
+  padding: 7px 9px !important;
+}
+
+.tos-task-details-modal .tos-task-editor-toolbar > div {
+  gap: 6px !important;
+}
+
+.tos-task-details-modal .tos-task-editor-toolbar[data-extended="false"] .tos-editor-group-block,
+.tos-task-details-modal .tos-task-editor-toolbar[data-extended="false"] .tos-editor-group-align,
+.tos-task-details-modal .tos-task-editor-toolbar[data-extended="false"] .tos-editor-group-color {
+  display: none !important;
+}
+
+.tos-task-details-modal .tos-task-editor-more-button {
+  margin-inline-start: auto;
+}
+
+/* Save stays reachable without feeling like another full-width section. */
+.tos-task-details-modal .tos-save-description-button {
+  position: sticky;
+  bottom: 14px;
+  z-index: 28;
+  min-height: 40px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .16) !important;
+}
+
+html.dark .tos-task-details-modal .tos-save-description-button {
+  box-shadow: 0 14px 34px rgba(0,0,0,.38) !important;
+}
+
+@media (max-width: 1279px) {
+  .tos-task-details-modal .tos-task-side-rail-head {
+    position: static;
+  }
+}
+
+@media (max-width: 767px) {
+  .tos-task-details-modal .tos-task-summary-compact {
+    padding: 11px !important;
+  }
+
+  .tos-task-details-modal .tos-task-progress-compact {
+    padding: 11px !important;
+  }
+
+  .tos-task-details-modal .tos-task-description-panel .tos-task-rich-editor-content {
+    min-height: 250px !important;
+  }
+}
