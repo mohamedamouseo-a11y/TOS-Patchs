@@ -1,0 +1,79 @@
+/* Phase 03 — Task Details Dark Contrast V5I
+   Screenshot-driven readability repair for the full-screen Task Details view.
+   Dark mode only. Presentation only. */
+
+.tos-task-details-modal {
+  --tos-task-details-dark-contrast-v5i-runtime: 1;
+}
+
+/* Task title must remain flagship-white in Dark Mode. */
+html.dark .tos-task-details-modal input[class*="text-3xl"] {
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  caret-color: #e6c56f !important;
+}
+
+/* Header summary beneath the title. */
+html.dark .tos-task-details-modal p[class*="border-r-"] {
+  color: #b9c5ce !important;
+}
+
+/*
+   Saved rich-text HTML may carry inline dark text colors created in Light Mode.
+   Those inline colors beat Tailwind's parent dark:text-* utility and made the
+   long description almost invisible. In Dark Mode, normalize readable prose
+   while preserving links, code and highlight surfaces with dedicated styling.
+*/
+html.dark .tos-task-details-modal .tos-task-rich-editor-content {
+  color: #dbe4ea !important;
+  -webkit-text-fill-color: #dbe4ea;
+}
+
+html.dark .tos-task-details-modal .tos-task-rich-editor-content :where(
+  p,
+  div,
+  span,
+  li,
+  strong,
+  b,
+  em,
+  i,
+  u,
+  blockquote
+) {
+  color: #dbe4ea !important;
+  -webkit-text-fill-color: #dbe4ea !important;
+}
+
+html.dark .tos-task-details-modal .tos-task-rich-editor-content :where(h1,h2,h3,h4,h5,h6) {
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+}
+
+html.dark .tos-task-details-modal .tos-task-rich-editor-content a {
+  color: #f0c96f !important;
+  -webkit-text-fill-color: #f0c96f !important;
+  text-decoration-color: rgba(240, 201, 111, .58) !important;
+}
+
+html.dark .tos-task-details-modal .tos-task-rich-editor-content :where(code,pre,kbd) {
+  color: #f5d98f !important;
+  -webkit-text-fill-color: #f5d98f !important;
+}
+
+html.dark .tos-task-details-modal .tos-task-rich-editor-content blockquote {
+  border-color: rgba(230, 197, 111, .46) !important;
+  background: rgba(230, 197, 111, .055) !important;
+}
+
+/* Keep user-applied highlight backgrounds readable against normalized text. */
+html.dark .tos-task-details-modal .tos-task-rich-editor-content [style*="background-color"] {
+  color: #eef3f6 !important;
+  -webkit-text-fill-color: #eef3f6 !important;
+}
+
+/* Placeholder / empty editor stays intentionally subdued, not invisible. */
+html.dark .tos-task-details-modal .tos-task-rich-editor-content:empty::before {
+  color: #85939e !important;
+  -webkit-text-fill-color: #85939e !important;
+}
