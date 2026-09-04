@@ -1,0 +1,93 @@
+/* Phase 03 — Task Details Dark Visibility V5L
+   Final focused repair for native date values and Save Description CTA.
+   Dark mode only. Presentation only. */
+
+.tos-task-details-modal {
+  --tos-task-details-dark-visibility-v5l-runtime: 1;
+}
+
+/* Chromium/Windows native date value parts can ignore the input parent color.
+   Target the exact Task Details date controls plus their WebKit sub-parts. */
+html.dark .tos-task-details-modal .tos-task-date-input {
+  color-scheme: dark !important;
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  caret-color: #e7c66f !important;
+  opacity: 1 !important;
+  background: #10181e !important;
+  border: 1px solid rgba(203, 213, 225, .18) !important;
+  border-radius: 10px !important;
+  padding: 6px 8px !important;
+}
+
+html.dark .tos-task-details-modal .tos-task-date-input::-webkit-datetime-edit,
+html.dark .tos-task-details-modal .tos-task-date-input::-webkit-datetime-edit-fields-wrapper,
+html.dark .tos-task-details-modal .tos-task-date-input::-webkit-datetime-edit-text,
+html.dark .tos-task-details-modal .tos-task-date-input::-webkit-datetime-edit-month-field,
+html.dark .tos-task-details-modal .tos-task-date-input::-webkit-datetime-edit-day-field,
+html.dark .tos-task-details-modal .tos-task-date-input::-webkit-datetime-edit-year-field,
+html.dark .tos-task-details-modal .tos-task-date-input::-webkit-datetime-edit-hour-field,
+html.dark .tos-task-details-modal .tos-task-date-input::-webkit-datetime-edit-minute-field,
+html.dark .tos-task-details-modal .tos-task-date-input::-webkit-datetime-edit-ampm-field {
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  opacity: 1 !important;
+  background: transparent !important;
+}
+
+html.dark .tos-task-details-modal .tos-task-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.45) !important;
+  opacity: .95 !important;
+  cursor: pointer;
+}
+
+html.dark .tos-task-details-modal .tos-task-date-input:disabled {
+  color: #cbd5df !important;
+  -webkit-text-fill-color: #cbd5df !important;
+  opacity: .82 !important;
+}
+
+/* Make the final Description action unmistakable against the dark editor footer.
+   Champagne hardware + dark ink gives stronger contrast than the previous dark gradient. */
+html.dark .tos-task-details-modal button.tos-save-description-button {
+  color: #111318 !important;
+  -webkit-text-fill-color: #111318 !important;
+  background: linear-gradient(135deg, #f4dfa2 0%, #dfb95f 50%, #b67c28 100%) !important;
+  border: 1px solid rgba(250, 226, 162, .58) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .34), inset 0 1px 0 rgba(255, 255, 255, .48) !important;
+  opacity: 1 !important;
+  min-width: 132px;
+}
+
+html.dark .tos-task-details-modal button.tos-save-description-button svg {
+  color: #111318 !important;
+  stroke: currentColor !important;
+}
+
+html.dark .tos-task-details-modal button.tos-save-description-button:hover:not(:disabled) {
+  color: #0b0d0f !important;
+  -webkit-text-fill-color: #0b0d0f !important;
+  background: linear-gradient(135deg, #f8e8b8 0%, #e8c66f 48%, #c48a31 100%) !important;
+  transform: translateY(-1px);
+}
+
+html.dark .tos-task-details-modal button.tos-save-description-button:disabled {
+  color: #20242a !important;
+  -webkit-text-fill-color: #20242a !important;
+  opacity: .72 !important;
+}
+
+/* Keep Task Details native select values/options fully explicit as part of this final lock. */
+html.dark .tos-task-details-modal select {
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  color-scheme: dark !important;
+  opacity: 1 !important;
+}
+
+html.dark .tos-task-details-modal select option,
+html.dark .tos-task-details-modal select optgroup {
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  background-color: #141b21 !important;
+}
