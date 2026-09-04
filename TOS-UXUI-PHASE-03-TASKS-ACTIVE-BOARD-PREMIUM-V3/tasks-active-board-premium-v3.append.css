@@ -1,0 +1,162 @@
+/* Phase 03 — Tasks Active Board Premium V3
+   Screenshot-driven refinement after V2 gateway approval.
+   Scope: active task-board presentation only.
+   Reference: approved Phase 02 Projects premium language. */
+
+.tos-tasks-page {
+  --tos-tasks-active-board-v3-runtime: 1;
+}
+
+/* ====================================================================== */
+/* DARK — KPI RINGS: FIX FAINT / WHITE-ON-IVORY VALUES                    */
+/* ====================================================================== */
+html.dark .tos-tasks-system-theme-v15 [style*="conic-gradient"] > div {
+  color: #f8fafc !important;
+  background:
+    radial-gradient(circle at 34% 24%, rgba(255,255,255,.08), transparent 28%),
+    linear-gradient(145deg, #1b2730 0%, #111a20 56%, #080d11 100%) !important;
+  border: 1px solid rgba(255,255,255,.085) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    inset 0 -10px 22px rgba(0,0,0,.20),
+    0 8px 20px rgba(0,0,0,.18) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 [style*="conic-gradient"] > div,
+html.dark .tos-tasks-system-theme-v15 [style*="conic-gradient"] > div * {
+  color: #f8fafc !important;
+  opacity: 1 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.38) !important;
+}
+
+/* ====================================================================== */
+/* DARK — WORKSPACE TOOLS: RESTRAIN MUDDY GOLD SELECTED SURFACES          */
+/* ====================================================================== */
+html.dark .tos-tasks-system-theme-v15 .tos-management-card [class*="bg-amber-50"],
+html.dark .tos-tasks-system-theme-v15 .tos-management-card [class*="border-amber-100"] {
+  background:
+    linear-gradient(180deg, rgba(216,180,102,.105) 0%, rgba(216,180,102,.045) 28%, #121b21 100%) !important;
+  border-color: rgba(216,180,102,.20) !important;
+  color: #f0cf87 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-management-card [class*="text-amber-700"] {
+  color: #f0cf87 !important;
+}
+
+/* ====================================================================== */
+/* ACTIVE BOARD COLUMNS — LIGHT                                           */
+/* ====================================================================== */
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-board-column {
+  border-color: rgba(177,139,64,.22) !important;
+  background:
+    radial-gradient(circle at 88% 0%, rgba(216,180,102,.065), transparent 26%),
+    linear-gradient(180deg, #fffefb 0%, #faf7f1 100%) !important;
+  --tw-ring-color: rgba(181,145,71,.10) !important;
+  box-shadow:
+    0 16px 42px rgba(69,50,25,.075),
+    inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-column-header {
+  border-color: rgba(182,151,91,.23) !important;
+  background: linear-gradient(180deg, #fff 0%, #fbf8f2 100%) !important;
+  box-shadow: 0 8px 22px rgba(66,48,23,.055), inset 0 1px 0 #fff !important;
+}
+
+/* ====================================================================== */
+/* ACTIVE BOARD COLUMNS — DARK: TRUE OBSIDIAN / TITANIUM                  */
+/* ====================================================================== */
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column:not([class*="border-blue-300"]) {
+  border-color: rgba(203,213,225,.115) !important;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(216,180,102,.035), transparent 28%),
+    linear-gradient(180deg, #111a20 0%, #0b1116 100%) !important;
+  --tw-ring-color: rgba(203,213,225,.065) !important;
+  box-shadow:
+    0 20px 52px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column:not([class*="border-blue-300"]):hover {
+  border-color: rgba(216,180,102,.18) !important;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(216,180,102,.055), transparent 30%),
+    linear-gradient(180deg, #142029 0%, #0d1419 100%) !important;
+  box-shadow:
+    0 24px 62px rgba(0,0,0,.38),
+    inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-column-header {
+  border-color: rgba(203,213,225,.105) !important;
+  background:
+    linear-gradient(180deg, #18232b 0%, #11191f 100%) !important;
+  box-shadow:
+    0 10px 26px rgba(0,0,0,.20),
+    inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-column-header [class*="text-slate-900"],
+html.dark .tos-tasks-system-theme-v15 .tos-modern-column-header [class*="dark:text-zinc-100"] {
+  color: #f4f7f9 !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-column-header [class*="text-slate-400"] {
+  color: #98a6af !important;
+}
+
+/* Primary board action adopts the approved champagne accent. */
+.tos-tasks-system-theme-v15 .tos-modern-column-header button[class*="bg-blue-600"] {
+  color: #171108 !important;
+  border: 1px solid rgba(151,104,30,.34) !important;
+  background: linear-gradient(135deg, #f2d98f 0%, #d8ad55 52%, #a97627 100%) !important;
+  box-shadow: 0 8px 20px rgba(165,114,34,.18), inset 0 1px 0 rgba(255,255,255,.46) !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-modern-column-header button[class*="bg-blue-600"]:hover {
+  filter: brightness(1.035);
+}
+
+/* Empty columns should feel intentional, not like black holes. */
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column [class*="border-dashed"] {
+  border-color: rgba(203,213,225,.12) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(216,180,102,.035), transparent 34%),
+    linear-gradient(180deg, #0f171d 0%, #0a1014 100%) !important;
+  color: #aeb9c1 !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-board-column [class*="border-dashed"] {
+  border-color: rgba(184,151,86,.20) !important;
+  background: linear-gradient(180deg, #fffefb 0%, #f8f5ef 100%) !important;
+}
+
+/* Footer guidance becomes a restrained champagne information strip. */
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-board-grid + div[class*="bg-blue-50"] {
+  color: #8a611f !important;
+  background: linear-gradient(180deg, #fff7e7 0%, #f8edd5 100%) !important;
+  border: 1px solid rgba(181,138,58,.18) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-grid + div[class*="bg-blue-500"] {
+  color: #e8c979 !important;
+  background: linear-gradient(180deg, rgba(216,180,102,.08), rgba(216,180,102,.035)) !important;
+  border: 1px solid rgba(216,180,102,.13) !important;
+}
+
+/* Keep semantic blue only for drag/drop focus states. */
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column[class*="border-blue-300"] {
+  background: linear-gradient(180deg, #132333 0%, #0c1720 100%) !important;
+}
+
+/* Dark mode typography on task cards / column metadata. */
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column [class*="text-slate-500"] {
+  color: #aeb9c1 !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column [class*="text-slate-400"] {
+  color: #8f9ca5 !important;
+  opacity: 1 !important;
+}
