@@ -1,0 +1,68 @@
+/* Phase 03 — Tasks Flagship Signature V5D
+   Clean fallback for task-card styling when legacy task-card classes are absent.
+   Presentation only. */
+
+.tos-tasks-page {
+  --tos-tasks-flagship-v5d-runtime: 1;
+}
+
+/* Target the real rendered card container structurally, without relying on
+   legacy .tos-modern-task-card or data-* hooks. */
+.tos-tasks-system-theme-v15 .tos-modern-board-column article {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px !important;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease !important;
+}
+
+.tos-tasks-system-theme-v15 .tos-modern-board-column article::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(244,222,160,.92), rgba(195,144,50,.58), transparent 90%);
+  opacity: .72;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-board-column article {
+  border-color: rgba(171,133,61,.30) !important;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(214,173,82,.09), transparent 30%),
+    linear-gradient(180deg, #ffffff 0%, #fffaf2 100%) !important;
+  box-shadow:
+    0 18px 42px rgba(67,47,22,.10),
+    inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column article {
+  border-color: rgba(214,222,228,.13) !important;
+  background:
+    radial-gradient(circle at 96% 0%, rgba(214,173,82,.055), transparent 30%),
+    linear-gradient(180deg, #19262f 0%, #10191f 100%) !important;
+  box-shadow:
+    0 20px 46px rgba(0,0,0,.40),
+    inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+html:not(.dark) .tos-tasks-system-theme-v15 .tos-modern-board-column article:hover {
+  transform: translateY(-4px) scale(1.004) !important;
+  border-color: rgba(164,119,39,.48) !important;
+  box-shadow: 0 30px 62px rgba(67,47,22,.16), inset 0 1px 0 #fff !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column article:hover {
+  transform: translateY(-4px) scale(1.004) !important;
+  border-color: rgba(214,173,82,.32) !important;
+  box-shadow: 0 32px 68px rgba(0,0,0,.58), inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column article h3 {
+  color: #fbfcfd !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.32);
+}
+
+html.dark .tos-tasks-system-theme-v15 .tos-modern-board-column article p {
+  text-shadow: 0 1px 1px rgba(0,0,0,.18);
+}
