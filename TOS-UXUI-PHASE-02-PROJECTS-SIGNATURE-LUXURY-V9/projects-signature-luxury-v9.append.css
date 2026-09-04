@@ -1,0 +1,446 @@
+/* Phase 02 Projects — Signature Luxury V9
+   Final visual refinement on reviewed Obsidian Elite V8.
+   Focus: premium depth, light-mode legibility, archive control, executive hierarchy.
+   Presentation only; no business logic. */
+
+.tos-projects-ui03 {
+  --tos-projects-signature-v9-runtime: 1;
+  --v9-ink: #0a0d10;
+  --v9-graphite: #10161b;
+  --v9-titanium: #172128;
+  --v9-platinum: #d8e0e5;
+  --v9-champagne: #d5ae5e;
+  --v9-champagne-bright: #f0cf87;
+  --v9-ivory: #fffdf8;
+  --v9-warm-paper: #f7f2e9;
+  --v9-light-text: #18140f;
+  --v9-light-secondary: #50473b;
+  --v9-light-muted: #756a5a;
+}
+
+/* ====================================================================== */
+/* LIGHT MODE — HIGH-CONTRAST EXECUTIVE IVORY                             */
+/* ====================================================================== */
+
+html:not(.dark) .tos-projects-ui03 .tos-projects-kpi-strip > * {
+  border-color: rgba(183, 148, 77, .30) !important;
+  background:
+    radial-gradient(circle at 88% 10%, rgba(213,174,94,.07), transparent 30%),
+    linear-gradient(145deg, #fffefa 0%, #faf6ef 62%, #f4eee3 100%) !important;
+  box-shadow:
+    0 22px 54px rgba(75,55,27,.09),
+    inset 0 1px 0 rgba(255,255,255,.96),
+    inset 0 -1px 0 rgba(151,116,55,.06) !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-projects-kpi-strip > *:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(183,148,77,.42) !important;
+  box-shadow: 0 30px 68px rgba(75,55,27,.13), inset 0 1px 0 #fff !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-projects-kpi-strip [class*="text-zinc-950"],
+html:not(.dark) .tos-projects-ui03 .tos-projects-kpi-strip [class*="text-zinc-900"],
+html:not(.dark) .tos-projects-ui03 .tos-projects-kpi-strip [class*="text-zinc-800"] {
+  color: #18130d !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-projects-kpi-strip p[class*="text-zinc-500"],
+html:not(.dark) .tos-projects-ui03 .tos-projects-kpi-strip p[class*="text-zinc-400"] {
+  color: #5f5547 !important;
+  opacity: 1 !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-projects-command-center {
+  position: relative;
+  border-color: rgba(184,148,75,.34) !important;
+  background:
+    linear-gradient(180deg, rgba(255,254,251,.99), rgba(248,243,234,.985)) !important;
+  box-shadow:
+    0 28px 78px rgba(69,51,26,.11),
+    inset 0 1px 0 rgba(255,255,255,.98) !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-projects-command-center::before {
+  content: "";
+  position: absolute;
+  inset: 0 22px auto 22px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(213,174,94,.72), transparent);
+  pointer-events: none;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-projects-search,
+html:not(.dark) .tos-projects-ui03 .tos-projects-sort {
+  border-color: #d8d1c5 !important;
+  background: #fff !important;
+  color: #282117 !important;
+  box-shadow: inset 0 1px 2px rgba(45,34,20,.035), 0 4px 12px rgba(70,51,25,.025) !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-projects-search::placeholder {
+  color: #817668 !important;
+  opacity: 1 !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-projects-filter-toggle,
+html:not(.dark) .tos-projects-ui03 .tos-projects-export-action {
+  border-color: #d9d0c2 !important;
+  background: linear-gradient(180deg, #fff, #faf7f1) !important;
+  color: #2c241a !important;
+  box-shadow: 0 8px 22px rgba(62,45,23,.055), inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-projects-filter-toggle:hover,
+html:not(.dark) .tos-projects-ui03 .tos-projects-export-action:hover {
+  border-color: rgba(185,145,67,.46) !important;
+  background: #fffdf8 !important;
+  box-shadow: 0 12px 28px rgba(62,45,23,.08) !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-projects-filters-shell {
+  border-color: #ded4c3 !important;
+  background: linear-gradient(180deg, #fbf8f2 0%, #f7f1e7 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-projects-filters-shell label,
+html:not(.dark) .tos-projects-ui03 .tos-projects-filters-shell [class*="text-zinc-500"],
+html:not(.dark) .tos-projects-ui03 .tos-projects-filters-shell [class*="text-zinc-400"] {
+  color: #5e5447 !important;
+  opacity: 1 !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-list-shell {
+  border-color: #ddd3c2 !important;
+  background: linear-gradient(180deg, #fffefa 0%, #fbf7ef 100%) !important;
+  box-shadow: 0 24px 64px rgba(72,52,27,.085), inset 0 1px 0 #fff !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-list-row {
+  background: rgba(255,254,251,.96) !important;
+  border-color: rgba(176,157,126,.20) !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-list-row:hover {
+  background: linear-gradient(90deg, rgba(213,174,94,.075), #fffefa 16%, #fbf8f2 100%) !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-list-row--selected {
+  background: linear-gradient(90deg, rgba(213,174,94,.14) 0%, #fffefa 9%, #fbf7ef 100%) !important;
+  border-color: rgba(181,139,57,.28) !important;
+  color: #17120d !important;
+  box-shadow: inset 3px 0 0 #d0a44e, 0 10px 26px rgba(88,62,21,.055) !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-list-row [class*="text-zinc-700"],
+html:not(.dark) .tos-projects-ui03 .tos-project-list-row [class*="text-zinc-600"] {
+  color: #4d4438 !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-list-row [class*="text-zinc-500"],
+html:not(.dark) .tos-projects-ui03 .tos-project-list-row [class*="text-zinc-400"] {
+  color: #706555 !important;
+  opacity: 1 !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector {
+  border-color: rgba(177,136,55,.34) !important;
+  background: linear-gradient(180deg, #fffefa 0%, #f9f4eb 100%) !important;
+  box-shadow:
+    0 34px 84px rgba(76,55,25,.15),
+    0 0 0 1px rgba(255,255,255,.74),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector [class*="text-zinc-400"] {
+  color: #645947 !important;
+  opacity: 1 !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector [class*="text-zinc-500"],
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector [class*="text-zinc-600"] {
+  color: #51483c !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector [class*="text-[9px]"] {
+  font-size: 10.5px !important;
+  line-height: 1.35 !important;
+  letter-spacing: .005em !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector [class*="text-[10px]"] {
+  color: #51483c !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:nth-child(2) > div,
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:last-child > div {
+  border-color: #ded5c8 !important;
+  background: linear-gradient(180deg, #fff 0%, #fcfaf6 100%) !important;
+  box-shadow: inset 0 1px 0 #fff, 0 6px 18px rgba(62,45,23,.035) !important;
+}
+
+/* ====================================================================== */
+/* ARCHIVE — EXECUTIVE VAULT CONTROL                                      */
+/* ====================================================================== */
+
+.tos-projects-ui03 .tos-projects-archive-toggle {
+  position: relative;
+  overflow: hidden;
+  height: 44px !important;
+  min-width: 156px !important;
+  border-radius: 15px !important;
+  padding-inline: 10px 11px !important;
+  border-color: #d7c9ad !important;
+  background: linear-gradient(180deg, #fffefb 0%, #f6efe3 100%) !important;
+  color: #2b2318 !important;
+  box-shadow:
+    0 10px 28px rgba(75,53,22,.085),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 0 -1px 0 rgba(123,91,35,.08) !important;
+}
+
+.tos-projects-ui03 .tos-projects-archive-toggle::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 8%, rgba(240,207,135,.75) 48%, transparent 92%);
+  pointer-events: none;
+}
+
+.tos-projects-ui03 .tos-projects-archive-toggle > span:first-child {
+  gap: 8px !important;
+  color: inherit !important;
+}
+
+.tos-projects-ui03 .tos-projects-archive-toggle > span:first-child svg {
+  width: 27px !important;
+  height: 27px !important;
+  padding: 5px !important;
+  border-radius: 9px !important;
+  border: 1px solid rgba(181,139,57,.24) !important;
+  background: linear-gradient(145deg, #fffdf7, #f2eadb) !important;
+  color: #9d742a !important;
+  stroke-width: 1.8 !important;
+  box-shadow: inset 0 1px 0 #fff, 0 4px 10px rgba(72,49,18,.055) !important;
+}
+
+.tos-projects-ui03 .tos-projects-archive-switch {
+  border: 1px solid rgba(139,116,76,.22) !important;
+  background: linear-gradient(180deg, #d8d2c8, #c7bfb2) !important;
+  box-shadow: inset 0 2px 5px rgba(59,46,29,.18), 0 1px 0 rgba(255,255,255,.86) !important;
+}
+
+.tos-projects-ui03 .tos-projects-archive-knob {
+  background: linear-gradient(180deg, #fff 0%, #ece8e1 100%) !important;
+  border: 1px solid rgba(114,95,66,.18) !important;
+  box-shadow: 0 3px 8px rgba(48,36,22,.24), inset 0 1px 0 #fff !important;
+}
+
+.tos-projects-ui03 .tos-projects-archive-toggle[data-active="true"] {
+  border-color: rgba(172,126,39,.44) !important;
+  background: linear-gradient(145deg, #f9e9b7 0%, #e3bd65 48%, #b9872d 100%) !important;
+  color: #20170a !important;
+  box-shadow: 0 14px 34px rgba(177,127,39,.20), inset 0 1px 0 rgba(255,255,255,.58) !important;
+}
+
+.tos-projects-ui03 .tos-projects-archive-toggle[data-active="true"] .tos-projects-archive-switch {
+  background: linear-gradient(180deg, #7c5a1e, #5a4015) !important;
+  border-color: rgba(76,51,12,.30) !important;
+}
+
+/* ====================================================================== */
+/* DARK MODE — OBSIDIAN SIGNATURE                                         */
+/* ====================================================================== */
+
+html.dark .tos-projects-ui03 .tos-projects-kpi-strip > * {
+  border-color: rgba(222,230,235,.12) !important;
+  background:
+    radial-gradient(circle at 86% 10%, rgba(240,207,135,.035), transparent 30%),
+    linear-gradient(145deg, #141c21 0%, #0c1216 62%, #090d10 100%) !important;
+  box-shadow:
+    0 26px 72px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.055),
+    inset 0 -1px 0 rgba(0,0,0,.55) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-command-center {
+  border-color: rgba(213,174,94,.24) !important;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(213,174,94,.045), transparent 26%),
+    linear-gradient(160deg, #131c22 0%, #0d1419 52%, #090e12 100%) !important;
+  box-shadow:
+    0 36px 100px rgba(0,0,0,.52),
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 0 0 1px rgba(213,174,94,.02) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-command-center::before {
+  content: "";
+  position: absolute;
+  inset: 0 28px auto 28px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(240,207,135,.52), transparent);
+  pointer-events: none;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-search,
+html.dark .tos-projects-ui03 .tos-projects-sort {
+  border-color: rgba(219,227,233,.16) !important;
+  background: linear-gradient(180deg, #090e12, #0c1318) !important;
+  color: #edf2f5 !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.34), 0 1px 0 rgba(255,255,255,.018) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-search::placeholder {
+  color: #94a0a8 !important;
+  opacity: 1 !important;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-filter-toggle,
+html.dark .tos-projects-ui03 .tos-projects-export-action {
+  border-color: rgba(218,226,231,.14) !important;
+  background: linear-gradient(180deg, #151e24, #0d1419) !important;
+  color: #e8eef1 !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-filter-toggle:hover,
+html.dark .tos-projects-ui03 .tos-projects-export-action:hover {
+  border-color: rgba(240,207,135,.30) !important;
+  background: linear-gradient(180deg, #19252c, #11191f) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-filters-shell {
+  border-color: rgba(219,227,232,.10) !important;
+  background: linear-gradient(180deg, rgba(15,23,29,.96), rgba(9,15,19,.98)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-archive-toggle {
+  border-color: rgba(216,224,229,.15) !important;
+  background: linear-gradient(180deg, #151e24 0%, #0b1115 100%) !important;
+  color: #eef3f5 !important;
+  box-shadow:
+    0 12px 32px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.045),
+    inset 0 -1px 0 rgba(0,0,0,.45) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-archive-toggle > span:first-child svg {
+  border-color: rgba(240,207,135,.22) !important;
+  background: linear-gradient(145deg, #1a252c, #10171c) !important;
+  color: #e2bd6b !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 18px rgba(213,174,94,.035) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-archive-switch {
+  border-color: rgba(205,216,223,.12) !important;
+  background: linear-gradient(180deg, #26333b, #182228) !important;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-archive-knob {
+  background: linear-gradient(180deg, #dfe6ea, #9eabb3) !important;
+  border-color: rgba(255,255,255,.12) !important;
+  box-shadow: 0 3px 9px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.55) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-archive-toggle[data-active="true"] {
+  border-color: rgba(240,207,135,.42) !important;
+  background: linear-gradient(145deg, #1b211f 0%, #171914 55%, #10120f 100%) !important;
+  color: #f1d58f !important;
+  box-shadow:
+    0 14px 36px rgba(0,0,0,.38),
+    0 0 24px rgba(213,174,94,.07),
+    inset 0 1px 0 rgba(240,207,135,.12) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-archive-toggle[data-active="true"] .tos-projects-archive-switch {
+  border-color: rgba(240,207,135,.28) !important;
+  background: linear-gradient(180deg, #8a6423, #5d4318) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-projects-primary-cta {
+  border-color: rgba(240,207,135,.50) !important;
+  background: linear-gradient(135deg, #f3d58b 0%, #d8ae58 45%, #aa7726 100%) !important;
+  color: #171008 !important;
+  box-shadow:
+    0 14px 36px rgba(213,174,94,.18),
+    inset 0 1px 0 rgba(255,255,255,.38),
+    inset 0 -1px 0 rgba(83,53,12,.16) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-project-list-shell {
+  border-color: rgba(219,227,232,.11) !important;
+  background: linear-gradient(180deg, #0d1419 0%, #090e12 100%) !important;
+  box-shadow: 0 30px 82px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.03) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-project-list-row {
+  background: rgba(7,12,15,.56) !important;
+  border-color: rgba(220,228,233,.07) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-project-list-row:hover {
+  background: linear-gradient(90deg, rgba(213,174,94,.035), rgba(18,28,34,.80) 15%, rgba(9,15,19,.90)) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-project-list-row--selected {
+  background:
+    linear-gradient(90deg, rgba(240,207,135,.10) 0%, #142028 9%, #0b1217 44%, #080d11 100%) !important;
+  border-color: rgba(240,207,135,.24) !important;
+  box-shadow:
+    inset 3px 0 0 #f0cf87,
+    0 0 0 1px rgba(213,174,94,.035),
+    0 14px 36px rgba(0,0,0,.24) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-project-inspector {
+  border-color: rgba(213,174,94,.26) !important;
+  background: linear-gradient(180deg, #0d151b 0%, #080d11 100%) !important;
+  box-shadow:
+    0 40px 110px rgba(0,0,0,.56),
+    0 0 0 1px rgba(213,174,94,.025),
+    inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+html.dark .tos-projects-ui03 .tos-project-inspector [class*="text-zinc-400"] {
+  color: #aeb9c0 !important;
+  opacity: 1 !important;
+}
+
+html.dark .tos-projects-ui03 .tos-project-inspector [class*="text-zinc-500"],
+html.dark .tos-projects-ui03 .tos-project-inspector [class*="text-zinc-600"] {
+  color: #c1cbd1 !important;
+}
+
+html.dark .tos-projects-ui03 .tos-project-inspector [class*="text-[9px]"] {
+  font-size: 10.5px !important;
+  line-height: 1.35 !important;
+}
+
+html.dark .tos-projects-ui03 .tos-project-inspector > div:nth-child(2) > div,
+html.dark .tos-projects-ui03 .tos-project-inspector > div:last-child > div {
+  border-color: rgba(220,228,233,.11) !important;
+  background: linear-gradient(180deg, #10181e 0%, #0a1014 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 8px 22px rgba(0,0,0,.14) !important;
+}
+
+/* Pagination: clearer platinum hierarchy. */
+html.dark .tos-projects-ui03 button:disabled {
+  opacity: .56 !important;
+}
+
+html:not(.dark) .tos-projects-ui03 button:disabled {
+  opacity: .62 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-projects-ui03 .tos-projects-kpi-strip > *,
+  .tos-projects-ui03 .tos-projects-archive-toggle,
+  .tos-projects-ui03 .tos-project-list-row {
+    transition-duration: .01ms !important;
+  }
+}
