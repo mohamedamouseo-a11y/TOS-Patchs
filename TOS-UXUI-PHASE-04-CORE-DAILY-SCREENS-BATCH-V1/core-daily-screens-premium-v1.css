@@ -1,0 +1,296 @@
+/* Phase 04 — Core Daily Screens Premium Batch V1
+   Visual-only layer for Design Queue, Employee Work Hub, Team Members and Team Performance. */
+
+:root {
+  --tos-phase04-runtime: 1;
+  --tos-p04-ivory: #fbf8f1;
+  --tos-p04-porcelain: #fffdf8;
+  --tos-p04-champagne: #d6b25e;
+  --tos-p04-champagne-soft: rgba(214, 178, 94, .16);
+  --tos-p04-ink: #161616;
+  --tos-p04-muted: #6b7280;
+  --tos-p04-line: rgba(148, 163, 184, .18);
+  --tos-p04-shadow: 0 18px 48px rgba(38, 32, 20, .07);
+  --tos-p04-radius-xl: 30px;
+  --tos-p04-radius-lg: 22px;
+}
+
+.tos-core-design-queue-premium,
+.tos-core-workhub-premium,
+.tos-core-team-premium,
+.tos-core-team-performance-premium {
+  position: relative;
+  isolation: isolate;
+}
+
+.tos-core-design-queue-premium::before,
+.tos-core-workhub-premium::before,
+.tos-core-team-premium::before,
+.tos-core-team-performance-premium::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(214,178,94,.10), transparent 28%),
+    linear-gradient(180deg, rgba(255,253,248,.72), rgba(248,246,240,.28));
+}
+
+html.dark .tos-core-design-queue-premium::before,
+html.dark .tos-core-workhub-premium::before,
+html.dark .tos-core-team-premium::before,
+html.dark .tos-core-team-performance-premium::before {
+  background:
+    radial-gradient(circle at 16% 0%, rgba(214,178,94,.07), transparent 26%),
+    linear-gradient(180deg, rgba(12,12,14,.94), rgba(8,8,10,.88));
+}
+
+/* Shared surface language */
+.tos-core-design-queue-premium :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]),
+.tos-core-workhub-premium :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]),
+.tos-core-team-premium :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]),
+.tos-core-team-performance-premium :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]) {
+  border-color: var(--tos-p04-line);
+}
+
+.tos-core-design-queue-premium > *,
+.tos-core-workhub-premium > *,
+.tos-core-team-premium > *,
+.tos-core-team-performance-premium > * {
+  min-width: 0;
+}
+
+/* Typography hierarchy */
+.tos-core-design-queue-premium :is(h1,h2),
+.tos-core-workhub-premium :is(h1,h2),
+.tos-core-team-premium :is(h1,h2),
+.tos-core-team-performance-premium :is(h1,h2) {
+  letter-spacing: -.025em;
+}
+
+.tos-core-design-queue-premium h2,
+.tos-core-workhub-premium h2,
+.tos-core-team-premium h2,
+.tos-core-team-performance-premium h2 {
+  text-wrap: balance;
+}
+
+/* Inputs / filters */
+.tos-core-design-queue-premium :is(input,select,textarea),
+.tos-core-workhub-premium :is(input,select,textarea),
+.tos-core-team-premium :is(input,select,textarea),
+.tos-core-team-performance-premium :is(input,select,textarea) {
+  transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease, transform .18s ease;
+}
+
+.tos-core-design-queue-premium :is(input,select,textarea):focus,
+.tos-core-workhub-premium :is(input,select,textarea):focus,
+.tos-core-team-premium :is(input,select,textarea):focus,
+.tos-core-team-performance-premium :is(input,select,textarea):focus {
+  border-color: rgba(214,178,94,.58) !important;
+  box-shadow: 0 0 0 4px rgba(214,178,94,.10) !important;
+  outline: none !important;
+}
+
+html.dark .tos-core-design-queue-premium :is(input,select,textarea),
+html.dark .tos-core-workhub-premium :is(input,select,textarea),
+html.dark .tos-core-team-premium :is(input,select,textarea),
+html.dark .tos-core-team-performance-premium :is(input,select,textarea) {
+  color-scheme: dark;
+}
+
+/* Tables */
+.tos-core-design-queue-premium table,
+.tos-core-workhub-premium table,
+.tos-core-team-premium table,
+.tos-core-team-performance-premium table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.tos-core-design-queue-premium thead,
+.tos-core-workhub-premium thead,
+.tos-core-team-premium thead,
+.tos-core-team-performance-premium thead {
+  backdrop-filter: blur(10px);
+}
+
+.tos-core-design-queue-premium tbody tr,
+.tos-core-workhub-premium tbody tr,
+.tos-core-team-premium tbody tr,
+.tos-core-team-performance-premium tbody tr {
+  transition: background-color .16s ease, transform .16s ease;
+}
+
+/* -------- Design Queue -------- */
+.tos-core-design-queue-premium {
+  padding: 1rem !important;
+  gap: .9rem;
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between {
+  border: 1px solid rgba(214,178,94,.20);
+  border-radius: 28px;
+  background: linear-gradient(145deg, rgba(255,253,248,.98), rgba(249,245,235,.84));
+  box-shadow: var(--tos-p04-shadow);
+  padding: 1rem 1.2rem !important;
+}
+
+html.dark .tos-core-design-queue-premium > .flex.flex-wrap.justify-between {
+  border-color: rgba(214,178,94,.16);
+  background: linear-gradient(145deg, rgba(18,18,20,.96), rgba(11,11,13,.94));
+  box-shadow: 0 18px 52px rgba(0,0,0,.26);
+}
+
+.tos-core-design-queue-premium > [class*="rounded"],
+.tos-core-design-queue-premium > section {
+  box-shadow: var(--tos-p04-shadow);
+}
+
+html.dark .tos-core-design-queue-premium > [class*="rounded"],
+html.dark .tos-core-design-queue-premium > section {
+  box-shadow: 0 18px 50px rgba(0,0,0,.22);
+}
+
+.tos-core-design-queue-premium .tos-smart-link-chip {
+  border-radius: 14px !important;
+}
+
+/* -------- Employee Work Hub -------- */
+.tos-core-workhub-premium {
+  display: grid;
+  gap: 1rem;
+}
+
+.tos-core-workhub-premium > section,
+.tos-core-workhub-premium > [class*="rounded-[30px]"],
+.tos-core-workhub-premium section > [class*="rounded-[30px]"] {
+  border-color: rgba(214,178,94,.16) !important;
+  box-shadow: var(--tos-p04-shadow) !important;
+}
+
+html.dark .tos-core-workhub-premium > section,
+html.dark .tos-core-workhub-premium > [class*="rounded-[30px]"],
+html.dark .tos-core-workhub-premium section > [class*="rounded-[30px]"] {
+  border-color: rgba(214,178,94,.14) !important;
+  box-shadow: 0 18px 52px rgba(0,0,0,.26) !important;
+}
+
+.tos-core-workhub-premium [class*="bg-slate-50"],
+.tos-core-workhub-premium [class*="bg-white/95"] {
+  background-image: linear-gradient(145deg, rgba(255,255,255,.94), rgba(250,247,239,.80));
+}
+
+html.dark .tos-core-workhub-premium [class*="bg-slate-50"],
+html.dark .tos-core-workhub-premium [class*="bg-white/95"] {
+  background-image: linear-gradient(145deg, rgba(24,24,27,.96), rgba(12,12,14,.96));
+}
+
+.tos-core-workhub-premium button:not([class*="red"]):not([class*="emerald"]):not([class*="violet"]):hover {
+  border-color: rgba(214,178,94,.38);
+}
+
+/* -------- Team Members -------- */
+.tos-core-team-premium {
+  display: grid;
+  gap: 1rem;
+}
+
+.tos-core-team-premium > .grid:first-of-type {
+  gap: .8rem !important;
+}
+
+.tos-core-team-premium > [class*="rounded"],
+.tos-core-team-premium > section,
+.tos-core-team-premium > .grid > [class*="rounded"] {
+  box-shadow: var(--tos-p04-shadow);
+}
+
+html.dark .tos-core-team-premium > [class*="rounded"],
+html.dark .tos-core-team-premium > section,
+html.dark .tos-core-team-premium > .grid > [class*="rounded"] {
+  box-shadow: 0 18px 50px rgba(0,0,0,.22);
+}
+
+.tos-core-team-premium article {
+  border-color: rgba(148,163,184,.16) !important;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+.tos-core-team-premium article:hover {
+  transform: translateY(-1px);
+  border-color: rgba(214,178,94,.34) !important;
+  box-shadow: 0 14px 36px rgba(42,35,20,.08);
+}
+
+html.dark .tos-core-team-premium article:hover {
+  box-shadow: 0 16px 38px rgba(0,0,0,.24);
+}
+
+/* -------- Team Performance -------- */
+.tos-core-team-performance-premium {
+  gap: 1rem !important;
+}
+
+.tos-core-team-performance-premium > [class*="rounded"],
+.tos-core-team-performance-premium > div > [class*="rounded"] {
+  border-color: rgba(214,178,94,.15);
+}
+
+.tos-core-team-performance-premium #team-performance-kpis > div {
+  min-height: 128px;
+  border-radius: 24px !important;
+  box-shadow: var(--tos-p04-shadow);
+}
+
+html.dark .tos-core-team-performance-premium #team-performance-kpis > div {
+  background: linear-gradient(145deg, rgba(23,23,26,.92), rgba(10,10,12,.94));
+  border-color: rgba(214,178,94,.14) !important;
+  box-shadow: 0 18px 48px rgba(0,0,0,.24);
+}
+
+.tos-core-team-performance-premium #team-performance-management-summary,
+.tos-core-team-performance-premium #team-performance-executive {
+  scroll-margin-top: 92px;
+}
+
+.tos-core-team-performance-premium table tbody tr:hover {
+  background: rgba(214,178,94,.08) !important;
+}
+
+html.dark .tos-core-team-performance-premium table tbody tr:hover {
+  background: rgba(214,178,94,.055) !important;
+}
+
+/* Shared premium focus / motion */
+@media (hover:hover) {
+  .tos-core-design-queue-premium button,
+  .tos-core-workhub-premium button,
+  .tos-core-team-premium button,
+  .tos-core-team-performance-premium button {
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background-color .16s ease;
+  }
+}
+
+@media (max-width: 767px) {
+  .tos-core-design-queue-premium {
+    padding: .65rem !important;
+  }
+
+  .tos-core-design-queue-premium > .flex.flex-wrap.justify-between {
+    border-radius: 22px;
+    padding: .8rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-core-design-queue-premium *,
+  .tos-core-workhub-premium *,
+  .tos-core-team-premium *,
+  .tos-core-team-performance-premium * {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
