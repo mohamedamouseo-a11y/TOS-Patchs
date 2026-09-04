@@ -1,0 +1,51 @@
+/* Phase 02 Projects — Light Final V14
+   Fixes the final two light-mode issues after V13 visual review.
+   Presentation only; dark mode intentionally untouched. */
+
+.tos-projects-ui03 {
+  --tos-projects-light-final-v14-runtime: 1;
+}
+
+/* Inspector status badge: force readable semantic green instead of washed/yellow text. */
+html:not(.dark) .tos-projects-ui03 .tos-project-inspector > div:first-child .tos-project-inspector-status {
+  color: #066b4f !important;
+  background: linear-gradient(180deg, #f2fff9 0%, #dcf8ec 100%) !important;
+  border-color: #a9dfc9 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.96), 0 6px 16px rgba(6,107,79,.10) !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  font-weight: 900 !important;
+}
+
+/* Project overview progress: restore a true premium circular gauge.
+   Keep the inline conic-gradient so the real progress percentage remains dynamic. */
+html:not(.dark) .tos-projects-ui03 .tos-project-overview-progress {
+  width: 66px !important;
+  height: 66px !important;
+  padding: 5px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(166,119,36,.42) !important;
+  box-shadow:
+    0 12px 28px rgba(94,64,19,.16),
+    0 0 0 4px rgba(215,181,106,.07),
+    inset 0 1px 0 rgba(255,255,255,.90) !important;
+  overflow: hidden !important;
+}
+
+html:not(.dark) .tos-projects-ui03 .tos-project-overview-progress-value {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 999px !important;
+  color: #fffdf8 !important;
+  background: radial-gradient(circle at 35% 25%, #2b3a44 0%, #131b21 58%, #090d10 100%) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+  letter-spacing: -.015em !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.42) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.09), inset 0 -8px 18px rgba(0,0,0,.14) !important;
+  opacity: 1 !important;
+}
+
+/* Dark mode deliberately untouched. */
