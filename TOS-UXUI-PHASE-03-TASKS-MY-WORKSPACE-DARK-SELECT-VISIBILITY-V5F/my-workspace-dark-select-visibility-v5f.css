@@ -1,0 +1,42 @@
+/* Phase 03 — Tasks / My Workspace Dark Native Select Visibility V5F
+   Screenshot-driven fix for unreadable Windows/Chrome native select popups.
+   Dark mode only. Presentation only. */
+
+.tos-my-workspace {
+  --tos-my-workspace-dark-select-v5f-runtime: 1;
+}
+
+html.dark .tos-my-workspace select {
+  color-scheme: dark !important;
+  color: #f8fafc !important;
+  background-color: #11161c !important;
+  border-color: rgba(203, 213, 225, 0.28) !important;
+  -webkit-text-fill-color: #f8fafc !important;
+}
+
+html.dark .tos-my-workspace select:focus {
+  color: #ffffff !important;
+  background-color: #151b22 !important;
+  border-color: rgba(216, 180, 102, 0.72) !important;
+  box-shadow: 0 0 0 3px rgba(216, 180, 102, 0.12) !important;
+}
+
+html.dark .tos-my-workspace select option,
+html.dark .tos-my-workspace select optgroup {
+  color: #f8fafc !important;
+  background: #18181b !important;
+  background-color: #18181b !important;
+  -webkit-text-fill-color: #f8fafc !important;
+}
+
+html.dark .tos-my-workspace select option:checked {
+  color: #111318 !important;
+  background: #e6c56f !important;
+  background-color: #e6c56f !important;
+  -webkit-text-fill-color: #111318 !important;
+}
+
+html.dark .tos-my-workspace select option:disabled {
+  color: #8b98a3 !important;
+  -webkit-text-fill-color: #8b98a3 !important;
+}
