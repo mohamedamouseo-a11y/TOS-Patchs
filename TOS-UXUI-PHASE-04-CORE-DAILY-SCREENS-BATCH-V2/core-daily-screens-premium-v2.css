@@ -1,0 +1,141 @@
+/* Phase 04 — Core Daily Screens Premium Batch V2
+   Screenshot-driven dark-mode corrections after V1 visual review.
+   Scope: Design Queue, Team Members, Employee Work Hub. Team Performance remains unchanged. */
+
+:root {
+  --tos-phase04-v2-runtime: 1;
+  --tos-p04-v2-obsidian: #0c0d0f;
+  --tos-p04-v2-titanium: #121316;
+  --tos-p04-v2-elevated: #18191d;
+  --tos-p04-v2-line: rgba(226, 197, 125, .14);
+  --tos-p04-v2-text: #f5f5f4;
+  --tos-p04-v2-muted: #a1a1aa;
+}
+
+/* ---------------- Design Queue: remove the white islands in Dark ---------------- */
+html.dark .tos-core-design-queue-premium > :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]) {
+  background-color: var(--tos-p04-v2-titanium) !important;
+  background-image: linear-gradient(145deg, rgba(24,25,29,.98), rgba(10,11,13,.98)) !important;
+  border-color: var(--tos-p04-v2-line) !important;
+  color: var(--tos-p04-v2-text) !important;
+  box-shadow: 0 18px 50px rgba(0,0,0,.30) !important;
+}
+
+html.dark .tos-core-design-queue-premium > :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]) :is([class~="bg-white"],[class*="bg-white/"],[class~="bg-zinc-50"],[class~="bg-slate-50"]) {
+  background-color: #101114 !important;
+  background-image: none !important;
+}
+
+html.dark .tos-core-design-queue-premium > :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]) :is([class~="text-zinc-950"],[class~="text-zinc-900"],[class~="text-zinc-800"],[class~="text-slate-950"],[class~="text-slate-900"],[class~="text-slate-800"]) {
+  color: var(--tos-p04-v2-text) !important;
+}
+
+html.dark .tos-core-design-queue-premium > :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]) :is([class~="text-zinc-700"],[class~="text-zinc-600"],[class~="text-zinc-500"],[class~="text-slate-700"],[class~="text-slate-600"],[class~="text-slate-500"]) {
+  color: #c4c4ca !important;
+}
+
+html.dark .tos-core-design-queue-premium > :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]) :is([class~="text-zinc-400"],[class~="text-slate-400"]) {
+  color: #8f929b !important;
+}
+
+html.dark .tos-core-design-queue-premium > :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]) :is(input,select,textarea) {
+  background-color: #17181c !important;
+  border-color: rgba(255,255,255,.12) !important;
+  color: #f4f4f5 !important;
+}
+
+html.dark .tos-core-design-queue-premium > :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]) :is(input,textarea)::placeholder {
+  color: #777b86 !important;
+}
+
+html.dark .tos-core-design-queue-premium > :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]) select option {
+  background: #15161a;
+  color: #f4f4f5;
+}
+
+html.dark .tos-core-design-queue-premium > :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]) thead {
+  background: #17181c !important;
+  color: #d4d4d8 !important;
+}
+
+/* Keep kanban columns visually separated without reintroducing white containers. */
+html.dark .tos-core-design-queue-premium > :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]) [class*="border-zinc-100"],
+html.dark .tos-core-design-queue-premium > :is(.rounded-2xl,.rounded-3xl,[class*="rounded-[2"],[class*="rounded-[3"]) [class*="border-slate-100"] {
+  border-color: rgba(255,255,255,.09) !important;
+}
+
+/* ---------------- Team Members: Departments table must be native Dark ---------------- */
+html.dark .tos-core-team-premium table {
+  background: #111216 !important;
+  border-color: rgba(255,255,255,.09) !important;
+}
+
+html.dark .tos-core-team-premium table thead {
+  background: #191a1f !important;
+  color: #c8cad1 !important;
+}
+
+html.dark .tos-core-team-premium table tbody,
+html.dark .tos-core-team-premium table tbody tr,
+html.dark .tos-core-team-premium table tbody td {
+  background: #111216 !important;
+  border-color: rgba(255,255,255,.075) !important;
+}
+
+html.dark .tos-core-team-premium table tbody tr:hover,
+html.dark .tos-core-team-premium table tbody tr:focus-within {
+  background: rgba(214,178,94,.055) !important;
+}
+
+html.dark .tos-core-team-premium table tbody td :is([class~="text-zinc-950"],[class~="text-zinc-900"],[class~="text-zinc-800"],[class~="text-slate-950"],[class~="text-slate-900"],[class~="text-slate-800"]) {
+  color: #f4f4f5 !important;
+}
+
+html.dark .tos-core-team-premium table tbody td :is([class~="text-zinc-700"],[class~="text-zinc-600"],[class~="text-zinc-500"],[class~="text-slate-700"],[class~="text-slate-600"],[class~="text-slate-500"]) {
+  color: #b5b7bf !important;
+}
+
+html.dark .tos-core-team-premium table tbody td :is([class~="text-zinc-400"],[class~="text-slate-400"]) {
+  color: #858995 !important;
+}
+
+/* Preserve semantic pills/buttons while removing explicit white table cells. */
+html.dark .tos-core-team-premium table tbody td[class*="bg-white"],
+html.dark .tos-core-team-premium table tbody tr[class*="bg-white"] {
+  background: #111216 !important;
+}
+
+/* ---------------- Employee Work Hub: restore heading hierarchy in Dark ---------------- */
+html.dark .tos-core-workhub-premium :is(h1,h2,h3) {
+  color: #fafafa !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.02);
+}
+
+html.dark .tos-core-workhub-premium :is(h1,h2,h3) + p {
+  color: #a7a8ae !important;
+}
+
+html.dark .tos-core-workhub-premium > section,
+html.dark .tos-core-workhub-premium > [class*="rounded-[30px]"],
+html.dark .tos-core-workhub-premium section > [class*="rounded-[30px]"] {
+  background-color: #111216 !important;
+}
+
+/* Inputs stay dark and legible without changing disabled/action semantics. */
+html.dark .tos-core-workhub-premium :is(input,select,textarea):not(:disabled) {
+  background-color: #17181c !important;
+  border-color: rgba(255,255,255,.12) !important;
+  color: #f4f4f5 !important;
+}
+
+html.dark .tos-core-workhub-premium :is(input,textarea)::placeholder {
+  color: #777b86 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-core-design-queue-premium *,
+  .tos-core-workhub-premium *,
+  .tos-core-team-premium * {
+    transition-duration: .01ms !important;
+  }
+}
