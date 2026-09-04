@@ -46,8 +46,9 @@ git -C "$ROOT" diff --cached --quiet || fail "Staged changes exist; stop" 10
 [ "$(git -C "$ROOT" rev-parse "HEAD:$PROJECTS_TARGET")" = "$EXPECTED_PROJECTS_HEAD_BLOB" ] || fail "Committed ProjectsPage.jsx baseline changed" 12
 [ "$(grep -Fxc "$IMPORT_LINE" "$ROOT/$MAIN_TARGET" || true)" = "1" ] || fail "Projects CSS import missing or duplicated" 13
 [ "$(grep -Fc -- "$V14_RUNTIME" "$ROOT/$CSS_TARGET" || true)" = "1" ] || fail "V14 runtime baseline missing" 14
-[ "$(grep -Fc 'tos-project-inspector-status' "$ROOT/$PROJECTS_TARGET" || true)" -ge 1 ] || fail "V14 inspector status hook missing" 15
-[ "$(grep -Fc 'tos-project-overview-progress' "$ROOT/$PROJECTS_TARGET" || true)" -ge 2 ] || fail "V14 overview progress hooks missing" 16
+grep -Fq 'tos-project-inspector-status' "$ROOT/$PROJECTS_TARGET" || fail "V14 inspector status hook missing" 15
+grep -Fq 'className="tos-project-overview-progress grid' "$ROOT/$PROJECTS_TARGET" || fail "V14 overview progress outer hook missing" 16
+grep -Fq 'className="tos-project-overview-progress-value grid' "$ROOT/$PROJECTS_TARGET" || fail "V14 overview progress value hook missing" 17
 
 STATUS="$(git -C "$ROOT" status --porcelain=v1 --untracked-files=all)"
 PATHS="$(printf '%s\n' "$STATUS" | sed '/^$/d' | cut -c4- | sort -u)"
@@ -55,16 +56,16 @@ EXPECTED_PATHS="$(printf '%s\n%s\n%s\n' "$MAIN_TARGET" "$PROJECTS_TARGET" "$CSS_
 [ "$PATHS" = "$EXPECTED_PATHS" ] || {
   echo "--- PRE-EXISTING STATUS ---"
   printf '%s\n' "$STATUS"
-  fail "Expected exact reviewed V14 working-tree paths only" 17
+  fail "Expected exact reviewed V14 working-tree paths only" 18
 }
 
 V15_COUNT="$(grep -Fc -- "$V15_RUNTIME" "$ROOT/$CSS_TARGET" || true)"
-[ "$V15_COUNT" -le 1 ] || fail "Duplicate V15 runtime sentinel" 18
+[ "$V15_COUNT" -le 1 ] || fail "Duplicate V15 runtime sentinel" 19
 
 if [ "$V15_COUNT" = "0" ]; then
   CURRENT_SHA="$(sha256sum "$ROOT/$CSS_TARGET" | awk '{print $1}')"
   echo "BASELINE_CSS_SHA256=$CURRENT_SHA"
-  [ "$CURRENT_SHA" = "$EXPECTED_V14_CSS_SHA256" ] || fail "Projects CSS is not exact reviewed V14 baseline" 19
+  [ "$CURRENT_SHA" = "$EXPECTED_V14_CSS_SHA256" ] || fail "Projects CSS is not exact reviewed V14 baseline" 20
 fi
 
 python3 - "$ROOT/$PROJECTS_TARGET" <<'PY'
@@ -93,10 +94,10 @@ if 'id="tos-project-overview-progress"' not in text:
 path.write_text(text)
 PY
 
-grep -Fq 'id="tos-project-inspector-status-anchor"' "$ROOT/$PROJECTS_TARGET" || fail "V15 inspector status anchor missing" 20
-grep -Fq 'id="tos-project-overview-progress"' "$ROOT/$PROJECTS_TARGET" || fail "V15 overview progress id missing" 21
-grep -Fq 'id="tos-project-overview-progress-value"' "$ROOT/$PROJECTS_TARGET" || fail "V15 overview progress value id missing" 22
-grep -Fq '"--tos-project-progress": `${selectedProgress}%`' "$ROOT/$PROJECTS_TARGET" || fail "V15 dynamic progress custom property missing" 23
+grep -Fq 'id="tos-project-inspector-status-anchor"' "$ROOT/$PROJECTS_TARGET" || fail "V15 inspector status anchor missing" 21
+grep -Fq 'id="tos-project-overview-progress"' "$ROOT/$PROJECTS_TARGET" || fail "V15 overview progress id missing" 22
+grep -Fq 'id="tos-project-overview-progress-value"' "$ROOT/$PROJECTS_TARGET" || fail "V15 overview progress value id missing" 23
+grep -Fq '"--tos-project-progress": `${selectedProgress}%`' "$ROOT/$PROJECTS_TARGET" || fail "V15 dynamic progress custom property missing" 24
 
 if [ "$V15_COUNT" = "0" ]; then
   printf '\n' >> "$ROOT/$CSS_TARGET"
@@ -106,7 +107,7 @@ else
   PATCH_ACTION="VALIDATED_EXISTING_LIGHT_VISIBILITY_V15"
 fi
 
-[ "$(grep -Fc -- "$V15_RUNTIME" "$ROOT/$CSS_TARGET" || true)" = "1" ] || fail "V15 runtime sentinel missing in source" 24
+[ "$(grep -Fc -- "$V15_RUNTIME" "$ROOT/$CSS_TARGET" || true)" = "1" ] || fail "V15 runtime sentinel missing in source" 25
 
 git -C "$ROOT" diff --check -- "$MAIN_TARGET" "$PROJECTS_TARGET" "$CSS_TARGET"
 
@@ -114,33 +115,33 @@ cd "$ROOT/frontend"
 npm run build
 cd "$ROOT"
 
-[ -f "$DIST/index.html" ] || fail "Built dist index missing" 25
-grep -RFlq -- "$V15_RUNTIME" "$DIST/assets" || fail "V15 runtime sentinel missing from dist assets" 26
-grep -RFlq 'tos-project-inspector-status-anchor' "$DIST/assets" || fail "V15 status anchor missing from dist assets" 27
-grep -RFlq 'tos-project-overview-progress-value' "$DIST/assets" || fail "V15 overview progress hook missing from dist assets" 28
-grep -RFlq -- '--tos-project-progress' "$DIST/assets" || fail "V15 dynamic progress variable missing from dist assets" 29
+[ -f "$DIST/index.html" ] || fail "Built dist index missing" 26
+grep -RFlq -- "$V15_RUNTIME" "$DIST/assets" || fail "V15 runtime sentinel missing from dist assets" 27
+grep -RFlq 'tos-project-inspector-status-anchor' "$DIST/assets" || fail "V15 status anchor missing from dist assets" 28
+grep -RFlq 'tos-project-overview-progress-value' "$DIST/assets" || fail "V15 overview progress hook missing from dist assets" 29
+grep -RFlq -- '--tos-project-progress' "$DIST/assets" || fail "V15 dynamic progress variable missing from dist assets" 30
 
 rm -rf "$STAGE"
 mkdir -p "$STAGE"
 cp -a "$DIST/." "$STAGE/"
-[ -f "$STAGE/index.html" ] || fail "Staged index missing" 30
-grep -RFlq -- "$V15_RUNTIME" "$STAGE/assets" || fail "V15 runtime sentinel missing from staged assets" 31
+[ -f "$STAGE/index.html" ] || fail "Staged index missing" 31
+grep -RFlq -- "$V15_RUNTIME" "$STAGE/assets" || fail "V15 runtime sentinel missing from staged assets" 32
 
 mv "$LIVE" "$BACKUP"
 if ! mv "$STAGE" "$LIVE"; then
   mv "$BACKUP" "$LIVE" || true
-  fail "Failed to activate V15 live build; rollback attempted" 32
+  fail "Failed to activate V15 live build; rollback attempted" 33
 fi
 
 if ! grep -RFlq -- "$V15_RUNTIME" "$LIVE/assets"; then
   rm -rf "$LIVE"
   mv "$BACKUP" "$LIVE" || true
-  fail "Live V15 runtime sentinel missing; rolled back" 33
+  fail "Live V15 runtime sentinel missing; rolled back" 34
 fi
 
 FINAL_STATUS="$(git -C "$ROOT" status --porcelain=v1 --untracked-files=all)"
 FINAL_PATHS="$(printf '%s\n' "$FINAL_STATUS" | sed '/^$/d' | cut -c4- | sort -u)"
-[ "$FINAL_PATHS" = "$EXPECTED_PATHS" ] || fail "Unexpected TOS files changed" 34
+[ "$FINAL_PATHS" = "$EXPECTED_PATHS" ] || fail "Unexpected TOS files changed" 35
 
 FINAL_SHA="$(sha256sum "$ROOT/$CSS_TARGET" | awk '{print $1}')"
 echo "PHASE02_PROJECTS_LIGHT_VISIBILITY_LOCK_V15=PASS"
