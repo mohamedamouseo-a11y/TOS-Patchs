@@ -1,0 +1,450 @@
+/* Phase 02 Projects — Obsidian Elite V8
+   Ultra-premium light/dark refinement with stronger contrast and a rebuilt Archive control.
+   Presentation only; no business logic. */
+
+.tos-projects-ui03 {
+  --tos-projects-obsidian-elite-v8-runtime: 1;
+  --v8-ink: #11100e;
+  --v8-ivory: #fffdfa;
+  --v8-ivory-2: #f8f4ed;
+  --v8-ivory-3: #f1eadf;
+  --v8-bronze-line: #decba7;
+  --v8-light-muted: #6f6558;
+  --v8-light-soft: #8a7f70;
+  --v8-obsidian: #06090c;
+  --v8-graphite: #0a1014;
+  --v8-titanium: #101920;
+  --v8-titanium-2: #152129;
+  --v8-platinum-line: rgba(226, 233, 238, .14);
+  --v8-platinum-line-strong: rgba(226, 233, 238, .23);
+  --v8-platinum: #eef3f6;
+  --v8-secondary: #c8d1d7;
+  --v8-muted: #9aa7af;
+  --v8-champagne: #d8b56a;
+  --v8-champagne-bright: #f1d58f;
+  --v8-champagne-deep: #9d7128;
+}
+
+/* ------------------------------------------------------------------ */
+/* LIGHT MODE — PORCELAIN / IVORY / CHAMPAGNE                        */
+/* ------------------------------------------------------------------ */
+
+.tos-projects-ui03 {
+  color: var(--v8-ink);
+}
+
+.tos-projects-kpi-strip > * {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(206, 181, 137, .52) !important;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.995), rgba(250,247,241,.99)) !important;
+  box-shadow:
+    0 18px 48px rgba(70, 50, 22, .075),
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 rgba(151,116,61,.035) !important;
+}
+
+.tos-projects-kpi-strip > *::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, rgba(255,255,255,.72), transparent 32%),
+    radial-gradient(circle at 100% 0%, rgba(216,181,106,.07), transparent 40%);
+}
+
+.tos-projects-kpi-strip [class*="text-zinc-950"],
+.tos-projects-kpi-strip [class*="text-zinc-900"],
+.tos-projects-kpi-strip [class*="text-zinc-800"] {
+  color: #17130e !important;
+}
+
+.tos-projects-kpi-strip [class*="text-zinc-600"],
+.tos-projects-kpi-strip [class*="text-zinc-500"] {
+  color: #5f5548 !important;
+}
+
+.tos-projects-kpi-strip [class*="text-zinc-400"] {
+  color: #796e60 !important;
+}
+
+/* Main toolbar becomes a precise executive command console. */
+.tos-projects-command-center {
+  position: relative;
+  isolation: isolate;
+  border-color: rgba(195, 151, 76, .36) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.995), rgba(248,244,237,.985)) !important;
+  box-shadow:
+    0 24px 68px rgba(73, 52, 20, .10),
+    inset 0 1px 0 rgba(255,255,255,1),
+    0 0 0 1px rgba(216,181,106,.045) !important;
+}
+
+.tos-projects-command-center::before {
+  content: "";
+  position: absolute;
+  inset: 0 7% auto;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(211,170,92,.72), rgba(211,170,92,.24), transparent);
+}
+
+.tos-projects-search,
+.tos-projects-sort {
+  color: #211b14 !important;
+  border-color: rgba(179, 157, 121, .38) !important;
+  background: linear-gradient(180deg, #fff 0%, #fbf8f3 100%) !important;
+  box-shadow: inset 0 1px 2px rgba(77,55,25,.035), 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+.tos-projects-search::placeholder {
+  color: #8b8175 !important;
+  opacity: 1 !important;
+}
+
+.tos-projects-filter-toggle,
+.tos-projects-export-action {
+  color: #2c251d !important;
+  border-color: rgba(178,157,123,.38) !important;
+  background: linear-gradient(180deg, #fff 0%, #f8f4ee 100%) !important;
+  box-shadow: 0 7px 18px rgba(71,50,21,.055), inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+.tos-projects-filter-toggle:hover,
+.tos-projects-export-action:hover {
+  border-color: rgba(183,135,55,.52) !important;
+  background: #fffdf9 !important;
+  transform: translateY(-1px);
+}
+
+/* Archive is rebuilt as a premium vault switch rather than a generic toggle. */
+.tos-projects-archive-toggle {
+  min-width: 176px !important;
+  height: 44px !important;
+  gap: 14px;
+  color: #282119 !important;
+  border-color: rgba(179,156,119,.42) !important;
+  background:
+    linear-gradient(180deg, #fff 0%, #f7f2ea 100%) !important;
+  box-shadow:
+    0 9px 22px rgba(73,51,20,.07),
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 rgba(126,91,37,.04) !important;
+}
+
+.tos-projects-archive-toggle > span:first-child {
+  letter-spacing: -.01em;
+  color: #2e271f !important;
+}
+
+.tos-projects-archive-toggle > span:first-child svg {
+  padding: 4px;
+  width: 26px;
+  height: 26px;
+  border-radius: 9px;
+  color: #8f6928 !important;
+  background: linear-gradient(145deg, #fffaf0, #efe2c8);
+  border: 1px solid rgba(186,145,76,.28);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.95);
+}
+
+.tos-projects-archive-switch {
+  width: 46px !important;
+  height: 24px !important;
+  border: 1px solid rgba(108,96,80,.18);
+  background: linear-gradient(180deg, #ddd6cc, #cfc7bb) !important;
+  box-shadow: inset 0 2px 4px rgba(51,42,31,.12), 0 1px 0 rgba(255,255,255,.8);
+}
+
+.tos-projects-archive-knob {
+  top: 3px !important;
+  width: 18px !important;
+  height: 18px !important;
+  background: linear-gradient(145deg, #fff, #ede8e1) !important;
+  border: 1px solid rgba(98,84,65,.12);
+  box-shadow: 0 2px 7px rgba(45,35,22,.18), inset 0 1px 0 #fff !important;
+}
+
+.tos-projects-archive-toggle[data-active="true"] {
+  color: #f8f4ec !important;
+  border-color: rgba(216,181,106,.54) !important;
+  background: linear-gradient(145deg, #19150f 0%, #2a2012 100%) !important;
+  box-shadow: 0 10px 28px rgba(91,63,20,.16), inset 0 1px 0 rgba(255,236,191,.10) !important;
+}
+
+.tos-projects-archive-toggle[data-active="true"] > span:first-child {
+  color: #fff8e9 !important;
+}
+
+.tos-projects-archive-toggle[data-active="true"] .tos-projects-archive-switch {
+  background: linear-gradient(90deg, #9d7128, #d8b56a) !important;
+  border-color: rgba(216,181,106,.48);
+}
+
+/* Champagne metal primary CTA. */
+.tos-projects-primary-cta {
+  min-width: 142px;
+  color: #171108 !important;
+  border-color: rgba(166,118,38,.52) !important;
+  background:
+    linear-gradient(135deg, #f5dd9c 0%, #deb968 38%, #c59038 72%, #a97425 100%) !important;
+  box-shadow:
+    0 12px 28px rgba(169,117,32,.20),
+    inset 0 1px 0 rgba(255,255,255,.58),
+    inset 0 -1px 0 rgba(102,67,14,.18) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.20);
+}
+
+.tos-projects-primary-cta:hover {
+  transform: translateY(-1px);
+  filter: saturate(1.04) brightness(1.02);
+  box-shadow: 0 16px 34px rgba(169,117,32,.24), inset 0 1px 0 rgba(255,255,255,.64) !important;
+}
+
+.tos-projects-filters-shell {
+  border-color: rgba(194,169,128,.34) !important;
+  background: linear-gradient(180deg, rgba(250,247,241,.98), rgba(246,241,232,.96)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.88), 0 10px 28px rgba(65,45,17,.035) !important;
+}
+
+.tos-projects-filters-shell label,
+.tos-projects-filters-shell [class*="text-zinc-500"],
+.tos-projects-filters-shell [class*="text-zinc-400"] {
+  color: #655a4d !important;
+}
+
+/* Light list/inspector contrast audit: no disappearing text in ivory tiles. */
+.tos-project-list-shell,
+.tos-project-inspector {
+  border-color: rgba(202,178,136,.42) !important;
+}
+
+.tos-project-list-shell [class*="text-zinc-700"],
+.tos-project-list-shell [class*="text-zinc-600"],
+.tos-project-inspector [class*="text-zinc-700"],
+.tos-project-inspector [class*="text-zinc-600"] {
+  color: #493f34 !important;
+}
+
+.tos-project-list-shell [class*="text-zinc-500"],
+.tos-project-list-shell [class*="text-zinc-400"],
+.tos-project-inspector [class*="text-zinc-500"],
+.tos-project-inspector [class*="text-zinc-400"] {
+  color: #706558 !important;
+}
+
+.tos-project-list-row--selected {
+  background: linear-gradient(90deg, rgba(216,181,106,.18) 0%, #fffdf9 9%, #fbf7f0 100%) !important;
+  border-color: rgba(192,145,61,.34) !important;
+  color: #17130e !important;
+  box-shadow: inset 4px 0 0 #c99842, 0 10px 26px rgba(112,78,22,.065) !important;
+}
+
+.tos-project-list-row--selected h3,
+.tos-project-list-row--selected [class*="text-zinc-"] {
+  color: #211a12 !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* DARK MODE — OBSIDIAN / TITANIUM / PLATINUM / CHAMPAGNE            */
+/* ------------------------------------------------------------------ */
+
+html.dark .tos-projects-ui03 {
+  color: var(--v8-platinum) !important;
+}
+
+html.dark .tos-projects-ui03::before {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(216,181,106,.095), transparent 24%),
+    radial-gradient(circle at 94% 0%, rgba(196,211,222,.045), transparent 25%),
+    linear-gradient(180deg, rgba(6,9,12,.72), transparent 38%) !important;
+}
+
+html.dark .tos-projects-kpi-strip > * {
+  border-color: var(--v8-platinum-line) !important;
+  background:
+    linear-gradient(145deg, rgba(18,27,33,.99), rgba(7,12,16,.998)) !important;
+  box-shadow:
+    0 28px 76px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.055),
+    inset 0 -1px 0 rgba(0,0,0,.38) !important;
+}
+
+html.dark .tos-projects-kpi-strip > *:nth-child(1) { border-left-color: rgba(248,113,113,.46) !important; }
+html.dark .tos-projects-kpi-strip > *:nth-child(2) { border-left-color: rgba(216,181,106,.52) !important; }
+html.dark .tos-projects-kpi-strip > *:nth-child(3) { border-left-color: rgba(52,211,153,.46) !important; }
+html.dark .tos-projects-kpi-strip > *:nth-child(4) { border-left-color: rgba(167,139,250,.45) !important; }
+
+html.dark .tos-projects-kpi-strip [class*="text-zinc-950"],
+html.dark .tos-projects-kpi-strip [class*="text-zinc-900"],
+html.dark .tos-projects-kpi-strip [class*="text-zinc-800"] {
+  color: #f7fafb !important;
+}
+
+html.dark .tos-projects-kpi-strip [class*="text-zinc-600"],
+html.dark .tos-projects-kpi-strip [class*="text-zinc-500"] {
+  color: #c2ccd2 !important;
+}
+
+html.dark .tos-projects-kpi-strip [class*="text-zinc-400"] {
+  color: #9eabb3 !important;
+}
+
+html.dark .tos-projects-command-center {
+  border-color: rgba(216,181,106,.22) !important;
+  background:
+    linear-gradient(145deg, rgba(17,26,32,.995), rgba(7,12,16,.998)) !important;
+  box-shadow:
+    0 34px 94px rgba(0,0,0,.48),
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 0 0 1px rgba(216,181,106,.025) !important;
+}
+
+html.dark .tos-projects-search,
+html.dark .tos-projects-sort {
+  color: #edf2f5 !important;
+  border-color: rgba(226,233,238,.15) !important;
+  background: linear-gradient(180deg, #070c10 0%, #0a1116 100%) !important;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.52), 0 1px 0 rgba(255,255,255,.018) !important;
+}
+
+html.dark .tos-projects-search::placeholder { color: #89969e !important; }
+
+html.dark .tos-projects-filter-toggle,
+html.dark .tos-projects-export-action {
+  color: #edf2f5 !important;
+  border-color: rgba(226,233,238,.14) !important;
+  background: linear-gradient(180deg, #111a20, #0a1116) !important;
+  box-shadow: 0 9px 24px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+
+html.dark .tos-projects-filter-toggle:hover,
+html.dark .tos-projects-export-action:hover {
+  border-color: rgba(216,181,106,.34) !important;
+  background: linear-gradient(180deg, #152129, #0c1419) !important;
+}
+
+html.dark .tos-projects-archive-toggle {
+  color: #e9eef1 !important;
+  border-color: rgba(226,233,238,.16) !important;
+  background: linear-gradient(145deg, #111a20 0%, #090f13 100%) !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+html.dark .tos-projects-archive-toggle > span:first-child { color: #edf2f5 !important; }
+html.dark .tos-projects-archive-toggle > span:first-child svg {
+  color: #e6c47b !important;
+  background: linear-gradient(145deg, rgba(216,181,106,.13), rgba(216,181,106,.045));
+  border-color: rgba(216,181,106,.23);
+}
+
+html.dark .tos-projects-archive-switch {
+  border-color: rgba(226,233,238,.12);
+  background: linear-gradient(180deg, #26333b, #19242b) !important;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,.42), 0 1px 0 rgba(255,255,255,.025);
+}
+
+html.dark .tos-projects-archive-knob {
+  background: linear-gradient(145deg, #d8e0e5, #9ca8af) !important;
+  border-color: rgba(255,255,255,.16);
+  box-shadow: 0 2px 8px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.36) !important;
+}
+
+html.dark .tos-projects-archive-toggle[data-active="true"] {
+  color: #171108 !important;
+  border-color: rgba(240,213,143,.54) !important;
+  background: linear-gradient(135deg, #f0d58f 0%, #d3ab59 52%, #a87627 100%) !important;
+  box-shadow: 0 14px 34px rgba(216,181,106,.20), inset 0 1px 0 rgba(255,255,255,.30) !important;
+}
+
+html.dark .tos-projects-archive-toggle[data-active="true"] > span:first-child { color: #171108 !important; }
+html.dark .tos-projects-archive-toggle[data-active="true"] > span:first-child svg {
+  color: #171108 !important;
+  background: rgba(255,255,255,.20);
+  border-color: rgba(255,255,255,.26);
+}
+
+html.dark .tos-projects-primary-cta {
+  color: #151008 !important;
+  border-color: rgba(241,213,143,.55) !important;
+  background: linear-gradient(135deg, #f5dda0 0%, #deb968 38%, #c38e35 74%, #9f7025 100%) !important;
+  box-shadow: 0 14px 34px rgba(216,181,106,.20), inset 0 1px 0 rgba(255,255,255,.42), inset 0 -1px 0 rgba(90,57,11,.22) !important;
+}
+
+html.dark .tos-projects-filters-shell {
+  border-color: rgba(226,233,238,.10) !important;
+  background: linear-gradient(180deg, rgba(13,21,26,.94), rgba(7,13,17,.96)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 12px 36px rgba(0,0,0,.18) !important;
+}
+
+html.dark .tos-projects-filters-shell label,
+html.dark .tos-projects-filters-shell [class*="text-zinc-500"],
+html.dark .tos-projects-filters-shell [class*="text-zinc-400"] {
+  color: #aeb9c0 !important;
+}
+
+html.dark .tos-project-list-shell {
+  background: linear-gradient(180deg, rgba(10,16,20,.995), rgba(6,11,14,.998)) !important;
+  border-color: rgba(226,233,238,.12) !important;
+  box-shadow: 0 30px 86px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+html.dark .tos-project-list-row {
+  background: rgba(8,14,18,.58) !important;
+  border-color: rgba(226,233,238,.075) !important;
+}
+
+html.dark .tos-project-list-row:hover {
+  background: linear-gradient(90deg, rgba(216,181,106,.04), rgba(17,27,33,.82) 14%, rgba(9,15,19,.82)) !important;
+}
+
+/* Dedicated class only: no amber utility classes remain on selected row after V8. */
+html.dark .tos-project-list-row--selected {
+  background: linear-gradient(90deg, rgba(216,181,106,.115) 0%, #111b21 9%, #0a1115 52%, #070c10 100%) !important;
+  border-color: rgba(216,181,106,.28) !important;
+  color: #f5f8f9 !important;
+  box-shadow: inset 4px 0 0 var(--v8-champagne-bright), 0 0 0 1px rgba(216,181,106,.04), 0 14px 38px rgba(0,0,0,.22) !important;
+}
+
+html.dark .tos-project-list-row--selected h3,
+html.dark .tos-project-list-row--selected [class*="text-zinc-"] {
+  color: #f4f7f9 !important;
+}
+
+html.dark .tos-project-list-row--selected p { color: #bec8ce !important; }
+
+html.dark .tos-project-inspector {
+  border-color: rgba(216,181,106,.22) !important;
+  background: linear-gradient(180deg, #0a1014 0%, #060b0e 100%) !important;
+  box-shadow: 0 38px 112px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+
+html.dark .tos-project-inspector > div:first-child {
+  background:
+    linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px),
+    radial-gradient(circle at 10% 0%, rgba(216,181,106,.13), transparent 34%),
+    linear-gradient(145deg, #07101b 0%, #0a1723 50%, #070d13 100%) !important;
+  background-size: 30px 30px, 30px 30px, auto, auto !important;
+}
+
+html.dark .tos-project-inspector [class*="text-zinc-400"] { color: #a9b5bc !important; }
+html.dark .tos-project-inspector [class*="text-zinc-500"],
+html.dark .tos-project-inspector [class*="text-zinc-600"] { color: #c2ccd2 !important; }
+
+html.dark .tos-project-inspector [class*="bg-zinc-950"],
+html.dark .tos-project-inspector [class*="bg-white/[0.025]"] {
+  background: linear-gradient(180deg, #0d151a, #091014) !important;
+  border-color: rgba(226,233,238,.12) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-projects-ui03 *,
+  .tos-projects-ui03 *::before,
+  .tos-projects-ui03 *::after {
+    transition-duration: .01ms !important;
+  }
+}
