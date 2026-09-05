@@ -1,0 +1,242 @@
+/* Phase 04.1 — Design Queue Flagship V5
+   Screenshot-driven couture refinement layered over V4.
+   Design Queue only. Visual-only. */
+
+:root { --tos-dq-v5-runtime: 1; }
+
+/* ---------- KPI deck: executive horizontal tiles ---------- */
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between {
+  gap: .65rem !important;
+  padding: .72rem !important;
+  border-radius: 28px !important;
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div {
+  --dq-accent: #b8b8bd;
+  position: relative;
+  display: grid !important;
+  grid-template-columns: 56px minmax(0,1fr) !important;
+  grid-template-rows: auto auto !important;
+  align-items: center !important;
+  column-gap: .72rem !important;
+  min-width: 0 !important;
+  min-height: 86px !important;
+  padding: .72rem .78rem !important;
+  border: 1px solid color-mix(in srgb, var(--dq-accent) 18%, rgba(120,113,98,.13)) !important;
+  border-radius: 20px !important;
+  text-align: start !important;
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--dq-accent) 11%, transparent), transparent 44%),
+    linear-gradient(150deg, rgba(255,255,255,.96), rgba(248,246,240,.86)) !important;
+  box-shadow: 0 10px 26px rgba(40,32,18,.045), inset 0 1px 0 rgba(255,255,255,.74) !important;
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:nth-child(1){--dq-accent:#7f8189}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:nth-child(2){--dq-accent:#ef4444}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:nth-child(3){--dq-accent:#f59e0b}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:nth-child(4){--dq-accent:#3b82f6}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:nth-child(5){--dq-accent:#8b5cf6}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:nth-child(6){--dq-accent:#10b981}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div::before {
+  content:"";
+  position:absolute;
+  inset-inline: 12px;
+  top:0;
+  height:2px;
+  border-radius: 0 0 999px 999px;
+  background: linear-gradient(90deg, transparent, var(--dq-accent), transparent);
+  opacity:.72;
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div .relative.grid.h-16.w-16 {
+  grid-column:1 !important;
+  grid-row:1 / 3 !important;
+  width:52px !important;
+  height:52px !important;
+  justify-self:start !important;
+  filter: drop-shadow(0 8px 14px rgba(0,0,0,.08));
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div .relative.grid.h-16.w-16 > div {
+  width:36px !important;
+  height:36px !important;
+  font-size:.9rem !important;
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div > div:nth-child(2){
+  grid-column:2 !important;
+  grid-row:1 !important;
+  align-self:end !important;
+  margin:0 !important;
+  font-size:.72rem !important;
+  line-height:1.2 !important;
+  text-align:start !important;
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div > div:nth-child(3){
+  grid-column:2 !important;
+  grid-row:2 !important;
+  align-self:start !important;
+  margin-top:.18rem !important;
+  font-size:.56rem !important;
+  text-align:start !important;
+}
+
+/* ---------- Capacity: compact executive rail ---------- */
+.tos-core-design-queue-premium > .overflow-hidden.p-0 {
+  border-radius: 22px !important;
+}
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child {
+  min-height: 58px !important;
+  padding: .68rem 1rem !important;
+}
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child::before {
+  height:28px !important;
+  width:3px !important;
+  margin-inline-end:.65rem !important;
+}
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child .text-sm {
+  font-size:.82rem !important;
+}
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child .mt-1 {
+  margin-top:.18rem !important;
+  font-size:.58rem !important;
+}
+
+/* ---------- Filters: integrated command strip ---------- */
+.tos-core-design-queue-premium > .p-3 {
+  padding:.62rem .7rem !important;
+  border-radius:20px !important;
+}
+.tos-core-design-queue-premium > .p-3 > .grid { gap:.5rem !important; }
+.tos-core-design-queue-premium > .p-3 :is(input,select),
+.tos-core-design-queue-premium > .p-3 button {
+  min-height:40px !important;
+  height:40px !important;
+  border-radius:12px !important;
+}
+.tos-core-design-queue-premium > .p-3 > .mt-2\.5 {
+  margin-top:.48rem !important;
+  padding-top:.48rem !important;
+  font-size:.58rem !important;
+}
+
+/* ---------- Board: editorial frame ---------- */
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] {
+  border-radius:26px !important;
+}
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between {
+  min-height:58px !important;
+  padding:.72rem 1rem !important;
+  border-top:0 !important;
+  border-bottom:1px solid rgba(216,179,90,.16) !important;
+}
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between .text-sm {
+  font-size:.86rem !important;
+}
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between > div:last-child {
+  border:1px solid rgba(216,179,90,.13);
+  border-radius:999px;
+  padding:.34rem .58rem;
+  background:rgba(216,179,90,.045);
+}
+
+/* ---------- Status columns: individual identity ---------- */
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div {
+  --col-accent:#d9a441;
+  --col-tint:rgba(217,164,65,.035);
+  border-radius:20px !important;
+  border-color:color-mix(in srgb, var(--col-accent) 18%, rgba(120,113,98,.13)) !important;
+  background:
+    linear-gradient(180deg, var(--col-tint), transparent 18%),
+    rgba(255,255,255,.58) !important;
+  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--col-accent) 78%, transparent), 0 10px 24px rgba(35,29,17,.035) !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(1){--col-accent:#d9a441;--col-tint:rgba(217,164,65,.045)}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(2){--col-accent:#4f8df7;--col-tint:rgba(79,141,247,.04)}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(3){--col-accent:#8b5cf6;--col-tint:rgba(139,92,246,.04)}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(4){--col-accent:#f97316;--col-tint:rgba(249,115,22,.04)}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(5){--col-accent:#10b981;--col-tint:rgba(16,185,129,.04)}
+
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div > div:first-child {
+  min-height:54px !important;
+  padding:.68rem .72rem !important;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--col-accent) 6%, rgba(255,255,255,.88)), rgba(255,255,255,.72)) !important;
+  border-bottom:1px solid color-mix(in srgb, var(--col-accent) 12%, rgba(120,113,98,.11)) !important;
+}
+
+/* ---------- Cards: status-native luxury, not gold-everywhere ---------- */
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] {
+  border-radius:16px !important;
+  padding:.72rem !important;
+  border-color:rgba(120,113,98,.13) !important;
+  background:linear-gradient(150deg, rgba(255,255,255,.97), rgba(249,247,242,.92)) !important;
+  box-shadow:0 6px 16px rgba(30,25,16,.035) !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\] button.w-full.rounded-\[16px\]::before { background:var(--col-accent) !important; }
+/* Correct selector retained separately for browsers that require escaped bracket parsing. */
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\]::before {
+  background:linear-gradient(180deg, var(--col-accent), color-mix(in srgb, var(--col-accent) 18%, transparent)) !important;
+  opacity:.82 !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\]:hover {
+  transform:translateY(-2px) scale(1.003) !important;
+  border-color:color-mix(in srgb, var(--col-accent) 30%, rgba(120,113,98,.13)) !important;
+  box-shadow:0 12px 26px color-mix(in srgb, var(--col-accent) 9%, rgba(0,0,0,.06)) !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] .line-clamp-2 {
+  font-size:.82rem !important;
+  line-height:1.34 !important;
+}
+
+/* ---------- Dark couture ---------- */
+html.dark .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div {
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--dq-accent) 12%, transparent), transparent 46%),
+    linear-gradient(150deg, rgba(23,25,30,.97), rgba(12,13,16,.96)) !important;
+  border-color:color-mix(in srgb, var(--dq-accent) 18%, rgba(255,255,255,.07)) !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+html.dark .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:hover {
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--dq-accent) 16%, transparent), transparent 46%),
+    linear-gradient(150deg, rgba(27,29,34,.99), rgba(13,14,17,.98)) !important;
+}
+html.dark .tos-core-design-queue-premium > .overflow-hidden.p-0,
+html.dark .tos-core-design-queue-premium > .p-3,
+html.dark .tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] {
+  background:linear-gradient(145deg, rgba(17,19,23,.99), rgba(8,9,11,.995)) !important;
+  border-color:rgba(216,179,90,.12) !important;
+  box-shadow:0 20px 48px rgba(0,0,0,.28) !important;
+}
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--col-accent) 4%, transparent), transparent 18%),
+    #0c0e11 !important;
+  border-color:color-mix(in srgb, var(--col-accent) 14%, rgba(255,255,255,.07)) !important;
+}
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div > div:first-child {
+  background:linear-gradient(180deg, color-mix(in srgb, var(--col-accent) 5%, #111318), #0f1114) !important;
+  border-bottom-color:color-mix(in srgb, var(--col-accent) 12%, rgba(255,255,255,.06)) !important;
+}
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] {
+  background:linear-gradient(150deg, rgba(19,21,25,.98), rgba(12,14,17,.99)) !important;
+  border-color:rgba(255,255,255,.075) !important;
+  box-shadow:0 7px 18px rgba(0,0,0,.20) !important;
+}
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\]:hover {
+  border-color:color-mix(in srgb, var(--col-accent) 28%, rgba(255,255,255,.08)) !important;
+  box-shadow:0 14px 30px color-mix(in srgb, var(--col-accent) 8%, rgba(0,0,0,.28)) !important;
+}
+html.dark .tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between {
+  border-top:0 !important;
+  border-bottom-color:rgba(216,179,90,.12) !important;
+  background:linear-gradient(180deg, rgba(255,255,255,.018), transparent) !important;
+}
+
+@media (max-width: 1279px) {
+  .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div {
+    flex:1 1 calc(33.333% - .65rem) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-core-design-queue-premium * { transition-duration:.01ms !important; }
+}
