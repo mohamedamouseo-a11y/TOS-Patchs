@@ -11,6 +11,7 @@ PATCH_REPO = PATCH_DIR.parent
 V6_SOURCE = PATCH_REPO / "TOS-UXUI-PHASE-04-1-DESIGN-QUEUE-FLAGSHIP-V6" / "design-queue-flagship-v6.css"
 DQ = ROOT / "frontend/src/pages/DesignQueuePage.jsx"
 PREF = ROOT / "frontend/src/contexts/PreferencesContext.jsx"
+SIDEBAR = ROOT / "frontend/src/components/layout/Sidebar.jsx"
 CSS = ROOT / "frontend/src/index.css"
 DIST = ROOT / "frontend/dist"
 LIVE_PARENT = Path("/opt/apps/tamiyouz-front")
@@ -20,6 +21,7 @@ DQ_PERF_V3_SHA = "f71c66b26a5cd7bb06ca849ce82afef897ed58d288c9fcfa198168a1d2d0eb
 PREF_PERF_V1_SHA = "1d949f3bc668400ffbfa69082166a41654a1c5ed9518b720675a7f13d873b731"
 CSS_V6_SHA = "2fa061485f20af185aeae3df1fe99033cbf12d2babe31f87c0f2e776e31fcb13"
 V7_MARKER = "--tos-dq-v7-runtime"
+SIDEBAR_MARKER = 'data-sidebar-premium="v7"'
 
 print("RUNNING=PHASE04_1_DESIGN_QUEUE_FLAGSHIP_V7")
 
@@ -37,7 +39,13 @@ def replace_once(text: str, old: str, new: str, label: str) -> str:
         raise RuntimeError(f"{label}: expected 1 match, found {count}")
     return text.replace(old, new, 1)
 
-if not all(path.exists() for path in [DQ, PREF, CSS, V6_SOURCE]):
+def replace_count(text: str, old: str, new: str, expected: int, label: str) -> str:
+    count = text.count(old)
+    if count != expected:
+        raise RuntimeError(f"{label}: expected {expected} matches, found {count}")
+    return text.replace(old, new)
+
+if not all(path.exists() for path in [DQ, PREF, SIDEBAR, CSS, V6_SOURCE]):
     fail("required source file missing")
 if sha(DQ) != DQ_PERF_V3_SHA:
     fail("Design Queue differs from verified Performance V3 state")
@@ -47,11 +55,14 @@ if sha(CSS) != CSS_V6_SHA:
     fail("index.css differs from verified V6 visual state")
 
 original_css = CSS.read_text()
+original_sidebar = SIDEBAR.read_text()
 v6 = V6_SOURCE.read_text().strip()
 if original_css.count(v6) != 1:
     fail("verified V6 CSS block not found exactly once")
 if V7_MARKER in original_css:
     fail("V7 already present")
+if SIDEBAR_MARKER in original_sidebar:
+    fail("Sidebar V7 already present")
 
 try:
     v7 = v6
@@ -73,7 +84,31 @@ try:
     v7 = replace_once(v7, "font-size: .84rem !important;\n  line-height: 1.38 !important;", "font-size: .89rem !important;\n  line-height: 1.38 !important;", "card title")
     v7 = replace_once(v7, "font-size: .64rem !important;", "font-size: .69rem !important;", "card metadata")
 
-    # New V7 rules live inside the single replacement block rather than accumulating another full layer.
+    # Sidebar: premium system navigation + readable labels, preserving behavior and collapsed mode.
+    sidebar = original_sidebar
+    sidebar = replace_once(sidebar, "const SIDEBAR_DEFAULT_WIDTH = 248;", "const SIDEBAR_DEFAULT_WIDTH = 272;", "sidebar expanded width")
+    sidebar = replace_once(
+        sidebar,
+        '      dir={isRtl ? "rtl" : "ltr"}\n      className={cn(',
+        '      dir={isRtl ? "rtl" : "ltr"}\n      data-sidebar-premium="v7"\n      data-collapsed={isCollapsedMode ? "true" : "false"}\n      className={cn(',
+        "sidebar premium data attributes",
+    )
+    sidebar = replace_count(
+        sidebar,
+        '<span className="truncate">{item.label}</span>',
+        '<span className="min-w-0 flex-1 whitespace-normal break-words leading-[1.3]">{item.label}</span>',
+        2,
+        "root/group readable labels",
+    )
+    sidebar = replace_once(
+        sidebar,
+        '<span className="truncate">{subItem.label}</span>',
+        '<span className="min-w-0 flex-1 whitespace-normal break-words leading-[1.3]">{subItem.label}</span>',
+        "submenu readable label",
+    )
+    SIDEBAR.write_text(sidebar)
+
+    # New V7 rules live inside the single replacement block rather than accumulating another full DQ layer.
     v7 += r'''
 
 /* =========================================================
@@ -168,6 +203,138 @@ html.dark .tos-core-design-queue-premium > .overflow-hidden.p-0 > .border-t :is(
   color: #f1f0ed !important;
 }
 
+/* =========================================================
+   V7 — premium system navigation: visible hierarchy + readable labels
+   ========================================================= */
+.tos-premium-sidebar[data-sidebar-premium="v7"] {
+  border-color: rgba(151,126,69,.18) !important;
+  background: linear-gradient(165deg, rgba(255,255,255,.985), rgba(248,245,238,.965)) !important;
+  box-shadow: 0 24px 60px rgba(43,34,18,.09), inset 0 1px 0 rgba(255,255,255,.94) !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav {
+  margin-top: .7rem !important;
+  padding-inline: .08rem .12rem !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav > div {
+  gap: .52rem !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav > div > a,
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section {
+  border-radius: 17px !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav > div > a {
+  min-height: 46px !important;
+  padding: .68rem .78rem !important;
+  border: 1px solid transparent !important;
+  font-size: .82rem !important;
+  line-height: 1.3 !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section {
+  overflow: hidden !important;
+  border-color: rgba(104,91,63,.12) !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.82), rgba(247,244,237,.72)) !important;
+  box-shadow: 0 7px 18px rgba(43,34,20,.035), inset 0 1px 0 rgba(255,255,255,.82) !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section:has(> button[aria-expanded="true"]) {
+  border-color: rgba(193,151,57,.24) !important;
+  background: linear-gradient(145deg, #fffefb, #f7f2e7) !important;
+  box-shadow: 0 10px 24px rgba(65,48,18,.06), inset 3px 0 0 rgba(205,165,75,.78) !important;
+}
+[dir="rtl"].tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section:has(> button[aria-expanded="true"]) {
+  box-shadow: 0 10px 24px rgba(65,48,18,.06), inset -3px 0 0 rgba(205,165,75,.78) !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section > button {
+  position: static !important;
+  min-height: 48px !important;
+  padding: .66rem .78rem !important;
+  gap: .62rem !important;
+  background: transparent !important;
+  font-size: .84rem !important;
+  line-height: 1.3 !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section > button > span {
+  color: #2d2b27 !important;
+  font-weight: 900 !important;
+  letter-spacing: -.01em !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section > div {
+  padding: .34rem .38rem .42rem !important;
+  border-top-color: rgba(112,98,70,.10) !important;
+  background: rgba(255,255,255,.52) !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section > div > a {
+  min-height: 42px !important;
+  margin-block: .12rem !important;
+  padding: .58rem .64rem !important;
+  gap: .52rem !important;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  color: #68645d !important;
+  font-size: .76rem !important;
+  line-height: 1.3 !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section > div > a:hover {
+  background: rgba(210,176,91,.075) !important;
+  border-color: rgba(191,150,58,.13) !important;
+  color: #25231f !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav a[aria-current="page"] {
+  color: #171714 !important;
+  background: linear-gradient(135deg, rgba(250,244,224,.98), rgba(255,253,247,.98)) !important;
+  border-color: rgba(192,147,49,.25) !important;
+  box-shadow: 0 5px 14px rgba(74,54,17,.065), inset 0 1px 0 rgba(255,255,255,.94) !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav a[aria-current="page"] svg {
+  color: #b98220 !important;
+}
+.tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav a[aria-current="page"] > span:last-child {
+  background: #c99835 !important;
+}
+
+html.dark .tos-premium-sidebar[data-sidebar-premium="v7"] {
+  border-color: rgba(219,184,94,.14) !important;
+  background: linear-gradient(165deg, rgba(16,18,22,.99), rgba(8,9,11,.985)) !important;
+  box-shadow: 0 26px 66px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.03) !important;
+}
+html.dark .tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section {
+  border-color: rgba(255,255,255,.075) !important;
+  background: linear-gradient(145deg, rgba(25,27,32,.92), rgba(14,16,19,.90)) !important;
+  box-shadow: 0 9px 22px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.02) !important;
+}
+html.dark .tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section:has(> button[aria-expanded="true"]) {
+  border-color: rgba(219,184,94,.18) !important;
+  background: linear-gradient(145deg, #191b20, #0f1114) !important;
+}
+html.dark .tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section > button > span {
+  color: #f0eee9 !important;
+}
+html.dark .tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section > div {
+  border-top-color: rgba(255,255,255,.06) !important;
+  background: rgba(6,7,9,.32) !important;
+}
+html.dark .tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section > div > a {
+  color: #aeb1b7 !important;
+}
+html.dark .tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav section > div > a:hover {
+  background: rgba(216,179,90,.055) !important;
+  border-color: rgba(216,179,90,.12) !important;
+  color: #f0eee9 !important;
+}
+html.dark .tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav a[aria-current="page"] {
+  color: #fbfaf7 !important;
+  background: linear-gradient(135deg, rgba(64,51,25,.78), rgba(28,27,24,.92)) !important;
+  border-color: rgba(224,190,102,.25) !important;
+  box-shadow: 0 7px 18px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+html.dark .tos-premium-sidebar[data-sidebar-premium="v7"][data-collapsed="false"] > nav > div > a:not([aria-current="page"]) {
+  color: #c2c4c8 !important;
+}
+html.dark .tos-premium-sidebar[data-sidebar-premium="v7"] > div:first-of-type,
+html.dark .tos-premium-sidebar[data-sidebar-premium="v7"] > div:nth-last-of-type(1) {
+  background-color: transparent !important;
+  border-color: rgba(255,255,255,.06) !important;
+}
+
 @media (max-width: 1279px) {
   .tos-core-design-queue-premium > .overflow-hidden.p-0 > .border-t > .mt-4.overflow-hidden > .divide-y > div {
     min-height: 52px !important;
@@ -182,10 +349,16 @@ html.dark .tos-core-design-queue-premium > .overflow-hidden.p-0 > .border-t :is(
         raise RuntimeError("V7 runtime marker missing or duplicated")
     if updated_css.count("/* Phase 04.1 — Design Queue Flagship V6") != 0:
         raise RuntimeError("old V6 block still present")
+    if SIDEBAR.read_text().count(SIDEBAR_MARKER) != 1:
+        raise RuntimeError("Sidebar premium marker missing or duplicated")
+    if SIDEBAR.read_text().count('className="truncate">{item.label}</span>') != 0:
+        raise RuntimeError("menu item truncation still present")
+    if SIDEBAR.read_text().count('className="truncate">{subItem.label}</span>') != 0:
+        raise RuntimeError("submenu truncation still present")
     if sha(DQ) != DQ_PERF_V3_SHA or sha(PREF) != PREF_PERF_V1_SHA:
         raise RuntimeError("performance source changed unexpectedly")
 
-    subprocess.run(["git", "-C", str(ROOT), "diff", "--check", "--", "frontend/src/index.css"], check=True)
+    subprocess.run(["git", "-C", str(ROOT), "diff", "--check", "--", "frontend/src/index.css", "frontend/src/components/layout/Sidebar.jsx"], check=True)
     subprocess.run(["npm", "run", "build"], cwd=ROOT / "frontend", check=True)
     if not (DIST / "index.html").exists():
         raise RuntimeError("built dist index missing")
@@ -213,16 +386,21 @@ html.dark .tos-core-design-queue-premium > .overflow-hidden.p-0 > .border-t :is(
 
 except Exception as exc:
     CSS.write_text(original_css)
+    SIDEBAR.write_text(original_sidebar)
     fail(str(exc))
 
 print("PASS/FAIL=PASS")
 print("BUILD_RESULT=PASS")
 print("LIVE_DEPLOY=PASS")
-print("SCREEN=Design_Queue_ONLY")
+print("SCREEN=Design_Queue_PLUS_System_Navigation")
 print("V6_BLOCK_REPLACED=YES")
 print("V7_RUNTIME=YES")
+print("SIDEBAR_PREMIUM=YES")
+print("MENU_TEXT_READABLE=YES")
+print("COLLAPSED_MODE_PRESERVED=YES")
 print("PERFORMANCE_V3_PRESERVED=YES")
 print("BUSINESS_LOGIC_CHANGED=NO")
 print("DESIGN_QUEUE_SHA256=" + sha(DQ))
 print("PREFERENCES_CONTEXT_SHA256=" + sha(PREF))
+print("SIDEBAR_SHA256=" + sha(SIDEBAR))
 print("INDEX_CSS_SHA256=" + sha(CSS))
