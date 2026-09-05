@@ -1,10 +1,12 @@
 from pathlib import Path
-import subprocess, sys, hashlib
+import subprocess, sys, hashlib, shutil
 
 ROOT = Path(sys.argv[1] if len(sys.argv) > 1 else "/var/www/TOS")
 DQ = ROOT / "frontend/src/pages/DesignQueuePage.jsx"
 PREF = ROOT / "frontend/src/contexts/PreferencesContext.jsx"
 CSS = ROOT / "frontend/src/index.css"
+DIST = ROOT / "frontend/dist"
+LIVE = Path("/opt/apps/tamiyouz-front/build")
 MARKER = "TOS_DQ_PERFORMANCE_V1"
 DQ_PRE_SHA = "d1a7d362d18506582e61f2a6f552fb88793bebd8174c3b6d60c74a3214a9cb3c"
 CSS_V6_SHA = "2fa061485f20af185aeae3df1fe99033cbf12d2babe31f87c0f2e776e31fcb13"
@@ -64,7 +66,16 @@ if PREF.read_text().count('export function useLanguagePreferences()') != 1:
 if sha(CSS) != CSS_V6_SHA:
     raise RuntimeError("V6 CSS changed unexpectedly")
 
+subprocess.run(["git", "diff", "--check", "--", str(DQ.relative_to(ROOT)), str(PREF.relative_to(ROOT))], cwd=ROOT, check=True)
 subprocess.run(["npm", "run", "build"], cwd=ROOT / "frontend", check=True)
+if not (DIST / "index.html").is_file():
+    raise RuntimeError("built dist index missing")
+
+LIVE.mkdir(parents=True, exist_ok=True)
+shutil.copytree(DIST, LIVE, dirs_exist_ok=True)
+if not (LIVE / "index.html").is_file():
+    raise RuntimeError("live deploy index missing")
+subprocess.run(["systemctl", "is-active", "--quiet", "nginx"], check=True)
 
 print("PHASE04_1_DESIGN_QUEUE_PERFORMANCE_V1=PASS")
 print("FOCUS_REFETCH_REMOVED=YES")
@@ -73,6 +84,7 @@ print("THEME_QUEUE_RERENDER_GUARD=YES")
 print("BUSINESS_LOGIC_CHANGED=NO")
 print("DESIGN_CHANGED=NO")
 print("BUILD_RESULT=PASS")
+print("LIVE_DEPLOY=PASS")
 print(f"DESIGN_QUEUE_SHA256={sha(DQ)}")
 print(f"PREFERENCES_CONTEXT_SHA256={sha(PREF)}")
 print(f"INDEX_CSS_SHA256={sha(CSS)}")
