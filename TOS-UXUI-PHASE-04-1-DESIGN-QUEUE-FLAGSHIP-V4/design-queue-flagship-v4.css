@@ -1,0 +1,383 @@
+/* Phase 04.1 — Design Queue Flagship V4
+   Screenshot-driven single-screen refinement on top of V3.
+   Goal: true flagship executive board; visual-only. */
+
+:root {
+  --tos-dq-v4-runtime: 1;
+  --dq4-gold: #cda75a;
+  --dq4-gold-hi: #f1d995;
+  --dq4-ink: #111216;
+  --dq4-porcelain: #f7f5ef;
+  --dq4-line-light: rgba(73, 61, 38, .11);
+}
+
+/* =========================================================
+   GLOBAL RHYTHM — calmer, denser, more deliberate
+   ========================================================= */
+.tos-core-design-queue-premium {
+  gap: 14px !important;
+  padding: 14px !important;
+}
+
+/* =========================================================
+   KPI DECK — six distinct executive tiles, not floating rings
+   ========================================================= */
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between {
+  gap: 10px !important;
+  padding: 10px !important;
+  border-radius: 24px !important;
+  background: linear-gradient(145deg, #fbfaf7 0%, #f3efe6 100%) !important;
+  border: 1px solid rgba(166,132,63,.18) !important;
+  box-shadow: 0 18px 50px rgba(47,38,22,.08) !important;
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div {
+  --kpi-accent: #cda75a;
+  position: relative;
+  min-height: 118px;
+  min-width: 150px !important;
+  flex: 1 1 150px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 10px 10px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(50,45,35,.08);
+  background: linear-gradient(160deg, rgba(255,255,255,.94), rgba(250,248,242,.74));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 8px 20px rgba(36,30,19,.035);
+  isolation: isolate;
+  overflow: hidden;
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:nth-child(1){ --kpi-accent:#191a1d; }
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:nth-child(2){ --kpi-accent:#e14d55; }
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:nth-child(3){ --kpi-accent:#d99a16; }
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:nth-child(4){ --kpi-accent:#4f8bf5; }
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:nth-child(5){ --kpi-accent:#8658ee; }
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:nth-child(6){ --kpi-accent:#11b981; }
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div::before {
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:2px;
+  background: linear-gradient(90deg, transparent, var(--kpi-accent), transparent);
+  opacity:.72;
+  z-index:-1;
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div::after {
+  content:"";
+  position:absolute;
+  width:90px;
+  height:90px;
+  top:-56px;
+  left:50%;
+  transform:translateX(-50%);
+  border-radius:999px;
+  background:var(--kpi-accent);
+  filter:blur(34px);
+  opacity:.075;
+  pointer-events:none;
+  z-index:-1;
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:hover {
+  transform: translateY(-2px) !important;
+  border-color: color-mix(in srgb, var(--kpi-accent) 30%, transparent) !important;
+  background: linear-gradient(160deg, #fff, #f7f4ec) !important;
+  box-shadow: 0 14px 30px rgba(36,30,19,.07) !important;
+}
+
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div .relative.grid.h-16.w-16 {
+  width: 58px !important;
+  height: 58px !important;
+  margin-bottom: 2px;
+  filter: drop-shadow(0 8px 14px rgba(25,22,15,.10));
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div .relative.grid.h-16.w-16 > div {
+  width: 42px !important;
+  height: 42px !important;
+  font-size: .98rem !important;
+  border: 1px solid rgba(255,255,255,.65);
+  box-shadow: 0 5px 13px rgba(30,25,16,.08) !important;
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div > div:nth-child(2) {
+  margin-top: 5px !important;
+  font-size: .69rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -.01em;
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div > div:nth-child(3) {
+  margin-top: 2px !important;
+  font-size: .56rem !important;
+  opacity: .66 !important;
+}
+
+/* =========================================================
+   DESIGNER CAPACITY — premium compact rail, no giant empty slab
+   ========================================================= */
+.tos-core-design-queue-premium > .overflow-hidden.p-0 {
+  border-radius: 20px !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f5ee 100%) !important;
+  border: 1px solid rgba(166,132,63,.15) !important;
+  box-shadow: 0 10px 30px rgba(45,36,20,.045) !important;
+}
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child {
+  min-height: 62px !important;
+  padding: 11px 18px !important;
+}
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child::before {
+  width: 3px !important;
+  height: 30px !important;
+  margin-inline-end: 12px !important;
+  background: linear-gradient(180deg, var(--dq4-gold-hi), #b4822f) !important;
+  box-shadow: 0 0 18px rgba(205,167,90,.18) !important;
+}
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child .text-sm {
+  font-size: .82rem !important;
+  letter-spacing: -.01em;
+}
+
+/* =========================================================
+   COMMAND BAR — one integrated control surface
+   ========================================================= */
+.tos-core-design-queue-premium > .p-3 {
+  padding: 10px 12px !important;
+  border-radius: 20px !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(247,245,239,.95)) !important;
+  border: 1px solid rgba(77,69,53,.10) !important;
+  box-shadow: 0 10px 28px rgba(33,28,20,.04) !important;
+}
+.tos-core-design-queue-premium > .p-3 > .grid {
+  gap: 8px !important;
+}
+.tos-core-design-queue-premium > .p-3 :is(input,select) {
+  min-height: 42px !important;
+  border-radius: 12px !important;
+  border-color: rgba(69,62,49,.12) !important;
+  background: rgba(255,255,255,.84) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 1px 0 rgba(0,0,0,.015);
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+.tos-core-design-queue-premium > .p-3 :is(input,select):focus {
+  border-color: rgba(205,167,90,.55) !important;
+  box-shadow: 0 0 0 3px rgba(205,167,90,.10) !important;
+  outline: none !important;
+}
+.tos-core-design-queue-premium > .p-3 button {
+  min-height: 42px !important;
+  border-radius: 12px !important;
+  border-color: rgba(69,62,49,.12) !important;
+  background: linear-gradient(145deg, #fff, #f1ede4) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 5px 12px rgba(36,30,18,.04);
+}
+.tos-core-design-queue-premium > .p-3 > .mt-2\.5 {
+  margin-top: 8px !important;
+  padding-top: 8px !important;
+  border-top-color: rgba(69,62,49,.08) !important;
+}
+
+/* =========================================================
+   BOARD FRAME — editorial header + clean inner canvas
+   ========================================================= */
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] {
+  border-radius: 24px !important;
+  border: 1px solid rgba(166,132,63,.16) !important;
+  background: linear-gradient(180deg, #f9f7f1 0%, #f3f0e8 100%) !important;
+  box-shadow: 0 18px 46px rgba(39,31,18,.065) !important;
+  overflow: hidden !important;
+}
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between {
+  min-height: 64px !important;
+  padding: 12px 18px !important;
+  border-bottom: 1px solid rgba(166,132,63,.12) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.86), rgba(251,248,240,.70)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.88);
+}
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between::after {
+  content:"";
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(205,167,90,.35), transparent);
+}
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between {
+  position:relative;
+}
+
+/* =========================================================
+   STATUS COLUMNS — distinct identity, controlled depth
+   ========================================================= */
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div {
+  gap: 9px !important;
+  padding-top: 10px !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div {
+  --status-accent: #cda75a;
+  border-radius: 18px !important;
+  border: 1px solid rgba(71,64,50,.10) !important;
+  background: rgba(255,255,255,.55) !important;
+  box-shadow: 0 7px 20px rgba(35,29,18,.035) !important;
+  overflow: hidden !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(1){ --status-accent:#d69a22; background:linear-gradient(180deg,rgba(214,154,34,.045),rgba(255,255,255,.58) 18%) !important; }
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(2){ --status-accent:#4f8bf5; background:linear-gradient(180deg,rgba(79,139,245,.04),rgba(255,255,255,.58) 18%) !important; }
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(3){ --status-accent:#8758ed; background:linear-gradient(180deg,rgba(135,88,237,.04),rgba(255,255,255,.58) 18%) !important; }
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(4){ --status-accent:#ef6c2f; background:linear-gradient(180deg,rgba(239,108,47,.04),rgba(255,255,255,.58) 18%) !important; }
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(5){ --status-accent:#10ad7a; background:linear-gradient(180deg,rgba(16,173,122,.04),rgba(255,255,255,.58) 18%) !important; }
+
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div > div:first-child {
+  position:relative;
+  min-height: 58px !important;
+  padding: 10px 12px !important;
+  border-bottom: 1px solid rgba(72,64,49,.08) !important;
+  background: rgba(255,255,255,.70) !important;
+  backdrop-filter: blur(12px);
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div > div:first-child::before {
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:2px;
+  background:var(--status-accent);
+  opacity:.85;
+}
+
+/* =========================================================
+   REQUEST CARDS — compact executive objects, status-linked
+   ========================================================= */
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] {
+  position: relative;
+  border-radius: 16px !important;
+  padding: 11px 12px !important;
+  border: 1px solid rgba(68,61,48,.10) !important;
+  background: linear-gradient(160deg, rgba(255,255,255,.98), rgba(248,246,240,.95)) !important;
+  box-shadow: 0 6px 15px rgba(34,28,18,.035) !important;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease !important;
+  overflow:hidden;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\]::before {
+  content:"";
+  position:absolute;
+  inset-block:10px;
+  inset-inline-start:0;
+  width:3px;
+  border-radius:0 999px 999px 0;
+  background:var(--status-accent) !important;
+  opacity:.70 !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\]:hover {
+  transform: translateY(-2px) scale(1.002) !important;
+  border-color: color-mix(in srgb, var(--status-accent) 32%, transparent) !important;
+  box-shadow: 0 12px 28px rgba(33,27,16,.075) !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] .line-clamp-2 {
+  font-size: .86rem !important;
+  line-height: 1.42 !important;
+  font-weight: 900 !important;
+}
+
+/* =========================================================
+   DARK — Black Titanium, restrained metallic accents
+   ========================================================= */
+html.dark .tos-core-design-queue-premium > .flex.flex-wrap.justify-between {
+  background: linear-gradient(145deg, #111216 0%, #090a0c 100%) !important;
+  border-color: rgba(218,184,102,.17) !important;
+  box-shadow: 0 20px 58px rgba(0,0,0,.38) !important;
+}
+html.dark .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div {
+  background: linear-gradient(160deg, rgba(25,27,32,.94), rgba(13,14,17,.94)) !important;
+  border-color: rgba(255,255,255,.065) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 8px 20px rgba(0,0,0,.16) !important;
+}
+html.dark .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div:hover {
+  background: linear-gradient(160deg, rgba(31,33,39,.98), rgba(15,16,20,.98)) !important;
+  border-color: color-mix(in srgb, var(--kpi-accent) 34%, rgba(255,255,255,.07)) !important;
+  box-shadow: 0 14px 30px rgba(0,0,0,.30) !important;
+}
+html.dark .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div .relative.grid.h-16.w-16 > div {
+  background: #090a0c !important;
+  color:#fff !important;
+  border-color:rgba(255,255,255,.04) !important;
+}
+
+html.dark .tos-core-design-queue-premium > .overflow-hidden.p-0 {
+  background: linear-gradient(135deg, #141519, #0c0d10) !important;
+  border-color: rgba(218,184,102,.13) !important;
+  box-shadow: 0 12px 34px rgba(0,0,0,.24) !important;
+}
+html.dark .tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child {
+  background: linear-gradient(90deg, rgba(218,184,102,.035), transparent 34%) !important;
+}
+
+html.dark .tos-core-design-queue-premium > .p-3 {
+  background: linear-gradient(145deg, #141519, #0c0d10) !important;
+  border-color: rgba(255,255,255,.075) !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,.22) !important;
+}
+html.dark .tos-core-design-queue-premium > .p-3 :is(input,select) {
+  background: #111318 !important;
+  border-color: rgba(255,255,255,.09) !important;
+  color: #f3f4f6 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.02) !important;
+}
+html.dark .tos-core-design-queue-premium > .p-3 :is(input,select):focus {
+  border-color: rgba(218,184,102,.45) !important;
+  box-shadow: 0 0 0 3px rgba(218,184,102,.08) !important;
+}
+html.dark .tos-core-design-queue-premium > .p-3 button {
+  background: linear-gradient(145deg, #1d1f24, #141519) !important;
+  border-color: rgba(255,255,255,.09) !important;
+  color:#f6f6f7 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03), 0 6px 14px rgba(0,0,0,.16) !important;
+}
+
+html.dark .tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] {
+  background: linear-gradient(180deg, #111216 0%, #090a0c 100%) !important;
+  border-color: rgba(218,184,102,.14) !important;
+  box-shadow: 0 22px 58px rgba(0,0,0,.34) !important;
+}
+html.dark .tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between {
+  background: linear-gradient(180deg, rgba(25,27,31,.94), rgba(15,16,20,.90)) !important;
+  border-bottom-color: rgba(255,255,255,.065) !important;
+}
+
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div {
+  border-color: rgba(255,255,255,.065) !important;
+  background: #0d0f12 !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,.18) !important;
+}
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(1){ background:linear-gradient(180deg,rgba(214,154,34,.055),#0d0f12 16%) !important; }
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(2){ background:linear-gradient(180deg,rgba(79,139,245,.050),#0d0f12 16%) !important; }
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(3){ background:linear-gradient(180deg,rgba(135,88,237,.050),#0d0f12 16%) !important; }
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(4){ background:linear-gradient(180deg,rgba(239,108,47,.050),#0d0f12 16%) !important; }
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div:nth-child(5){ background:linear-gradient(180deg,rgba(16,173,122,.050),#0d0f12 16%) !important; }
+
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div > div:first-child {
+  background: rgba(18,20,24,.88) !important;
+  border-bottom-color: rgba(255,255,255,.055) !important;
+}
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] {
+  background: linear-gradient(155deg, #15171b, #0f1114) !important;
+  border-color: rgba(255,255,255,.07) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.018), 0 6px 16px rgba(0,0,0,.18) !important;
+}
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\]:hover {
+  border-color: color-mix(in srgb, var(--status-accent) 32%, rgba(255,255,255,.08)) !important;
+  box-shadow: 0 14px 30px rgba(0,0,0,.32) !important;
+  background: linear-gradient(155deg, #1b1d22, #111318) !important;
+}
+
+@media (max-width: 1200px) {
+  .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div {
+    min-width: 130px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-core-design-queue-premium * {
+    transition-duration: .01ms !important;
+  }
+}
