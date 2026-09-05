@@ -1,0 +1,282 @@
+/* Phase 04.1 — Design Queue Flagship V6
+   Screenshot-driven final composition refinement over verified V5.
+   Design Queue only. Visual-only. No business logic changes. */
+
+:root { --tos-dq-v6-runtime: 1; }
+
+/* =========================================================
+   Page rhythm — remove the oversized empty bands from V5
+   ========================================================= */
+.tos-core-design-queue-premium {
+  --dq-champagne: #d7b35a;
+  --dq-porcelain: #fbfaf7;
+  --dq-ivory: #f6f1e7;
+  --dq-ink: #17181b;
+  --dq-muted: #77736a;
+  padding-top: .85rem !important;
+  padding-bottom: 1rem !important;
+}
+.tos-core-design-queue-premium > * + * {
+  margin-top: .72rem !important;
+}
+
+/* Prevent any inherited sticky/fixed behavior from repeating rails in captures. */
+.tos-core-design-queue-premium > .overflow-hidden.p-0,
+.tos-core-design-queue-premium > .p-3 {
+  position: static !important;
+  inset: auto !important;
+  min-height: 0 !important;
+}
+
+/* =========================================================
+   KPI deck — stronger hierarchy, tighter executive tiles
+   ========================================================= */
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between {
+  gap: .58rem !important;
+  padding: .58rem !important;
+  border: 1px solid rgba(151, 126, 69, .15) !important;
+  border-radius: 24px !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.94), rgba(247,243,234,.82)) !important;
+  box-shadow: 0 14px 34px rgba(62, 48, 22, .055), inset 0 1px 0 rgba(255,255,255,.8) !important;
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div {
+  min-height: 76px !important;
+  grid-template-columns: 48px minmax(0,1fr) !important;
+  column-gap: .72rem !important;
+  padding: .72rem .82rem !important;
+  border-radius: 17px !important;
+  box-shadow: 0 6px 16px rgba(31,26,17,.035), inset 0 1px 0 rgba(255,255,255,.88) !important;
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div .relative.grid.h-16.w-16 {
+  width: 46px !important;
+  height: 46px !important;
+  filter: drop-shadow(0 7px 12px rgba(0,0,0,.075));
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div .relative.grid.h-16.w-16 > div {
+  width: 32px !important;
+  height: 32px !important;
+  font-size: .88rem !important;
+  font-weight: 900 !important;
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div > div:nth-child(2) {
+  font-size: .76rem !important;
+  letter-spacing: -.01em !important;
+}
+.tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div > div:nth-child(3) {
+  margin-top: .14rem !important;
+  font-size: .58rem !important;
+  opacity: .82;
+}
+
+/* =========================================================
+   Capacity rail — compact, deliberate, no dead space
+   ========================================================= */
+.tos-core-design-queue-premium > .overflow-hidden.p-0 {
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, rgba(255,255,255,.97), rgba(250,247,240,.93)) !important;
+  border-color: rgba(151,126,69,.15) !important;
+  box-shadow: 0 8px 22px rgba(55,43,19,.04) !important;
+}
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child {
+  min-height: 50px !important;
+  height: auto !important;
+  padding: .58rem .92rem !important;
+}
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child::before {
+  height: 24px !important;
+  width: 2px !important;
+  margin-inline-end: .58rem !important;
+  background: linear-gradient(180deg,#e4c36c,#bd8f2f) !important;
+}
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child .text-sm {
+  font-size: .78rem !important;
+  letter-spacing: -.01em !important;
+}
+.tos-core-design-queue-premium > .overflow-hidden.p-0 > button:first-child .mt-1 {
+  margin-top: .08rem !important;
+  font-size: .56rem !important;
+  line-height: 1.2 !important;
+}
+
+/* =========================================================
+   Command bar — dense, clean, readable
+   ========================================================= */
+.tos-core-design-queue-premium > .p-3 {
+  padding: .55rem .62rem !important;
+  border-radius: 17px !important;
+  border-color: rgba(151,126,69,.13) !important;
+  background: rgba(255,255,255,.92) !important;
+  box-shadow: 0 7px 20px rgba(35,29,19,.035) !important;
+}
+.tos-core-design-queue-premium > .p-3 > .grid {
+  gap: .42rem !important;
+}
+.tos-core-design-queue-premium > .p-3 :is(input,select),
+.tos-core-design-queue-premium > .p-3 button {
+  min-height: 38px !important;
+  height: 38px !important;
+  border-radius: 10px !important;
+  font-size: .72rem !important;
+}
+.tos-core-design-queue-premium > .p-3 > .mt-2\.5 {
+  margin-top: .38rem !important;
+  padding-top: .38rem !important;
+  font-size: .58rem !important;
+  opacity: .86;
+}
+
+/* =========================================================
+   Board shell — stronger flagship frame and header
+   ========================================================= */
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] {
+  min-height: 665px !important;
+  border-radius: 23px !important;
+  border-color: rgba(151,126,69,.18) !important;
+  background: linear-gradient(145deg, #fffefb 0%, #f8f5ee 100%) !important;
+  box-shadow: 0 18px 44px rgba(50,39,20,.055), inset 0 1px 0 rgba(255,255,255,.85) !important;
+}
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between {
+  min-height: 62px !important;
+  padding: .78rem .92rem !important;
+  border-bottom: 1px solid rgba(183,145,58,.17) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.86), rgba(252,248,239,.64)) !important;
+}
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between .text-sm {
+  font-size: .9rem !important;
+  letter-spacing: -.015em !important;
+}
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between .mt-1 {
+  font-size: .6rem !important;
+  margin-top: .14rem !important;
+}
+.tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between > div:last-child {
+  padding: .38rem .64rem !important;
+  border-color: rgba(183,145,58,.18) !important;
+  background: rgba(222,187,96,.065) !important;
+}
+
+/* =========================================================
+   Kanban columns — crisp status identity and premium depth
+   ========================================================= */
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div {
+  gap: .58rem !important;
+  padding: .58rem !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div {
+  border-radius: 17px !important;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--col-accent) 4%, #ffffff), rgba(250,248,243,.92) 19%, rgba(248,246,241,.93)) !important;
+  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--col-accent) 72%, transparent), 0 9px 20px rgba(34,28,18,.035) !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div > div:first-child {
+  min-height: 58px !important;
+  padding: .72rem .72rem !important;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--col-accent) 8%, #ffffff), rgba(255,255,255,.79)) !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div > div:first-child .font-black {
+  font-size: .75rem !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div > div:first-child .text-\[10px\] {
+  font-size: .58rem !important;
+}
+
+/* =========================================================
+   Cards — stronger hierarchy and less washed-out light mode
+   ========================================================= */
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] {
+  padding: .76rem !important;
+  border-radius: 15px !important;
+  border-color: rgba(109,99,77,.14) !important;
+  background: linear-gradient(145deg, #ffffff, #fbf9f4) !important;
+  box-shadow: 0 7px 16px rgba(41,33,20,.045), inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] .line-clamp-2 {
+  font-size: .84rem !important;
+  line-height: 1.38 !important;
+  letter-spacing: -.012em !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] .text-\[11px\] {
+  font-size: .64rem !important;
+}
+.tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 14px 28px color-mix(in srgb, var(--col-accent) 8%, rgba(40,30,12,.08)) !important;
+}
+
+/* =========================================================
+   Dark — Obsidian / Black Titanium / Platinum / Champagne
+   ========================================================= */
+html.dark .tos-core-design-queue-premium {
+  --dq-ink: #f3f1ec;
+  --dq-muted: #96999f;
+}
+html.dark .tos-core-design-queue-premium > .flex.flex-wrap.justify-between {
+  background: linear-gradient(145deg, #0c0d0f, #090a0c) !important;
+  border-color: rgba(219,184,94,.12) !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+html.dark .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div {
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--dq-accent) 13%, transparent), transparent 46%),
+    linear-gradient(145deg, #17191e, #0f1114) !important;
+  border-color: color-mix(in srgb, var(--dq-accent) 21%, rgba(255,255,255,.065)) !important;
+  box-shadow: 0 9px 22px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+html.dark .tos-core-design-queue-premium > .overflow-hidden.p-0,
+html.dark .tos-core-design-queue-premium > .p-3 {
+  background: linear-gradient(145deg, #111317, #0b0c0f) !important;
+  border-color: rgba(219,184,94,.115) !important;
+  box-shadow: 0 11px 28px rgba(0,0,0,.28) !important;
+}
+html.dark .tos-core-design-queue-premium > .p-3 :is(input,select),
+html.dark .tos-core-design-queue-premium > .p-3 button {
+  background-color: #15171b !important;
+  border-color: rgba(255,255,255,.09) !important;
+  color: #ecebea !important;
+}
+html.dark .tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] {
+  background: linear-gradient(145deg, #0d0f12, #08090b) !important;
+  border-color: rgba(219,184,94,.12) !important;
+  box-shadow: 0 22px 52px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.022) !important;
+}
+html.dark .tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] > .flex.items-center.justify-between {
+  background: linear-gradient(180deg, #15171b, #101216) !important;
+  border-bottom-color: rgba(219,184,94,.12) !important;
+}
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--col-accent) 5%, #111318), #0d0f12 20%, #0b0d10) !important;
+  border-color: color-mix(in srgb, var(--col-accent) 16%, rgba(255,255,255,.06)) !important;
+  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--col-accent) 66%, transparent), 0 11px 24px rgba(0,0,0,.24) !important;
+}
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] > div > div > div:first-child {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--col-accent) 7%, #17191e), #111318) !important;
+  border-bottom-color: color-mix(in srgb, var(--col-accent) 13%, rgba(255,255,255,.055)) !important;
+}
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] {
+  background: linear-gradient(145deg, #17191d, #101216) !important;
+  border-color: rgba(255,255,255,.075) !important;
+  box-shadow: 0 8px 18px rgba(0,0,0,.25) !important;
+}
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\] .line-clamp-2 {
+  color: #f2f0eb !important;
+}
+html.dark .tos-core-design-queue-premium .h-\[calc\(100\%-58px\)\] button.w-full.rounded-\[16px\]:hover {
+  background: linear-gradient(145deg, #1b1e23, #121419) !important;
+  border-color: color-mix(in srgb, var(--col-accent) 28%, rgba(255,255,255,.08)) !important;
+}
+
+/* Responsive integrity */
+@media (max-width: 1279px) {
+  .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div {
+    flex: 1 1 calc(33.333% - .6rem) !important;
+  }
+}
+@media (max-width: 767px) {
+  .tos-core-design-queue-premium { padding: .65rem !important; }
+  .tos-core-design-queue-premium > .flex.flex-wrap.justify-between > div {
+    flex: 1 1 calc(50% - .58rem) !important;
+    min-height: 72px !important;
+  }
+  .tos-core-design-queue-premium > .h-\[calc\(100vh-350px\)\] {
+    min-height: 620px !important;
+  }
+}
