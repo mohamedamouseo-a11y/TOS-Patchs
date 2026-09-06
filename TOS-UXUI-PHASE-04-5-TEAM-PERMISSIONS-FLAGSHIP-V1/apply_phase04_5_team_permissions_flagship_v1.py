@@ -116,7 +116,7 @@ require_count(source, table_old, 1, "matrix table")
 source = source.replace(table_old, table_new, 1)
 
 # 3) Replace the remaining native role <select> with a premium menu preserving the same value/onChange behavior.
-role_filter_component = r'''
+role_filter_component = '''
 function RoleFilterMenu({ value, onChange }) {
   const { lang } = usePreferences();
   const isEnglish = lang === "en";
@@ -185,7 +185,7 @@ matrix_anchor = 'function MatrixTable({ matrix, users = [], query, roleFilter, c
 require_count(source, matrix_anchor, 1, "MatrixTable insertion anchor")
 source = source.replace(matrix_anchor, role_filter_component + matrix_anchor, 1)
 
-native_role_filter = r'''            <label className="relative block">
+native_role_filter = '''            <label className="relative block">
               <SlidersHorizontal size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <select value={roleFilter} onChange={(event) => setRoleFilter(event.target.value)} className="h-11 rounded-2xl border border-slate-200 bg-white pr-9 pl-8 text-xs font-black text-slate-700 outline-none transition focus:border-violet-200 focus:ring-4 focus:ring-violet-100 dark:border-white/10 dark:bg-zinc-950 dark:text-white dark:focus:ring-violet-500/10">
                 <option value="ALL">{ui("كل الأدوار", "All roles")}</option>
@@ -202,7 +202,7 @@ source = source.replace(native_role_filter, premium_role_filter, 1)
 # 4) Build executive KPIs from data already loaded by this page; no API or DB additions.
 user_counts_line = '  const userCounts = useMemo(() => users.reduce((acc, item) => ({ ...acc, [item.role]: (acc[item.role] || 0) + 1 }), {}), [users]);'
 require_count(source, user_counts_line, 1, "userCounts anchor")
-stats_block = r'''
+stats_block = '''
   const permissionStats = useMemo(() => {
     const permissionKeys = matrix?.permissions || [];
     const managedRoles = ["ADMIN", "MANAGER", "PROJECT_MANAGER", "TEAM_MEMBER"];
@@ -256,7 +256,7 @@ notices_anchor = '''      <Notice type="success">{message}</Notice>
       <Notice type="error">{error}</Notice>
 '''
 require_count(source, notices_anchor, 1, "KPI insertion anchor")
-kpi_block = r'''
+kpi_block = '''
 
       <section className="tos-permissions-kpi-grid" aria-label={ui("ملخص الصلاحيات", "Permissions summary")}>
         <div className="tos-permissions-kpi">
