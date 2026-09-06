@@ -13,10 +13,12 @@ helper = r'''
 function looksLikeActionDraftMessage(text) {
   const value = String(text || "").trim();
   if (!value) return false;
-  return /^(?:(?:من فضلك|لو سمحت|please|عايز|أريد|اريد|i want to)\s+)?(?:اعمل|انشئ|أنشئ|create|make)\b[\s\S]{0,160}\b(?:task|تاسك|مهمه|مهمة)\b/iu.test(value)
-    || /^(?:(?:من فضلك|لو سمحت|please|عايز|أريد|اريد|i want to)\s+)?(?:اسند|إسند|assign|حوّل|حول|انقل)\b[\s\S]{0,180}/iu.test(value)
-    || /^(?:(?:من فضلك|لو سمحت|please|عايز|أريد|اريد|i want to)\s+)?(?:ضيف|اضف|أضف|add)\b[\s\S]{0,140}\b(?:comment|تعليق|checklist|check list|تشيك ليست)\b/iu.test(value)
-    || /^(?:(?:من فضلك|لو سمحت|please|عايز|أريد|اريد|i want to)\s+)?(?:غير|غيّر|عدل|عدّل|change|set|move)\b[\s\S]{0,160}\b(?:due|deadline|موعد|ميعاد|assignee|منفذ)\b/iu.test(value);
+  // Do not use JS \\b around Arabic words: \\b is based on ASCII-style word characters
+  // and can miss valid Arabic action commands. Space/end boundaries are Unicode-safe here.
+  return /^(?:(?:من فضلك|لو سمحت|please|عايز|أريد|اريد|i want to)\s+)?(?:اعمل|انشئ|أنشئ|create|make)(?:\s|$)[\s\S]{0,160}(?:^|\s)(?:task|تاسك|التاسك|مهمه|مهمة|المهمه|المهمة)(?:\s|$)/iu.test(value)
+    || /^(?:(?:من فضلك|لو سمحت|please|عايز|أريد|اريد|i want to)\s+)?(?:اسند|إسند|assign|حوّل|حول|انقل)(?:\s|$)[\s\S]{0,180}/iu.test(value)
+    || /^(?:(?:من فضلك|لو سمحت|please|عايز|أريد|اريد|i want to)\s+)?(?:ضيف|اضف|أضف|add)(?:\s|$)[\s\S]{0,140}(?:^|\s)(?:comment|تعليق|checklist|check list|تشيك ليست)(?:\s|$)/iu.test(value)
+    || /^(?:(?:من فضلك|لو سمحت|please|عايز|أريد|اريد|i want to)\s+)?(?:غير|غيّر|عدل|عدّل|خلي|خلّي|change|set|move)(?:\s|$)[\s\S]{0,160}(?:^|\s)(?:due|deadline|موعد|ميعاد|assignee|منفذ)(?:\s|$)/iu.test(value);
 }
 '''
 
