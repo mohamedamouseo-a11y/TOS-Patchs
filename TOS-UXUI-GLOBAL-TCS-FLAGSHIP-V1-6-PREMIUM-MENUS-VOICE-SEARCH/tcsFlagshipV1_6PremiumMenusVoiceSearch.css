@@ -1,0 +1,429 @@
+:root {
+  --tos-tcs-flagship-v1-6-premium-menus-voice-search-runtime: 1;
+}
+
+/* TCS V1.6 — Premium menus + voice search.
+   Visual/menu/search-input layer only; no messaging/API/database semantics. */
+
+.tcs-v16-premium-select {
+  position: relative;
+  min-width: 0;
+}
+
+.tcs-v16-premium-select-trigger {
+  display: flex;
+  width: 100%;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 14px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1.2;
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease, transform .16s ease;
+}
+
+.tcs-v16-premium-select-trigger:hover {
+  transform: translateY(-1px);
+}
+
+.tcs-v16-premium-select-trigger .tcs-v16-select-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tcs-v16-premium-select-chevron {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 9px;
+  font-size: 13px;
+  transition: transform .16s ease, background .16s ease;
+}
+
+.tcs-v16-premium-select.is-open .tcs-v16-premium-select-chevron {
+  transform: rotate(180deg);
+}
+
+.tcs-v16-premium-select-menu {
+  position: absolute;
+  z-index: 90;
+  inset-inline: 0;
+  top: calc(100% + 8px);
+  overflow: hidden;
+  border-radius: 18px;
+  padding: 8px;
+  backdrop-filter: blur(22px) saturate(1.08);
+}
+
+.tcs-v16-premium-select-search {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+  border-radius: 13px;
+  padding: 0 10px;
+}
+
+.tcs-v16-premium-select-search input {
+  min-width: 0;
+  flex: 1;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 700;
+  outline: none;
+}
+
+.tcs-v16-premium-select-options {
+  max-height: 250px;
+  overflow-y: auto;
+  padding-inline-end: 2px;
+  scrollbar-width: thin;
+}
+
+.tcs-v16-premium-select-option {
+  display: flex;
+  width: 100%;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 12px;
+  padding: 8px 10px;
+  text-align: start;
+  transition: transform .14s ease, border-color .14s ease, background .14s ease, box-shadow .14s ease;
+}
+
+.tcs-v16-premium-select-option + .tcs-v16-premium-select-option {
+  margin-top: 4px;
+}
+
+.tcs-v16-premium-select-option:hover {
+  transform: translateX(2px);
+}
+
+.tcs-v16-premium-select-option-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.tcs-v16-premium-select-option-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.tcs-v16-premium-select-option-meta {
+  display: block;
+  overflow: hidden;
+  margin-top: 2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 650;
+  opacity: .64;
+}
+
+.tcs-v16-premium-select-check {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 950;
+}
+
+.tcs-v16-premium-select-empty {
+  padding: 14px 10px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 750;
+  opacity: .65;
+}
+
+.tcs-v16-tools-menu {
+  overflow: hidden;
+  border-radius: 26px !important;
+  padding: 14px !important;
+  backdrop-filter: blur(24px) saturate(1.08);
+}
+
+.tcs-v16-tools-menu::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .8;
+}
+
+.tcs-v16-tools-menu > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tcs-v16-tools-menu .tcs-v8-toolbar-menu-actions > button,
+.tcs-v16-tools-menu > .grid > button {
+  min-height: 44px;
+  border-radius: 14px !important;
+  border: 1px solid transparent;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+
+.tcs-v16-tools-menu .tcs-v8-toolbar-menu-actions > button:hover,
+.tcs-v16-tools-menu > .grid > button:hover {
+  transform: translateY(-1px);
+}
+
+.tcs-v16-voice-search-wrap {
+  position: relative;
+}
+
+.tcs-v16-voice-search-wrap .tcs-v15-smart-search-input {
+  padding-inline-end: 58px !important;
+}
+
+.tcs-v16-voice-button {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 13px;
+  border: 1px solid transparent;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease, color .16s ease;
+}
+
+.tcs-v16-voice-search-wrap > .tcs-v16-voice-button {
+  position: absolute;
+  inset-inline-end: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tcs-v16-voice-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.tcs-v16-voice-search-wrap > .tcs-v16-voice-button:hover:not(:disabled) {
+  transform: translateY(calc(-50% - 1px));
+}
+
+.tcs-v16-voice-button.is-listening {
+  animation: tcs-v16-voice-pulse 1.15s ease-in-out infinite;
+}
+
+.tcs-v16-voice-button:disabled {
+  cursor: not-allowed;
+  opacity: .38;
+}
+
+@keyframes tcs-v16-voice-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(205,154,48,.18); }
+  50% { box-shadow: 0 0 0 7px rgba(205,154,48,0); }
+}
+
+.tcs-v16-inline-search-shell {
+  position: relative;
+}
+
+.tcs-v16-inline-search-shell .tcs-v16-voice-button {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+}
+
+/* Light — ivory, champagne and brushed-gold depth. */
+html:not(.dark) .tcs-v16-premium-select-trigger {
+  color: #2e2417;
+  border: 1px solid rgba(171,119,20,.24);
+  background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(247,236,215,.92));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.96), 0 7px 18px rgba(66,45,8,.06);
+}
+
+html:not(.dark) .tcs-v16-premium-select.is-open .tcs-v16-premium-select-trigger {
+  border-color: rgba(184,127,20,.48);
+  box-shadow: 0 0 0 3px rgba(202,151,45,.07), 0 12px 26px rgba(66,45,8,.09);
+}
+
+html:not(.dark) .tcs-v16-premium-select-chevron {
+  color: #8a6423;
+  background: rgba(190,137,31,.08);
+}
+
+html:not(.dark) .tcs-v16-premium-select-menu {
+  color: #2b2115;
+  border: 1px solid rgba(176,122,18,.25);
+  background:
+    radial-gradient(circle at 100% 0, rgba(215,168,69,.13), transparent 28%),
+    linear-gradient(145deg, rgba(255,254,249,.99), rgba(243,231,207,.98));
+  box-shadow: 0 26px 70px rgba(63,43,8,.22), inset 0 1px 0 rgba(255,255,255,.95);
+}
+
+html:not(.dark) .tcs-v16-premium-select-search {
+  color: #3d3020;
+  border: 1px solid rgba(169,117,20,.18);
+  background: rgba(255,255,255,.72);
+}
+
+html:not(.dark) .tcs-v16-premium-select-search input {
+  color: #2d2317;
+}
+
+html:not(.dark) .tcs-v16-premium-select-option {
+  color: #40331f;
+  border: 1px solid rgba(162,112,18,.08);
+  background: rgba(255,255,255,.42);
+}
+
+html:not(.dark) .tcs-v16-premium-select-option:hover,
+html:not(.dark) .tcs-v16-premium-select-option.is-selected {
+  border-color: rgba(184,127,22,.24);
+  background: linear-gradient(90deg, rgba(221,176,81,.14), rgba(255,255,255,.68));
+  box-shadow: 0 7px 16px rgba(67,46,9,.05);
+}
+
+html:not(.dark) .tcs-v16-premium-select-check {
+  color: #6c4a0d;
+  background: #f5df9e;
+}
+
+html:not(.dark) .tcs-v16-tools-menu {
+  color: #2c2216;
+  border-color: rgba(178,123,20,.26) !important;
+  background: linear-gradient(145deg, rgba(255,254,249,.99), rgba(242,229,204,.98)) !important;
+  box-shadow: 0 32px 82px rgba(62,42,7,.24), inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+html:not(.dark) .tcs-v16-tools-menu::before {
+  background:
+    radial-gradient(circle at 100% 0, rgba(218,172,76,.16), transparent 32%),
+    linear-gradient(90deg, rgba(211,162,58,.045), transparent 30%);
+}
+
+html:not(.dark) .tcs-v16-tools-menu .tcs-v8-toolbar-menu-actions > button,
+html:not(.dark) .tcs-v16-tools-menu > .grid > button {
+  color: #49381f !important;
+  border-color: rgba(170,118,22,.13) !important;
+  background: linear-gradient(180deg, #fffefa, #f5e9d3) !important;
+  box-shadow: 0 6px 14px rgba(64,43,8,.045) !important;
+}
+
+html:not(.dark) .tcs-v16-voice-button {
+  color: #77510e;
+  border-color: rgba(180,126,22,.20);
+  background: linear-gradient(180deg, #fffdf8, #f3e3c3);
+  box-shadow: 0 6px 16px rgba(72,49,9,.07), inset 0 1px 0 rgba(255,255,255,.95);
+}
+
+html:not(.dark) .tcs-v16-voice-button.is-listening {
+  color: #2a1e0b;
+  border-color: rgba(199,143,27,.45);
+  background: linear-gradient(135deg, #f8df93, #c98c1b);
+}
+
+/* Dark — obsidian/titanium menus with controlled gold. */
+html.dark .tcs-v16-premium-select-trigger {
+  color: #eee7dc;
+  border: 1px solid rgba(207,157,55,.20);
+  background: linear-gradient(180deg, #1c1c19, #11110f);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035), 0 8px 20px rgba(0,0,0,.22);
+}
+
+html.dark .tcs-v16-premium-select.is-open .tcs-v16-premium-select-trigger {
+  border-color: rgba(219,169,66,.40);
+  box-shadow: 0 0 0 3px rgba(214,163,61,.05), 0 14px 30px rgba(0,0,0,.30);
+}
+
+html.dark .tcs-v16-premium-select-chevron {
+  color: #d8b55d;
+  background: rgba(207,158,57,.08);
+}
+
+html.dark .tcs-v16-premium-select-menu {
+  color: #eee7da;
+  border: 1px solid rgba(216,165,61,.22);
+  background:
+    radial-gradient(circle at 100% 0, rgba(201,151,49,.11), transparent 30%),
+    linear-gradient(145deg, rgba(27,27,24,.99), rgba(10,10,9,.995));
+  box-shadow: 0 30px 84px rgba(0,0,0,.58), inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+html.dark .tcs-v16-premium-select-search {
+  color: #d8d0c1;
+  border: 1px solid rgba(211,161,58,.13);
+  background: rgba(255,255,255,.035);
+}
+
+html.dark .tcs-v16-premium-select-search input {
+  color: #eee8dd;
+}
+
+html.dark .tcs-v16-premium-select-option {
+  color: #d9d2c6;
+  border: 1px solid rgba(210,159,56,.06);
+  background: rgba(255,255,255,.018);
+}
+
+html.dark .tcs-v16-premium-select-option:hover,
+html.dark .tcs-v16-premium-select-option.is-selected {
+  color: #f2eadb;
+  border-color: rgba(220,169,66,.22);
+  background: linear-gradient(90deg, rgba(200,149,47,.11), rgba(255,255,255,.025));
+  box-shadow: 0 8px 18px rgba(0,0,0,.18);
+}
+
+html.dark .tcs-v16-premium-select-check {
+  color: #221707;
+  background: linear-gradient(135deg, #f0d27b, #b97d14);
+}
+
+html.dark .tcs-v16-tools-menu {
+  color: #eee7db;
+  border-color: rgba(214,163,60,.24) !important;
+  background: linear-gradient(145deg, rgba(25,25,22,.99), rgba(9,9,8,.995)) !important;
+  box-shadow: 0 38px 94px rgba(0,0,0,.62), inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+html.dark .tcs-v16-tools-menu::before {
+  background:
+    radial-gradient(circle at 100% 0, rgba(201,151,49,.10), transparent 34%),
+    linear-gradient(90deg, rgba(201,151,49,.035), transparent 30%);
+}
+
+html.dark .tcs-v16-tools-menu .tcs-v8-toolbar-menu-actions > button,
+html.dark .tcs-v16-tools-menu > .grid > button {
+  color: #d8d1c4 !important;
+  border-color: rgba(210,160,57,.09) !important;
+  background: linear-gradient(180deg, #1d1d1a, #131311) !important;
+  box-shadow: 0 7px 16px rgba(0,0,0,.16) !important;
+}
+
+html.dark .tcs-v16-voice-button {
+  color: #d8b85f;
+  border-color: rgba(214,164,61,.16);
+  background: linear-gradient(180deg, #20201d, #141412);
+  box-shadow: 0 7px 18px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+html.dark .tcs-v16-voice-button.is-listening {
+  color: #201607;
+  border-color: rgba(235,193,94,.44);
+  background: linear-gradient(135deg, #f0d37f, #bd8118);
+}
+
+@media (max-width: 760px) {
+  .tcs-v16-premium-select-menu { max-width: min(92vw, 360px); }
+  .tcs-v16-tools-menu { width: min(92vw, 340px) !important; }
+}
