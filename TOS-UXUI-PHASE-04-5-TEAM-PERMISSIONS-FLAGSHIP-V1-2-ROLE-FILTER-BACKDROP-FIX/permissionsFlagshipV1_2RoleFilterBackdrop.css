@@ -1,0 +1,16 @@
+:root {
+  --tos-permissions-flagship-v1-2-role-filter-backdrop-runtime: 1;
+}
+
+/* Phase 04.5 V1.2: role-filter backdrop visual fix only.
+   Keep the outside-click layer fully transparent so it never paints over the page. */
+.tos-permissions-role-filter-backdrop {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}
