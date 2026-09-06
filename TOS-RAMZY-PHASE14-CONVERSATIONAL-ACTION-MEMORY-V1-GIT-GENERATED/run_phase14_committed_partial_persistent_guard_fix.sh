@@ -27,6 +27,16 @@ public_code() {
   printf '%s' "$code"
 }
 
+strip_target_status() {
+  local status="$1"
+  printf '%s\n' "$status" | while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    local path="${line:3}"
+    [[ "$path" == "$TARGET" ]] && continue
+    printf '%s\n' "$line"
+  done | sort
+}
+
 echo "RUNNING=RAMZY_PHASE14_COMMITTED_PARTIAL_PERSISTENT_GUARD_FIX"
 cd "$TOS_ROOT"
 CURRENT_HEAD="$(git rev-parse HEAD)"
@@ -84,9 +94,8 @@ TEST_HASH_AFTER="$(sha256sum "$TEST" | awk '{print $1}')"
 [[ "$TEST_HASH_BEFORE" == "$TEST_HASH_AFTER" ]] || fail "REGRESSION_TEST_CHANGED"
 
 POST_STATUS="$(git status --short)"
-EXPECTED_POST="$(printf '%s\nM  %s\n' "$PRE_STATUS" "$TARGET" | sed '/^$/d' | sort)"
-ACTUAL_POST="$(printf '%s\n' "$POST_STATUS" | sed '/^$/d' | sort)"
-if [[ "$EXPECTED_POST" != "$ACTUAL_POST" ]]; then
+printf '%s\n' "$POST_STATUS" | grep -Fq " $TARGET" || fail "PHASE14_GUARD_TARGET_NOT_CHANGED"
+if [[ "$(strip_target_status "$PRE_STATUS")" != "$(strip_target_status "$POST_STATUS")" ]]; then
   fail "UNRELATED_WORKTREE_CHANGED"
 fi
 
