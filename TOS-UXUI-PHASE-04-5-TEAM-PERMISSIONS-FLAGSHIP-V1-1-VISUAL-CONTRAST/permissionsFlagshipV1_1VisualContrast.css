@@ -1,0 +1,134 @@
+:root {
+  --tos-permissions-flagship-v1-1-runtime: 1;
+}
+
+/* Phase 04.5 V1.1: targeted visual correction only.
+   No permission semantics, handlers, API calls, DB access, or layout structure are changed. */
+
+/* Dark-mode typography: the baseline Tailwind dark text utilities are being overridden
+   in the live cascade on this page, so lock critical executive headings to readable tones. */
+.dark .tos-permissions-flagship-v1 .tos-permissions-hero h2,
+.dark .tos-permissions-flagship-v1 .tos-permissions-section > div h3,
+.dark .tos-permissions-flagship-v1 .tos-permissions-role-card h3 {
+  color: #f5f1e8 !important;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-project-card h3 {
+  color: #efe6d4 !important;
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-section h3 > span {
+  color: #9f978a !important;
+}
+
+/* Permission-name column: force actual label/key content to remain visible in both themes. */
+.tos-permissions-flagship-v1 .tos-permissions-matrix tbody td:first-child {
+  width: 260px;
+  min-width: 260px;
+  max-width: 260px;
+  color: #1d1a15 !important;
+  isolation: isolate;
+}
+
+.tos-permissions-flagship-v1 .tos-permissions-matrix tbody td:first-child > div {
+  position: relative;
+  z-index: 2;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.tos-permissions-flagship-v1 .tos-permissions-matrix tbody td:first-child > div:first-child {
+  color: #201d18 !important;
+}
+
+.tos-permissions-flagship-v1 .tos-permissions-matrix tbody td:first-child > div:nth-child(2) {
+  color: #958a78 !important;
+}
+
+/* Keep sticky behavior deterministic for both document directions. */
+[dir="ltr"] .tos-permissions-flagship-v1 .tos-permissions-matrix th:first-child,
+[dir="ltr"] .tos-permissions-flagship-v1 .tos-permissions-matrix td:first-child {
+  left: 0;
+  right: auto;
+}
+
+[dir="rtl"] .tos-permissions-flagship-v1 .tos-permissions-matrix th:first-child,
+[dir="rtl"] .tos-permissions-flagship-v1 .tos-permissions-matrix td:first-child {
+  right: 0;
+  left: auto;
+}
+
+/* Light matrix: preserve ivory character while adding enough row definition to read the labels. */
+.tos-permissions-flagship-v1 .tos-permissions-matrix thead th {
+  background: #fffdf9 !important;
+}
+
+.tos-permissions-flagship-v1 .tos-permissions-matrix tbody td {
+  background: rgba(255, 255, 255, 0.985) !important;
+}
+
+.tos-permissions-flagship-v1 .tos-permissions-matrix tbody tr:nth-child(even) td {
+  background: rgba(255, 251, 244, 0.72) !important;
+}
+
+.tos-permissions-flagship-v1 .tos-permissions-matrix tbody tr:hover td {
+  background: rgba(255, 247, 229, 0.92) !important;
+}
+
+/* Dark matrix: remove the white table slab and restore the Obsidian/Titanium surface. */
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix-shell,
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix {
+  background: #11110f !important;
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix thead,
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix thead tr,
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix thead th {
+  background: #1a1916 !important;
+  color: #d8d1c4 !important;
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix thead th > div:first-child {
+  color: #f2ede4 !important;
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix thead th > div:nth-child(2) {
+  color: #8f887b !important;
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix tbody,
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix tbody tr,
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix tbody td {
+  background: #141411 !important;
+  border-color: rgba(255, 255, 255, 0.055) !important;
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix tbody tr:nth-child(even) td {
+  background: #171714 !important;
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix tbody tr:hover td {
+  background: #1d1b16 !important;
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix th:first-child,
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix td:first-child {
+  background: #191814 !important;
+  box-shadow: 1px 0 0 rgba(213, 168, 73, 0.10), 10px 0 24px rgba(0, 0, 0, 0.10) !important;
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix tbody td:first-child > div:first-child {
+  color: #f2eee6 !important;
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix tbody td:first-child > div:nth-child(2) {
+  color: #8f887b !important;
+}
+
+/* Dark matrix footer must read as part of the same surface, not a separate black strip. */
+.dark .tos-permissions-flagship-v1 .tos-permissions-matrix-shell > div:last-child {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  background: #121210 !important;
+}
