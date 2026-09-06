@@ -21,6 +21,13 @@ def stop(message: str):
     sys.exit(1)
 
 
+def replace_once(text: str, old: str, new: str, label: str) -> str:
+    count = text.count(old)
+    if count != 1:
+        stop(f"{label}: expected 1 patch-script target, found {count}")
+    return text.replace(old, new, 1)
+
+
 if not SOURCE.exists():
     stop(f"base patch script missing: {SOURCE}")
 if git_blob_sha(SOURCE) != EXPECTED_SOURCE_BLOB_SHA:
@@ -28,41 +35,68 @@ if git_blob_sha(SOURCE) != EXPECTED_SOURCE_BLOB_SHA:
 
 text = SOURCE.read_text(encoding="utf-8")
 
-transforms = [
-    (
-        'print("RUNNING=EMPLOYEE_WORK_HUB_PREMIUM_DATE_PICKER_V1")',
-        'print("RUNNING=EMPLOYEE_WORK_HUB_PREMIUM_DATE_PICKER_V1_2")',
-        "runtime label",
-    ),
-    (
-        '''native_before = original_page.count('type=\\"date\\"')\nif native_before != 6:\n    fail(f\\"expected exactly 6 native date inputs in EmployeeWorkHub.jsx, found {native_before}\\")''',
-        '''native_before = original_page.count('type=\\"date\\"')\nif native_before != 7:\n    fail(f\\"expected exactly 7 native date inputs in EmployeeWorkHub.jsx, found {native_before}\\")''',
-        "seven native dates guard",
-    ),
-    (
-        '''        (\n            '<input type=\\"date\\" value={form.startDate} onChange={(event) => setForm((current) => ({ ...current, startDate: event.target.value, endDate: event.target.value }))} className={inputClass()} required />',\n            '<EmployeeWorkDatePickerV1 value={form.startDate} onChange={(value) => setForm((current) => ({ ...current, startDate: value, endDate: value }))} isAr={isAr} ariaLabel={isAr ? \\"تاريخ العمل الإضافي\\" : \\"Overtime date\\"} required />',\n            \\"overtime date\\",\n        ),\n    ]''',
-        '''        (\n            '<input type=\\"date\\" value={form.startDate} onChange={(event) => setForm((current) => ({ ...current, startDate: event.target.value, endDate: event.target.value }))} className={inputClass()} required />',\n            '<EmployeeWorkDatePickerV1 value={form.startDate} onChange={(value) => setForm((current) => ({ ...current, startDate: value, endDate: value }))} isAr={isAr} ariaLabel={isAr ? \\"تاريخ العمل الإضافي\\" : \\"Overtime date\\"} required />',\n            \\"overtime date\\",\n        ),\n        (\n            '<input type=\\"date\\" value={adminFilters.requestDay} onChange={(event) => setAdminFilter(\\"requestDay\\", event.target.value)} className={inputClass()} />',\n            '<EmployeeWorkDatePickerV1 value={adminFilters.requestDay} onChange={(value) => setAdminFilter(\\"requestDay\\", value)} isAr={isAr} ariaLabel={isAr ? \\"يوم الطلب\\" : \\"Request day\\"} />',\n            \\"admin request-day filter\\",\n        ),\n    ]''',
-        "admin date filter replacement",
-    ),
-    (
-        '''    if page.count(\\"<EmployeeWorkDatePickerV1\\") != 6:\n        raise RuntimeError(\\"expected exactly 6 premium date picker usages\\")''',
-        '''    if page.count(\\"<EmployeeWorkDatePickerV1\\") != 7:\n        raise RuntimeError(\\"expected exactly 7 premium date picker usages\\")''',
-        "seven premium picker postcondition",
-    ),
-]
+text = replace_once(
+    text,
+    'print("RUNNING=EMPLOYEE_WORK_HUB_PREMIUM_DATE_PICKER_V1")',
+    'print("RUNNING=EMPLOYEE_WORK_HUB_PREMIUM_DATE_PICKER_V1_2")',
+    "runtime label",
+)
 
-for old, new, label in transforms:
-    count = text.count(old)
-    if count != 1:
-        stop(f"{label}: expected 1 patch-script target, found {count}")
-    text = text.replace(old, new, 1)
+text = replace_once(
+    text,
+    '''native_before = original_page.count('type="date"')
+if native_before != 6:
+    fail(f"expected exactly 6 native date inputs in EmployeeWorkHub.jsx, found {native_before}")''',
+    '''native_before = original_page.count('type="date"')
+if native_before != 7:
+    fail(f"expected exactly 7 native date inputs in EmployeeWorkHub.jsx, found {native_before}")''',
+    "seven native dates guard",
+)
 
-# Correct the known V1 Python f-string parser issue without weakening its postcondition.
-bad_syntax = '''    if page.count('type=\\"date\\"') != 0:\n        raise RuntimeError(f\\"native date inputs remain after patch: {page.count('type=\\\\\\"date\\\\\\"')}\\")'''
-good_syntax = '''    remaining_native_dates = page.count('type=\\"date\\"')\n    if remaining_native_dates != 0:\n        raise RuntimeError(f\\"native date inputs remain after patch: {remaining_native_dates}\\")'''
-if text.count(bad_syntax) != 1:
-    stop(f"V1 syntax-fix target: expected 1, found {text.count(bad_syntax)}")
-text = text.replace(bad_syntax, good_syntax, 1)
+overtime_tail = '''        (
+            '<input type="date" value={form.startDate} onChange={(event) => setForm((current) => ({ ...current, startDate: event.target.value, endDate: event.target.value }))} className={inputClass()} required />',
+            '<EmployeeWorkDatePickerV1 value={form.startDate} onChange={(value) => setForm((current) => ({ ...current, startDate: value, endDate: value }))} isAr={isAr} ariaLabel={isAr ? "تاريخ العمل الإضافي" : "Overtime date"} required />',
+            "overtime date",
+        ),
+    ]'''
+
+overtime_plus_admin = '''        (
+            '<input type="date" value={form.startDate} onChange={(event) => setForm((current) => ({ ...current, startDate: event.target.value, endDate: event.target.value }))} className={inputClass()} required />',
+            '<EmployeeWorkDatePickerV1 value={form.startDate} onChange={(value) => setForm((current) => ({ ...current, startDate: value, endDate: value }))} isAr={isAr} ariaLabel={isAr ? "تاريخ العمل الإضافي" : "Overtime date"} required />',
+            "overtime date",
+        ),
+        (
+            '<input type="date" value={adminFilters.requestDay} onChange={(event) => setAdminFilter("requestDay", event.target.value)} className={inputClass()} />',
+            '<EmployeeWorkDatePickerV1 value={adminFilters.requestDay} onChange={(value) => setAdminFilter("requestDay", value)} isAr={isAr} ariaLabel={isAr ? "يوم الطلب" : "Request day"} />',
+            "admin request-day filter",
+        ),
+    ]'''
+text = replace_once(text, overtime_tail, overtime_plus_admin, "admin date filter replacement")
+
+# Preserve the original safety condition while fixing the known Python parser issue in V1.
+bad_syntax = '''    if page.count('type="date"') != 0:
+        raise RuntimeError(f"native date inputs remain after patch: {page.count('type=\\"date\\"')}")'''
+good_syntax = '''    remaining_native_dates = page.count('type="date"')
+    if remaining_native_dates != 0:
+        raise RuntimeError(f"native date inputs remain after patch: {remaining_native_dates}")'''
+text = replace_once(text, bad_syntax, good_syntax, "V1 syntax fix")
+
+text = replace_once(
+    text,
+    '''    if page.count("<EmployeeWorkDatePickerV1") != 6:
+        raise RuntimeError("expected exactly 6 premium date picker usages")''',
+    '''    if page.count("<EmployeeWorkDatePickerV1") != 7:
+        raise RuntimeError("expected exactly 7 premium date picker usages")''',
+    "seven premium picker postcondition",
+)
+
+text = replace_once(text, 'print("PREMIUM_DATE_PICKERS=6")', 'print("PREMIUM_DATE_PICKERS=7")', "report picker count")
+text = replace_once(
+    text,
+    'print("OVERTIME_DATE=PREMIUM")',
+    'print("OVERTIME_DATE=PREMIUM")\nprint("ADMIN_REQUEST_DAY_FILTER=PREMIUM")',
+    "report admin filter date",
+)
 
 try:
     code = compile(text, str(SOURCE) + "[V1.2]", "exec")
