@@ -11,14 +11,20 @@ if 'publicActionDraftView' not in text or 'conversation_action_draft' not in tex
 
 helper = r'''
 function looksLikeActionDraftMessage(text) {
-  const value = String(text || "").trim();
-  if (!value) return false;
-  // Do not use JS \\b around Arabic words: \\b is based on ASCII-style word characters
-  // and can miss valid Arabic action commands. Space/end boundaries are Unicode-safe here.
-  return /^(?:(?:من فضلك|لو سمحت|please|عايز|أريد|اريد|i want to)\s+)?(?:اعمل|انشئ|أنشئ|create|make)(?:\s|$)[\s\S]{0,160}(?:^|\s)(?:task|تاسك|التاسك|مهمه|مهمة|المهمه|المهمة)(?:\s|$)/iu.test(value)
-    || /^(?:(?:من فضلك|لو سمحت|please|عايز|أريد|اريد|i want to)\s+)?(?:اسند|إسند|assign|حوّل|حول|انقل)(?:\s|$)[\s\S]{0,180}/iu.test(value)
-    || /^(?:(?:من فضلك|لو سمحت|please|عايز|أريد|اريد|i want to)\s+)?(?:ضيف|اضف|أضف|add)(?:\s|$)[\s\S]{0,140}(?:^|\s)(?:comment|تعليق|checklist|check list|تشيك ليست)(?:\s|$)/iu.test(value)
-    || /^(?:(?:من فضلك|لو سمحت|please|عايز|أريد|اريد|i want to)\s+)?(?:غير|غيّر|عدل|عدّل|خلي|خلّي|change|set|move)(?:\s|$)[\s\S]{0,160}(?:^|\s)(?:due|deadline|موعد|ميعاد|assignee|منفذ)(?:\s|$)/iu.test(value);
+  const original = String(text || "").trim().replace(/\s+/g, " ");
+  if (!original) return false;
+  const value = original.replace(/^(?:من فضلك|لو سمحت|please|عايز|أريد|اريد|i want to)\s+/iu, "");
+  const startsWithVerb = (verbs) => verbs.some((verb) => value === verb || value.startsWith(`${verb} `));
+  const taskToken = /(?:^|\s)(?:task|tasks|تاسك|التاسك|تاسكات|التاسكات|مهمه|مهمة|المهمه|المهمة|مهام|المهام)(?=\s|$)/iu;
+  const commentChecklistToken = /(?:^|\s)(?:comment|تعليق|checklist|check list|تشيك ليست)(?=\s|$)/iu;
+  const dueToken = /(?:^|\s)(?:due|deadline|موعد|ميعاد|تسليم)(?=\s|$)/iu;
+
+  if (startsWithVerb(["اعمل", "انشئ", "أنشئ", "create", "make"]) && taskToken.test(value)) return true;
+  if (startsWithVerb(["اسند", "إسند", "assign", "حوّل", "حول", "انقل"])) return true;
+  if (startsWithVerb(["خلي", "خلّي", "خليها", "خلّيها", "خليه", "خلّيه"]) && taskToken.test(value)) return true;
+  if (startsWithVerb(["ضيف", "اضف", "أضف", "add"]) && commentChecklistToken.test(value)) return true;
+  if (startsWithVerb(["غير", "غيّر", "عدل", "عدّل", "change", "set", "move"]) && dueToken.test(value)) return true;
+  return false;
 }
 '''
 
@@ -44,6 +50,8 @@ if new_testables not in text:
 
 required = [
     'function looksLikeActionDraftMessage',
+    'const startsWithVerb = (verbs)',
+    'taskToken.test(value)',
     'looksLikeActionDraftMessage(message) || !isHighConfidenceMemory(message)',
     'looksLikeActionDraftMessage,',
 ]
