@@ -1,0 +1,296 @@
+:root {
+  --tos-tcs-flagship-v1-5-smart-search-runtime: 1;
+}
+
+/* TCS V1.5 — Smart Search + executive refinement.
+   Search presentation and final visual polish only. */
+
+.tcs-desktop-window [data-tcs-presentation="desktop-window"] .tcs-v15-inline-smart-search {
+  font-weight: 650;
+  letter-spacing: -.01em;
+}
+
+.tcs-desktop-window [data-tcs-presentation="desktop-window"] div:has(> .tcs-v15-inline-smart-search) {
+  min-height: 46px;
+  border-radius: 16px !important;
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .18s ease;
+}
+
+.tcs-desktop-window [data-tcs-presentation="desktop-window"] div:has(> .tcs-v15-inline-smart-search):focus-within {
+  transform: translateY(-1px);
+}
+
+.tcs-v15-smart-search-dialog {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  max-width: 760px !important;
+  border-radius: 32px !important;
+}
+
+.tcs-v15-smart-search-dialog::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .75;
+  background:
+    radial-gradient(circle at 0 0, rgba(213,166,65,.14), transparent 28%),
+    radial-gradient(circle at 100% 0, rgba(213,166,65,.08), transparent 24%);
+}
+
+.tcs-v15-smart-search-dialog > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tcs-v15-smart-search-input {
+  min-height: 56px;
+  border-radius: 18px !important;
+  font-size: 14px !important;
+  font-weight: 700;
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.tcs-v15-smart-search-types {
+  gap: 7px !important;
+}
+
+.tcs-v15-smart-search-types > button {
+  min-height: 31px;
+  padding-inline: 12px !important;
+  border: 1px solid transparent;
+  transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.tcs-v15-smart-search-types > button:hover {
+  transform: translateY(-1px);
+}
+
+.tcs-v15-smart-search-meta {
+  min-height: 38px;
+  border: 1px solid transparent;
+}
+
+.tcs-v15-smart-search-results {
+  padding-inline-end: 3px;
+  scrollbar-width: thin;
+}
+
+.tcs-v15-smart-search-result {
+  position: relative;
+  overflow: hidden;
+  min-height: 70px;
+  padding: 13px 14px !important;
+  border-radius: 18px !important;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+
+.tcs-v15-smart-search-result::before {
+  content: "";
+  position: absolute;
+  inset-block: 10px;
+  inset-inline-start: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, transparent, rgba(204,151,42,.84), transparent);
+}
+
+.tcs-v15-smart-search-result:hover {
+  transform: translateY(-1px);
+}
+
+.tcs-v15-smart-search-kind {
+  display: inline-flex;
+  align-items: center;
+  min-height: 21px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+
+.tcs-v15-smart-search-hint {
+  font-size: 10px;
+  font-weight: 750;
+}
+
+/* Light — richer ivory separation without adding visual clutter. */
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] div:has(> .tcs-v15-inline-smart-search) {
+  border-color: rgba(176,126,25,.22) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(247,237,218,.86)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.96), 0 9px 24px rgba(64,45,12,.055) !important;
+}
+
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] div:has(> .tcs-v15-inline-smart-search):focus-within {
+  border-color: rgba(184,128,21,.44) !important;
+  box-shadow: 0 13px 30px rgba(72,48,8,.10), 0 0 0 3px rgba(202,151,45,.07) !important;
+}
+
+html:not(.dark) .tcs-v15-smart-search-dialog {
+  color: #2b2115;
+  border-color: rgba(181,129,26,.27) !important;
+  background:
+    linear-gradient(145deg, rgba(255,254,250,.99), rgba(244,232,209,.98)) !important;
+  box-shadow: 0 38px 100px rgba(61,42,9,.25), inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+html:not(.dark) .tcs-v15-smart-search-input {
+  color: #261d13 !important;
+  border-color: rgba(174,123,25,.22) !important;
+  background: linear-gradient(180deg, #fffefb, #faf2e3) !important;
+  box-shadow: inset 0 1px 2px rgba(65,45,10,.04), 0 9px 22px rgba(65,45,10,.05) !important;
+}
+
+html:not(.dark) .tcs-v15-smart-search-input:focus {
+  border-color: rgba(181,126,20,.55) !important;
+  box-shadow: 0 0 0 4px rgba(202,151,45,.08), 0 13px 30px rgba(62,43,10,.08) !important;
+}
+
+html:not(.dark) .tcs-v15-smart-search-types > button {
+  color: #5c4c35 !important;
+  border-color: rgba(163,115,23,.14) !important;
+  background: linear-gradient(180deg, #fffefa, #f5ead5) !important;
+  box-shadow: 0 5px 12px rgba(63,44,11,.04) !important;
+}
+
+html:not(.dark) .tcs-v15-smart-search-types > button[class*="bg-zinc-950"] {
+  color: #fff7e4 !important;
+  border-color: rgba(221,177,79,.48) !important;
+  background: linear-gradient(135deg, #2d2113 0%, #70501c 62%, #a46d10 100%) !important;
+  box-shadow: 0 9px 20px rgba(70,48,8,.18), inset 0 1px 0 rgba(255,255,255,.16) !important;
+}
+
+html:not(.dark) .tcs-v15-smart-search-meta {
+  color: #6f6048 !important;
+  border-color: rgba(171,122,26,.13) !important;
+  background: rgba(255,252,245,.72) !important;
+}
+
+html:not(.dark) .tcs-v15-smart-search-result {
+  color: #2a2116 !important;
+  border-color: rgba(171,121,24,.14) !important;
+  background:
+    linear-gradient(90deg, rgba(213,165,67,.055), transparent 18%),
+    linear-gradient(180deg, rgba(255,255,255,.95), rgba(247,238,222,.88)) !important;
+  box-shadow: 0 7px 18px rgba(62,43,10,.05), inset 0 1px 0 rgba(255,255,255,.94) !important;
+}
+
+html:not(.dark) .tcs-v15-smart-search-result:hover,
+html:not(.dark) .tcs-v15-smart-search-result.is-active {
+  border-color: rgba(190,136,28,.34) !important;
+  background:
+    radial-gradient(circle at 92% 0, rgba(220,174,77,.12), transparent 34%),
+    linear-gradient(180deg, #fffdf7, #f2e2c3) !important;
+  box-shadow: 0 13px 28px rgba(69,47,8,.10), inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+
+html:not(.dark) .tcs-v15-smart-search-kind {
+  color: #74500e;
+  border: 1px solid rgba(181,128,24,.18);
+  background: #f8e9bc;
+}
+
+html:not(.dark) .tcs-v15-smart-search-hint { color: #897657; }
+
+/* Dark — restrained black titanium with intentional gold focus. */
+html.dark .tcs-desktop-window [data-tcs-presentation="desktop-window"] div:has(> .tcs-v15-inline-smart-search) {
+  border-color: rgba(205,156,54,.19) !important;
+  background: linear-gradient(180deg, rgba(24,23,19,.94), rgba(13,13,11,.98)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035), 0 10px 24px rgba(0,0,0,.18) !important;
+}
+
+html.dark .tcs-desktop-window [data-tcs-presentation="desktop-window"] div:has(> .tcs-v15-inline-smart-search):focus-within {
+  border-color: rgba(215,168,67,.38) !important;
+  box-shadow: 0 0 0 3px rgba(215,168,67,.055), 0 15px 32px rgba(0,0,0,.24) !important;
+}
+
+html.dark .tcs-v15-smart-search-dialog {
+  color: #eee6d7;
+  border-color: rgba(210,161,59,.25) !important;
+  background:
+    radial-gradient(circle at 100% -20%, rgba(201,151,49,.10), transparent 34%),
+    linear-gradient(145deg, #171714 0%, #0c0c0b 100%) !important;
+  box-shadow: 0 44px 110px rgba(0,0,0,.58), inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+html.dark .tcs-v15-smart-search-input {
+  color: #f1eadc !important;
+  border-color: rgba(210,161,59,.20) !important;
+  background: linear-gradient(180deg, #191916, #10100f) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 10px 24px rgba(0,0,0,.18) !important;
+}
+
+html.dark .tcs-v15-smart-search-input:focus {
+  border-color: rgba(220,171,66,.46) !important;
+  box-shadow: 0 0 0 4px rgba(220,171,66,.055), 0 16px 34px rgba(0,0,0,.24) !important;
+}
+
+html.dark .tcs-v15-smart-search-types > button {
+  color: #bdb4a4 !important;
+  border-color: rgba(211,162,59,.10) !important;
+  background: linear-gradient(180deg, #20201d, #151513) !important;
+}
+
+html.dark .tcs-v15-smart-search-types > button[class*="dark:bg-white"] {
+  color: #1b1408 !important;
+  border-color: rgba(235,197,110,.44) !important;
+  background: linear-gradient(135deg, #f3d986, #c28a1d) !important;
+  box-shadow: 0 10px 22px rgba(181,124,16,.13), inset 0 1px 0 rgba(255,255,255,.34) !important;
+}
+
+html.dark .tcs-v15-smart-search-meta {
+  color: #9c9488 !important;
+  border-color: rgba(207,158,57,.10) !important;
+  background: rgba(255,255,255,.025) !important;
+}
+
+html.dark .tcs-v15-smart-search-result {
+  color: #eee8dc !important;
+  border-color: rgba(209,160,58,.11) !important;
+  background:
+    linear-gradient(90deg, rgba(201,151,49,.045), transparent 18%),
+    linear-gradient(180deg, #1b1b18, #121211) !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+html.dark .tcs-v15-smart-search-result:hover,
+html.dark .tcs-v15-smart-search-result.is-active {
+  border-color: rgba(220,171,67,.32) !important;
+  background:
+    radial-gradient(circle at 92% 0, rgba(201,151,49,.10), transparent 34%),
+    linear-gradient(180deg, #222019, #151411) !important;
+  box-shadow: 0 15px 32px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+html.dark .tcs-v15-smart-search-kind {
+  color: #e1c26f;
+  border: 1px solid rgba(220,170,64,.18);
+  background: rgba(201,151,49,.08);
+}
+
+html.dark .tcs-v15-smart-search-hint { color: #8d867a; }
+
+/* Final shell refinement: premium depth stays quiet behind the search experience. */
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-v8-workspace {
+  background:
+    radial-gradient(circle at 52% 42%, rgba(206,154,42,.085), transparent 20%),
+    linear-gradient(180deg, #fffefa 0%, #f8f3eb 55%, #f1e9dc 100%) !important;
+}
+
+html.dark .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-v8-workspace {
+  background:
+    radial-gradient(circle at 52% 42%, rgba(196,145,45,.045), transparent 21%),
+    linear-gradient(180deg, #11110f 0%, #0c0c0b 100%) !important;
+}
+
+.tcs-desktop-window-titlebar {
+  backdrop-filter: blur(18px) saturate(1.06);
+}
+
+@media (max-width: 720px) {
+  .tcs-v15-smart-search-dialog { border-radius: 24px !important; }
+  .tcs-v15-smart-search-result { min-height: 64px; }
+}
