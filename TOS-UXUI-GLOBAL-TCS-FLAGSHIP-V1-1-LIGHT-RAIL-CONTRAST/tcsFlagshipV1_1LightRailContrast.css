@@ -1,0 +1,83 @@
+:root {
+  --tos-tcs-flagship-v1-1-light-rail-contrast-runtime: 1;
+}
+
+/* TCS Flagship V1.1 — visual-only correction for the embedded desktop-window chat rail.
+   Scope is deliberately limited to light mode inside TCS desktop-window presentation. */
+
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail {
+  color: #2b2419 !important;
+  border-color: rgba(201,145,25,.16) !important;
+  background:
+    radial-gradient(circle at 18% 4%, rgba(201,145,25,.08), transparent 28%),
+    linear-gradient(180deg, #fffdf8 0%, #faf4e8 100%) !important;
+  box-shadow: inset -1px 0 0 rgba(255,255,255,.65), inset 0 1px 0 rgba(255,255,255,.85) !important;
+}
+
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .text-zinc-100,
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .text-zinc-200,
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .text-zinc-300 {
+  color: #30271b !important;
+}
+
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .text-zinc-400,
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .text-zinc-500 {
+  color: #7f715d !important;
+}
+
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .bg-zinc-900 {
+  background: rgba(255,255,255,.88) !important;
+}
+
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .bg-white\/5 {
+  background: rgba(255,255,255,.62) !important;
+}
+
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .bg-white\/10 {
+  background: rgba(201,145,25,.08) !important;
+}
+
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .border-white\/10 {
+  border-color: rgba(201,145,25,.16) !important;
+}
+
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail input {
+  color: #2b2419 !important;
+  caret-color: #b77d0d;
+}
+
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail input::placeholder {
+  color: #9a8b74 !important;
+}
+
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail button {
+  color: #32291d;
+}
+
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .tcs-v8-new-conversation-trigger {
+  color: #33291c !important;
+  border-color: rgba(201,145,25,.20) !important;
+  background: rgba(255,255,255,.74) !important;
+  box-shadow: 0 8px 18px rgba(65,45,10,.04);
+}
+
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .tcs-v8-new-conversation-trigger:hover {
+  color: #9a6708 !important;
+  border-color: rgba(201,145,25,.34) !important;
+  background: #fff8e8 !important;
+}
+
+/* Conversation rows: keep the champagne state while restoring readable foreground contrast. */
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail button[class*="amber"],
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail button[class*="bg-amber"] {
+  color: #2a2116 !important;
+}
+
+/* Preserve semantic accents instead of flattening the whole rail. */
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .text-emerald-300,
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .text-emerald-400,
+html:not(.dark) .tcs-desktop-window [data-tcs-presentation="desktop-window"] .tos-chat-rail .text-emerald-500 {
+  color: #15815b !important;
+}
+
+/* Dark mode intentionally unchanged from approved V1. */
