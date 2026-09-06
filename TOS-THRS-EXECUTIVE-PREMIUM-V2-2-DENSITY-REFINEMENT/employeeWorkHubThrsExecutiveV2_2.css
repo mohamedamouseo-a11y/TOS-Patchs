@@ -1,0 +1,249 @@
+/* --tos-thrs-executive-v2-2-runtime */
+
+/* Executive density refinement only: no structural or functional changes. */
+.tos-thrs-executive-v2,
+.tos-thrs-request-shell-v2 {
+  border-color: rgba(176, 139, 70, 0.34) !important;
+  background:
+    radial-gradient(circle at 92% -12%, rgba(222, 190, 126, 0.19), transparent 30%),
+    radial-gradient(circle at 8% -4%, rgba(255, 255, 255, 0.99), transparent 29%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.995), rgba(247, 243, 234, 0.985)) !important;
+  box-shadow:
+    0 28px 74px rgba(72, 54, 24, 0.12),
+    0 8px 24px rgba(64, 48, 22, 0.065),
+    inset 0 1px 0 rgba(255, 255, 255, 0.98) !important;
+}
+
+.tos-thrs-executive-v2::after,
+.tos-thrs-request-shell-v2::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42);
+}
+
+.dark .tos-thrs-executive-v2,
+.dark .tos-thrs-request-shell-v2 {
+  border-color: rgba(220, 181, 105, 0.21) !important;
+  background:
+    radial-gradient(circle at 90% -10%, rgba(184, 137, 50, 0.13), transparent 31%),
+    linear-gradient(155deg, rgba(20, 21, 24, 0.995), rgba(7, 8, 10, 0.998)) !important;
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.55),
+    0 12px 34px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+}
+
+/* KPIs: breathe more and never ellipsize executive labels. */
+.tos-thrs-admin-kpis-v2,
+.tos-thrs-calendar-kpis-v2 {
+  gap: 14px;
+}
+
+.tos-thrs-admin-kpis-v2 {
+  grid-template-columns: 1fr;
+  margin-bottom: 24px;
+}
+
+.tos-thrs-calendar-kpis-v2 {
+  width: 100%;
+  max-width: 1120px;
+  grid-template-columns: 1fr;
+}
+
+.tos-thrs-kpi-v2 {
+  min-height: 96px;
+  gap: 14px;
+  border-radius: 24px;
+  padding: 14px 16px;
+  border-color: rgba(184, 157, 107, 0.54);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.985), rgba(247, 242, 233, 0.94));
+  box-shadow:
+    0 12px 30px rgba(67, 50, 22, 0.075),
+    inset 0 1px 0 rgba(255, 255, 255, 0.98);
+}
+
+.tos-thrs-kpi-v2:hover {
+  transform: translateY(-3px);
+  border-color: rgba(181, 132, 42, 0.50);
+  box-shadow:
+    0 18px 38px rgba(72, 51, 18, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.99);
+}
+
+.tos-thrs-kpi-ring-v2 {
+  width: 68px;
+  height: 68px;
+  flex-basis: 68px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.70),
+    0 8px 20px color-mix(in srgb, var(--tone) 15%, transparent);
+}
+
+.tos-thrs-kpi-ring-core-v2 {
+  width: 50px;
+  height: 50px;
+}
+
+.tos-thrs-kpi-ring-core-v2 span {
+  font-size: 18px;
+}
+
+.tos-thrs-kpi-copy-v2 {
+  align-content: center;
+  gap: 5px;
+}
+
+.tos-thrs-kpi-copy-v2 strong,
+.tos-thrs-kpi-copy-v2 span {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.tos-thrs-kpi-copy-v2 strong {
+  color: #101827;
+  font-size: 12.5px;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+}
+
+.tos-thrs-kpi-copy-v2 span {
+  color: #7c6945;
+  font-size: 10.5px;
+  line-height: 1.35;
+}
+
+.dark .tos-thrs-kpi-v2 {
+  border-color: rgba(255, 255, 255, 0.09);
+  background:
+    linear-gradient(155deg, rgba(31, 33, 37, 0.96), rgba(15, 16, 19, 0.98));
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.dark .tos-thrs-kpi-v2:hover {
+  border-color: rgba(220, 181, 105, 0.31);
+  background:
+    linear-gradient(155deg, rgba(38, 35, 29, 0.98), rgba(16, 17, 20, 0.99));
+  box-shadow:
+    0 20px 44px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.dark .tos-thrs-kpi-ring-core-v2 {
+  background: #111318;
+}
+
+.dark .tos-thrs-kpi-copy-v2 strong { color: #fafafa; }
+.dark .tos-thrs-kpi-copy-v2 span { color: #b8b3aa; }
+
+/* Stronger filter-console hierarchy and a more prominent smart-search control. */
+.tos-thrs-executive-v2 .tos-thrs-admin-filters {
+  border-color: rgba(184, 148, 82, 0.34) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(246, 241, 232, 0.90)) !important;
+  padding: 17px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    0 10px 28px rgba(67, 50, 22, 0.07);
+}
+
+.dark .tos-thrs-executive-v2 .tos-thrs-admin-filters {
+  border-color: rgba(214, 174, 96, 0.18) !important;
+  background:
+    linear-gradient(180deg, rgba(27, 29, 33, 0.96), rgba(13, 14, 17, 0.98)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+.tos-thrs-smart-search-v2 > input {
+  min-height: 50px;
+  border-radius: 17px;
+  border-color: rgba(184, 153, 98, 0.78);
+  font-size: 12.5px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    0 5px 14px rgba(72, 52, 22, 0.055);
+}
+
+.tos-thrs-smart-search-v2 > input:focus {
+  border-color: rgba(174, 124, 32, 0.72);
+  box-shadow:
+    0 0 0 4px rgba(210, 172, 98, 0.14),
+    0 14px 32px rgba(82, 57, 19, 0.11);
+}
+
+.dark .tos-thrs-smart-search-v2 > input {
+  border-color: rgba(219, 180, 105, 0.18);
+  background:
+    linear-gradient(180deg, rgba(32, 34, 38, 0.99), rgba(16, 17, 20, 0.99));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 7px 18px rgba(0, 0, 0, 0.31);
+}
+
+.dark .tos-thrs-smart-search-v2 > input:focus {
+  border-color: rgba(222, 183, 109, 0.50);
+  background: #1b1d21;
+  box-shadow:
+    0 0 0 4px rgba(210, 172, 98, 0.09),
+    0 16px 38px rgba(0, 0, 0, 0.40);
+}
+
+/* Tables gain a distinct surface in dark mode rather than merging into the section. */
+.dark .tos-thrs-executive-v2 table {
+  background: rgba(13, 14, 17, 0.72);
+}
+
+.dark .tos-thrs-executive-v2 thead {
+  background: rgba(31, 33, 37, 0.82);
+}
+
+/* Responsive density targets from visual QA. */
+@media (min-width: 640px) {
+  .tos-thrs-admin-kpis-v2,
+  .tos-thrs-calendar-kpis-v2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .tos-thrs-admin-kpis-v2 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .tos-thrs-calendar-kpis-v2 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1440px) {
+  .tos-thrs-kpi-v2 {
+    min-height: 100px;
+    padding-inline: 17px;
+  }
+}
+
+@media (max-width: 639px) {
+  .tos-thrs-kpi-v2 {
+    min-height: 88px;
+  }
+
+  .tos-thrs-kpi-ring-v2 {
+    width: 62px;
+    height: 62px;
+    flex-basis: 62px;
+  }
+
+  .tos-thrs-kpi-ring-core-v2 {
+    width: 46px;
+    height: 46px;
+  }
+}
