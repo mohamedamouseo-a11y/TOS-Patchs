@@ -1,0 +1,134 @@
+:root {
+  --tos-team-performance-flagship-v3-1-runtime: 1;
+}
+
+/*
+  Team Performance Flagship V3.1 — visual polish only.
+  Scope: light-mode depth, executive alert softness, disclosure accents,
+  and compact deep-dive empty states. No structure/functionality changes.
+*/
+
+/* 1) Light-mode depth: separate premium surfaces from the porcelain canvas. */
+html:not(.dark) [data-tp-flagship-v2="v2"] .tos-tp-employee-ledger-v2,
+html:not(.dark) [data-tp-flagship-v2="v2"] #phase1-deep-dive-disclosure,
+html:not(.dark) [data-tp-flagship-v2="v2"] #team-performance-executive > div,
+html:not(.dark) [data-tp-flagship-v2="v2"] #team-performance-reviews > div,
+html:not(.dark) [data-tp-flagship-v2="v2"] #team-performance-workforce > div,
+html:not(.dark) [data-tp-flagship-v2="v2"] #team-performance-skills > div,
+html:not(.dark) [data-tp-flagship-v2="v2"] #team-performance-talent > div,
+html:not(.dark) [data-tp-flagship-v2="v2"] #team-performance-recognition > div {
+  border-color: rgba(190, 154, 88, 0.22) !important;
+  background:
+    radial-gradient(circle at 92% -18%, rgba(228, 198, 137, 0.08), transparent 30%),
+    linear-gradient(180deg, rgba(255,255,255,0.995), rgba(252,250,246,0.985)) !important;
+  box-shadow:
+    0 18px 44px rgba(83, 62, 27, 0.065),
+    0 4px 14px rgba(57, 45, 25, 0.035),
+    inset 0 1px 0 rgba(255,255,255,0.98) !important;
+}
+
+html:not(.dark) [data-tp-flagship-v2="v2"] .tos-tp-employee-ledger-v2 thead {
+  background: linear-gradient(180deg, rgba(249,244,233,0.96), rgba(246,240,227,0.90)) !important;
+}
+
+html:not(.dark) [data-tp-flagship-v2="v2"] .tos-tp-employee-ledger-v2 tbody tr {
+  border-color: rgba(190, 164, 117, 0.13) !important;
+}
+
+html:not(.dark) [data-tp-flagship-v2="v2"] .tos-tp-employee-ledger-v2 tbody tr:hover {
+  background: rgba(248, 243, 232, 0.58) !important;
+}
+
+/* 2) Executive Command Center: soften red/pink surfaces in light mode. */
+html:not(.dark) [data-tp-flagship-v2="v2"] #team-performance-executive [class*="bg-red-50"] {
+  background: linear-gradient(155deg, rgba(255,248,248,0.96), rgba(253,241,241,0.72)) !important;
+  border-color: rgba(239, 181, 181, 0.58) !important;
+}
+
+html:not(.dark) [data-tp-flagship-v2="v2"] #team-performance-executive [class*="bg-orange-50"] {
+  background: linear-gradient(155deg, rgba(255,251,244,0.96), rgba(253,246,232,0.74)) !important;
+  border-color: rgba(232, 196, 135, 0.54) !important;
+}
+
+html:not(.dark) [data-tp-flagship-v2="v2"] #team-performance-executive [class*="text-red-"],
+html:not(.dark) [data-tp-flagship-v2="v2"] #team-performance-executive [class*="text-orange-"] {
+  filter: saturate(0.90);
+}
+
+/* 3) Collapsed/open disclosure headers: subtle section-specific executive accents. */
+[data-tp-flagship-v2="v2"] #phase1-goals-disclosure,
+[data-tp-flagship-v2="v2"] #phase1-intelligence-disclosure,
+[data-tp-flagship-v2="v2"] #phase1-deep-dive-disclosure {
+  overflow: hidden;
+}
+
+[data-tp-flagship-v2="v2"] #phase1-goals-disclosure > summary,
+[data-tp-flagship-v2="v2"] #phase1-intelligence-disclosure > summary,
+[data-tp-flagship-v2="v2"] #phase1-deep-dive-disclosure > summary {
+  position: relative;
+}
+
+[data-tp-flagship-v2="v2"] #phase1-goals-disclosure > summary::before,
+[data-tp-flagship-v2="v2"] #phase1-intelligence-disclosure > summary::before,
+[data-tp-flagship-v2="v2"] #phase1-deep-dive-disclosure > summary::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 18px;
+  width: 82px;
+  height: 2px;
+  border-radius: 999px;
+  opacity: 0.78;
+  pointer-events: none;
+}
+
+[data-tp-flagship-v2="v2"] #phase1-goals-disclosure > summary::before {
+  background: linear-gradient(90deg, rgba(211,164,70,0.95), rgba(239,211,151,0.34), transparent);
+}
+
+[data-tp-flagship-v2="v2"] #phase1-intelligence-disclosure > summary::before {
+  background: linear-gradient(90deg, rgba(94,126,164,0.82), rgba(159,181,207,0.28), transparent);
+}
+
+[data-tp-flagship-v2="v2"] #phase1-deep-dive-disclosure > summary::before {
+  background: linear-gradient(90deg, rgba(126,103,154,0.76), rgba(183,167,204,0.26), transparent);
+}
+
+html:not(.dark) [data-tp-flagship-v2="v2"] #phase1-goals-disclosure > summary {
+  background: linear-gradient(180deg, rgba(255,253,248,0.92), rgba(252,249,242,0.82));
+}
+
+html:not(.dark) [data-tp-flagship-v2="v2"] #phase1-intelligence-disclosure > summary {
+  background: linear-gradient(180deg, rgba(252,253,255,0.92), rgba(248,250,252,0.84));
+}
+
+html:not(.dark) [data-tp-flagship-v2="v2"] #phase1-deep-dive-disclosure > summary {
+  background: linear-gradient(180deg, rgba(253,252,255,0.92), rgba(250,248,252,0.84));
+}
+
+.dark [data-tp-flagship-v2="v2"] #phase1-goals-disclosure > summary::before,
+.dark [data-tp-flagship-v2="v2"] #phase1-intelligence-disclosure > summary::before,
+.dark [data-tp-flagship-v2="v2"] #phase1-deep-dive-disclosure > summary::before {
+  opacity: 0.58;
+}
+
+/* 4) Deep Dive empty states: reduce dead vertical space without touching populated states. */
+[data-tp-flagship-v2="v2"] #team-performance-reviews .border-dashed,
+[data-tp-flagship-v2="v2"] #team-performance-workforce .border-dashed,
+[data-tp-flagship-v2="v2"] #team-performance-skills .border-dashed,
+[data-tp-flagship-v2="v2"] #team-performance-talent .border-dashed,
+[data-tp-flagship-v2="v2"] #team-performance-recognition .border-dashed {
+  min-height: 0 !important;
+  padding-block: 18px !important;
+}
+
+[data-tp-flagship-v2="v2"] #phase1-deep-dive-disclosure[open] > div {
+  padding-bottom: 8px;
+}
+
+/* Preserve V3 menus/date layering above polished surfaces. */
+.tos-tp-premium-menu-v2,
+.tos-tp-date-menu-v3,
+.tos-tp-export-menu-v3 {
+  isolation: isolate;
+}
