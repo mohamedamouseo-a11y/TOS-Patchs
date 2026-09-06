@@ -1,0 +1,509 @@
+:root {
+  --tos-permissions-flagship-v1-runtime: 1;
+}
+
+.tos-permissions-flagship-v1 {
+  --perm-gold: #c98c12;
+  --perm-gold-strong: #b87908;
+  --perm-ivory: #fffaf1;
+  --perm-champagne: rgba(201, 140, 18, 0.22);
+  --perm-ink: #171511;
+  isolation: isolate;
+}
+
+.tos-permissions-flagship-v1 .tos-permissions-hero,
+.tos-permissions-flagship-v1 .tos-permissions-section {
+  position: relative;
+  border-color: rgba(201, 140, 18, 0.17) !important;
+  background:
+    radial-gradient(circle at 92% 0%, rgba(201, 140, 18, 0.075), transparent 31%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.99), rgba(255, 251, 244, 0.96)) !important;
+  box-shadow: 0 18px 48px rgba(50, 38, 15, 0.065), 0 1px 0 rgba(255, 255, 255, 0.9) inset !important;
+}
+
+.tos-permissions-flagship-v1 .tos-permissions-hero {
+  overflow: hidden;
+  min-height: 132px;
+  display: flex;
+  align-items: center;
+  padding: 28px 30px !important;
+}
+
+.tos-permissions-flagship-v1 .tos-permissions-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(201, 140, 18, 0.035), transparent 35%, rgba(201, 140, 18, 0.025));
+}
+
+.tos-permissions-flagship-v1 .tos-permissions-hero::after {
+  content: "";
+  position: absolute;
+  inset-block: -55%;
+  inset-inline-end: 6%;
+  width: 34%;
+  transform: skewX(-18deg);
+  pointer-events: none;
+  opacity: 0.7;
+  background: repeating-linear-gradient(90deg, transparent 0 24px, rgba(201, 140, 18, 0.18) 25px 28px, transparent 29px 47px);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 30%, #000 72%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 30%, #000 72%, transparent);
+}
+
+.tos-permissions-flagship-v1 .tos-permissions-hero > * {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.tos-permissions-flagship-v1 .tos-permissions-hero button {
+  border-color: rgba(201, 140, 18, 0.24) !important;
+  background: rgba(255, 255, 255, 0.82) !important;
+  box-shadow: 0 8px 24px rgba(60, 45, 12, 0.07) !important;
+}
+
+.tos-permissions-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.tos-permissions-kpi {
+  position: relative;
+  overflow: hidden;
+  min-height: 116px;
+  border: 1px solid rgba(201, 140, 18, 0.15);
+  border-radius: 24px;
+  padding: 17px 18px;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.99), rgba(255, 250, 241, 0.92));
+  box-shadow: 0 12px 34px rgba(48, 35, 9, 0.055);
+}
+
+.tos-permissions-kpi::after {
+  content: "";
+  position: absolute;
+  width: 94px;
+  height: 94px;
+  border-radius: 999px;
+  inset-inline-end: -34px;
+  inset-block-start: -42px;
+  background: radial-gradient(circle, rgba(201, 140, 18, 0.13), transparent 68%);
+}
+
+.tos-permissions-kpi-top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tos-permissions-kpi-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid rgba(201, 140, 18, 0.18);
+  border-radius: 14px;
+  color: var(--perm-gold-strong);
+  background: linear-gradient(145deg, #fff9e9, #fff2c8);
+  box-shadow: 0 7px 18px rgba(201, 140, 18, 0.11);
+}
+
+.tos-permissions-kpi-value {
+  margin-top: 10px;
+  font-size: clamp(23px, 2vw, 31px);
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: -0.035em;
+  color: var(--perm-ink);
+}
+
+.tos-permissions-kpi-label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8c806c;
+}
+
+.tos-permissions-kpi-note {
+  margin-top: 7px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #a09583;
+}
+
+.tos-permissions-flagship-v1 .tos-permissions-section {
+  padding: 22px !important;
+}
+
+.tos-permissions-role-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 13px !important;
+}
+
+.tos-permissions-role-card,
+.tos-permissions-project-card {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(201, 140, 18, 0.14) !important;
+  box-shadow: 0 10px 28px rgba(44, 34, 14, 0.052) !important;
+}
+
+.tos-permissions-role-card::after,
+.tos-permissions-project-card::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 18px;
+  inset-inline-end: 18px;
+  inset-block-start: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 140, 18, 0.43), transparent);
+  opacity: 0.72;
+}
+
+.tos-permissions-role-card {
+  min-height: 255px;
+}
+
+.tos-permissions-role-card:hover,
+.tos-permissions-project-card:hover {
+  border-color: rgba(201, 140, 18, 0.28) !important;
+  box-shadow: 0 18px 40px rgba(44, 34, 14, 0.08) !important;
+}
+
+.tos-permissions-project-card > div > div {
+  border: 1px solid rgba(201, 140, 18, 0.07);
+}
+
+.tos-permissions-console {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+  padding: 8px;
+  border: 1px solid rgba(201, 140, 18, 0.13);
+  border-radius: 20px;
+  background: rgba(255, 251, 244, 0.72);
+}
+
+.tos-permissions-search {
+  min-width: min(330px, 72vw);
+}
+
+.tos-permissions-search input {
+  width: 100% !important;
+  border-color: rgba(201, 140, 18, 0.17) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: 0 5px 16px rgba(55, 42, 14, 0.035) inset;
+}
+
+.tos-permissions-search input:focus {
+  border-color: rgba(201, 140, 18, 0.46) !important;
+  box-shadow: 0 0 0 4px rgba(201, 140, 18, 0.10) !important;
+}
+
+.tos-permissions-role-filter {
+  position: relative;
+  z-index: 40;
+}
+
+.tos-permissions-role-filter-trigger {
+  height: 44px;
+  min-width: 175px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid rgba(201, 140, 18, 0.19);
+  border-radius: 16px;
+  padding: 0 13px;
+  color: #413928;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 6px 18px rgba(52, 40, 12, 0.05);
+  font-size: 12px;
+  font-weight: 900;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.tos-permissions-role-filter-trigger:hover,
+.tos-permissions-role-filter-trigger[data-open="true"] {
+  border-color: rgba(201, 140, 18, 0.42);
+  box-shadow: 0 9px 24px rgba(91, 64, 5, 0.09);
+}
+
+.tos-permissions-role-filter-menu {
+  position: absolute;
+  inset-inline-end: 0;
+  top: calc(100% + 8px);
+  z-index: 60;
+  width: 235px;
+  overflow: hidden;
+  border: 1px solid rgba(201, 140, 18, 0.20);
+  border-radius: 19px;
+  padding: 7px;
+  background: rgba(255, 253, 248, 0.985);
+  box-shadow: 0 24px 64px rgba(40, 28, 7, 0.16), 0 1px 0 rgba(255,255,255,0.9) inset;
+  backdrop-filter: blur(18px);
+}
+
+.tos-permissions-role-filter-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 13px;
+  padding: 10px 11px;
+  text-align: start;
+  color: #3d3526;
+  font-size: 12px;
+  font-weight: 900;
+  transition: background 140ms ease, color 140ms ease;
+}
+
+.tos-permissions-role-filter-option:hover {
+  background: rgba(201, 140, 18, 0.08);
+}
+
+.tos-permissions-role-filter-option[data-selected="true"] {
+  color: #7a4e00;
+  background: linear-gradient(135deg, #fff4cf, #f6d77f);
+}
+
+.tos-permissions-matrix-shell {
+  border-color: rgba(201, 140, 18, 0.16) !important;
+  background: rgba(255, 255, 255, 0.97) !important;
+  box-shadow: 0 15px 38px rgba(44, 34, 14, 0.06) !important;
+}
+
+.tos-permissions-matrix-shell > .overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 140, 18, 0.42) transparent;
+}
+
+.tos-permissions-matrix thead {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  backdrop-filter: blur(16px);
+}
+
+.tos-permissions-matrix th,
+.tos-permissions-matrix td {
+  border-color: rgba(201, 140, 18, 0.075);
+}
+
+.tos-permissions-matrix th:first-child,
+.tos-permissions-matrix td:first-child {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 4;
+  background: rgba(255, 253, 248, 0.98);
+  box-shadow: 1px 0 0 rgba(201, 140, 18, 0.08);
+}
+
+.tos-permissions-matrix thead th:first-child {
+  z-index: 7;
+}
+
+.tos-permissions-matrix tbody tr {
+  transition: background 140ms ease, box-shadow 140ms ease;
+}
+
+.tos-permissions-matrix tbody tr:hover {
+  background: rgba(201, 140, 18, 0.035) !important;
+  box-shadow: 0 1px 0 rgba(201, 140, 18, 0.08) inset, 0 -1px 0 rgba(201, 140, 18, 0.06) inset;
+}
+
+.tos-permissions-matrix button {
+  min-height: 29px;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 12px rgba(34, 27, 12, 0.035);
+}
+
+.tos-permissions-matrix button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.dark .tos-permissions-flagship-v1 {
+  --perm-ink: #f8f4eb;
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-hero,
+.dark .tos-permissions-flagship-v1 .tos-permissions-section {
+  border-color: rgba(213, 168, 73, 0.16) !important;
+  background:
+    radial-gradient(circle at 91% 0%, rgba(213, 168, 73, 0.07), transparent 30%),
+    linear-gradient(145deg, rgba(24, 23, 21, 0.985), rgba(14, 14, 13, 0.985)) !important;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.26), 0 1px 0 rgba(255,255,255,0.025) inset !important;
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-hero::after {
+  opacity: 0.45;
+  background: repeating-linear-gradient(90deg, transparent 0 24px, rgba(222, 176, 74, 0.19) 25px 28px, transparent 29px 47px);
+}
+
+.dark .tos-permissions-flagship-v1 .tos-permissions-hero button {
+  border-color: rgba(213, 168, 73, 0.18) !important;
+  color: #ede7db !important;
+  background: rgba(13, 13, 12, 0.78) !important;
+}
+
+.dark .tos-permissions-kpi {
+  border-color: rgba(213, 168, 73, 0.14);
+  background: linear-gradient(145deg, rgba(27, 27, 25, 0.98), rgba(16, 16, 15, 0.99));
+  box-shadow: 0 15px 38px rgba(0, 0, 0, 0.24), 0 1px 0 rgba(255,255,255,0.025) inset;
+}
+
+.dark .tos-permissions-kpi-icon {
+  border-color: rgba(213, 168, 73, 0.18);
+  color: #e1b85e;
+  background: linear-gradient(145deg, rgba(213, 168, 73, 0.13), rgba(213, 168, 73, 0.045));
+  box-shadow: none;
+}
+
+.dark .tos-permissions-kpi-label,
+.dark .tos-permissions-kpi-note {
+  color: #948b7c;
+}
+
+.dark .tos-permissions-role-card,
+.dark .tos-permissions-project-card {
+  border-color: rgba(255, 255, 255, 0.075) !important;
+  background: linear-gradient(145deg, rgba(29, 29, 27, 0.98), rgba(17, 17, 16, 0.98)) !important;
+  box-shadow: 0 13px 34px rgba(0, 0, 0, 0.22) !important;
+}
+
+.dark .tos-permissions-role-card:hover,
+.dark .tos-permissions-project-card:hover {
+  border-color: rgba(213, 168, 73, 0.22) !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.30) !important;
+}
+
+.dark .tos-permissions-project-card > div > div {
+  border-color: rgba(255, 255, 255, 0.055);
+  background: rgba(8, 8, 8, 0.28) !important;
+}
+
+.dark .tos-permissions-console {
+  border-color: rgba(213, 168, 73, 0.12);
+  background: rgba(8, 8, 8, 0.24);
+}
+
+.dark .tos-permissions-search input,
+.dark .tos-permissions-role-filter-trigger {
+  border-color: rgba(255, 255, 255, 0.09) !important;
+  color: #f2eee7 !important;
+  background: rgba(8, 8, 8, 0.52) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset;
+}
+
+.dark .tos-permissions-search input:focus,
+.dark .tos-permissions-role-filter-trigger[data-open="true"] {
+  border-color: rgba(213, 168, 73, 0.32) !important;
+  box-shadow: 0 0 0 4px rgba(213, 168, 73, 0.075) !important;
+}
+
+.dark .tos-permissions-role-filter-menu {
+  border-color: rgba(213, 168, 73, 0.16);
+  background: rgba(19, 19, 18, 0.985);
+  box-shadow: 0 26px 68px rgba(0, 0, 0, 0.42), 0 1px 0 rgba(255,255,255,0.035) inset;
+}
+
+.dark .tos-permissions-role-filter-option {
+  color: #ddd7cc;
+}
+
+.dark .tos-permissions-role-filter-option:hover {
+  background: rgba(213, 168, 73, 0.07);
+}
+
+.dark .tos-permissions-role-filter-option[data-selected="true"] {
+  color: #f4d78d;
+  background: linear-gradient(135deg, rgba(213, 168, 73, 0.18), rgba(213, 168, 73, 0.07));
+}
+
+.dark .tos-permissions-matrix-shell {
+  border-color: rgba(213, 168, 73, 0.13) !important;
+  background: rgba(17, 17, 16, 0.985) !important;
+  box-shadow: 0 17px 44px rgba(0, 0, 0, 0.28) !important;
+}
+
+.dark .tos-permissions-matrix th:first-child,
+.dark .tos-permissions-matrix td:first-child {
+  background: rgba(18, 18, 17, 0.985);
+  box-shadow: 1px 0 0 rgba(213, 168, 73, 0.075);
+}
+
+.dark .tos-permissions-matrix tbody tr:hover {
+  background: rgba(213, 168, 73, 0.026) !important;
+}
+
+@media (max-width: 1279px) {
+  .tos-permissions-role-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1023px) {
+  .tos-permissions-kpi-grid,
+  .tos-permissions-role-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  .tos-permissions-flagship-v1 .tos-permissions-hero,
+  .tos-permissions-flagship-v1 .tos-permissions-section {
+    border-radius: 22px !important;
+  }
+
+  .tos-permissions-flagship-v1 .tos-permissions-hero {
+    min-height: 0;
+    padding: 19px !important;
+  }
+
+  .tos-permissions-flagship-v1 .tos-permissions-hero::after {
+    width: 52%;
+    inset-inline-end: -8%;
+    opacity: 0.4;
+  }
+
+  .tos-permissions-kpi-grid,
+  .tos-permissions-role-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tos-permissions-kpi {
+    min-height: 104px;
+  }
+
+  .tos-permissions-console {
+    width: 100%;
+  }
+
+  .tos-permissions-search,
+  .tos-permissions-role-filter,
+  .tos-permissions-role-filter-trigger {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .tos-permissions-role-filter-menu {
+    position: fixed;
+    inset-inline: 12px;
+    top: auto;
+    bottom: 12px;
+    width: auto;
+    max-height: min(64vh, 430px);
+    overflow-y: auto;
+    border-radius: 22px;
+    padding: 9px;
+  }
+}
