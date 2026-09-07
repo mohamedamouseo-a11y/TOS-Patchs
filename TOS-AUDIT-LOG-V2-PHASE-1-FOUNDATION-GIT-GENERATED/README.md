@@ -1,8 +1,20 @@
-# TOS Audit Log V2 — Phase 1 Foundation
+# TOS Audit Log V2 — Phase 1 Foundation (R1)
 
 Deterministic additive patch for TOS base commit:
 
 `f6b6f60b57d702e62ed488eca7265bfcde0ca601`
+
+## R1 generator fix
+
+The original generator wrote the new Phase 1 source files into its temporary repository but did not stage them with intent-to-add before running `git diff`. Git therefore omitted all untracked files from the generated patch.
+
+R1 fixes that defect by:
+
+- running `git add --intent-to-add` for all 8 new files before generating the diff;
+- validating that the patch contains exactly 10 expected paths;
+- validating that all 8 expected new files are represented as additions;
+- requiring every expected `diff --git` header before writing a successful artifact;
+- exposing `PATCH_FILES_VALIDATED=PASS`, `PATCH_FILE_COUNT=10`, and `PATCH_NEW_FILE_COUNT=8` markers.
 
 ## Scope
 
@@ -16,24 +28,14 @@ Phase 1 only:
 - Add pure Node tests for redaction, request context, and audit event construction.
 - Preserve the existing `/api/audit-log` route and all legacy audit/activity tables unchanged.
 
-## Important compatibility rule
+## Compatibility rule
 
 Phase 1 is write-foundation only. It does **not** replace or rewire the current Audit Center. Security/business event wiring begins in Phase 2 and later phases.
 
-## Generate
+## Recovery from the previous partial apply
 
-Run the generator while your current directory is the TOS repository root:
+If the old broken patch already modified only `backend/prisma/schema.prisma` and `backend/src/app.js`, follow `OPENHANDS.md` section 0. Restore only those two known Phase 1 edits after inspection. Never use `git reset --hard` or `git clean`.
 
-```bash
-python3 /path/to/TOS-Patchs/TOS-AUDIT-LOG-V2-PHASE-1-FOUNDATION-GIT-GENERATED/generate_tos_audit_log_v2_phase1_foundation.py
-```
-
-The generator refuses to run unless HEAD and guarded source blobs match the exact reviewed base. It runs the pure Node tests and `git apply --check`, then writes:
-
-`tos-audit-log-v2-phase1-foundation.patch`
-
-next to the generator.
-
-## Apply and verify
+## Generate and apply
 
 Follow `OPENHANDS.md` exactly. Never use `prisma migrate reset`.
