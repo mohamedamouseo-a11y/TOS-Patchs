@@ -1,0 +1,37 @@
+model AuditEventV2 {
+  id           String   @id @default(cuid())
+  occurredAt   DateTime @default(now())
+  action       String
+  category     String?
+  entityType   String?
+  entityId     String?
+  actorId      String?
+  actorType    String   @default("USER")
+  actorName    String?
+  actorEmail   String?
+  actorRole    String?
+  outcome      String   @default("SUCCESS")
+  severity     String   @default("INFO")
+  source       String   @default("TOS")
+  requestId    String?
+  ipAddress    String?
+  userAgent    String?
+  httpMethod   String?
+  route        String?
+  legacySource String?
+  legacyId     String?
+  metadata     Json?
+  beforeState  Json?
+  afterState   Json?
+  errorCode    String?
+  errorMessage String?
+  createdAt    DateTime @default(now())
+
+  @@index([occurredAt])
+  @@index([actorId, occurredAt])
+  @@index([action, occurredAt])
+  @@index([category, occurredAt])
+  @@index([entityType, entityId])
+  @@index([requestId])
+  @@index([legacySource, legacyId])
+}
