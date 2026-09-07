@@ -14,11 +14,15 @@ export async function writeAuditEvent(input, options = {}) {
       input?.requestId ?? input?.req?.auditContext?.requestId,
       128,
     );
-    logger?.error?.("[audit-v2] write failed; business operation continues", {
-      action: normalizeAuditText(input?.action, 160),
-      requestId,
-      error: redactAuditString(error instanceof Error ? error.message : String(error), 1024),
-    });
+    try {
+      logger?.error?.("[audit-v2] write failed; business operation continues", {
+        action: normalizeAuditText(input?.action, 160),
+        requestId,
+        error: redactAuditString(error instanceof Error ? error.message : String(error), 1024),
+      });
+    } catch {
+      // Audit telemetry must never break the business request, even if logging fails.
+    }
     return null;
   }
 }
