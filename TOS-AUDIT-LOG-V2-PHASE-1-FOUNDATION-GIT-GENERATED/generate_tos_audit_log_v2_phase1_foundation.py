@@ -27,6 +27,7 @@ NEW_FILES = {
     "backend/src/services/auditV2.service.js": "auditV2.service.js",
 }
 PATCH_PATHS = ["backend/prisma/schema.prisma", "backend/src/app.js", *NEW_FILES]
+EXPECTED_PATCH_PATHS = set(PATCH_PATHS)
 
 
 def run(cmd, cwd, check=True, capture=True):
@@ -57,6 +58,31 @@ def require(condition, message):
 def write_text(path, content):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8", newline="\n")
+
+
+def validate_patch_paths(tmp):
+    changed = {
+        line.strip()
+        for line in git(tmp, "diff", "--name-only", "HEAD", "--", *PATCH_PATHS).splitlines()
+        if line.strip()
+    }
+    missing = sorted(EXPECTED_PATCH_PATHS - changed)
+    unexpected = sorted(changed - EXPECTED_PATCH_PATHS)
+    require(
+        changed == EXPECTED_PATCH_PATHS,
+        f"generated patch path set mismatch; missing={missing}, unexpected={unexpected}, changed={sorted(changed)}",
+    )
+
+    statuses = git(tmp, "diff", "--name-status", "HEAD", "--", *PATCH_PATHS).splitlines()
+    added = {
+        line.split("\t", 1)[1]
+        for line in statuses
+        if line.startswith("A\t") and "\t" in line
+    }
+    require(
+        added == set(NEW_FILES),
+        f"new-file coverage mismatch; expected={sorted(NEW_FILES)}, added={sorted(added)}",
+    )
 
 
 def main():
@@ -110,8 +136,20 @@ def main():
         run(["git", "add", "backend/prisma/schema.prisma", "backend/src/app.js", "backend/package.json"], tmp)
         run(["git", "commit", "-q", "-m", "baseline"], tmp)
 
-        write_text(tmp / "backend/prisma/schema.prisma", schema.replace(schema_anchor, "\n" + model.rstrip() + "\n\n" + schema_anchor.lstrip("\n"), 1))
-        write_text(tmp / "backend/src/app.js", app.replace(import_anchor, import_insert, 1).replace(middleware_anchor, middleware_insert, 1))
+        write_text(
+            tmp / "backend/prisma/schema.prisma",
+            schema.replace(
+                schema_anchor,
+                "\n" + model.rstrip() + "\n\n" + schema_anchor.lstrip("\n"),
+                1,
+            ),
+        )
+        write_text(
+            tmp / "backend/src/app.js",
+            app.replace(import_anchor, import_insert, 1).replace(
+                middleware_anchor, middleware_insert, 1
+            ),
+        )
         for rel, payload in NEW_FILES.items():
             write_text(tmp / rel, (payload_dir / payload).read_text(encoding="utf-8"))
 
@@ -123,15 +161,44 @@ def main():
         ]:
             run(["node", "--check", rel], tmp, capture=False)
 
-        run([
-            "node", "--test",
-            "src/utils/auditRedaction.test.js",
-            "src/middleware/requestContext.test.js",
-            "src/services/auditV2.core.test.js",
-        ], tmp / "backend", capture=False)
+        run(
+            [
+                "node",
+                "--test",
+                "src/utils/auditRedaction.test.js",
+                "src/middleware/requestContext.test.js",
+                "src/services/auditV2.core.test.js",
+            ],
+            tmp / "backend",
+            capture=False,
+        )
 
-        diff = run(["git", "diff", "--binary", "--full-index", "--no-renames", "HEAD", "--", *PATCH_PATHS], tmp).stdout
+        # Critical: make untracked Phase 1 files visible to git diff without
+        # committing them. Plain git diff HEAD ignores untracked files.
+        run(["git", "add", "--intent-to-add", "--", *NEW_FILES], tmp)
+
+        validate_patch_paths(tmp)
+
+        diff = run(
+            [
+                "git",
+                "diff",
+                "--binary",
+                "--full-index",
+                "--no-renames",
+                "HEAD",
+                "--",
+                *PATCH_PATHS,
+            ],
+            tmp,
+        ).stdout
         require(diff.strip(), "generated patch is empty")
+        for rel in PATCH_PATHS:
+            require(
+                f"diff --git a/{rel} b/{rel}" in diff,
+                f"generated patch missing diff header for {rel}",
+            )
+
         output = script_dir / OUTPUT_NAME
         output.write_text(diff, encoding="utf-8", newline="\n")
 
@@ -142,6 +209,9 @@ def main():
             raise RuntimeError("git apply --check failed")
 
         print("PURE_NODE_TESTS=PASS")
+        print("PATCH_FILES_VALIDATED=PASS")
+        print(f"PATCH_FILE_COUNT={len(PATCH_PATHS)}")
+        print(f"PATCH_NEW_FILE_COUNT={len(NEW_FILES)}")
         print("GIT_APPLY_CHECK=PASS")
         print(f"PATCH_FILE={output}")
         print(f"PATCH_SHA256={hashlib.sha256(output.read_bytes()).hexdigest()}")
