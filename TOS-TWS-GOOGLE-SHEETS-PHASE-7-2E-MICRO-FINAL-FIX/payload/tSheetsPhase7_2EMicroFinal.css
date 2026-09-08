@@ -1,0 +1,80 @@
+/* TWS T-Sheets — Phase 7.2E Micro Final Fix
+   Visual-only correction after live QA:
+   1) dark title visibility
+   2) one blue selection/fill-handle language with no amber residue. */
+
+.tws-sheets-phase7-2e-micro-final {
+  --ts72e-selection: #1a73e8;
+  --ts72e-selection-soft: rgba(26, 115, 232, 0.10);
+}
+
+.dark .tws-sheets-phase7-2e-micro-final {
+  --ts72e-selection: #8ab4f8;
+  --ts72e-selection-soft: rgba(138, 180, 248, 0.12);
+}
+
+/* Disabled editable-title inputs can inherit browser text-fill behavior.
+   Force the actual glyph fill, not only CSS color. */
+.dark .tws-sheets-phase7-2e-micro-final .tws-sheets-title-input,
+.dark .tws-sheets-phase7-2e-micro-final .tws-sheets-title-input:disabled,
+.dark .tws-sheets-phase7-2e-micro-final .tws-sheets-chrome > input,
+.dark .tws-sheets-phase7-2e-micro-final .tws-sheets-chrome > input:disabled {
+  color: #e8eaed !important;
+  -webkit-text-fill-color: #e8eaed !important;
+  caret-color: var(--ts72e-selection) !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+.dark .tws-sheets-phase7-2e-micro-final .tws-sheets-title-input::placeholder {
+  color: #9aa0a6 !important;
+  -webkit-text-fill-color: #9aa0a6 !important;
+  opacity: 1 !important;
+}
+
+/* One selection language: active cell, range preview and fill handle are blue. */
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid td.tws-sheets-cell-focused,
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid td:focus-within {
+  outline: 0 !important;
+  box-shadow: inset 0 0 0 2px var(--ts72e-selection) !important;
+}
+
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid td.tws-sheets-cell-focused::after {
+  background: var(--ts72e-selection) !important;
+  border-color: var(--ts7-surface) !important;
+}
+
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid td:focus-within::after {
+  box-shadow: 0 0 0 1px var(--ts72e-selection) !important;
+}
+
+.tws-sheets-phase7-2e-micro-final .tws-sheets-fill-preview {
+  --tw-ring-color: var(--ts72e-selection) !important;
+}
+
+.tws-sheets-phase7-2e-micro-final .tws-sheets-fill-handle {
+  border: 1px solid #ffffff !important;
+  background: var(--ts72e-selection) !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ts72e-selection) 30%, transparent) !important;
+}
+
+.dark .tws-sheets-phase7-2e-micro-final .tws-sheets-fill-handle {
+  border-color: #202124 !important;
+  background: var(--ts72e-selection) !important;
+}
+
+/* Do not let legacy amber focus utility backgrounds tint the active cell. */
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid input:focus,
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid textarea:focus,
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid select:focus {
+  background: transparent !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tws-sheets-phase7-2e-micro-final *,
+  .tws-sheets-phase7-2e-micro-final *::before,
+  .tws-sheets-phase7-2e-micro-final *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
