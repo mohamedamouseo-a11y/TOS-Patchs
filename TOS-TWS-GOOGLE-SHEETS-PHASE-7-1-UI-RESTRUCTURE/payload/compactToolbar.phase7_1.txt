@@ -1,0 +1,34 @@
+      {canEdit && (
+        <div className="tws-sheets-toolbar tws-sheets-toolbar-compact flex items-center border-b">
+          <ToolbarButton icon={RotateCcw} label={ui.undo} onClick={undo} disabled={historyVersion >= 0 && historyRef.current.past.length === 0} />
+          <span className="inline-block -scale-x-100"><ToolbarButton icon={RotateCcw} label={ui.redo} onClick={redo} disabled={historyVersion >= 0 && historyRef.current.future.length === 0} /></span>
+          <span className="tws-sheets-toolbar-divider" />
+          <ToolbarButton icon={Bold} label={ui.bold} onClick={() => toggleFormat(focusedRef, "bold")} active={Boolean(focusedCellFormat.bold)} />
+          <button type="button" title={ui.lang === "en" ? "Italic" : "مائل"} onClick={() => toggleFormat(focusedRef, "italic")} className={cn("grid h-8 w-8 place-items-center rounded-lg text-sm italic transition", focusedCellFormat.italic ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/10")}>I</button>
+          <button type="button" title={ui.lang === "en" ? "Underline" : "تحته خط"} onClick={() => toggleFormat(focusedRef, "underline")} className={cn("grid h-8 w-8 place-items-center rounded-lg text-sm underline transition", focusedCellFormat.underline ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/10")}>U</button>
+          <button type="button" title={ui.lang === "en" ? "Wrap text" : "التفاف النص"} onClick={() => toggleFormat(focusedRef, "wrap")} className={cn("rounded-lg px-2 py-1.5 text-[11px] font-black transition", focusedCellFormat.wrap ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950" : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/10")}>{ui.lang === "en" ? "Wrap" : "التفاف"}</button>
+          <span className="tws-sheets-toolbar-divider" />
+          <Field as="select" value={activeSheet?.formats?.[focusedRef]?.numberFormat || "general"} onChange={(event) => toggleFormat(focusedRef, "numberFormat", event.target.value)} className="!w-28 !py-1.5 text-xs">
+            <option value="general">{ui.formatGeneral}</option>
+            <option value="number">{ui.formatNumber}</option>
+            <option value="currency">{ui.formatCurrency}</option>
+            <option value="percent">{ui.formatPercent}</option>
+            <option value="date">{ui.lang === "en" ? "Date" : "تاريخ"}</option>
+            <option value="datetime">{ui.lang === "en" ? "Date & time" : "تاريخ ووقت"}</option>
+          </Field>
+          <Field as="select" value={activeSheet?.formats?.[focusedRef]?.fontSize || ""} onChange={(event) => toggleFormat(focusedRef, "fontSize", event.target.value)} className="!w-20 !py-1.5 text-xs">
+            <option value="">{ui.textSize}</option>
+            {SHEET_TEXT_SIZES.map((size) => <option key={size} value={size}>{size}</option>)}
+          </Field>
+          <ToolbarButton icon={AlignLeft} label={ui.alignLeft} onClick={() => toggleFormat(focusedRef, "align", "left")} />
+          <ToolbarButton icon={AlignCenter} label={ui.alignCenter} onClick={() => toggleFormat(focusedRef, "align", "center")} />
+          <ToolbarButton icon={AlignRight} label={ui.alignRight} onClick={() => toggleFormat(focusedRef, "align", "right")} />
+          <input type="color" title={ui.lang === "en" ? "Text color" : "لون النص"} onChange={(event) => toggleFormat(focusedRef, "color", event.target.value)} className="h-8 w-8 cursor-pointer rounded-lg border border-zinc-200 bg-transparent p-0.5 dark:border-white/10" />
+          <input type="color" title={ui.lang === "en" ? "Background color" : "لون الخلفية"} onChange={(event) => toggleFormat(focusedRef, "bg", event.target.value)} className="h-8 w-8 cursor-pointer rounded-lg border border-zinc-200 bg-transparent p-0.5 dark:border-white/10" />
+          <button type="button" onClick={() => toggleFormat(focusedRef, "border", focusedCellFormat.border ? "" : "1px solid #cbd5e1")} className={cn("rounded-lg border px-2 py-1.5 text-[11px] font-black transition", focusedCellFormat.border ? "border-amber-400 bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-200" : "border-zinc-200 text-zinc-600 hover:bg-zinc-100 dark:border-white/10 dark:text-zinc-300 dark:hover:bg-white/10")}>{ui.lang === "en" ? "Border" : "حدود"}</button>
+          <span className="tws-sheets-toolbar-divider" />
+          <ToolbarButton icon={Filter} label={ui.lang === "en" ? "Create filter" : "إنشاء فلتر"} onClick={createFilterAction} active={Boolean(activeSheet?.filter)} />
+          <ToolbarButton icon={PanelRight} label={showSheetPanel ? ui.hide : ui.show} onClick={() => setShowSheetPanel((v) => !v)} active={showSheetPanel} />
+          <Field value={sheetFilterQuery} onChange={(event) => setSheetFilterQuery(event.target.value)} placeholder={ui.quickFilter} className="tws-sheets-toolbar-search !py-1.5 text-xs" />
+        </div>
+      )}
