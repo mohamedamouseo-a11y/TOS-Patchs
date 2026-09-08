@@ -1,0 +1,37 @@
+        <div className="tws-sheets-actions tws-sheets-actions-compact">
+          <Button type="button" variant="soft" onClick={() => setShowComments((v) => !v)}>
+            <MessageSquare size={14} /><span className="tws-sheets-action-label">{ui.comments}</span>
+          </Button>
+          {access === "OWNER" && (
+            <Button type="button" variant="soft" onClick={() => setShowPermissions(true)} className="tws-sheets-share-primary">
+              <Users size={14} /><span className="tws-sheets-action-label">{ui.share}</span>
+            </Button>
+          )}
+          <details className="tws-sheets-more">
+            <summary><Settings2 size={14} /> <span className="tws-sheets-action-label">{ui.lang === "en" ? "More" : "المزيد"}</span></summary>
+            <div className="tws-sheets-more-menu">
+              <button type="button" onClick={() => setShowVersions(true)}><Clock3 size={13} /> {ui.versions}</button>
+              {access === "OWNER" && <button type="button" onClick={() => setShowShareLink(true)}><Lock size={13} /> {ui.publicLink}</button>}
+              <div className="tws-sheets-menu-separator" />
+              {canEdit && (
+                <>
+                  <input ref={csvInputRef} type="file" accept=".csv,text/csv" className="hidden" onChange={handleImportCsv} />
+                  <input ref={xlsxInputRef} type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" className="hidden" onChange={handleImportXlsx} />
+                  <button type="button" onClick={() => csvInputRef.current?.click()}><Upload size={13} /> {ui.uploadCsv}</button>
+                  <button type="button" onClick={() => xlsxInputRef.current?.click()}><Upload size={13} /> {ui.lang === "en" ? "Import Excel" : "استيراد Excel"}</button>
+                </>
+              )}
+              <div className="tws-sheets-export-stack">
+                <ExportButton documentId={documentId} format="csv" label="CSV" filename={`${title || "sheet"}.csv`} query={{ sheetId: activeSheetId }} onError={setError} />
+                <ExportButton documentId={documentId} format="xlsx" label="Excel" filename={`${title || "sheet"}.xlsx`} onError={setError} />
+                <ExportButton documentId={documentId} format="pdf" label="PDF" filename={`${title || "sheet"}.pdf`} onError={setError} />
+              </div>
+              {canEdit && (
+                <>
+                  <div className="tws-sheets-menu-separator" />
+                  <button type="button" className="tws-sheets-menu-danger" onClick={handleTrash}>{ui.delete}</button>
+                </>
+              )}
+            </div>
+          </details>
+        </div>
