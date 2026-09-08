@@ -1,0 +1,78 @@
+/* TWS T-Sheets — Phase 7.2E R1 Micro Final Fix
+   Visual-only correction for the final live QA findings:
+   1) dark document title remains readable even when the input is disabled;
+   2) active selection/autofill uses one blue spreadsheet language with no amber residue. */
+
+.tws-sheets-phase7-2e-micro-final {
+  --ts72e-selection: #1a73e8;
+  --ts72e-selection-soft: rgba(26, 115, 232, 0.10);
+}
+
+.dark .tws-sheets-phase7-2e-micro-final {
+  --ts72e-selection: #8ab4f8;
+  --ts72e-selection-soft: rgba(138, 180, 248, 0.12);
+}
+
+/* Chromium can keep disabled input text dark through -webkit-text-fill-color.
+   Force both normal color and text-fill so the file title never looks disabled/hidden. */
+.dark .tws-sheets-phase7-2e-micro-final .tws-sheets-chrome > input,
+.dark .tws-sheets-phase7-2e-micro-final .tws-sheets-chrome > input:disabled,
+.dark .tws-sheets-phase7-2e-micro-final .tws-sheets-chrome > input[disabled] {
+  color: #e8eaed !important;
+  -webkit-text-fill-color: #e8eaed !important;
+  caret-color: #e8eaed !important;
+  opacity: 1 !important;
+}
+
+/* Keep active/focused spreadsheet interaction entirely blue. */
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid td.tws-sheets-cell-focused {
+  box-shadow: inset 0 0 0 2px var(--ts72e-selection) !important;
+}
+
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid td.tws-sheets-cell-focused::after {
+  background: var(--ts72e-selection) !important;
+  border-color: var(--ts7-surface) !important;
+}
+
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid td.tws-sheets-cell-selected:not(.tws-sheets-cell-focused) {
+  background-image: linear-gradient(var(--ts72e-selection-soft), var(--ts72e-selection-soft)) !important;
+}
+
+/* Legacy Tailwind amber focus backgrounds from the original editor must not leak through. */
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid input:focus,
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid textarea:focus,
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid select:focus {
+  background: transparent !important;
+}
+
+/* Autofill handle: override the legacy bg-amber-500 class without changing behavior. */
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid button[class*="cursor-crosshair"][class*="bg-amber-500"] {
+  background: var(--ts72e-selection) !important;
+  border-color: var(--ts7-surface) !important;
+  box-shadow: none !important;
+}
+
+/* Drag-fill preview used ring-amber-500. Keep the same interaction, recolor it blue. */
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid td[class*="ring-amber-500"] {
+  --tw-ring-color: var(--ts72e-selection) !important;
+}
+
+/* The active row/column axes remain in the same blue family. */
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid thead th.tws-sheets-axis-active,
+.tws-sheets-phase7-2e-micro-final .tws-sheets-grid tbody > tr > td:first-child.tws-sheets-axis-active {
+  color: var(--ts72e-selection) !important;
+}
+
+.dark .tws-sheets-phase7-2e-micro-final .tws-sheets-grid thead th.tws-sheets-axis-active,
+.dark .tws-sheets-phase7-2e-micro-final .tws-sheets-grid tbody > tr > td:first-child.tws-sheets-axis-active {
+  color: #aecbfa !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tws-sheets-phase7-2e-micro-final *,
+  .tws-sheets-phase7-2e-micro-final *::before,
+  .tws-sheets-phase7-2e-micro-final *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
