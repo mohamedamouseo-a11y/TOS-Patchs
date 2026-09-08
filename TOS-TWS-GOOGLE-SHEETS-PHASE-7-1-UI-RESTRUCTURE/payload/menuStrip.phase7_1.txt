@@ -1,0 +1,75 @@
+      {canEdit && (
+        <div className="tws-sheets-menu-strip" aria-label={ui.lang === "en" ? "Spreadsheet menus" : "قوائم جدول البيانات"}>
+          <details className="tws-sheets-menu">
+            <summary>{ui.lang === "en" ? "File" : "ملف"}</summary>
+            <div className="tws-sheets-menu-popover">
+              <button type="button" onClick={() => csvInputRef.current?.click()}>{ui.uploadCsv}</button>
+              <button type="button" onClick={() => xlsxInputRef.current?.click()}>{ui.lang === "en" ? "Import Excel" : "استيراد Excel"}</button>
+              <div className="tws-sheets-menu-separator" />
+              <button type="button" onClick={printCurrentSheet}>{ui.lang === "en" ? "Print" : "طباعة"}</button>
+            </div>
+          </details>
+          <details className="tws-sheets-menu">
+            <summary>{ui.lang === "en" ? "Edit" : "تحرير"}</summary>
+            <div className="tws-sheets-menu-popover">
+              <button type="button" onClick={undo}>{ui.undo}</button>
+              <button type="button" onClick={redo}>{ui.redo}</button>
+              <div className="tws-sheets-menu-separator" />
+              <button type="button" onClick={clearCurrentSelection}>{ui.lang === "en" ? "Clear values" : "مسح القيم"}</button>
+              <button type="button" onClick={clearFormattingAction}>{ui.lang === "en" ? "Clear formatting" : "مسح التنسيق"}</button>
+            </div>
+          </details>
+          <details className="tws-sheets-menu">
+            <summary>{ui.lang === "en" ? "View" : "عرض"}</summary>
+            <div className="tws-sheets-menu-popover">
+              <button type="button" onClick={() => setShowSheetPanel((v) => !v)}>{showSheetPanel ? (ui.lang === "en" ? "Hide inspector" : "إخفاء اللوحة") : (ui.lang === "en" ? "Show inspector" : "إظهار اللوحة")}</button>
+              <button type="button" onClick={() => setFreezeFromSelection("rows")}>{ui.freezeRows}</button>
+              <button type="button" onClick={() => setFreezeFromSelection("cols")}>{ui.freezeCols}</button>
+              <button type="button" onClick={clearFreeze}>{ui.clearFreeze}</button>
+            </div>
+          </details>
+          <details className="tws-sheets-menu">
+            <summary>{ui.lang === "en" ? "Insert" : "إدراج"}</summary>
+            <div className="tws-sheets-menu-popover">
+              <button type="button" onClick={addChartAction}>{ui.lang === "en" ? "Chart" : "رسم بياني"}</button>
+              <button type="button" onClick={addPivotAction}>{ui.lang === "en" ? "Pivot table" : "جدول محوري"}</button>
+              <button type="button" onClick={addDropdownValidationAction}>{ui.lang === "en" ? "Dropdown" : "قائمة منسدلة"}</button>
+              <button type="button" onClick={addNamedRange}>{ui.lang === "en" ? "Named range" : "نطاق مسمى"}</button>
+              <div className="tws-sheets-menu-separator" />
+              <button type="button" onClick={addRow}>{ui.lang === "en" ? "Add row" : "إضافة صف"}</button>
+              <button type="button" onClick={addCol}>{ui.lang === "en" ? "Add column" : "إضافة عمود"}</button>
+            </div>
+          </details>
+          <details className="tws-sheets-menu">
+            <summary>{ui.lang === "en" ? "Format" : "تنسيق"}</summary>
+            <div className="tws-sheets-menu-popover">
+              <button type="button" onClick={mergeSelectionAction}>{ui.lang === "en" ? "Merge cells" : "دمج الخلايا"}</button>
+              <button type="button" onClick={unmergeSelectionAction}>{ui.lang === "en" ? "Unmerge cells" : "إلغاء الدمج"}</button>
+              <button type="button" onClick={() => toggleFormat(focusedRef, "wrap")}>{ui.lang === "en" ? "Wrap text" : "التفاف النص"}</button>
+              <button type="button" onClick={clearFormattingAction}>{ui.lang === "en" ? "Clear formatting" : "مسح التنسيق"}</button>
+            </div>
+          </details>
+          <details className="tws-sheets-menu">
+            <summary>{ui.lang === "en" ? "Data" : "بيانات"}</summary>
+            <div className="tws-sheets-menu-popover">
+              <button type="button" onClick={() => sortSelection("asc")}>{ui.sortAsc}</button>
+              <button type="button" onClick={() => sortSelection("desc")}>{ui.sortDesc}</button>
+              <div className="tws-sheets-menu-separator" />
+              <button type="button" onClick={createFilterAction}>{ui.lang === "en" ? "Create filter" : "إنشاء فلتر"}</button>
+              <button type="button" onClick={filterCurrentColumnAction}>{ui.lang === "en" ? "Filter values" : "قيم الفلتر"}</button>
+              {activeSheet?.filter && <button type="button" onClick={clearFilterAction}>{ui.lang === "en" ? "Clear filter" : "مسح الفلتر"}</button>}
+              <button type="button" onClick={addConditionalFormattingAction}>{ui.lang === "en" ? "Conditional formatting" : "تنسيق شرطي"}</button>
+            </div>
+          </details>
+          <details className="tws-sheets-menu">
+            <summary>{ui.lang === "en" ? "Tools" : "أدوات"}</summary>
+            <div className="tws-sheets-menu-popover">
+              <button type="button" onClick={protectSelection}>{ui.protectSelection}</button>
+              <button type="button" onClick={unprotectSelection}>{ui.unprotectSelection}</button>
+              <div className="tws-sheets-menu-separator" />
+              <button type="button" onClick={() => setShowComments(true)}>{ui.comments}</button>
+              <button type="button" onClick={() => setShowVersions(true)}>{ui.versions}</button>
+            </div>
+          </details>
+        </div>
+      )}
