@@ -1,0 +1,257 @@
+/* TWS T-Sheets — Phase 7.2C Selection + Dark Fidelity Final Polish
+   Visual-only correction layer: stronger spreadsheet selection, clearer active
+   axes, softer gridlines, unified controls, formula bar, and sheet tabs. */
+
+.tws-sheets-phase7-2c-final {
+  --ts72c-active: var(--ts7-accent, #d89b12);
+  --ts72c-active-strong: color-mix(in srgb, var(--ts72c-active) 88%, #6b4a00);
+  --ts72c-active-soft: color-mix(in srgb, var(--ts72c-active) 12%, transparent);
+  --ts72c-active-softer: color-mix(in srgb, var(--ts72c-active) 7%, transparent);
+  --ts72c-grid: #e1e5ea;
+  --ts72c-grid-header: #d7dce2;
+  --ts72c-toolbar: #f8f9fa;
+  --ts72c-formula: #ffffff;
+  --ts72c-control-hover: #eef1f4;
+  --ts72c-tab: #f8f9fa;
+}
+
+.dark .tws-sheets-phase7-2c-final {
+  --ts72c-active: #f0b429;
+  --ts72c-active-strong: #f6c453;
+  --ts72c-active-soft: rgba(240, 180, 41, 0.16);
+  --ts72c-active-softer: rgba(240, 180, 41, 0.075);
+  --ts72c-grid: rgba(255, 255, 255, 0.072);
+  --ts72c-grid-header: rgba(255, 255, 255, 0.11);
+  --ts72c-toolbar: #202124;
+  --ts72c-formula: #202124;
+  --ts72c-control-hover: #303134;
+  --ts72c-tab: #202124;
+}
+
+/* Strong, unmistakable active cell without returning to card-style cells. */
+.tws-sheets-phase7-2c-final .tws-sheets-grid td.tws-sheets-cell-focused {
+  position: relative;
+  z-index: 32 !important;
+  outline: 0 !important;
+  box-shadow:
+    inset 0 0 0 2px var(--ts72c-active-strong),
+    0 0 0 1px color-mix(in srgb, var(--ts72c-active) 28%, transparent) !important;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-grid td.tws-sheets-cell-focused::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  inset-inline-end: -3px;
+  bottom: -3px;
+  z-index: 40;
+  border: 1px solid var(--ts7-surface, #fff);
+  border-radius: 1px;
+  background: var(--ts72c-active-strong);
+  pointer-events: none;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-grid td.tws-sheets-cell-selected:not(.tws-sheets-cell-focused) {
+  background-image: linear-gradient(var(--ts72c-active-softer), var(--ts72c-active-softer)) !important;
+}
+
+/* Row / column headers should make the active axis immediately obvious. */
+.tws-sheets-phase7-2c-final .tws-sheets-grid thead th.tws-sheets-axis-active,
+.tws-sheets-phase7-2c-final .tws-sheets-grid tbody > tr > td:first-child.tws-sheets-axis-active {
+  background: var(--ts72c-active-soft) !important;
+  color: var(--ts72c-active-strong) !important;
+  font-weight: 800 !important;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-grid thead th.tws-sheets-axis-active {
+  box-shadow: inset 0 -3px 0 var(--ts72c-active-strong) !important;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-grid tbody > tr > td:first-child.tws-sheets-axis-active {
+  box-shadow: inset -3px 0 0 var(--ts72c-active-strong) !important;
+}
+
+/* Softer spreadsheet gridlines, especially in dark mode. */
+.tws-sheets-phase7-2c-final .tws-sheets-grid td {
+  border-color: var(--ts72c-grid) !important;
+  border-radius: 0 !important;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-grid th,
+.tws-sheets-phase7-2c-final .tws-sheets-grid tbody > tr > td:first-child {
+  border-color: var(--ts72c-grid-header) !important;
+}
+
+.dark .tws-sheets-phase7-2c-final .tws-sheets-grid input,
+.dark .tws-sheets-phase7-2c-final .tws-sheets-grid textarea,
+.dark .tws-sheets-phase7-2c-final .tws-sheets-grid select {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* One coherent toolbar language in light and dark — no glaring white controls. */
+.tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact {
+  min-height: 40px;
+  gap: 3px;
+  background: var(--ts72c-toolbar) !important;
+  border-color: var(--ts7-line) !important;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact button,
+.tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact select,
+.tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact input:not([type="color"]) {
+  min-height: 28px !important;
+  border: 1px solid transparent !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: var(--ts7-text) !important;
+  box-shadow: none !important;
+  opacity: 1;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact button:hover:not(:disabled),
+.tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact select:hover:not(:disabled),
+.tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact input:not([type="color"]):hover:not(:disabled) {
+  background: var(--ts72c-control-hover) !important;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact button[aria-pressed="true"],
+.tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact button.is-active {
+  background: var(--ts72c-active-soft) !important;
+  color: var(--ts72c-active-strong) !important;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact button:disabled,
+.tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact select:disabled,
+.tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact input:disabled {
+  background: transparent !important;
+  color: var(--ts7-muted) !important;
+  opacity: 0.48 !important;
+}
+
+.dark .tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact select option {
+  background: #202124;
+  color: #e8eaed;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact input[type="color"] {
+  width: 27px !important;
+  height: 27px !important;
+  padding: 2px !important;
+  border: 1px solid var(--ts7-line) !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+}
+
+/* Formula strip: flatter, higher contrast, clear Name Box + fx + input hierarchy. */
+.tws-sheets-phase7-2c-final .tws-sheets-formula-strip-compact {
+  min-height: 42px;
+  background: var(--ts72c-formula) !important;
+  border-top: 1px solid var(--ts7-line) !important;
+  border-bottom: 1px solid var(--ts7-line) !important;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-formula-strip-compact > input:first-child {
+  background: color-mix(in srgb, var(--ts72c-toolbar) 82%, transparent) !important;
+  border-inline-end: 1px solid var(--ts7-line) !important;
+  color: var(--ts7-text) !important;
+  font-weight: 800;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-fx {
+  color: var(--ts7-muted) !important;
+  background: transparent !important;
+  border-inline-end: 1px solid var(--ts7-line) !important;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-formula-strip-compact input:not(:first-child) {
+  background: transparent !important;
+  color: var(--ts7-text) !important;
+}
+
+.dark .tws-sheets-phase7-2c-final .tws-sheets-formula-strip-compact input::placeholder {
+  color: #9aa0a6 !important;
+  opacity: 1;
+}
+
+/* Bottom tabs: dark-safe add button and stronger active state. */
+.tws-sheets-phase7-2c-final .tws-sheets-tabs {
+  min-height: 36px;
+  background: var(--ts72c-tab) !important;
+  border-top: 1px solid var(--ts7-line) !important;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-tabs > button {
+  min-height: 32px;
+  border-radius: 4px 4px 0 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-tabs > button.tws-sheets-tab-active {
+  background: var(--ts72c-active-softer) !important;
+  color: var(--ts7-text) !important;
+  font-weight: 800 !important;
+  box-shadow: inset 0 -3px 0 var(--ts72c-active-strong) !important;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-tab-add {
+  width: 34px !important;
+  min-width: 34px !important;
+  background: transparent !important;
+  color: var(--ts7-muted) !important;
+  border: 0 !important;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-tab-add:hover {
+  background: var(--ts72c-control-hover) !important;
+  color: var(--ts7-text) !important;
+}
+
+/* Keep floating menus/panels visually coherent with the final dark surface. */
+.dark .tws-sheets-phase7-2c-final .tws-sheets-context-menu,
+.dark .tws-sheets-phase7-2c-final .tws-sheets-sheet-tab-menu,
+.dark .tws-sheets-phase7-2c-final .tws-sheets-find-replace-panel {
+  background: #202124 !important;
+  border-color: rgba(255, 255, 255, 0.13) !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.42) !important;
+}
+
+/* More spreadsheet-like scrollbars without changing behavior. */
+.tws-sheets-phase7-2c-final .tws-sheets-grid-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--ts7-muted) 45%, transparent) transparent;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-grid-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.tws-sheets-phase7-2c-final .tws-sheets-grid-scroll::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+  background-color: color-mix(in srgb, var(--ts7-muted) 44%, transparent);
+}
+
+@media (max-width: 900px) {
+  .tws-sheets-phase7-2c-final .tws-sheets-toolbar-compact {
+    min-height: 38px;
+  }
+
+  .tws-sheets-phase7-2c-final .tws-sheets-formula-strip-compact {
+    min-height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tws-sheets-phase7-2c-final *,
+  .tws-sheets-phase7-2c-final *::before,
+  .tws-sheets-phase7-2c-final *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
