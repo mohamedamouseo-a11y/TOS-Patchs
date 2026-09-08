@@ -1,0 +1,197 @@
+/* TWS T-Docs — Phase 1.1: dark sidebar/header/toolbar final polish.
+   Visual-only refinement on top of Phase 1. No editor behavior or data model changes. */
+
+.tws-docs-phase1-1-final-polish {
+  --td11-blue: #1a73e8;
+  --td11-line: #dadce0;
+  --td11-hover: #f1f3f4;
+}
+
+/* Header actions: quieter, denser document-product chrome. */
+.tws-docs-phase1-1-final-polish .tws-docs-header-actions {
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.tws-docs-phase1-1-final-polish .tws-docs-header-actions button {
+  min-height: 32px !important;
+  padding: 0 11px !important;
+  border: 1px solid #dadce0 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: #3c4043 !important;
+  box-shadow: none !important;
+  font-size: 11px !important;
+  white-space: nowrap;
+}
+.tws-docs-phase1-1-final-polish .tws-docs-header-actions button:hover:not(:disabled) {
+  background: #f1f3f4 !important;
+  border-color: #c7c9cc !important;
+}
+.tws-docs-phase1-1-final-polish .tws-docs-header-actions button:last-child {
+  background: #fce8e6 !important;
+  border-color: #f3c6c2 !important;
+  color: #c5221f !important;
+}
+
+/* Toolbar: compact controls without pill-like bulk. */
+.tws-docs-phase1-1-final-polish .tws-docs-toolbar {
+  min-height: 40px !important;
+  padding-block: 3px !important;
+}
+.tws-docs-phase1-1-final-polish .tws-docs-toolbar button.grid {
+  width: 30px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  border-radius: 5px !important;
+}
+.tws-docs-phase1-1-final-polish .tws-docs-toolbar select {
+  height: 30px !important;
+  min-height: 30px !important;
+  padding-inline: 7px !important;
+  border-radius: 5px !important;
+  font-size: 11px !important;
+}
+.tws-docs-phase1-1-final-polish .tws-docs-toolbar > button:not(.grid),
+.tws-docs-phase1-1-final-polish .tws-docs-toolbar .ms-auto > button {
+  min-height: 30px !important;
+  border-radius: 5px !important;
+  padding-block: 4px !important;
+}
+
+/* Ruler: flatter guide, closer to a document canvas ruler than a decorative strip. */
+.tws-docs-phase1-1-final-polish .tws-doc-ruler {
+  height: 20px !important;
+  flex-basis: 20px !important;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 23px, rgba(95,99,104,.20) 23px 24px),
+    #f1f3f4 !important;
+}
+.tws-docs-phase1-1-final-polish .tws-doc-ruler::before,
+.tws-docs-phase1-1-final-polish .tws-doc-ruler::after {
+  top: 3px !important;
+  border-left-width: 4px !important;
+  border-right-width: 4px !important;
+  border-top-width: 6px !important;
+}
+
+/* Inspector: remove the white-pill look from every outline row. */
+.tws-docs-phase1-1-final-polish .tws-docs-inspector {
+  padding: 12px !important;
+}
+.tws-docs-phase1-1-final-polish .tws-docs-outline-card,
+.tws-docs-phase1-1-final-polish .tws-docs-info-card {
+  border-radius: 12px !important;
+  padding: 14px !important;
+}
+.tws-docs-phase1-1-final-polish .tws-docs-outline-card button {
+  display: block;
+  width: 100%;
+  min-height: 26px;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  line-height: 1.35;
+}
+.tws-docs-phase1-1-final-polish .tws-docs-outline-card button:hover {
+  background: #e8f0fe !important;
+  color: #174ea6 !important;
+}
+
+/* Dark fidelity: charcoal surfaces, subtle borders, no white islands. */
+.dark .tws-docs-phase1-1-final-polish {
+  --td11-blue: #8ab4f8;
+  --td11-line: #3c4043;
+  --td11-hover: #303134;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-docs-header-actions button {
+  background: #28292c !important;
+  border-color: #3c4043 !important;
+  color: #e8eaed !important;
+  box-shadow: none !important;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-docs-header-actions button:hover:not(:disabled) {
+  background: #303134 !important;
+  border-color: #5f6368 !important;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-docs-header-actions button:last-child {
+  background: rgba(242,139,130,.12) !important;
+  border-color: rgba(242,139,130,.28) !important;
+  color: #f28b82 !important;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-docs-toolbar {
+  background: #202124 !important;
+  border-color: #3c4043 !important;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-docs-toolbar button,
+.dark .tws-docs-phase1-1-final-polish .tws-docs-toolbar select {
+  color: #e8eaed !important;
+  -webkit-text-fill-color: currentColor;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-docs-toolbar select {
+  background: #202124 !important;
+  border-color: transparent !important;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-docs-toolbar select:hover,
+.dark .tws-docs-phase1-1-final-polish .tws-docs-toolbar select:focus {
+  background: #303134 !important;
+  border-color: #5f6368 !important;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-doc-ruler {
+  border-color: #3c4043 !important;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 23px, rgba(189,193,198,.16) 23px 24px),
+    #28292c !important;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-docs-inspector {
+  background: #202124 !important;
+  border-color: #3c4043 !important;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-docs-outline-card,
+.dark .tws-docs-phase1-1-final-polish .tws-docs-info-card {
+  background: #28292c !important;
+  border-color: #3c4043 !important;
+  box-shadow: none !important;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-docs-outline-card button {
+  background: transparent !important;
+  border: 0 !important;
+  color: #bdc1c6 !important;
+  -webkit-text-fill-color: #bdc1c6 !important;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-docs-outline-card button:hover {
+  background: #303134 !important;
+  color: #aecbfa !important;
+  -webkit-text-fill-color: #aecbfa !important;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-docs-info-card,
+.dark .tws-docs-phase1-1-final-polish .tws-docs-info-card div {
+  color: #9aa0a6 !important;
+}
+.dark .tws-docs-phase1-1-final-polish .tws-docs-info-card span:last-child {
+  color: #e8eaed !important;
+}
+
+/* Phase 1 paper contract remains deliberately untouched: white paper + dark authored text. */
+
+@media (max-width: 1180px) {
+  .tws-docs-phase1-1-final-polish .tws-docs-header-actions {
+    max-width: 48vw;
+  }
+}
+@media (max-width: 760px) {
+  .tws-docs-phase1-1-final-polish .tws-docs-header-actions {
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tws-docs-phase1-1-final-polish *,
+  .tws-docs-phase1-1-final-polish *::before,
+  .tws-docs-phase1-1-final-polish *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
