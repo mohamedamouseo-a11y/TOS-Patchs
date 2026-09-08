@@ -1,0 +1,60 @@
+
+            <div className="mt-3 rounded-3xl border border-zinc-100 bg-zinc-50 p-4 dark:border-white/10 dark:bg-white/[0.04]">
+              <div className="flex items-center justify-between gap-2">
+                <b className="text-sm font-black text-zinc-900 dark:text-white">{ui.lang === "en" ? "Advanced sheets" : "أدوات متقدمة"}</b>
+                <div className="flex gap-1">
+                  <button type="button" disabled={!canEdit} onClick={addChartAction} className="rounded-lg bg-white px-2 py-1 text-[10px] font-black text-zinc-700 shadow-sm disabled:opacity-40 dark:bg-white/10 dark:text-zinc-200">+ Chart</button>
+                  <button type="button" disabled={!canEdit} onClick={addPivotAction} className="rounded-lg bg-white px-2 py-1 text-[10px] font-black text-zinc-700 shadow-sm disabled:opacity-40 dark:bg-white/10 dark:text-zinc-200">+ Pivot</button>
+                </div>
+              </div>
+
+              <div className="mt-3 grid gap-3">
+                {(activeSheet?.charts || []).map((chart) => {
+                  const model = chartModel(activeSheet, chart, computedValues);
+                  return (
+                    <div key={chart.id} className="rounded-2xl bg-white p-3 shadow-sm dark:bg-white/5">
+                      <div className="mb-2 flex items-center justify-between gap-2">
+                        <div className="min-w-0"><b className="block truncate text-xs text-zinc-900 dark:text-white">{chart.title}</b><span className="text-[10px] font-bold uppercase text-zinc-400">{chart.type} · {chart.start}:{chart.end}</span></div>
+                        {canEdit && <button type="button" onClick={() => removeChartAction(chart.id)} className="text-[10px] font-black text-red-500">{ui.delete}</button>}
+                      </div>
+                      <AdvancedChartPreview model={model} />
+                    </div>
+                  );
+                })}
+                {!(activeSheet?.charts || []).length && <p className="text-[11px] font-bold text-zinc-400">{ui.lang === "en" ? "Select a table range and insert a chart." : "حدد نطاق جدول ثم أضف رسمًا بيانيًا."}</p>}
+              </div>
+
+              <div className="mt-4 grid gap-3">
+                {(activeSheet?.pivots || []).map((pivot) => {
+                  const model = pivotModel(activeSheet, pivot, computedValues);
+                  return (
+                    <div key={pivot.id} className="overflow-hidden rounded-2xl bg-white p-3 shadow-sm dark:bg-white/5">
+                      <div className="mb-2 flex items-center justify-between gap-2">
+                        <div><b className="block text-xs text-zinc-900 dark:text-white">{pivot.title}</b><span className="text-[10px] font-bold uppercase text-zinc-400">{pivot.aggregate} · {pivot.start}:{pivot.end}</span></div>
+                        {canEdit && <button type="button" onClick={() => removePivotAction(pivot.id)} className="text-[10px] font-black text-red-500">{ui.delete}</button>}
+                      </div>
+                      {model && (
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-[10px]">
+                            <thead><tr className="text-zinc-400"><th className="py-1 text-start">{model.rowHeader}</th><th className="py-1 text-end">{model.valueHeader}</th></tr></thead>
+                            <tbody>{model.rows.slice(0, 12).map((row) => <tr key={row.label} className="border-t border-zinc-100 dark:border-white/10"><td className="py-1 font-bold text-zinc-600 dark:text-zinc-300">{row.label}</td><td className="py-1 text-end font-black text-zinc-900 dark:text-white">{formatAdvancedNumber(row.value)}</td></tr>)}</tbody>
+                            <tfoot><tr className="border-t border-zinc-200 dark:border-white/15"><td className="pt-1 font-black">Total</td><td className="pt-1 text-end font-black">{formatAdvancedNumber(model.grandTotal)}</td></tr></tfoot>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-4 border-t border-zinc-200 pt-3 dark:border-white/10">
+                <div className="mb-2 flex items-center justify-between"><b className="text-xs font-black text-zinc-800 dark:text-zinc-100">{ui.lang === "en" ? "Print & page setup" : "الطباعة وإعداد الصفحة"}</b><button type="button" onClick={printCurrentSheet} className="flex items-center gap-1 text-[10px] font-black text-amber-600"><Printer size={11} /> {ui.lang === "en" ? "Print" : "طباعة"}</button></div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Field as="select" disabled={!canEdit} value={normalizePageSetup(activeSheet?.pageSetup || {}).orientation} onChange={(event) => updatePageSetup({ orientation: event.target.value })} className="!py-1.5 text-[10px]"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></Field>
+                  <Field as="select" disabled={!canEdit} value={normalizePageSetup(activeSheet?.pageSetup || {}).paperSize} onChange={(event) => updatePageSetup({ paperSize: event.target.value })} className="!py-1.5 text-[10px]"><option value="A4">A4</option><option value="LETTER">Letter</option></Field>
+                  <Field as="select" disabled={!canEdit} value={normalizePageSetup(activeSheet?.pageSetup || {}).scale} onChange={(event) => updatePageSetup({ scale: event.target.value })} className="!py-1.5 text-[10px]"><option value="fitWidth">Fit width</option><option value="actual">Actual size</option></Field>
+                  <label className="flex items-center gap-2 rounded-xl bg-white px-2 text-[10px] font-bold text-zinc-500 dark:bg-white/5"><input type="checkbox" disabled={!canEdit} checked={normalizePageSetup(activeSheet?.pageSetup || {}).gridlines} onChange={(event) => updatePageSetup({ gridlines: event.target.checked })} /> Gridlines</label>
+                </div>
+              </div>
+            </div>
+
