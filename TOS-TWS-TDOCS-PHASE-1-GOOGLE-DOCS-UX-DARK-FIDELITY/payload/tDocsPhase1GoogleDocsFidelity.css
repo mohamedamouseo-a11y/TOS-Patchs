@@ -1,0 +1,311 @@
+/* TWS T-Docs — Phase 1: familiar document-editor fidelity + dark-mode readability.
+   Visual-only. The document paper remains a neutral paper surface in both themes
+   so authored text never loses contrast when the surrounding application is dark. */
+
+.tws-docs-phase1-google-fidelity {
+  --td1-blue: #1a73e8;
+  --td1-blue-soft: rgba(26, 115, 232, .10);
+  --td1-shell: #f8f9fa;
+  --td1-toolbar: #f8fafd;
+  --td1-line: #dadce0;
+  --td1-muted: #5f6368;
+  --td1-text: #202124;
+  --td1-paper: #ffffff;
+  --td1-panel: #ffffff;
+  --td1-panel-soft: #f8f9fa;
+  background: var(--td1-shell);
+  color: var(--td1-text);
+}
+
+.tws-docs-phase1-google-fidelity .tws-docs-chrome {
+  min-height: 52px;
+  padding: 7px 12px !important;
+  gap: 8px !important;
+  background: #fff !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 1px 0 rgba(60,64,67,.05);
+}
+
+.tws-docs-phase1-google-fidelity .tws-docs-chrome > input {
+  min-width: 180px;
+  max-width: min(36vw, 520px);
+  padding: 6px 8px;
+  border: 1px solid transparent !important;
+  border-radius: 6px;
+  color: #202124 !important;
+  -webkit-text-fill-color: #202124 !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+.tws-docs-phase1-google-fidelity .tws-docs-chrome > input:hover,
+.tws-docs-phase1-google-fidelity .tws-docs-chrome > input:focus {
+  border-color: #dadce0 !important;
+  background: #f8f9fa !important;
+}
+
+.tws-docs-phase1-google-fidelity .tws-docs-header-actions {
+  margin-inline-start: auto;
+  gap: 5px !important;
+}
+.tws-docs-phase1-google-fidelity .tws-docs-header-actions button {
+  min-height: 34px;
+  border-radius: 8px !important;
+}
+
+.tws-docs-phase1-google-fidelity .tws-docs-toolbar {
+  min-height: 44px;
+  padding: 4px 10px !important;
+  gap: 2px !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  background: #edf2fa !important;
+  border-color: #dfe3eb !important;
+}
+.tws-docs-phase1-google-fidelity .tws-docs-toolbar button,
+.tws-docs-phase1-google-fidelity .tws-docs-toolbar select {
+  border-radius: 6px !important;
+  box-shadow: none !important;
+}
+.tws-docs-phase1-google-fidelity .tws-docs-toolbar button:hover:not(:disabled),
+.tws-docs-phase1-google-fidelity .tws-docs-toolbar select:hover:not(:disabled) {
+  background: #e3e8f0 !important;
+}
+.tws-docs-phase1-google-fidelity .tws-docs-toolbar select {
+  height: 32px !important;
+  border-color: transparent !important;
+  background: transparent !important;
+  color: #3c4043 !important;
+  font-weight: 700 !important;
+}
+.tws-docs-phase1-google-fidelity .tws-docs-toolbar .ms-auto {
+  margin-inline-start: auto;
+  flex-shrink: 0;
+}
+
+/* Familiar ruler strip: visual guide only; page setup remains driven by existing controls. */
+.tws-docs-phase1-google-fidelity .tws-doc-ruler {
+  position: relative;
+  height: 22px;
+  flex: 0 0 22px;
+  border-bottom: 1px solid #dadce0;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 23px, rgba(95,99,104,.20) 23px 24px),
+    linear-gradient(#fff, #f8f9fa);
+  overflow: hidden;
+}
+.tws-docs-phase1-google-fidelity .tws-doc-ruler::before,
+.tws-docs-phase1-google-fidelity .tws-doc-ruler::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid var(--td1-blue);
+  opacity: .8;
+}
+.tws-docs-phase1-google-fidelity .tws-doc-ruler::before { left: clamp(38px, 8vw, 96px); }
+.tws-docs-phase1-google-fidelity .tws-doc-ruler::after { right: clamp(38px, 8vw, 96px); }
+
+.tws-docs-phase1-google-fidelity .tws-docs-workspace {
+  background: var(--td1-shell);
+}
+.tws-docs-phase1-google-fidelity .tws-docs-page-shell {
+  position: relative;
+  background: #f8f9fa !important;
+  padding-top: 24px !important;
+}
+.tws-docs-phase1-google-fidelity .tws-doc-page {
+  border-radius: 3px !important;
+  border-color: #dadce0 !important;
+  background: var(--td1-paper) !important;
+  box-shadow: 0 2px 8px rgba(60,64,67,.14), 0 1px 2px rgba(60,64,67,.08) !important;
+}
+
+/* Paper is intentionally theme-neutral. This is the critical dark-mode readability fix. */
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor {
+  color: #202124 !important;
+  caret-color: #1a73e8;
+  font-family: Arial, "Noto Sans Arabic", "Segoe UI", sans-serif;
+  font-size: 14px;
+  line-height: 1.75 !important;
+}
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor h1,
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor h2,
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor h3,
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor p,
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor li,
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor td,
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor th {
+  color: inherit;
+}
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor h1 {
+  margin: 1.1em 0 .45em;
+  font-size: 2rem;
+  line-height: 1.25;
+  font-weight: 700;
+}
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor h2 {
+  margin: 1em 0 .4em !important;
+  font-size: 1.45rem !important;
+  line-height: 1.3;
+}
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor h3 {
+  margin: .9em 0 .35em;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor blockquote {
+  color: #5f6368 !important;
+  border-color: #9aa0a6 !important;
+}
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor a {
+  color: #1967d2 !important;
+}
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor table {
+  border-color: #dadce0;
+}
+.tws-docs-phase1-google-fidelity .tws-tdoc-editor ::selection {
+  background: rgba(26,115,232,.22);
+}
+
+.tws-docs-phase1-google-fidelity .tws-docs-inspector {
+  width: 260px !important;
+  background: var(--td1-panel) !important;
+  border-color: #e5e7eb !important;
+  padding: 10px !important;
+}
+.tws-docs-phase1-google-fidelity .tws-docs-outline-card,
+.tws-docs-phase1-google-fidelity .tws-docs-info-card {
+  border-radius: 14px !important;
+  border-color: #e5e7eb !important;
+  background: var(--td1-panel-soft) !important;
+  box-shadow: none !important;
+}
+.tws-docs-phase1-google-fidelity .tws-docs-outline-card button {
+  border-radius: 6px !important;
+}
+.tws-docs-phase1-google-fidelity .tws-docs-outline-card button:hover {
+  background: #eef3fd !important;
+  color: #174ea6 !important;
+}
+
+/* Dark application chrome, while the actual page stays paper-white. */
+.dark .tws-docs-phase1-google-fidelity {
+  --td1-shell: #202124;
+  --td1-toolbar: #202124;
+  --td1-line: #3c4043;
+  --td1-muted: #9aa0a6;
+  --td1-panel: #202124;
+  --td1-panel-soft: #28292c;
+  background: #202124 !important;
+  color: #e8eaed !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-chrome {
+  background: #202124 !important;
+  border-color: #3c4043 !important;
+  box-shadow: none !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-chrome > input,
+.dark .tws-docs-phase1-google-fidelity .tws-docs-chrome > input:disabled,
+.dark .tws-docs-phase1-google-fidelity .tws-docs-chrome > input[disabled] {
+  color: #e8eaed !important;
+  -webkit-text-fill-color: #e8eaed !important;
+  caret-color: #e8eaed !important;
+  opacity: 1 !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-chrome > input:hover,
+.dark .tws-docs-phase1-google-fidelity .tws-docs-chrome > input:focus {
+  background: #303134 !important;
+  border-color: #5f6368 !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-toolbar {
+  background: #202124 !important;
+  border-color: #3c4043 !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-toolbar button,
+.dark .tws-docs-phase1-google-fidelity .tws-docs-toolbar select {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #e8eaed !important;
+  box-shadow: none !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-toolbar button:hover:not(:disabled),
+.dark .tws-docs-phase1-google-fidelity .tws-docs-toolbar select:hover:not(:disabled) {
+  background: #303134 !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-toolbar button[class*="dark:bg-white"] {
+  background: rgba(138,180,248,.16) !important;
+  color: #aecbfa !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-doc-ruler {
+  border-color: #3c4043;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 23px, rgba(189,193,198,.18) 23px 24px),
+    #28292c;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-page-shell,
+.dark .tws-docs-phase1-google-fidelity .tws-docs-workspace {
+  background: #202124 !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-doc-page {
+  background: #fff !important;
+  border-color: #5f6368 !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.34) !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-tdoc-editor {
+  color: #202124 !important;
+  -webkit-text-fill-color: initial;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-inspector {
+  background: #202124 !important;
+  border-color: #3c4043 !important;
+  color: #e8eaed !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-outline-card,
+.dark .tws-docs-phase1-google-fidelity .tws-docs-info-card {
+  background: #28292c !important;
+  border-color: #3c4043 !important;
+  color: #e8eaed !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-outline-card b,
+.dark .tws-docs-phase1-google-fidelity .tws-docs-info-card b,
+.dark .tws-docs-phase1-google-fidelity .tws-docs-info-card span:last-child {
+  color: #e8eaed !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-outline-card button {
+  color: #bdc1c6 !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-outline-card button:hover {
+  background: #303134 !important;
+  color: #aecbfa !important;
+}
+.dark .tws-docs-phase1-google-fidelity .tws-docs-info-card,
+.dark .tws-docs-phase1-google-fidelity .tws-docs-info-card div {
+  color: #9aa0a6;
+}
+
+/* Keep the editing surface usable on narrower screens. */
+@media (max-width: 1100px) {
+  .tws-docs-phase1-google-fidelity .tws-docs-chrome > input { max-width: 42vw; }
+  .tws-docs-phase1-google-fidelity .tws-docs-page-shell { padding-inline: 12px !important; }
+}
+@media (max-width: 720px) {
+  .tws-docs-phase1-google-fidelity .tws-docs-chrome { align-items: center; }
+  .tws-docs-phase1-google-fidelity .tws-docs-chrome > input { max-width: none; min-width: 0; }
+  .tws-docs-phase1-google-fidelity .tws-doc-ruler { display: none; }
+  .tws-docs-phase1-google-fidelity .tws-doc-page { padding: 28px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tws-docs-phase1-google-fidelity *,
+  .tws-docs-phase1-google-fidelity *::before,
+  .tws-docs-phase1-google-fidelity *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
