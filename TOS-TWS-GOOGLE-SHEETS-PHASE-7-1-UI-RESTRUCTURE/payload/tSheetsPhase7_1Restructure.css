@@ -1,0 +1,353 @@
+/* TWS T-Sheets — Phase 7.1 UI restructure
+   Compact spreadsheet chrome inspired by familiar spreadsheet information hierarchy.
+   Visual/layout only; TWS/Tamiyouz identity and all existing actions are preserved. */
+
+.tws-sheets-phase7-1-restructure {
+  --ts71-menu-height: 34px;
+  --ts71-toolbar-height: 42px;
+  --ts71-formula-height: 42px;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-chrome {
+  min-height: 52px !important;
+  padding: 6px 10px !important;
+  gap: 7px !important;
+  flex-wrap: nowrap !important;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-chrome > input {
+  max-width: 420px;
+  height: 32px;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-actions-compact {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-share-primary {
+  border-color: color-mix(in srgb, var(--ts7-accent) 36%, var(--ts7-line)) !important;
+  background: var(--ts7-accent-soft) !important;
+  color: var(--ts7-accent-strong) !important;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-more,
+.tws-sheets-phase7-1-restructure .tws-sheets-menu {
+  position: relative;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-more > summary,
+.tws-sheets-phase7-1-restructure .tws-sheets-menu > summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-more > summary::-webkit-details-marker,
+.tws-sheets-phase7-1-restructure .tws-sheets-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-more > summary {
+  display: inline-flex;
+  height: 34px;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--ts7-line);
+  border-radius: 9px;
+  padding: 0 10px;
+  background: var(--ts7-surface-soft);
+  color: var(--ts7-text);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-more[open] > summary,
+.tws-sheets-phase7-1-restructure .tws-sheets-menu[open] > summary {
+  background: var(--ts7-accent-soft);
+  color: var(--ts7-accent-strong);
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-more-menu,
+.tws-sheets-phase7-1-restructure .tws-sheets-menu-popover {
+  position: absolute;
+  top: calc(100% + 5px);
+  z-index: 120;
+  min-width: 220px;
+  overflow: hidden;
+  border: 1px solid var(--ts7-line);
+  border-radius: 12px;
+  background: var(--ts7-surface);
+  padding: 6px;
+  box-shadow: var(--ts7-shadow-float);
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-more-menu {
+  inset-inline-end: 0;
+  min-width: 238px;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-menu-popover {
+  inset-inline-start: 0;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-more-menu button,
+.tws-sheets-phase7-1-restructure .tws-sheets-menu-popover > button {
+  width: 100%;
+  min-height: 32px;
+  justify-content: flex-start !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  padding: 6px 9px !important;
+  color: var(--ts7-text) !important;
+  box-shadow: none !important;
+  text-align: start;
+  font-size: 11px !important;
+  font-weight: 750 !important;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-more-menu button:hover,
+.tws-sheets-phase7-1-restructure .tws-sheets-menu-popover > button:hover {
+  background: var(--ts7-surface-soft) !important;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-menu-danger {
+  color: #c2413b !important;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-menu-separator {
+  height: 1px;
+  margin: 5px 4px;
+  background: var(--ts7-line);
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-export-stack {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-export-stack button {
+  justify-content: center !important;
+  border: 1px solid var(--ts7-line) !important;
+  background: var(--ts7-surface-soft) !important;
+  padding-inline: 5px !important;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-menu-strip {
+  position: relative;
+  z-index: 33;
+  display: flex;
+  min-height: var(--ts71-menu-height);
+  align-items: center;
+  gap: 1px;
+  overflow: visible;
+  border-bottom: 1px solid var(--ts7-line);
+  background: var(--ts7-surface);
+  padding: 2px 8px;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-menu > summary {
+  display: flex;
+  height: 28px;
+  align-items: center;
+  border-radius: 7px;
+  padding: 0 10px;
+  color: var(--ts7-text);
+  font-size: 11px;
+  font-weight: 760;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-menu > summary:hover {
+  background: var(--ts7-surface-soft);
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-toolbar-compact {
+  min-height: var(--ts71-toolbar-height);
+  flex-wrap: nowrap !important;
+  gap: 2px !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 8px !important;
+  border-bottom-color: var(--ts7-line) !important;
+  background: var(--ts7-surface-soft) !important;
+  scrollbar-width: none;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-toolbar-compact::-webkit-scrollbar {
+  display: none;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-toolbar-compact button,
+.tws-sheets-phase7-1-restructure .tws-sheets-toolbar-compact select,
+.tws-sheets-phase7-1-restructure .tws-sheets-toolbar-compact input {
+  flex: 0 0 auto;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-toolbar-divider {
+  width: 1px;
+  height: 22px;
+  margin: 0 4px;
+  flex: 0 0 auto;
+  background: var(--ts7-line-strong);
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-toolbar-search {
+  margin-inline-start: auto;
+  min-width: 176px;
+  max-width: 220px;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-formula-strip-compact {
+  min-height: var(--ts71-formula-height);
+  display: grid !important;
+  grid-template-columns: 94px 28px minmax(220px, 1fr) auto !important;
+  align-items: center;
+  gap: 5px !important;
+  padding: 4px 8px !important;
+  border-bottom-color: var(--ts7-line) !important;
+  background: var(--ts7-surface) !important;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-fx {
+  display: grid;
+  width: 28px;
+  height: 30px;
+  place-items: center;
+  border-inline-start: 1px solid var(--ts7-line);
+  color: var(--ts7-muted);
+  font-family: Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 700;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-formula-meta {
+  max-width: 250px;
+  overflow: hidden;
+  border: 1px solid var(--ts7-line);
+  border-radius: 8px;
+  background: var(--ts7-surface-soft);
+  padding: 6px 9px;
+  color: var(--ts7-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-workspace {
+  background: var(--ts7-surface);
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-grid-scroll {
+  background: var(--ts7-surface);
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-grid {
+  min-width: max-content;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-grid thead th {
+  height: 27px !important;
+  font-size: 10px !important;
+  font-weight: 750 !important;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-grid tbody th {
+  min-width: 40px;
+  font-size: 10px !important;
+  font-weight: 650 !important;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-inspector {
+  width: 276px !important;
+  border-inline-start: 1px solid var(--ts7-line) !important;
+  border-inline-end: 0 !important;
+  box-shadow: -14px 0 36px rgba(15, 23, 42, 0.04);
+}
+
+.dark .tws-sheets-phase7-1-restructure .tws-sheets-inspector {
+  box-shadow: -16px 0 42px rgba(0, 0, 0, 0.18);
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-tabs {
+  min-height: 36px;
+  padding: 3px 7px !important;
+}
+
+.tws-sheets-phase7-1-restructure .tws-sheets-tabs > button {
+  min-width: 84px;
+  height: 29px;
+  border-radius: 7px !important;
+  padding-inline: 12px !important;
+}
+
+@media (max-width: 1280px) {
+  .tws-sheets-phase7-1-restructure .tws-sheets-chrome {
+    gap: 5px !important;
+  }
+
+  .tws-sheets-phase7-1-restructure .tws-sheets-chrome > input {
+    max-width: 300px;
+  }
+
+  .tws-sheets-phase7-1-restructure .tws-sheets-action-label {
+    display: none;
+  }
+
+  .tws-sheets-phase7-1-restructure .tws-sheets-formula-meta {
+    display: none;
+  }
+
+  .tws-sheets-phase7-1-restructure .tws-sheets-formula-strip-compact {
+    grid-template-columns: 90px 28px minmax(220px, 1fr) !important;
+  }
+}
+
+@media (max-width: 820px) {
+  .tws-sheets-phase7-1-restructure .tws-sheets-chrome {
+    flex-wrap: wrap !important;
+  }
+
+  .tws-sheets-phase7-1-restructure .tws-sheets-chrome > input {
+    order: 1;
+    max-width: none;
+    flex-basis: calc(100% - 100px);
+  }
+
+  .tws-sheets-phase7-1-restructure .tws-sheets-actions-compact {
+    order: 2;
+    margin-inline-start: 0;
+  }
+
+  .tws-sheets-phase7-1-restructure .tws-sheets-menu-strip {
+    overflow-x: auto;
+    overflow-y: visible;
+    scrollbar-width: none;
+  }
+
+  .tws-sheets-phase7-1-restructure .tws-sheets-menu-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tws-sheets-phase7-1-restructure .tws-sheets-formula-strip-compact {
+    grid-template-columns: 76px 24px minmax(180px, 1fr) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tws-sheets-phase7-1-restructure *,
+  .tws-sheets-phase7-1-restructure *::before,
+  .tws-sheets-phase7-1-restructure *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
