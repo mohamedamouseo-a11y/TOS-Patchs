@@ -1,0 +1,312 @@
+/* TWS T-Sheets — Phase 7.2A Google-Sheets UX & Core Interaction Parity
+   Familiar spreadsheet density and interaction hierarchy, while preserving Tamiyouz identity. */
+
+.tws-sheets-phase7-2-google-parity {
+  --ts72-grid-line: #e2e5e9;
+  --ts72-header: #f8f9fa;
+  --ts72-header-hover: #eef1f4;
+  --ts72-toolbar: #f8f9fa;
+  --ts72-active: var(--ts7-accent, #d89b12);
+  --ts72-active-soft: color-mix(in srgb, var(--ts72-active) 10%, transparent);
+  --ts72-row-height: 28px;
+  --ts72-radius: 6px;
+}
+
+.dark .tws-sheets-phase7-2-google-parity {
+  --ts72-grid-line: rgba(255, 255, 255, 0.12);
+  --ts72-header: #202124;
+  --ts72-header-hover: #2b2d31;
+  --ts72-toolbar: #202124;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-chrome {
+  min-height: 48px !important;
+  padding: 5px 9px !important;
+  border-bottom-color: var(--ts7-line) !important;
+  box-shadow: none !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-chrome > input {
+  height: 30px !important;
+  max-width: 460px;
+  border-radius: 6px !important;
+  padding-inline: 8px !important;
+  font-size: 15px !important;
+  font-weight: 760 !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-actions-compact button,
+.tws-sheets-phase7-2-google-parity .tws-sheets-more > summary {
+  min-height: 32px !important;
+  height: 32px !important;
+  border-radius: 7px !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-menu-strip {
+  min-height: 32px;
+  padding: 1px 7px !important;
+  gap: 0 !important;
+  background: var(--ts7-surface) !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-menu > summary {
+  height: 27px !important;
+  border-radius: 5px !important;
+  padding: 0 9px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-menu[open] > summary {
+  background: var(--ts72-active-soft) !important;
+  color: var(--ts7-text) !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-menu-popover {
+  top: calc(100% + 2px) !important;
+  min-width: 225px !important;
+  border-radius: 8px !important;
+  padding: 5px !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-menu-popover > button {
+  min-height: 30px !important;
+  border-radius: 5px !important;
+  font-size: 11px !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-toolbar-compact {
+  min-height: 40px !important;
+  padding: 4px 7px !important;
+  gap: 1px !important;
+  background: var(--ts72-toolbar) !important;
+  border-bottom-color: var(--ts7-line) !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-toolbar-compact button {
+  height: 30px !important;
+  min-height: 30px !important;
+  border-radius: 5px !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-toolbar-compact select,
+.tws-sheets-phase7-2-google-parity .tws-sheets-toolbar-compact input {
+  height: 30px !important;
+  min-height: 30px !important;
+  border-radius: 5px !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-toolbar-divider {
+  height: 20px !important;
+  margin-inline: 3px !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-zoom-control {
+  width: 68px !important;
+  min-width: 68px !important;
+  padding-inline: 5px !important;
+  text-align: center;
+  font-weight: 750;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-number-shortcut {
+  display: inline-grid;
+  min-width: 30px;
+  place-items: center;
+  padding-inline: 6px !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--ts7-text) !important;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-number-shortcut:hover {
+  background: color-mix(in srgb, var(--ts7-text) 7%, transparent) !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-toolbar-search {
+  min-width: 130px !important;
+  max-width: 170px !important;
+  font-size: 10px !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-formula-strip-compact {
+  min-height: 37px !important;
+  grid-template-columns: 92px 30px minmax(260px, 1fr) !important;
+  gap: 0 !important;
+  padding: 3px 7px !important;
+  background: var(--ts7-surface) !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-formula-strip-compact > input,
+.tws-sheets-phase7-2-google-parity .tws-sheets-formula-strip-compact > select {
+  height: 30px !important;
+  border-radius: 4px !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-fx {
+  width: 30px !important;
+  height: 30px !important;
+  border-inline: 1px solid var(--ts7-line) !important;
+  color: var(--ts7-muted);
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-formula-meta {
+  display: none !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid-scroll {
+  background: var(--ts7-surface) !important;
+  scrollbar-color: color-mix(in srgb, var(--ts7-muted) 35%, transparent) transparent;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid {
+  width: max-content !important;
+  min-width: 100% !important;
+  background: var(--ts7-surface);
+  transform-origin: top left;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid th,
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid td {
+  border-color: var(--ts72-grid-line) !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid thead th,
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid tbody > tr > td:first-child {
+  background: var(--ts72-header) !important;
+  color: var(--ts7-muted) !important;
+  font-weight: 650 !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid thead th:hover,
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid tbody > tr > td:first-child:hover {
+  background: var(--ts72-header-hover) !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid input,
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid select,
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid textarea {
+  min-height: var(--ts72-row-height) !important;
+  height: 100% !important;
+  border-radius: 0 !important;
+  padding-inline: 6px !important;
+  font-size: 11px !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid input:focus,
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid select:focus,
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid textarea:focus {
+  background: transparent !important;
+  box-shadow: inset 0 0 0 2px var(--ts72-active) !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid td:has(> input:focus),
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid td:has(> select:focus),
+.tws-sheets-phase7-2-google-parity .tws-sheets-grid td:has(> textarea:focus) {
+  z-index: 24;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-tabs {
+  min-height: 35px !important;
+  padding: 2px 6px !important;
+  background: var(--ts72-toolbar) !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-tabs > button {
+  min-width: 78px !important;
+  height: 30px !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+  color: var(--ts7-text) !important;
+  font-size: 11px !important;
+  font-weight: 720 !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-tabs > button:hover {
+  background: color-mix(in srgb, var(--ts7-text) 7%, transparent) !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-tabs > button[class*="bg-zinc-950"],
+.dark .tws-sheets-phase7-2-google-parity .tws-sheets-tabs > button[class*="dark:bg-white"] {
+  box-shadow: inset 0 -3px 0 var(--ts72-active) !important;
+  background: transparent !important;
+  color: var(--ts7-text) !important;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-sheet-tab-menu {
+  position: fixed;
+  z-index: 140;
+  min-width: 180px;
+  overflow: hidden;
+  border: 1px solid var(--ts7-line);
+  border-radius: 8px;
+  background: var(--ts7-surface);
+  padding: 5px;
+  box-shadow: var(--ts7-shadow-float);
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-sheet-tab-menu button {
+  width: 100%;
+  min-height: 30px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  padding: 6px 9px;
+  color: var(--ts7-text);
+  text-align: start;
+  font-size: 11px;
+  font-weight: 720;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-sheet-tab-menu button:hover {
+  background: var(--ts7-surface-soft);
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-sheet-tab-menu .danger {
+  color: #c2413b;
+}
+
+.tws-sheets-phase7-2-google-parity .tws-sheets-inspector {
+  width: 260px !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 1180px) {
+  .tws-sheets-phase7-2-google-parity .tws-sheets-chrome > input {
+    max-width: 310px;
+  }
+
+  .tws-sheets-phase7-2-google-parity .tws-sheets-toolbar-search {
+    display: none;
+  }
+
+  .tws-sheets-phase7-2-google-parity .tws-sheets-formula-strip-compact {
+    grid-template-columns: 84px 28px minmax(210px, 1fr) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .tws-sheets-phase7-2-google-parity .tws-sheets-toolbar-compact {
+    overflow-x: auto;
+  }
+
+  .tws-sheets-phase7-2-google-parity .tws-sheets-menu-popover {
+    min-width: 205px !important;
+  }
+
+  .tws-sheets-phase7-2-google-parity .tws-sheets-formula-strip-compact {
+    grid-template-columns: 72px 26px minmax(180px, 1fr) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tws-sheets-phase7-2-google-parity *,
+  .tws-sheets-phase7-2-google-parity *::before,
+  .tws-sheets-phase7-2-google-parity *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
