@@ -1,0 +1,65 @@
+
+function formatAdvancedNumber(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return String(value ?? "");
+  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(number);
+}
+
+function AdvancedChartPreview({ model }) {
+  if (!model?.series?.length || !model.labels?.length) {
+    return <div className="grid h-28 place-items-center rounded-2xl bg-white text-[11px] font-bold text-zinc-400 dark:bg-white/5">No numeric chart data</div>;
+  }
+  const series = model.series[0];
+  const values = series.values.map((value) => Number(value) || 0);
+  const max = Math.max(1, ...values.map((value) => Math.abs(value)));
+
+  if (model.type === "line") {
+    const width = 240;
+    const height = 100;
+    const points = values.map((value, index) => {
+      const x = values.length <= 1 ? width / 2 : (index / (values.length - 1)) * width;
+      const y = height - (Math.max(0, value) / max) * (height - 12) - 6;
+      return `${x},${y}`;
+    }).join(" ");
+    return (
+      <div className="rounded-2xl bg-white p-2 dark:bg-white/5">
+        <svg viewBox={`0 0 ${width} ${height}`} className="h-28 w-full overflow-visible text-amber-500">
+          <polyline points={points} fill="none" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
+          {points.split(" ").map((point) => { const [cx, cy] = point.split(","); return <circle key={point} cx={cx} cy={cy} r="3.5" fill="currentColor" />; })}
+        </svg>
+      </div>
+    );
+  }
+
+  if (model.type === "pie") {
+    const positive = values.map((value) => Math.max(0, value));
+    const total = positive.reduce((sum, value) => sum + value, 0) || 1;
+    let cursor = 0;
+    const stops = positive.map((value, index) => {
+      const start = cursor;
+      cursor += (value / total) * 100;
+      return `hsl(${(index * 71) % 360} 72% 48%) ${start}% ${cursor}%`;
+    });
+    return (
+      <div className="flex items-center gap-3 rounded-2xl bg-white p-3 dark:bg-white/5">
+        <div className="h-24 w-24 shrink-0 rounded-full" style={{ backgroundImage: `conic-gradient(${stops.join(",")})` }} />
+        <div className="min-w-0 grid gap-1">
+          {model.labels.slice(0, 6).map((label, index) => <div key={`${label}-${index}`} className="truncate text-[10px] font-bold text-zinc-500">{label}: {formatAdvancedNumber(values[index])}</div>)}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-32 items-end gap-1.5 rounded-2xl bg-white p-3 dark:bg-white/5">
+      {values.slice(0, 16).map((value, index) => (
+        <div key={`${model.labels[index]}-${index}`} className="group flex min-w-0 flex-1 flex-col items-center justify-end gap-1">
+          <span className="hidden text-[9px] font-black text-zinc-500 group-hover:block">{formatAdvancedNumber(value)}</span>
+          <div className="w-full min-w-2 rounded-t bg-amber-500/80" style={{ height: `${Math.max(4, (Math.abs(value) / max) * 88)}px` }} />
+          <span className="max-w-full truncate text-[8px] font-bold text-zinc-400">{model.labels[index]}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
