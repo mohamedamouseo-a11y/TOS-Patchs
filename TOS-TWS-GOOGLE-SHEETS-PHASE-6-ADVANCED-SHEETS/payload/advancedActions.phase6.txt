@@ -1,0 +1,79 @@
+
+  function addChartAction() {
+    const bounds = selectionBounds();
+    if (!bounds || bounds.colTo <= bounds.colFrom || bounds.rowTo <= bounds.rowFrom) {
+      setError(ui.lang === "en" ? "Select a range with headers, labels and numeric values first." : "حدد نطاقًا يحتوي على عناوين وتسميات وقيم رقمية أولًا.");
+      return;
+    }
+    const rawType = window.prompt(ui.lang === "en" ? "Chart type: bar, line, or pie" : "نوع الرسم: bar أو line أو pie", "bar");
+    if (rawType === null) return;
+    const type = String(rawType || "").trim().toLowerCase();
+    if (!["bar", "line", "pie"].includes(type)) {
+      setError(ui.lang === "en" ? "Unsupported chart type." : "نوع الرسم غير مدعوم.");
+      return;
+    }
+    const chartTitle = window.prompt(ui.lang === "en" ? "Chart title:" : "عنوان الرسم:", ui.lang === "en" ? "Chart" : "رسم بياني");
+    if (chartTitle === null) return;
+    const chart = createChartConfig(bounds, { type, title: chartTitle || "Chart" });
+    if (!chart) return;
+    mutateActiveSheet((sheet) => ({ ...sheet, charts: [...(sheet.charts || []), chart].slice(0, 20) }), `chart-add:${Date.now()}`);
+  }
+
+  function removeChartAction(chartId) {
+    mutateActiveSheet((sheet) => ({ ...sheet, charts: (sheet.charts || []).filter((chart) => chart.id !== chartId) }), `chart-remove:${chartId}`);
+  }
+
+  function addPivotAction() {
+    const bounds = selectionBounds();
+    if (!bounds || bounds.colTo <= bounds.colFrom || bounds.rowTo <= bounds.rowFrom) {
+      setError(ui.lang === "en" ? "Select a table with a header row first." : "حدد جدولًا يحتوي على صف عناوين أولًا.");
+      return;
+    }
+    const headers = rangeHeaders(activeSheet, bounds, computedValues);
+    const optionsLabel = headers.map((header, index) => `${index + 1}:${header}`).join(" · ");
+    const rowRaw = window.prompt(ui.lang === "en" ? `Row field number - ${optionsLabel}` : `رقم حقل الصف - ${optionsLabel}`, "1");
+    if (rowRaw === null) return;
+    const valueRaw = window.prompt(ui.lang === "en" ? `Value field number - ${optionsLabel}` : `رقم حقل القيمة - ${optionsLabel}`, headers.length > 1 ? "2" : "1");
+    if (valueRaw === null) return;
+    const aggregateRaw = window.prompt(ui.lang === "en" ? "Aggregate: sum, count, or average" : "التجميع: sum أو count أو average", "sum");
+    if (aggregateRaw === null) return;
+    const aggregate = String(aggregateRaw || "").trim().toLowerCase();
+    if (!["sum", "count", "average"].includes(aggregate)) {
+      setError(ui.lang === "en" ? "Unsupported pivot aggregation." : "نوع تجميع Pivot غير مدعوم.");
+      return;
+    }
+    const pivot = createPivotConfig(bounds, {
+      rowField: Number(rowRaw) - 1,
+      valueField: Number(valueRaw) - 1,
+      aggregate,
+      title: ui.lang === "en" ? "Pivot table" : "جدول محوري",
+    });
+    if (!pivot) {
+      setError(ui.lang === "en" ? "Invalid pivot field selection." : "اختيار حقول Pivot غير صالح.");
+      return;
+    }
+    mutateActiveSheet((sheet) => ({ ...sheet, pivots: [...(sheet.pivots || []), pivot].slice(0, 20) }), `pivot-add:${Date.now()}`);
+  }
+
+  function removePivotAction(pivotId) {
+    mutateActiveSheet((sheet) => ({ ...sheet, pivots: (sheet.pivots || []).filter((pivot) => pivot.id !== pivotId) }), `pivot-remove:${pivotId}`);
+  }
+
+  function updatePageSetup(patch) {
+    mutateActiveSheet((sheet) => ({ ...sheet, pageSetup: normalizePageSetup({ ...(sheet.pageSetup || {}), ...patch }) }), `page-setup:${Date.now()}`);
+  }
+
+  function printCurrentSheet() {
+    const html = buildPrintableSheetHtml(activeSheet, computedValues, { title: `${title || "T-Sheets"} - ${activeSheet?.name || "Sheet"}` });
+    const printWindow = window.open("", "_blank", "width=1100,height=800");
+    if (!printWindow) {
+      setError(ui.lang === "en" ? "The browser blocked the print window." : "المتصفح منع نافذة الطباعة.");
+      return;
+    }
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+    window.setTimeout(() => printWindow.print(), 120);
+  }
+
