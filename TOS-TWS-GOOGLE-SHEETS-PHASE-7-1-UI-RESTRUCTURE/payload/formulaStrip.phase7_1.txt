@@ -1,0 +1,16 @@
+      {canEdit && (
+        <div className="tws-sheets-formula-strip tws-sheets-formula-strip-compact border-b">
+          <Field value={nameBoxDraft || selectedRangeLabel} onChange={(event) => setNameBoxDraft(event.target.value.toUpperCase())} onKeyDown={handleNameBoxKeyDown} onBlur={() => setNameBoxDraft("")} title={ui.lang === "en" ? "Name box — type A1 or A1:C10 and press Enter" : "مربع الاسم — اكتب A1 أو A1:C10 ثم Enter"} className="!py-1.5 text-center text-xs font-black uppercase" />
+          <span className="tws-sheets-fx" title={ui.formulaBar}>fx</span>
+          <Field
+            value={focusedRef ? (activeSheet?.cells?.[focusedRef]?.v ?? "") : ""}
+            onChange={(event) => focusedRef && setCellValue(focusedRef, event.target.value)}
+            disabled={!focusedRef || isProtectedRef(focusedRef)}
+            placeholder={ui.formulaBar}
+            className="!py-1.5 text-xs"
+          />
+          <div className="tws-sheets-formula-meta" title={`${ui.selectedRange}: ${selectedRangeLabel}`}>
+            {selectedRangeLabel} · {activeSheet?.filter ? (ui.lang === "en" ? "Filter on" : "الفلتر مفعل") : (ui.lang === "en" ? "Ready" : "جاهز")}
+          </div>
+        </div>
+      )}
