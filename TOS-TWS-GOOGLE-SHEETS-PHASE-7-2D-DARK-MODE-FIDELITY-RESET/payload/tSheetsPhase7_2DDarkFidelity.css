@@ -1,0 +1,246 @@
+/* TWS T-Sheets — Phase 7.2D Dark Mode Fidelity Reset
+   Visual-only final correction based on live visual QA.
+   Keeps TWS branding in the shell while giving the spreadsheet canvas a familiar
+   Google-Sheets-like charcoal surface, blue selection language, and coherent controls. */
+
+.tws-sheets-phase7-2d-dark-fidelity {
+  --ts72d-selection: #1a73e8;
+  --ts72d-selection-soft: rgba(26, 115, 232, 0.10);
+  --ts72d-selection-axis: #e8f0fe;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity {
+  --ts7-bg: #202124;
+  --ts7-surface: #202124;
+  --ts7-surface-soft: #28292c;
+  --ts7-surface-muted: #303134;
+  --ts7-line: #3c4043;
+  --ts7-line-strong: #5f6368;
+  --ts7-text: #e8eaed;
+  --ts7-muted: #9aa0a6;
+  --ts72-grid-line: #3c4043;
+  --ts72-header: #28292c;
+  --ts72-header-hover: #303134;
+  --ts72-toolbar: #202124;
+  --ts72b-grid: #3c4043;
+  --ts72b-header: #28292c;
+  --ts72b-control: #202124;
+  --ts72b-control-hover: #303134;
+  --ts72b-formula: #202124;
+  --ts72c-grid: #3c4043;
+  --ts72c-grid-header: #45484d;
+  --ts72c-toolbar: #202124;
+  --ts72c-formula: #202124;
+  --ts72c-control-hover: #303134;
+  --ts72c-tab: #202124;
+  --ts72d-selection: #8ab4f8;
+  --ts72d-selection-soft: rgba(138, 180, 248, 0.12);
+  --ts72d-selection-axis: #303134;
+  background: #202124 !important;
+  color: #e8eaed !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-chrome {
+  background: #202124 !important;
+  border-bottom-color: #3c4043 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-chrome > input {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: #e8eaed !important;
+  opacity: 1 !important;
+  box-shadow: none !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-chrome > input:hover,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-chrome > input:focus {
+  background: #303134 !important;
+  border-color: #5f6368 !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-menu-strip,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact {
+  background: #202124 !important;
+  border-color: #3c4043 !important;
+  box-shadow: none !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact button,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact select,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact input:not([type="color"]),
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact [class*="bg-white"],
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact [class*="dark:bg-white"],
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact [class*="bg-zinc-950"] {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #e8eaed !important;
+  box-shadow: none !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact button:hover:not(:disabled),
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact select:hover:not(:disabled),
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact input:not([type="color"]):hover:not(:disabled) {
+  background: #303134 !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact button[aria-pressed="true"],
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact button.is-active,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact button[class*="bg-zinc-950"] {
+  background: rgba(138, 180, 248, 0.16) !important;
+  color: #aecbfa !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact button:disabled,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact select:disabled,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact input:disabled {
+  background: transparent !important;
+  color: #6f7378 !important;
+  opacity: 0.58 !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-divider {
+  background: #3c4043 !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-toolbar-compact input[type="color"] {
+  border: 1px solid #5f6368 !important;
+  background: #202124 !important;
+  box-shadow: none !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-formula-strip-compact {
+  background: #202124 !important;
+  border-top-color: #3c4043 !important;
+  border-bottom-color: #3c4043 !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-formula-strip-compact input,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-formula-strip-compact textarea,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-formula-strip-compact select,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-formula-strip-compact [contenteditable="true"] {
+  background: #202124 !important;
+  border-color: #3c4043 !important;
+  color: #e8eaed !important;
+  box-shadow: none !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-formula-strip-compact > input:first-child {
+  background: #28292c !important;
+  border-inline-end-color: #3c4043 !important;
+  color: #e8eaed !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-fx {
+  background: #202124 !important;
+  border-inline-end-color: #3c4043 !important;
+  color: #9aa0a6 !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-workspace,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid-scroll,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid tbody td:not(:first-child) {
+  background: #202124 !important;
+  background-color: #202124 !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid td,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid th {
+  border-color: #3c4043 !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid thead th,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid tbody > tr > td:first-child {
+  background: #28292c !important;
+  color: #9aa0a6 !important;
+}
+
+.tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid td.tws-sheets-cell-focused {
+  box-shadow: inset 0 0 0 2px var(--ts72d-selection) !important;
+}
+
+.tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid td.tws-sheets-cell-focused::after {
+  background: var(--ts72d-selection) !important;
+  border-color: var(--ts7-surface) !important;
+}
+
+.tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid td.tws-sheets-cell-selected:not(.tws-sheets-cell-focused) {
+  background-image: linear-gradient(var(--ts72d-selection-soft), var(--ts72d-selection-soft)) !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid thead th.tws-sheets-axis-active,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid tbody > tr > td:first-child.tws-sheets-axis-active {
+  background: var(--ts72d-selection-axis) !important;
+  color: #aecbfa !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid thead th.tws-sheets-axis-active {
+  box-shadow: inset 0 -2px 0 var(--ts72d-selection) !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid tbody > tr > td:first-child.tws-sheets-axis-active {
+  box-shadow: inset -2px 0 0 var(--ts72d-selection) !important;
+}
+
+.tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid td:focus-within {
+  box-shadow: inset 0 0 0 2px var(--ts72d-selection) !important;
+}
+
+.tws-sheets-phase7-2d-dark-fidelity .tws-sheets-grid td:focus-within::after {
+  box-shadow: 0 0 0 1px var(--ts72d-selection) !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-tabs {
+  background: #202124 !important;
+  border-top-color: #3c4043 !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-tabs > button,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-tab-add,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-tabs > button[class*="dark:bg-white"],
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-tabs > button[class*="bg-white"] {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #bdc1c6 !important;
+  box-shadow: none !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-tabs > button:hover,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-tab-add:hover {
+  background: #303134 !important;
+  color: #e8eaed !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-tabs > button.tws-sheets-tab-active {
+  background: #28292c !important;
+  color: #e8eaed !important;
+  box-shadow: inset 0 -3px 0 var(--ts72d-selection) !important;
+}
+
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-context-menu,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-sheet-tab-menu,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-find-replace-panel,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-menu-popover,
+.dark .tws-sheets-phase7-2d-dark-fidelity .tws-sheets-more-menu {
+  background: #28292c !important;
+  border-color: #5f6368 !important;
+  color: #e8eaed !important;
+}
+
+.tws-sheets-phase7-2d-dark-fidelity:not(.dark) .tws-sheets-grid thead th.tws-sheets-axis-active,
+.tws-sheets-phase7-2d-dark-fidelity:not(.dark) .tws-sheets-grid tbody > tr > td:first-child.tws-sheets-axis-active {
+  background: var(--ts72d-selection-axis) !important;
+  color: #174ea6 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tws-sheets-phase7-2d-dark-fidelity *,
+  .tws-sheets-phase7-2d-dark-fidelity *::before,
+  .tws-sheets-phase7-2d-dark-fidelity *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
