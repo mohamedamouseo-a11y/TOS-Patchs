@@ -15,40 +15,48 @@ if not BASE.exists():
     sys.exit(1)
 
 source = BASE.read_text(encoding="utf-8")
-
-OLD_LINE = "    'className=\\\"tos-tws-document-card group relative flex flex-col gap-3 p-4\\\"',"
-NEW_LINE = "    '\\\"tos-tws-document-card group relative flex flex-col gap-3 p-4\\\"',"
+TOKEN = "tos-tws-document-card group relative flex flex-col gap-3 p-4"
+NEW_LINE = "    'tos-tws-document-card group relative flex flex-col gap-3 p-4',"
 
 lines = source.splitlines()
-old_matches = [i for i, line in enumerate(lines) if line == OLD_LINE]
-if len(old_matches) != 1:
+matches = [i for i, line in enumerate(lines) if TOKEN in line]
+if len(matches) != 1:
     print("PASS/FAIL=FAIL")
-    print(f"ERROR=R1 expected exactly one obsolete document-card guard line, found {len(old_matches)}")
+    print(f"ERROR=R1 expected exactly one V2.1 document-card guard token, found {len(matches)}")
     print("BUILD_RESULT=FAIL_OR_SKIPPED")
     print("LIVE_DEPLOY=ROLLED_BACK_OR_SKIPPED")
     print("TWS_DASHBOARD_FLAGSHIP_V2_1_R1_RUNTIME=NO")
     sys.exit(1)
 
-lines[old_matches[0]] = NEW_LINE
+index = matches[0]
+if "className=" not in lines[index]:
+    print("PASS/FAIL=FAIL")
+    print("ERROR=R1 matched document-card token is not the obsolete className guard")
+    print("BUILD_RESULT=FAIL_OR_SKIPPED")
+    print("LIVE_DEPLOY=ROLLED_BACK_OR_SKIPPED")
+    print("TWS_DASHBOARD_FLAGSHIP_V2_1_R1_RUNTIME=NO")
+    sys.exit(1)
+
+lines[index] = NEW_LINE
 corrected = "\n".join(lines) + ("\n" if source.endswith("\n") else "")
 
-if OLD_LINE in corrected.splitlines():
-    print("PASS/FAIL=FAIL")
-    print("ERROR=R1 obsolete document-card guard still present after correction")
-    print("BUILD_RESULT=FAIL_OR_SKIPPED")
-    print("LIVE_DEPLOY=ROLLED_BACK_OR_SKIPPED")
-    print("TWS_DASHBOARD_FLAGSHIP_V2_1_R1_RUNTIME=NO")
-    sys.exit(1)
-
-if corrected.splitlines().count(NEW_LINE) != 1:
+corrected_lines = corrected.splitlines()
+if corrected_lines.count(NEW_LINE) != 1:
     print("PASS/FAIL=FAIL")
     print("ERROR=R1 corrected document-card guard count mismatch")
     print("BUILD_RESULT=FAIL_OR_SKIPPED")
     print("LIVE_DEPLOY=ROLLED_BACK_OR_SKIPPED")
     print("TWS_DASHBOARD_FLAGSHIP_V2_1_R1_RUNTIME=NO")
     sys.exit(1)
+if any(TOKEN in line and "className=" in line for line in corrected_lines):
+    print("PASS/FAIL=FAIL")
+    print("ERROR=R1 obsolete className document-card guard still present")
+    print("BUILD_RESULT=FAIL_OR_SKIPPED")
+    print("LIVE_DEPLOY=ROLLED_BACK_OR_SKIPPED")
+    print("TWS_DASHBOARD_FLAGSHIP_V2_1_R1_RUNTIME=NO")
+    sys.exit(1)
 
-# Execute the original V2.1 installer entirely in memory with only the guard line corrected.
+# Execute the original V2.1 installer entirely in memory with only the false guard corrected.
 # sys.argv is intentionally preserved so the target root remains /var/www/TOS.
 namespace = {
     "__name__": "__main__",
@@ -66,3 +74,5 @@ except Exception as exc:
     print("LIVE_DEPLOY=ROLLED_BACK_OR_SKIPPED")
     print("TWS_DASHBOARD_FLAGSHIP_V2_1_R1_RUNTIME=NO")
     sys.exit(1)
+
+print("TWS_DASHBOARD_FLAGSHIP_V2_1_R1_RUNTIME=YES")
