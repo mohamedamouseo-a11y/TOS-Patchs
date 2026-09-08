@@ -1,0 +1,264 @@
+/* TWS T-Sheets — Phase 7.2B Fidelity & Interaction Polish
+   Flat spreadsheet cells, stronger selection, unified dark/light toolbar,
+   cleaner formula bar, sheet-tab polish, and interaction overlays. */
+
+.tws-sheets-phase7-2b-polish {
+  --ts72b-active: var(--ts7-accent, #d89b12);
+  --ts72b-active-soft: color-mix(in srgb, var(--ts72b-active) 11%, transparent);
+  --ts72b-grid: #dfe3e8;
+  --ts72b-header: #f7f8fa;
+  --ts72b-control: #ffffff;
+  --ts72b-control-hover: #f1f3f4;
+  --ts72b-formula: #ffffff;
+}
+
+.dark .tws-sheets-phase7-2b-polish {
+  --ts72b-grid: rgba(255, 255, 255, 0.095);
+  --ts72b-header: #202124;
+  --ts72b-control: #292a2d;
+  --ts72b-control-hover: #35363a;
+  --ts72b-formula: #202124;
+}
+
+/* Flat, spreadsheet-like cells. */
+.tws-sheets-phase7-2b-polish .tws-sheets-grid td,
+.tws-sheets-phase7-2b-polish .tws-sheets-grid input,
+.tws-sheets-phase7-2b-polish .tws-sheets-grid textarea,
+.tws-sheets-phase7-2b-polish .tws-sheets-grid select {
+  border-radius: 0 !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-grid td,
+.tws-sheets-phase7-2b-polish .tws-sheets-grid th {
+  border-color: var(--ts72b-grid) !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-grid td {
+  outline: 0;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-grid td.tws-sheets-cell-focused {
+  z-index: 28 !important;
+  box-shadow: inset 0 0 0 2px var(--ts72b-active) !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-grid td.tws-sheets-cell-selected:not(.tws-sheets-cell-focused) {
+  background: var(--ts72b-active-soft) !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-grid thead th.tws-sheets-axis-active,
+.tws-sheets-phase7-2b-polish .tws-sheets-grid tbody > tr > td:first-child.tws-sheets-axis-active {
+  background: var(--ts72b-active-soft) !important;
+  color: var(--ts72b-active) !important;
+  box-shadow: inset 0 -2px 0 var(--ts72b-active);
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-grid tbody > tr > td:first-child.tws-sheets-axis-active {
+  box-shadow: inset -2px 0 0 var(--ts72b-active);
+}
+
+/* Remove the dark-mode "card cell" feeling completely. */
+.dark .tws-sheets-phase7-2b-polish .tws-sheets-grid input,
+.dark .tws-sheets-phase7-2b-polish .tws-sheets-grid textarea,
+.dark .tws-sheets-phase7-2b-polish .tws-sheets-grid select {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.dark .tws-sheets-phase7-2b-polish .tws-sheets-grid td.tws-sheets-cell-focused > input,
+.dark .tws-sheets-phase7-2b-polish .tws-sheets-grid td.tws-sheets-cell-focused > textarea,
+.dark .tws-sheets-phase7-2b-polish .tws-sheets-grid td.tws-sheets-cell-focused > select {
+  box-shadow: none !important;
+}
+
+/* Unified compact toolbar controls in both themes. */
+.tws-sheets-phase7-2b-polish .tws-sheets-toolbar-compact {
+  align-items: center;
+  background: var(--ts72b-header) !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-toolbar-compact button,
+.tws-sheets-phase7-2b-polish .tws-sheets-toolbar-compact select,
+.tws-sheets-phase7-2b-polish .tws-sheets-toolbar-compact input:not([type="color"]) {
+  border-color: transparent !important;
+  background: transparent !important;
+  color: var(--ts7-text) !important;
+  box-shadow: none !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-toolbar-compact button:hover,
+.tws-sheets-phase7-2b-polish .tws-sheets-toolbar-compact select:hover,
+.tws-sheets-phase7-2b-polish .tws-sheets-toolbar-compact input:not([type="color"]):hover {
+  background: var(--ts72b-control-hover) !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-toolbar-compact button[aria-pressed="true"],
+.tws-sheets-phase7-2b-polish .tws-sheets-toolbar-compact button.is-active {
+  background: var(--ts72b-active-soft) !important;
+  color: var(--ts72b-active) !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-toolbar-compact input[type="color"] {
+  width: 28px !important;
+  height: 28px !important;
+  border: 1px solid var(--ts7-line) !important;
+  border-radius: 5px !important;
+  background: var(--ts72b-control) !important;
+}
+
+/* Cleaner name box + fx + formula input. */
+.tws-sheets-phase7-2b-polish .tws-sheets-formula-strip-compact {
+  background: var(--ts72b-formula) !important;
+  border-bottom: 1px solid var(--ts7-line) !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-formula-strip-compact input {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--ts7-text) !important;
+  box-shadow: none !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-formula-strip-compact > input:first-child {
+  border-inline-end: 1px solid var(--ts7-line) !important;
+  text-align: center;
+  font-weight: 750;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-fx {
+  border-inline: 0 !important;
+  border-inline-end: 1px solid var(--ts7-line) !important;
+  background: transparent !important;
+}
+
+/* Title should look editable, not disabled. */
+.tws-sheets-phase7-2b-polish .tws-sheets-chrome > input {
+  color: var(--ts7-text) !important;
+  opacity: 1 !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-chrome > input:disabled {
+  color: var(--ts7-text) !important;
+  opacity: 0.88 !important;
+}
+
+/* Sheet tabs: flatter, active underline, dark-safe add button. */
+.tws-sheets-phase7-2b-polish .tws-sheets-tabs {
+  border-top-color: var(--ts7-line) !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-tabs > button {
+  border-radius: 4px 4px 0 0 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-tabs > button.tws-sheets-tab-active {
+  color: var(--ts7-text) !important;
+  box-shadow: inset 0 -3px 0 var(--ts72b-active) !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-tab-add {
+  min-width: 34px !important;
+  width: 34px !important;
+  background: transparent !important;
+  color: var(--ts7-muted) !important;
+}
+
+.dark .tws-sheets-phase7-2b-polish .tws-sheets-tab-add:hover {
+  background: var(--ts72b-control-hover) !important;
+  color: var(--ts7-text) !important;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-tab-dragging {
+  opacity: 0.45;
+}
+
+/* Find/replace panel: compact, non-blocking, spreadsheet-native. */
+.tws-sheets-phase7-2b-polish .tws-sheets-find-replace-panel {
+  position: absolute;
+  top: 121px;
+  inset-inline-end: 12px;
+  z-index: 132;
+  width: min(420px, calc(100% - 24px));
+  border: 1px solid var(--ts7-line);
+  border-radius: 9px;
+  background: var(--ts7-surface);
+  padding: 10px;
+  box-shadow: var(--ts7-shadow-float);
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-find-replace-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 7px;
+  align-items: center;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-find-replace-panel input {
+  height: 32px;
+  border: 1px solid var(--ts7-line);
+  border-radius: 6px;
+  background: var(--ts7-surface-soft);
+  padding: 0 9px;
+  color: var(--ts7-text);
+  outline: none;
+  font-size: 11px;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-find-replace-panel input:focus {
+  border-color: var(--ts72b-active);
+  box-shadow: 0 0 0 2px var(--ts72b-active-soft);
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-find-replace-actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-find-replace-actions button {
+  min-height: 30px;
+  border: 1px solid var(--ts7-line);
+  border-radius: 6px;
+  background: var(--ts7-surface-soft);
+  padding: 0 10px;
+  color: var(--ts7-text);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.tws-sheets-phase7-2b-polish .tws-sheets-find-replace-actions button.primary {
+  border-color: color-mix(in srgb, var(--ts72b-active) 40%, var(--ts7-line));
+  background: var(--ts72b-active-soft);
+  color: var(--ts72b-active);
+}
+
+/* Context menus remain readable in dark mode. */
+.dark .tws-sheets-phase7-2b-polish .tws-sheets-context-menu,
+.dark .tws-sheets-phase7-2b-polish .tws-sheets-sheet-tab-menu,
+.dark .tws-sheets-phase7-2b-polish .tws-sheets-find-replace-panel {
+  background: #202124 !important;
+  border-color: rgba(255,255,255,.14) !important;
+}
+
+@media (max-width: 900px) {
+  .tws-sheets-phase7-2b-polish .tws-sheets-find-replace-panel {
+    top: 156px;
+  }
+
+  .tws-sheets-phase7-2b-polish .tws-sheets-find-replace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tws-sheets-phase7-2b-polish *,
+  .tws-sheets-phase7-2b-polish *::before,
+  .tws-sheets-phase7-2b-polish *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
