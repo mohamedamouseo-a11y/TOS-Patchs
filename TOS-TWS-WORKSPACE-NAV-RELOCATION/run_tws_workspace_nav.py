@@ -68,22 +68,22 @@ def status_paths():
 
 
 def rollback():
-    try:
-        run(["git", "checkout", "HEAD", "--", SIDEBAR], check=False)
-    except Exception:
-        pass
-    try:
-        target = REPO / TEST
-        if target.exists():
-            target.unlink()
-    except Exception:
-        pass
+    run(["git", "checkout", "HEAD", "--", SIDEBAR], check=False)
+    target = REPO / TEST
+    if target.exists():
+        target.unlink()
 
 
-def fail(message, preexisting=None):
-    rollback()
-    if preexisting is not None:
-        changed = [p for p, fp in preexisting.items() if file_fingerprint(p) != fp]
+applied = False
+pre_fingerprints = None
+
+
+def fail(message):
+    global applied
+    if applied:
+        rollback()
+    if pre_fingerprints is not None:
+        changed = [p for p, fp in pre_fingerprints.items() if file_fingerprint(p) != fp]
         print(f"PREEXISTING_DIRTY_STATE_PRESERVED={'NO' if changed else 'YES'}")
         if changed:
             print("PREEXISTING_DIRTY_CHANGED=" + ",".join(sorted(changed)))
@@ -94,7 +94,6 @@ def fail(message, preexisting=None):
     sys.exit(1)
 
 
-pre_fingerprints = None
 try:
     if not REPO.is_dir():
         raise RuntimeError(f"repo not found: {REPO}")
@@ -107,9 +106,6 @@ try:
     if sidebar_blob != EXPECTED_SIDEBAR_BLOB:
         raise RuntimeError(f"Sidebar baseline blob mismatch: {sidebar_blob}")
 
-    if git("cat-file", "-e", f"HEAD:{TEST}", check=False) == "":
-        # cat-file writes no stdout both on success and failure; verify through return code below instead.
-        pass
     tracked_test = run(["git", "cat-file", "-e", f"HEAD:{TEST}"], check=False)
     if tracked_test.returncode == 0:
         raise RuntimeError(f"unexpected baseline test file already tracked: {TEST}")
@@ -128,6 +124,8 @@ try:
     source = sidebar_path.read_text(encoding="utf-8")
     if source.count(OLD_WORKSPACE) != 1 or source.count(OLD_SYSTEM) != 1:
         raise RuntimeError("expected sidebar group definitions were not found exactly once")
+
+    applied = True
     source = source.replace(OLD_WORKSPACE, NEW_WORKSPACE, 1).replace(OLD_SYSTEM, NEW_SYSTEM, 1)
     sidebar_path.write_text(source, encoding="utf-8")
 
@@ -177,4 +175,4 @@ try:
     print("PATCH_APPLIED=YES")
     print("READY_FOR_GIT_PUSH=YES")
 except Exception as exc:
-    fail(str(exc), pre_fingerprints)
+    fail(str(exc))
