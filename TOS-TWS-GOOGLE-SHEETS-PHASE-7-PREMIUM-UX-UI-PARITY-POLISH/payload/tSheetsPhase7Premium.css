@@ -1,0 +1,401 @@
+/* TWS T-Sheets — Phase 7 premium UX/UI parity polish
+   Visual-only layer: keeps TWS/Tamiyouz identity while tightening spreadsheet familiarity. */
+
+.tws-sheets-phase7-premium {
+  --ts7-accent: #d89a2b;
+  --ts7-accent-strong: #b97812;
+  --ts7-accent-soft: rgba(216, 154, 43, 0.12);
+  --ts7-bg: #f7f8fa;
+  --ts7-surface: #ffffff;
+  --ts7-surface-soft: #f3f5f7;
+  --ts7-surface-muted: #eef1f4;
+  --ts7-line: #dde2e8;
+  --ts7-line-strong: #cbd2da;
+  --ts7-text: #202124;
+  --ts7-muted: #6b7280;
+  --ts7-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 30px rgba(15, 23, 42, 0.06);
+  --ts7-shadow-float: 0 18px 48px rgba(15, 23, 42, 0.16);
+  background:
+    radial-gradient(circle at 82% -10%, rgba(216, 154, 43, 0.08), transparent 34%),
+    var(--ts7-bg);
+  color: var(--ts7-text);
+  min-width: 0;
+  isolation: isolate;
+}
+
+.dark .tws-sheets-phase7-premium {
+  --ts7-accent: #efb54b;
+  --ts7-accent-strong: #ffd27a;
+  --ts7-accent-soft: rgba(239, 181, 75, 0.14);
+  --ts7-bg: #111315;
+  --ts7-surface: #17191c;
+  --ts7-surface-soft: #1d2024;
+  --ts7-surface-muted: #23272c;
+  --ts7-line: rgba(255, 255, 255, 0.09);
+  --ts7-line-strong: rgba(255, 255, 255, 0.15);
+  --ts7-text: #f4f5f7;
+  --ts7-muted: #9aa2ad;
+  --ts7-shadow: 0 1px 2px rgba(0, 0, 0, 0.22), 0 16px 40px rgba(0, 0, 0, 0.24);
+  --ts7-shadow-float: 0 22px 60px rgba(0, 0, 0, 0.44);
+}
+
+/* Document chrome */
+.tws-sheets-phase7-premium .tws-sheets-chrome {
+  position: relative;
+  z-index: 35;
+  gap: 10px !important;
+  min-height: 58px;
+  padding: 9px 14px !important;
+  border-color: var(--ts7-line) !important;
+  background: color-mix(in srgb, var(--ts7-surface) 94%, transparent) !important;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
+.tws-sheets-phase7-premium .tws-sheets-chrome > button:first-child {
+  width: 34px !important;
+  height: 34px !important;
+  border: 1px solid var(--ts7-line) !important;
+  background: var(--ts7-surface-soft) !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.tws-sheets-phase7-premium .tws-sheets-chrome > input {
+  max-width: 460px;
+  min-width: 170px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 8px;
+  color: var(--ts7-text) !important;
+  font-size: 15px !important;
+  font-weight: 760 !important;
+  letter-spacing: -0.012em;
+  transition: background-color 120ms ease, box-shadow 120ms ease;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-chrome > input:hover,
+.tws-sheets-phase7-premium .tws-sheets-chrome > input:focus {
+  background: var(--ts7-surface-soft) !important;
+  box-shadow: inset 0 0 0 1px var(--ts7-line-strong);
+}
+
+.tws-sheets-phase7-premium .tws-sheets-actions {
+  margin-inline-start: auto;
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  max-width: min(100%, 820px);
+  padding: 2px;
+  scrollbar-width: none;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-actions::-webkit-scrollbar { display: none; }
+
+.tws-sheets-phase7-premium .tws-sheets-actions button {
+  min-height: 30px;
+  border-radius: 8px !important;
+  white-space: nowrap;
+  font-size: 11px !important;
+  font-weight: 760 !important;
+}
+
+/* Main compact command toolbar */
+.tws-sheets-phase7-premium .tws-sheets-toolbar {
+  position: relative;
+  z-index: 30;
+  flex-wrap: nowrap !important;
+  gap: 2px !important;
+  min-height: 42px;
+  overflow-x: auto;
+  padding: 5px 10px !important;
+  border-color: var(--ts7-line) !important;
+  background: var(--ts7-surface-soft) !important;
+  box-shadow: inset 0 -1px 0 rgba(15, 23, 42, 0.02);
+  scrollbar-width: none;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-toolbar::-webkit-scrollbar { display: none; }
+
+.tws-sheets-phase7-premium .tws-sheets-toolbar button {
+  flex: 0 0 auto;
+  min-height: 30px;
+  border-radius: 7px !important;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-toolbar button:hover:not(:disabled) {
+  background: var(--ts7-surface-muted) !important;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-toolbar select,
+.tws-sheets-phase7-premium .tws-sheets-toolbar input {
+  height: 30px;
+  border-color: transparent !important;
+  background: transparent !important;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-toolbar select:hover,
+.tws-sheets-phase7-premium .tws-sheets-toolbar input:hover,
+.tws-sheets-phase7-premium .tws-sheets-toolbar select:focus,
+.tws-sheets-phase7-premium .tws-sheets-toolbar input:focus {
+  background: var(--ts7-surface) !important;
+  box-shadow: inset 0 0 0 1px var(--ts7-line-strong);
+}
+
+/* Name box + formula strip */
+.tws-sheets-phase7-premium .tws-sheets-formula-strip {
+  position: relative;
+  z-index: 28;
+  grid-template-columns: minmax(84px, 120px) minmax(260px, 1fr) minmax(220px, 310px) !important;
+  gap: 7px !important;
+  min-height: 44px;
+  padding: 5px 10px !important;
+  border-color: var(--ts7-line) !important;
+  background: var(--ts7-surface) !important;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-formula-strip input,
+.tws-sheets-phase7-premium .tws-sheets-formula-strip select {
+  min-height: 32px;
+  border-radius: 6px !important;
+  border-color: var(--ts7-line) !important;
+  background: var(--ts7-surface) !important;
+  color: var(--ts7-text) !important;
+  box-shadow: none !important;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-formula-strip input:focus {
+  border-color: var(--ts7-accent) !important;
+  box-shadow: 0 0 0 2px var(--ts7-accent-soft) !important;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-formula-strip > div:last-child {
+  border: 1px solid var(--ts7-line);
+  border-radius: 7px !important;
+  background: var(--ts7-surface-soft) !important;
+  color: var(--ts7-muted) !important;
+}
+
+/* Spreadsheet canvas */
+.tws-sheets-phase7-premium .tws-sheets-workspace {
+  min-height: 0;
+  background: var(--ts7-bg);
+}
+
+.tws-sheets-phase7-premium .tws-sheets-grid-scroll {
+  position: relative;
+  background: var(--ts7-surface);
+  overscroll-behavior: contain;
+  scrollbar-color: var(--ts7-line-strong) transparent;
+  scrollbar-width: thin;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-grid-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-grid-scroll::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: var(--ts7-line-strong);
+  background-clip: padding-box;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-grid {
+  background: var(--ts7-surface);
+  color: var(--ts7-text);
+}
+
+.tws-sheets-phase7-premium .tws-sheets-grid th,
+.tws-sheets-phase7-premium .tws-sheets-grid td {
+  border-color: var(--ts7-line) !important;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-grid thead th,
+.tws-sheets-phase7-premium .tws-sheets-grid tbody > tr > td:first-child {
+  background: var(--ts7-surface-soft) !important;
+  color: var(--ts7-muted) !important;
+  font-weight: 760 !important;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-grid thead th:hover,
+.tws-sheets-phase7-premium .tws-sheets-grid tbody > tr > td:first-child:hover {
+  background: var(--ts7-surface-muted) !important;
+  color: var(--ts7-text) !important;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-grid tbody td:not(:first-child) {
+  background-color: var(--ts7-surface);
+  transition: box-shadow 70ms ease, background-color 70ms ease;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-grid tbody td:not(:first-child):hover {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ts7-accent) 42%, var(--ts7-line));
+}
+
+.tws-sheets-phase7-premium .tws-sheets-grid td:focus-within {
+  z-index: 22 !important;
+  box-shadow:
+    inset 0 0 0 2px var(--ts7-accent) !important;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-grid td:focus-within::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: 0 0 0 1px var(--ts7-accent-strong);
+}
+
+.tws-sheets-phase7-premium .tws-sheets-grid input,
+.tws-sheets-phase7-premium .tws-sheets-grid textarea,
+.tws-sheets-phase7-premium .tws-sheets-grid select {
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-grid input:focus,
+.tws-sheets-phase7-premium .tws-sheets-grid textarea:focus,
+.tws-sheets-phase7-premium .tws-sheets-grid select:focus {
+  background: var(--ts7-accent-soft) !important;
+}
+
+/* Bottom sheet tabs */
+.tws-sheets-phase7-premium .tws-sheets-tabs {
+  min-height: 42px;
+  gap: 3px !important;
+  padding: 5px 9px !important;
+  border-color: var(--ts7-line) !important;
+  background: var(--ts7-surface-soft) !important;
+  box-shadow: 0 -1px 0 rgba(15, 23, 42, 0.03);
+}
+
+.tws-sheets-phase7-premium .tws-sheets-tabs > button {
+  position: relative;
+  min-height: 30px;
+  border-radius: 7px !important;
+  border: 1px solid transparent;
+  padding-inline: 12px !important;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-tabs > button:hover {
+  border-color: var(--ts7-line);
+  background: var(--ts7-surface) !important;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-tabs > button[class*="bg-zinc-950"],
+.dark .tws-sheets-phase7-premium .tws-sheets-tabs > button[class*="dark:bg-white"] {
+  border-color: color-mix(in srgb, var(--ts7-accent) 58%, var(--ts7-line));
+  background: var(--ts7-surface) !important;
+  color: var(--ts7-text) !important;
+  box-shadow: inset 0 -2px 0 var(--ts7-accent);
+}
+
+/* Inspector / side tools */
+.tws-sheets-phase7-premium .tws-sheets-inspector {
+  width: 304px !important;
+  border-color: var(--ts7-line) !important;
+  background: var(--ts7-surface) !important;
+  box-shadow: -8px 0 28px rgba(15, 23, 42, 0.035);
+}
+
+.dark .tws-sheets-phase7-premium .tws-sheets-inspector {
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.16);
+}
+
+.tws-sheets-phase7-premium .tws-sheets-inspector > div {
+  border-radius: 14px !important;
+  border-color: var(--ts7-line) !important;
+  background: var(--ts7-surface-soft) !important;
+  box-shadow: none !important;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-inspector > div > b,
+.tws-sheets-phase7-premium .tws-sheets-inspector b {
+  letter-spacing: -0.01em;
+}
+
+/* Context menu */
+.tws-sheets-phase7-premium .tws-sheets-context-menu {
+  width: 228px !important;
+  border-color: var(--ts7-line) !important;
+  border-radius: 12px !important;
+  background: color-mix(in srgb, var(--ts7-surface) 97%, transparent) !important;
+  box-shadow: var(--ts7-shadow-float) !important;
+  backdrop-filter: blur(20px) saturate(130%);
+}
+
+.tws-sheets-phase7-premium .tws-sheets-context-menu button {
+  border-radius: 7px !important;
+  min-height: 31px;
+}
+
+.tws-sheets-phase7-premium .tws-sheets-context-menu button:hover {
+  background: var(--ts7-surface-soft) !important;
+}
+
+/* Collaboration and state emphasis */
+.tws-sheets-phase7-premium [class*="text-amber-600"],
+.tws-sheets-phase7-premium [class*="text-amber-300"] {
+  color: var(--ts7-accent-strong) !important;
+}
+
+.tws-sheets-phase7-premium [class*="ring-amber-500"] {
+  --tw-ring-color: var(--ts7-accent) !important;
+}
+
+/* Responsive density */
+@media (max-width: 1180px) {
+  .tws-sheets-phase7-premium .tws-sheets-chrome {
+    flex-wrap: wrap !important;
+  }
+
+  .tws-sheets-phase7-premium .tws-sheets-actions {
+    order: 10;
+    width: 100%;
+    max-width: none;
+    margin-inline-start: 0;
+  }
+
+  .tws-sheets-phase7-premium .tws-sheets-formula-strip {
+    grid-template-columns: 100px minmax(220px, 1fr) !important;
+  }
+
+  .tws-sheets-phase7-premium .tws-sheets-formula-strip > div:last-child {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .tws-sheets-phase7-premium .tws-sheets-chrome {
+    padding-inline: 9px !important;
+  }
+
+  .tws-sheets-phase7-premium .tws-sheets-chrome > input {
+    max-width: none;
+    min-width: 120px;
+  }
+
+  .tws-sheets-phase7-premium .tws-sheets-toolbar {
+    padding-inline: 7px !important;
+  }
+
+  .tws-sheets-phase7-premium .tws-sheets-formula-strip {
+    grid-template-columns: 82px minmax(180px, 1fr) !important;
+    padding-inline: 7px !important;
+  }
+
+  .tws-sheets-phase7-premium .tws-sheets-tabs {
+    padding-inline: 6px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tws-sheets-phase7-premium *,
+  .tws-sheets-phase7-premium *::before,
+  .tws-sheets-phase7-premium *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
