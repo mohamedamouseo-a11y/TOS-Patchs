@@ -141,7 +141,6 @@ export async function listAuditV2(db, query = {}) {
 
 async function distinctValues(db, field, take = 500) {
   const rows = await db.auditEventV2.findMany({
-    where: { [field]: { not: null } },
     distinct: [field],
     select: { [field]: true },
     orderBy: { [field]: "asc" },
