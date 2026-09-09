@@ -265,6 +265,7 @@ export function TDocsGoogleMenuBar({
             role="menuitem"
             disabled={disabled}
             className="tws-docs-google-menu-item"
+            onMouseDown={(event) => event.preventDefault()}
             onClick={() => hasSubmenu ? (!disabled && setOpenSubmenu((current) => current === key ? "" : key)) : runItem(item)}
             onKeyDown={(event) => {
               if (event.key === "ArrowRight" && hasSubmenu && !disabled) {
@@ -313,6 +314,7 @@ export function TDocsGoogleMenuBar({
             aria-haspopup="menu"
             aria-expanded={openMenu === id}
             className={`tws-docs-google-menu-trigger${openMenu === id ? " is-open" : ""}`}
+            onMouseDown={(event) => event.preventDefault()}
             onClick={() => chooseMenu(id)}
             onPointerEnter={() => {
               if (openMenu && openMenu !== id) {
