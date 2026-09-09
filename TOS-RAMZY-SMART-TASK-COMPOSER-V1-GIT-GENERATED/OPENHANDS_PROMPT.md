@@ -1,4 +1,4 @@
-# OpenHands Prompt — Ramzy Smart Task Composer V1
+# OpenHands Prompt — Ramzy Smart Task Composer V1 R2
 
 نفّذ الباتش فقط على السيرفر الحالي لـ TOS.
 
@@ -16,11 +16,11 @@
 شغّل الأمر التالي كما هو:
 
 ```bash
-curl -fsSL "https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/main/TOS-RAMZY-SMART-TASK-COMPOSER-V1-GIT-GENERATED/run_ramzy_smart_task_composer_v1.py" -o /tmp/run_ramzy_smart_task_composer_v1.py && python3 /tmp/run_ramzy_smart_task_composer_v1.py
+curl -fsSL "https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/main/TOS-RAMZY-SMART-TASK-COMPOSER-V1-GIT-GENERATED/run_ramzy_smart_task_composer_v1_r2.py" -o /tmp/run_ramzy_smart_task_composer_v1_r2.py && python3 /tmp/run_ramzy_smart_task_composer_v1_r2.py
 ```
 
-الباتش مربوط بالـ baseline التالي:
-`db1efe2ccf30552ab7c65f7bc672861adf66cc05`
+الباتش مربوط بالـ baseline الحالي:
+`048592147387e2b49382f605a04f8d2efd64f61c`
 
 ويتحقق من blob ملف Ramzy قبل أي تعديل:
 `509c40b4f283d39fb50e7e2dc146797392d6d1ca`
