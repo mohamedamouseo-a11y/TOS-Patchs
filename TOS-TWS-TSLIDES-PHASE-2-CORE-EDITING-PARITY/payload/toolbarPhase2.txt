@@ -1,0 +1,6 @@
+          <div className="tws-slides-phase2-cluster">
+            <Button type="button" variant="soft" onClick={() => addShapeElement("rect")} title={ui.lang === "en" ? "Rectangle" : "مستطيل"}><Square size={14} /> {ui.lang === "en" ? "Shape" : "شكل"}</Button>
+            <Button type="button" variant="soft" onClick={() => addShapeElement("ellipse")} title={ui.lang === "en" ? "Ellipse" : "دائرة"}><Circle size={14} /></Button>
+            <Button type="button" variant="soft" onClick={() => addLineElement("line")} title={ui.lang === "en" ? "Line" : "خط"}><Minus size={14} /></Button>
+            <Button type="button" variant="soft" onClick={() => addLineElement("arrow")} title={ui.lang === "en" ? "Arrow" : "سهم"}><ArrowRight size={14} /></Button>
+          </div>
