@@ -68,7 +68,7 @@ def status_path(line: str) -> str:
 
 
 def main_asset_from_html(html: str):
-    match = re.search(r'(/assets/index-[^"\']+\.js)', html)
+    match = re.search(r"(/assets/index-[^\"']+\.js)", html)
     return match.group(1) if match else None
 
 
