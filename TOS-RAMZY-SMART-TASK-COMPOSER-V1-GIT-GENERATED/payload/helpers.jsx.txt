@@ -1,0 +1,44 @@
+function smartTaskCollection(payload, keys = []) {
+  if (Array.isArray(payload)) return payload;
+  for (const key of keys) if (Array.isArray(payload?.[key])) return payload[key];
+  if (Array.isArray(payload?.data)) return payload.data;
+  return [];
+}
+
+function smartTaskOptionId(item) {
+  return String(item?.id || item?.projectId || item?.userId || "");
+}
+
+function smartTaskOptionName(item, fallback = "") {
+  return String(item?.name || item?.title || item?.fullName || item?.displayName || item?.email || fallback || "");
+}
+
+function smartTaskDuePreset(kind) {
+  if (kind === "NONE") return null;
+  const date = new Date();
+  const days = kind === "TODAY" ? 0 : kind === "TOMORROW" ? 1 : kind === "IN_2_DAYS" ? 2 : 7;
+  date.setDate(date.getDate() + days);
+  date.setHours(17, 0, 0, 0);
+  return date.toISOString();
+}
+
+function smartTaskDueLabel(kind, isEnglish) {
+  const labels = {
+    TODAY: { ar: "اليوم", en: "Today" },
+    TOMORROW: { ar: "بكرة", en: "Tomorrow" },
+    IN_2_DAYS: { ar: "بعد يومين", en: "In 2 days" },
+    IN_1_WEEK: { ar: "بعد أسبوع", en: "In 1 week" },
+    NONE: { ar: "بدون موعد", en: "No due date" },
+  };
+  return labels[kind]?.[isEnglish ? "en" : "ar"] || kind;
+}
+
+function smartTaskPriorityLabel(priority, isEnglish) {
+  const labels = {
+    HIGH: { ar: "عالية", en: "High" },
+    MEDIUM: { ar: "متوسطة", en: "Medium" },
+    LOW: { ar: "منخفضة", en: "Low" },
+    AUTO: { ar: "خلي رمزي يقترح", en: "Let Ramzy suggest" },
+  };
+  return labels[priority]?.[isEnglish ? "en" : "ar"] || priority;
+}
