@@ -1,0 +1,225 @@
+.tws-docs-phase2-1-toolbar-fidelity .tws-docs-chrome {
+  min-height: 58px;
+  gap: 8px;
+  padding: 7px 12px;
+  border-bottom-color: #e8eaed;
+}
+
+.tws-docs-phase2-1-toolbar-fidelity [data-tws-docs-title] {
+  min-width: 180px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -.2px;
+}
+
+.tws-docs-phase2-1-toolbar-fidelity .tws-docs-header-actions {
+  gap: 4px;
+}
+
+.tws-docs-gtoolbar-shell {
+  position: relative;
+  z-index: 42;
+  flex: 0 0 auto;
+  padding: 5px 8px 6px;
+  border-bottom: 1px solid #e8eaed;
+  background: #fff;
+  direction: ltr;
+}
+
+.tws-docs-gtoolbar-track {
+  display: flex;
+  min-height: 40px;
+  width: 100%;
+  align-items: center;
+  gap: 2px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: 20px;
+  background: #edf2fa;
+  padding: 4px 7px;
+  scrollbar-width: thin;
+  scrollbar-color: #c7ccd1 transparent;
+}
+
+.tws-docs-gtoolbar-track::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tws-docs-gtoolbar-track::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #c7ccd1;
+}
+
+.tws-docs-gtoolbar-icon {
+  display: grid;
+  height: 30px;
+  width: 30px;
+  flex: 0 0 30px;
+  place-items: center;
+  border: 0;
+  border-radius: 15px;
+  background: transparent;
+  color: #3c4043;
+  cursor: default;
+  transition: background-color .08s ease, color .08s ease;
+}
+
+.tws-docs-gtoolbar-icon:hover,
+.tws-docs-gtoolbar-icon:focus-visible {
+  background: #dfe6f1;
+  outline: none;
+}
+
+.tws-docs-gtoolbar-icon:active {
+  background: #cfd9e8;
+}
+
+.tws-docs-gtoolbar-icon.is-flipped svg {
+  transform: scaleX(-1);
+}
+
+.tws-docs-gtoolbar-divider {
+  width: 1px;
+  height: 22px;
+  flex: 0 0 1px;
+  margin: 0 3px;
+  background: #c9d0d8;
+}
+
+.tws-docs-gtoolbar-select {
+  height: 30px;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  padding: 0 23px 0 8px;
+  color: #3c4043;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 30px;
+  outline: none;
+  cursor: default;
+}
+
+.tws-docs-gtoolbar-select:hover,
+.tws-docs-gtoolbar-select:focus {
+  background-color: #dfe6f1;
+}
+
+.tws-docs-gtoolbar-select.is-zoom {
+  width: 72px;
+}
+
+.tws-docs-gtoolbar-select.is-style {
+  width: 116px;
+}
+
+.tws-docs-gtoolbar-select.is-font {
+  width: 126px;
+}
+
+.tws-docs-gtoolbar-select.is-size {
+  width: 62px;
+  text-align: center;
+}
+
+.tws-docs-gtoolbar-direction {
+  height: 30px;
+  min-width: 42px;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 15px;
+  background: transparent;
+  padding: 0 8px;
+  color: #3c4043;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: default;
+}
+
+.tws-docs-gtoolbar-direction:hover,
+.tws-docs-gtoolbar-direction:focus-visible {
+  background: #dfe6f1;
+  outline: none;
+}
+
+.tws-docs-phase2-1-toolbar-fidelity .tws-doc-ruler {
+  height: 16px;
+  background-size: auto 100%;
+}
+
+.tws-docs-phase2-1-toolbar-fidelity .tws-docs-page-shell {
+  background: #f8f9fa !important;
+  padding-top: 20px !important;
+}
+
+.tws-docs-phase2-1-toolbar-fidelity .tws-doc-page {
+  border-color: #dadce0 !important;
+  border-radius: 1px !important;
+  box-shadow: 0 1px 3px rgba(60,64,67,.20) !important;
+}
+
+.tws-docs-phase2-1-toolbar-fidelity .tws-docs-inspector {
+  border-color: #e8eaed;
+}
+
+.tws-docs-phase2-1-toolbar-fidelity .tws-docs-outline-card,
+.tws-docs-phase2-1-toolbar-fidelity .tws-docs-info-card {
+  border-radius: 12px !important;
+}
+
+.dark .tws-docs-phase2-1-toolbar-fidelity .tws-docs-chrome,
+.dark .tws-docs-gtoolbar-shell {
+  border-bottom-color: #3c4043;
+  background: #202124;
+}
+
+.dark .tws-docs-gtoolbar-track {
+  background: #282c33;
+  scrollbar-color: #5f6368 transparent;
+}
+
+.dark .tws-docs-gtoolbar-icon,
+.dark .tws-docs-gtoolbar-select,
+.dark .tws-docs-gtoolbar-direction {
+  color: #e8eaed;
+}
+
+.dark .tws-docs-gtoolbar-icon:hover,
+.dark .tws-docs-gtoolbar-icon:focus-visible,
+.dark .tws-docs-gtoolbar-select:hover,
+.dark .tws-docs-gtoolbar-select:focus,
+.dark .tws-docs-gtoolbar-direction:hover,
+.dark .tws-docs-gtoolbar-direction:focus-visible {
+  background-color: #3c4043;
+}
+
+.dark .tws-docs-gtoolbar-divider {
+  background: #5f6368;
+}
+
+.dark .tws-docs-phase2-1-toolbar-fidelity .tws-docs-page-shell {
+  background: #202124 !important;
+}
+
+.dark .tws-docs-phase2-1-toolbar-fidelity .tws-doc-page {
+  border-color: #5f6368 !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,.42) !important;
+}
+
+@media (max-width: 1100px) {
+  .tws-docs-phase2-1-toolbar-fidelity .tws-docs-chrome {
+    gap: 6px;
+  }
+
+  .tws-docs-gtoolbar-shell {
+    padding-inline: 5px;
+  }
+
+  .tws-docs-gtoolbar-track {
+    border-radius: 16px;
+  }
+}
