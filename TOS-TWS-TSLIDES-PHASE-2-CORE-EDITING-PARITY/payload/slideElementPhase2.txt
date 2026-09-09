@@ -1,0 +1,165 @@
+function SlideElement({ element, siblings, editable, selected, onSelect, onDrag, onDragGuides, onResize, onRotate, onTextChange }) {
+  const style = {
+    left: `${(element.x / CANVAS_W) * 100}%`,
+    top: `${(element.y / CANVAS_H) * 100}%`,
+    width: `${(element.w / CANVAS_W) * 100}%`,
+    height: `${(element.h / CANVAS_H) * 100}%`,
+    transform: `rotate(${Number(element.rotation) || 0}deg)`,
+    transformOrigin: "center center",
+  };
+
+  function handlePointerDown(event) {
+    if (!editable) return;
+    event.stopPropagation();
+    onSelect(element.id, event);
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const startEl = { x: element.x, y: element.y };
+    function handleMove(moveEvent) {
+      const canvasEl = document.querySelector("[data-tws-canvas]");
+      const rect = canvasEl?.getBoundingClientRect();
+      if (!rect) return;
+      const scaleX = CANVAS_W / rect.width;
+      const scaleY = CANVAS_H / rect.height;
+      const dx = (moveEvent.clientX - startX) * scaleX;
+      const dy = (moveEvent.clientY - startY) * scaleY;
+      const snapped = computeSnap(startEl.x + dx, startEl.y + dy, element.w, element.h, siblings);
+      onDrag(element.id, snapped.x, snapped.y);
+      onDragGuides?.({ x: snapped.guideX, y: snapped.guideY });
+    }
+    function handleUp() {
+      window.removeEventListener("pointermove", handleMove);
+      window.removeEventListener("pointerup", handleUp);
+      onDragGuides?.(null);
+    }
+    window.addEventListener("pointermove", handleMove);
+    window.addEventListener("pointerup", handleUp);
+  }
+
+  function handleResizePointerDown(event, handle) {
+    event.stopPropagation();
+    event.preventDefault();
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const startElement = { ...element };
+    function handleMove(moveEvent) {
+      const canvasEl = document.querySelector("[data-tws-canvas]");
+      const rect = canvasEl?.getBoundingClientRect();
+      if (!rect) return;
+      const scaleX = CANVAS_W / rect.width;
+      const scaleY = CANVAS_H / rect.height;
+      const dx = (moveEvent.clientX - startX) * scaleX;
+      const dy = (moveEvent.clientY - startY) * scaleY;
+      onResize(element.id, resizeElement(startElement, handle, dx, dy));
+    }
+    function handleUp() {
+      window.removeEventListener("pointermove", handleMove);
+      window.removeEventListener("pointerup", handleUp);
+    }
+    window.addEventListener("pointermove", handleMove);
+    window.addEventListener("pointerup", handleUp);
+  }
+
+  function handleRotatePointerDown(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    const rect = event.currentTarget.parentElement?.getBoundingClientRect();
+    if (!rect) return;
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const startAngle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
+    const startRotation = Number(element.rotation) || 0;
+    function handleMove(moveEvent) {
+      const angle = Math.atan2(moveEvent.clientY - centerY, moveEvent.clientX - centerX);
+      const delta = ((angle - startAngle) * 180) / Math.PI;
+      onRotate(element.id, normalizeRotation(startRotation + delta));
+    }
+    function handleUp() {
+      window.removeEventListener("pointermove", handleMove);
+      window.removeEventListener("pointerup", handleUp);
+    }
+    window.addEventListener("pointermove", handleMove);
+    window.addEventListener("pointerup", handleUp);
+  }
+
+  const contentOpacity = Math.min(Math.max(Number(element.opacity) || 1, .05), 1);
+
+  return (
+    <div
+      style={style}
+      onPointerDown={handlePointerDown}
+      className={cn("absolute select-none", editable && "cursor-move", selected && editable && "tws-slides-element-selected ring-2 ring-amber-400")}
+    >
+      {element.type === "text" ? (
+        <div
+          contentEditable={editable && selected}
+          suppressContentEditableWarning
+          onDoubleClick={(event) => event.stopPropagation()}
+          onBlur={(event) => onTextChange(element.id, event.currentTarget.innerText)}
+          style={{
+            fontSize: element.fontSize,
+            fontWeight: element.bold ? 900 : 500,
+            color: element.color,
+            textAlign: element.align || "left",
+            opacity: contentOpacity,
+          }}
+          className="h-full w-full overflow-hidden outline-none"
+        >
+          {element.text}
+        </div>
+      ) : element.type === "shape" ? (
+        <div
+          className="tws-slides-shape"
+          style={{
+            background: element.fill || "#f1f3f4",
+            border: `${Number(element.strokeWidth) || 0}px solid ${element.stroke || "#5f6368"}`,
+            borderRadius: element.shapeKind === "ellipse" ? "9999px" : element.shapeKind === "roundRect" ? "18px" : "2px",
+            opacity: contentOpacity,
+          }}
+        />
+      ) : element.type === "line" ? (
+        <svg className="tws-slides-line" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ opacity: contentOpacity }}>
+          <defs>
+            <marker id={`arrow-${element.id}`} markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L8,4 L0,8 z" fill={element.stroke || "#3c4043"} />
+            </marker>
+          </defs>
+          <line
+            x1="1" y1="50" x2="98" y2="50"
+            stroke={element.stroke || "#3c4043"}
+            strokeWidth={Number(element.strokeWidth) || 3}
+            vectorEffect="non-scaling-stroke"
+            markerEnd={element.lineKind === "arrow" ? `url(#arrow-${element.id})` : undefined}
+          />
+        </svg>
+      ) : element.src ? (
+        <img src={element.src} alt="" className="h-full w-full rounded-md object-cover" style={{ opacity: contentOpacity }} draggable={false} />
+      ) : (
+        <div className="grid h-full w-full place-items-center rounded-md border-2 border-dashed border-zinc-300 text-zinc-400">
+          <ImageIcon size={22} />
+        </div>
+      )}
+      {editable && selected && (
+        <>
+          {["nw", "ne", "sw", "se"].map((handle) => (
+            <button
+              key={handle}
+              type="button"
+              aria-label={`Resize ${handle}`}
+              data-handle={handle}
+              onPointerDown={(event) => handleResizePointerDown(event, handle)}
+              className="tws-slides-resize-handle"
+            />
+          ))}
+          <button
+            type="button"
+            aria-label="Rotate element"
+            title="Rotate"
+            onPointerDown={handleRotatePointerDown}
+            className="tws-slides-rotate-handle"
+          />
+        </>
+      )}
+    </div>
+  );
+}
