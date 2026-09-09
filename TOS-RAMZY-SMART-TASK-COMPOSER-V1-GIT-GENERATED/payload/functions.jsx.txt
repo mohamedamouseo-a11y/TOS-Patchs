@@ -1,0 +1,128 @@
+  async function loadSmartTaskOptions() {
+    setSmartTaskOptions((current) => ({ ...current, loading: true, error: "" }));
+    try {
+      const [projectPayload, userPayload] = await Promise.all([
+        api.projects.list({ summary: true }),
+        api.users.list({ summary: true }),
+      ]);
+      const projects = smartTaskCollection(projectPayload, ["projects", "items"]).filter((item) => smartTaskOptionId(item) && smartTaskOptionName(item));
+      const users = smartTaskCollection(userPayload, ["users", "items"]).filter((item) => smartTaskOptionId(item) && smartTaskOptionName(item));
+      projects.sort((a, b) => {
+        if (projectId && smartTaskOptionId(a) === String(projectId)) return -1;
+        if (projectId && smartTaskOptionId(b) === String(projectId)) return 1;
+        return smartTaskOptionName(a).localeCompare(smartTaskOptionName(b), isEnglish ? "en" : "ar");
+      });
+      users.sort((a, b) => smartTaskOptionName(a).localeCompare(smartTaskOptionName(b), isEnglish ? "en" : "ar"));
+      setSmartTaskOptions({ projects, users, loading: false, error: "" });
+    } catch (err) {
+      setSmartTaskOptions({ projects: [], users: [], loading: false, error: getErrorMessage(err, isEnglish ? "Could not load projects and team." : "تعذر تحميل المشاريع والفريق.") });
+    }
+  }
+
+  function startSmartTask() {
+    stopVoicePlayback();
+    setHelpSuggestion(null);
+    setSmartTask({ step: "TITLE", title: "", project: null, dueKind: "", dueDate: null, priority: "", assignee: null });
+    setComposerValue("", { resize: false });
+    if (composerRef.current) composerRef.current.style.height = "";
+    void loadSmartTaskOptions();
+    setTimeout(() => composerRef.current?.focus(), 0);
+  }
+
+  function cancelSmartTask() {
+    setSmartTask(null);
+    setComposerValue("", { resize: false });
+    if (composerRef.current) composerRef.current.style.height = "";
+  }
+
+  function smartTaskStepNumber(step = smartTask?.step) {
+    return ({ TITLE: 1, PROJECT: 2, DUE: 3, PRIORITY: 4, ASSIGNEE: 5, REVIEW: 5 })[step] || 1;
+  }
+
+  function captureSmartTaskTitle() {
+    const title = String(composerValueRef.current || "").trim();
+    if (!title) return;
+    setSmartTask((current) => ({ ...current, title, step: "PROJECT" }));
+    setComposerValue("", { resize: false });
+    if (composerRef.current) composerRef.current.style.height = "";
+  }
+
+  function chooseSmartTaskProject(item) {
+    const project = item === "AUTO"
+      ? { id: "", name: isEnglish ? "Let Ramzy suggest the best project" : "خلي رمزي يقترح المشروع الأنسب", auto: true }
+      : { id: smartTaskOptionId(item), name: smartTaskOptionName(item), auto: false };
+    setSmartTask((current) => ({ ...current, project, step: "DUE" }));
+  }
+
+  function chooseSmartTaskDue(kind) {
+    setSmartTask((current) => ({ ...current, dueKind: kind, dueDate: smartTaskDuePreset(kind), step: "PRIORITY" }));
+  }
+
+  function chooseSmartTaskPriority(priority) {
+    setSmartTask((current) => ({ ...current, priority, step: "ASSIGNEE" }));
+  }
+
+  function chooseSmartTaskAssignee(item) {
+    let assignee;
+    if (item === "AUTO") assignee = { id: "", name: isEnglish ? "Let Ramzy suggest the best assignee" : "خلي رمزي يقترح المنفذ الأنسب", auto: true };
+    else if (item === "NONE") assignee = { id: "", name: isEnglish ? "Unassigned" : "بدون تحديد", none: true };
+    else assignee = { id: smartTaskOptionId(item), name: smartTaskOptionName(item), auto: false };
+    setSmartTask((current) => ({ ...current, assignee, step: "REVIEW" }));
+  }
+
+  function smartTaskPrompt() {
+    if (!smartTask?.title) return "";
+    const projectLine = smartTask.project?.auto
+      ? (isEnglish ? "Project: suggest the best matching project from the user's accessible projects." : "المشروع: اقترح أنسب مشروع من المشاريع المتاحة للمستخدم.")
+      : `${isEnglish ? "Project" : "المشروع"}: ${smartTask.project?.name || "-"}${smartTask.project?.id ? ` (ID: ${smartTask.project.id})` : ""}`;
+    const dueLine = smartTask.dueKind === "NONE"
+      ? (isEnglish ? "Due date: none." : "الموعد: بدون موعد.")
+      : `${isEnglish ? "Due date" : "الموعد"}: ${smartTask.dueDate || "-"} (${smartTaskDueLabel(smartTask.dueKind, isEnglish)})`;
+    const priorityLine = smartTask.priority === "AUTO"
+      ? (isEnglish ? "Priority: suggest the appropriate priority." : "الأولوية: اقترح الأولوية المناسبة.")
+      : `${isEnglish ? "Priority" : "الأولوية"}: ${smartTask.priority}`;
+    const assigneeLine = smartTask.assignee?.auto
+      ? (isEnglish ? "Assignee: suggest the best available team member based on the project and workload." : "المنفذ: اقترح أنسب شخص متاح من الفريق بناءً على المشروع وحجم العمل.")
+      : smartTask.assignee?.none
+        ? (isEnglish ? "Assignee: leave unassigned." : "المنفذ: اترك المهمة بدون منفذ.")
+        : `${isEnglish ? "Assignee" : "المنفذ"}: ${smartTask.assignee?.name || "-"}${smartTask.assignee?.id ? ` (User ID: ${smartTask.assignee.id})` : ""}`;
+    if (isEnglish) return [
+      "Create a new task using the existing Ramzy CREATE_TASK workflow with these details:",
+      `Task title: ${smartTask.title}`,
+      projectLine,
+      dueLine,
+      priorityLine,
+      assigneeLine,
+      "Use the existing approval flow. Prepare the CREATE_TASK approval draft and do not execute the task until I explicitly approve it.",
+    ].join("\n");
+    return [
+      "أنشئ مهمة جديدة باستخدام مسار CREATE_TASK الحالي في رمزي بهذه التفاصيل:",
+      `اسم المهمة: ${smartTask.title}`,
+      projectLine,
+      dueLine,
+      priorityLine,
+      assigneeLine,
+      "استخدم مسار الموافقة الحالي. جهّز مسودة CREATE_TASK ولا تنفذ إنشاء المهمة قبل اعتمادي الصريح.",
+    ].join("\n");
+  }
+
+  function submitSmartTask() {
+    const prompt = smartTaskPrompt();
+    if (!prompt) return;
+    setSmartTask(null);
+    setComposerValue("", { resize: false });
+    void sendMessage(prompt);
+  }
+
+  function handleComposerKeyDown(event) {
+    if (event.nativeEvent?.isComposing || event.isComposing) return;
+    if (smartTask?.step === "TITLE" && event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      captureSmartTaskTitle();
+      return;
+    }
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendMessage();
+    }
+  }
