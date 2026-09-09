@@ -1,0 +1,70 @@
+  function addShapeElement(kind = "rect") {
+    const element = createShapeElement(kind);
+    mutateActiveSlide((slide) => ({ ...slide, elements: [...slide.elements, element] }), `add-shape:${kind}:${element.id}`);
+    setSelectedElementIds([element.id]);
+  }
+
+  function addLineElement(kind = "line") {
+    const element = createLineElement(kind);
+    mutateActiveSlide((slide) => ({ ...slide, elements: [...slide.elements, element] }), `add-line:${kind}:${element.id}`);
+    setSelectedElementIds([element.id]);
+  }
+
+  function duplicateSelectedElements() {
+    if (!selectedElementIds.length || !activeSlide) return;
+    const now = Date.now();
+    const preview = duplicateElements(activeSlide.elements || [], selectedElementIds, { now, offset: 18 });
+    mutateActiveSlide((slide) => ({ ...slide, elements: duplicateElements(slide.elements || [], selectedElementIds, { now, offset: 18 }).elements }), `duplicate-elements:${now}`);
+    setSelectedElementIds(preview.cloneIds);
+  }
+
+  function copySelectedElements() {
+    if (!selectedElementIds.length || !activeSlide) return;
+    const ids = new Set(selectedElementIds);
+    elementClipboardRef.current = (activeSlide.elements || []).filter((item) => ids.has(item.id)).map((item) => ({ ...item }));
+  }
+
+  function pasteSelectedElements() {
+    const clipboard = elementClipboardRef.current || [];
+    if (!clipboard.length) return;
+    const now = Date.now();
+    const result = duplicateElements(clipboard, clipboard.map((item) => item.id), { now, offset: 18 });
+    const cloneSet = new Set(result.cloneIds);
+    const clones = result.elements.filter((item) => cloneSet.has(item.id));
+    mutateActiveSlide((slide) => ({ ...slide, elements: [...slide.elements, ...clones] }), `paste-elements:${now}`);
+    setSelectedElementIds(result.cloneIds);
+  }
+
+  function groupSelectedElements() {
+    if (selectedElementIds.length < 2) return;
+    const groupId = `group_${Date.now()}`;
+    mutateActiveSlide((slide) => ({ ...slide, elements: groupElements(slide.elements, selectedElementIds, groupId) }), `group:${groupId}`);
+  }
+
+  function ungroupSelectedElements() {
+    if (!selectedElementIds.length) return;
+    mutateActiveSlide((slide) => ({ ...slide, elements: ungroupElements(slide.elements, selectedElementIds) }), `ungroup:${Date.now()}`);
+  }
+
+  function distributeSelectedElements(axis) {
+    if (selectedElementIds.length < 3) return;
+    mutateActiveSlide((slide) => ({ ...slide, elements: distributeElements(slide.elements, selectedElementIds, axis) }), `distribute:${axis}:${Date.now()}`);
+  }
+
+  function rotateSelectedElements(delta) {
+    if (!selectedElementIds.length) return;
+    const selected = new Set(selectedElementIds);
+    mutateActiveSlide((slide) => ({
+      ...slide,
+      elements: slide.elements.map((item) => selected.has(item.id) ? { ...item, rotation: normalizeRotation((Number(item.rotation) || 0) + delta) } : item),
+    }), `rotate-selected:${Date.now()}`);
+  }
+
+  function updateSelectedElementStyle(key, value) {
+    if (!selectedElementIds.length) return;
+    const selected = new Set(selectedElementIds);
+    mutateActiveSlide((slide) => ({
+      ...slide,
+      elements: slide.elements.map((item) => selected.has(item.id) ? { ...item, [key]: value } : item),
+    }), `style:${key}:${Date.now()}`);
+  }
