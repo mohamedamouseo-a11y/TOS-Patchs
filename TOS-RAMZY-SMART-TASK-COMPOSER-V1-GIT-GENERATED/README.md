@@ -30,7 +30,8 @@
 - No permission changes.
 - No direct task creation bypass.
 - No git commit or git push.
-- Baseline guard: `db1efe2ccf30552ab7c65f7bc672861adf66cc05`.
+- Current R2 baseline guard: `048592147387e2b49382f605a04f8d2efd64f61c`.
 - Ramzy source blob guard: `509c40b4f283d39fb50e7e2dc146797392d6d1ca`.
+- R2 exists because TDocs Phase 2 R4 advanced TOS main while leaving Ramzy source unchanged.
 
 After a successful run, visually test the full smart-task flow before pushing the server changes to TOS main.
