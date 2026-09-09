@@ -1,0 +1,112 @@
+/* TWS T-Slides — Phase 2: core editing parity.
+   Frontend-only interaction layer for shape/line editing, transform handles and contextual controls. */
+
+.tws-slides-phase2-core {
+  --tsl2-blue: #1a73e8;
+  --tsl2-blue-dark: #8ab4f8;
+  --tsl2-handle: #ffffff;
+}
+
+.tws-slides-phase2-core .tws-slides-canvas .ring-amber-400 {
+  --tw-ring-color: var(--tsl2-blue) !important;
+}
+
+.tws-slides-phase2-core .tws-slides-element-selected {
+  outline: 2px solid var(--tsl2-blue);
+  outline-offset: 1px;
+}
+
+.tws-slides-phase2-core .tws-slides-resize-handle,
+.tws-slides-phase2-core .tws-slides-rotate-handle {
+  position: absolute;
+  z-index: 12;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--tsl2-blue);
+  border-radius: 50%;
+  background: var(--tsl2-handle);
+  box-shadow: 0 1px 3px rgba(60,64,67,.28);
+}
+
+.tws-slides-phase2-core .tws-slides-resize-handle[data-handle="nw"] { left: -6px; top: -6px; cursor: nwse-resize; }
+.tws-slides-phase2-core .tws-slides-resize-handle[data-handle="ne"] { right: -6px; top: -6px; cursor: nesw-resize; }
+.tws-slides-phase2-core .tws-slides-resize-handle[data-handle="sw"] { left: -6px; bottom: -6px; cursor: nesw-resize; }
+.tws-slides-phase2-core .tws-slides-resize-handle[data-handle="se"] { right: -6px; bottom: -6px; cursor: nwse-resize; }
+
+.tws-slides-phase2-core .tws-slides-rotate-handle {
+  left: 50%;
+  top: -28px;
+  width: 12px;
+  height: 12px;
+  transform: translateX(-50%);
+  cursor: grab;
+}
+.tws-slides-phase2-core .tws-slides-rotate-handle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  width: 1px;
+  height: 16px;
+  background: var(--tsl2-blue);
+  transform: translateX(-50%);
+}
+
+.tws-slides-phase2-core .tws-slides-shape {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+.tws-slides-phase2-core .tws-slides-line {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.tws-slides-phase2-core .tws-slides-toolbar .tws-slides-phase2-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.tws-slides-phase2-core .tws-slides-toolbar .tws-slides-phase2-cluster > button {
+  min-height: 30px;
+}
+
+.tws-slides-phase2-core .tws-slides-properties-card input[type="range"] {
+  accent-color: var(--tsl2-blue);
+}
+.tws-slides-phase2-core .tws-slides-properties-card input[type="color"] {
+  min-width: 36px;
+  min-height: 30px;
+  border-radius: 6px;
+}
+
+.dark .tws-slides-phase2-core {
+  --tsl2-blue: var(--tsl2-blue-dark);
+  --tsl2-handle: #202124;
+}
+.dark .tws-slides-phase2-core .tws-slides-element-selected {
+  outline-color: var(--tsl2-blue-dark);
+}
+.dark .tws-slides-phase2-core .tws-slides-resize-handle,
+.dark .tws-slides-phase2-core .tws-slides-rotate-handle {
+  border-color: var(--tsl2-blue-dark);
+  background: #202124;
+}
+.dark .tws-slides-phase2-core .tws-slides-rotate-handle::after {
+  background: var(--tsl2-blue-dark);
+}
+
+@media (max-width: 1180px) {
+  .tws-slides-phase2-core .tws-slides-toolbar .tws-slides-phase2-secondary {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tws-slides-phase2-core .tws-slides-resize-handle,
+  .tws-slides-phase2-core .tws-slides-rotate-handle {
+    transition: none !important;
+  }
+}
