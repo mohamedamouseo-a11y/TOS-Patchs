@@ -1,0 +1,12 @@
+              <span className="tws-slides-phase2-cluster tws-slides-phase2-secondary">
+                <Button type="button" variant="soft" onClick={() => alignSelectedElements("top")}>{ui.lang === "en" ? "Top" : "أعلى"}</Button>
+                <Button type="button" variant="soft" onClick={() => alignSelectedElements("middle")}>{ui.lang === "en" ? "Middle" : "وسط"}</Button>
+                <Button type="button" variant="soft" onClick={() => alignSelectedElements("bottom")}>{ui.lang === "en" ? "Bottom" : "أسفل"}</Button>
+                <Button type="button" variant="soft" onClick={() => distributeSelectedElements("horizontal")} disabled={selectedElementIds.length < 3}>{ui.lang === "en" ? "Distribute H" : "توزيع أفقي"}</Button>
+                <Button type="button" variant="soft" onClick={() => distributeSelectedElements("vertical")} disabled={selectedElementIds.length < 3}>{ui.lang === "en" ? "Distribute V" : "توزيع رأسي"}</Button>
+                <Button type="button" variant="soft" onClick={duplicateSelectedElements}><Copy size={14} /> {ui.lang === "en" ? "Duplicate" : "تكرار"}</Button>
+                <Button type="button" variant="soft" onClick={groupSelectedElements} disabled={selectedElementIds.length < 2}>{ui.lang === "en" ? "Group" : "تجميع"}</Button>
+                <Button type="button" variant="soft" onClick={ungroupSelectedElements}>{ui.lang === "en" ? "Ungroup" : "فك التجميع"}</Button>
+                <Button type="button" variant="soft" onClick={() => rotateSelectedElements(-15)}><RotateCw size={14} className="-scale-x-100" /> −15°</Button>
+                <Button type="button" variant="soft" onClick={() => rotateSelectedElements(15)}><RotateCw size={14} /> +15°</Button>
+              </span>
