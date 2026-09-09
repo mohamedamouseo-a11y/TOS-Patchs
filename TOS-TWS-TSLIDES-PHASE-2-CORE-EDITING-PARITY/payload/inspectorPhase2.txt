@@ -1,0 +1,32 @@
+                <div className="col-span-2 rounded-lg border border-zinc-200 p-2 text-[11px] font-bold dark:border-white/10">
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <span>{ui.lang === "en" ? "Element" : "العنصر"}</span>
+                    <span className="uppercase text-zinc-400">{selectedElement?.type || "—"}</span>
+                  </div>
+                  <label className="grid grid-cols-[1fr_72px] items-center gap-2">
+                    <span>{ui.lang === "en" ? "Rotation" : "الدوران"}</span>
+                    <input type="number" min="0" max="359" value={Math.round(Number(selectedElement?.rotation) || 0)} onChange={(event) => updateSelectedElementStyle("rotation", normalizeRotation(event.target.value))} className="rounded-md border border-zinc-200 bg-white px-2 py-1 dark:border-white/10 dark:bg-zinc-800" />
+                  </label>
+                  <label className="mt-2 grid grid-cols-[1fr_1fr] items-center gap-2">
+                    <span>{ui.lang === "en" ? "Opacity" : "الشفافية"}</span>
+                    <input type="range" min="0.05" max="1" step="0.05" value={Number(selectedElement?.opacity) || 1} onChange={(event) => updateSelectedElementStyle("opacity", Number(event.target.value))} />
+                  </label>
+                  {selectedElement?.type === "text" && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <input type="color" title={ui.lang === "en" ? "Text color" : "لون النص"} value={selectedElement.color || "#111111"} onChange={(event) => updateSelectedElementStyle("color", event.target.value)} />
+                      <Button type="button" variant="soft" onClick={() => updateSelectedElementStyle("bold", !selectedElement.bold)}><Bold size={13} /> {ui.lang === "en" ? "Bold" : "عريض"}</Button>
+                    </div>
+                  )}
+                  {selectedElement?.type === "shape" && (
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                      <label className="flex items-center gap-1">{ui.lang === "en" ? "Fill" : "تعبئة"} <input type="color" value={selectedElement.fill || "#f1f3f4"} onChange={(event) => updateSelectedElementStyle("fill", event.target.value)} /></label>
+                      <label className="flex items-center gap-1">{ui.lang === "en" ? "Border" : "حد"} <input type="color" value={selectedElement.stroke || "#5f6368"} onChange={(event) => updateSelectedElementStyle("stroke", event.target.value)} /></label>
+                    </div>
+                  )}
+                  {selectedElement?.type === "line" && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <input type="color" title={ui.lang === "en" ? "Line color" : "لون الخط"} value={selectedElement.stroke || "#3c4043"} onChange={(event) => updateSelectedElementStyle("stroke", event.target.value)} />
+                      <input type="number" min="1" max="20" value={Number(selectedElement.strokeWidth) || 3} onChange={(event) => updateSelectedElementStyle("strokeWidth", Math.min(Math.max(Number(event.target.value) || 1, 1), 20))} className="w-16 rounded-md border border-zinc-200 bg-white px-2 py-1 dark:border-white/10 dark:bg-zinc-800" />
+                    </div>
+                  )}
+                </div>
