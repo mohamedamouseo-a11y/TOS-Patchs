@@ -1,0 +1,102 @@
+:root {
+  --tos-task-details-canonical-reference-v2-2-app-shell-grid-lock-runtime: 1;
+}
+
+/*
+ * Canonical Reference V2.2
+ * Structural geometry is permanently LTR while Task Details is open.
+ * Arabic remains a content/text concern only. This deliberately avoids
+ * structural [dir="rtl"] branches that mirrored the approved reference.
+ */
+@media (min-width: 1024px) {
+  body:has(.tos-task-details-reference-v1[data-content-dir="rtl"]) .tos-premium-system-v14 {
+    direction: ltr !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir="rtl"]) .tos-premium-app-frame {
+    direction: ltr !important;
+    flex-direction: row !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir="rtl"]) .tos-premium-sidebar {
+    order: 0 !important;
+    direction: rtl !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir="rtl"]) .tos-premium-main-shell {
+    order: 1 !important;
+    direction: ltr !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir="rtl"]) .tos-premium-topbar {
+    direction: ltr !important;
+    flex-direction: row !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir="rtl"]) .tos-premium-topbar-identity {
+    order: 0 !important;
+    margin-right: auto !important;
+    margin-left: 0 !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir="rtl"]) .tos-premium-topbar-actions {
+    order: 1 !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+  }
+
+  .tos-task-details-reference-v1[data-content-dir="rtl"] {
+    direction: ltr !important;
+  }
+
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-details-modal,
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-details-layout,
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-main-column,
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-side-rail,
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-summary-compact,
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-summary-compact > div,
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-summary-controls,
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-detail-tabs,
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-description-panel {
+    direction: ltr !important;
+  }
+
+  /* Explicitly preserve the canonical left-main / right-rail ordering. */
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-details-layout {
+    grid-auto-flow: row !important;
+  }
+
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-main-column {
+    order: 1 !important;
+  }
+
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-side-rail {
+    order: 2 !important;
+  }
+
+  /* Hero/tabs must use physical reference order, never RTL auto-placement. */
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-summary-compact > div,
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-summary-controls,
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-reference-tabs-main,
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-reference-actions {
+    direction: ltr !important;
+  }
+
+  /* Arabic remains readable without being allowed to mirror the structural grid. */
+  .tos-task-details-reference-v1[data-content-dir="rtl"] :where(h1,h2,h3,h4,h5,h6,p,label,dt,dd,span) {
+    unicode-bidi: plaintext;
+  }
+
+  .tos-task-details-reference-v1[data-content-dir="rtl"] :where(textarea,[contenteditable="true"]) {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+
+  /* Task identity follows the canonical reference's physical left alignment. */
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-reference-title-block,
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-title-input,
+  .tos-task-details-reference-v1[data-content-dir="rtl"] .tos-task-header-description {
+    direction: ltr !important;
+    text-align: left !important;
+  }
+}
