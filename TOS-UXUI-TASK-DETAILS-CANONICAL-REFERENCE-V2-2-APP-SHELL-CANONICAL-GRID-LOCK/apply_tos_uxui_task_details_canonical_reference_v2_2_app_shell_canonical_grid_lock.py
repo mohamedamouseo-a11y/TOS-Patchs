@@ -23,7 +23,7 @@ V2_RUNTIME_MARKERS = (
 V2_1_RUNTIME = "--tos-task-details-canonical-reference-v2-1-rtl-structural-geometry-runtime"
 
 ROOT_PATTERN = re.compile(
-    r'(<div\\b[^>]*className="[^"]*tos-task-details-reference-v1[^"]*"[^>]*?)\\sdir=\\{modalDirection\\}([^>]*>)'
+    r'(<div\b[^>]*className="[^"]*tos-task-details-reference-v1[^"]*"[^>]*?)\sdir=\{modalDirection\}([^>]*>)'
 )
 
 
