@@ -1,0 +1,49 @@
+:root {
+  --tos-task-details-canonical-reference-v2-1-rtl-structural-geometry-runtime: 1;
+}
+
+/*
+ * V2.1 structural rule:
+ * Arabic/RTL may change text flow, but it must NOT mirror the approved
+ * Task Details desktop composition. The canonical V2 geometry remains:
+ * sidebar left, task workspace right of it, search left/profile right,
+ * hero identity left/quote right, description left/right-rail right.
+ */
+@media (min-width: 1024px) {
+  body:has(.tos-task-details-reference-v1[dir="rtl"]) #root {
+    direction: ltr !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[dir="rtl"]) .tos-premium-sidebar {
+    left: 24px !important;
+    right: auto !important;
+    direction: rtl !important;
+  }
+
+  .tos-task-details-reference-v1[dir="rtl"] {
+    left: 272px !important;
+    right: 0 !important;
+    direction: ltr !important;
+  }
+
+  body:has(.tos-premium-sidebar[data-collapsed="true"]) .tos-task-details-reference-v1[dir="rtl"] {
+    left: 88px !important;
+    right: 0 !important;
+  }
+
+  /* Neutralize nested RTL direction only for structural wrappers. */
+  .tos-task-details-reference-v1[dir="rtl"] [dir="rtl"]:not(input):not(textarea):not([contenteditable="true"]) {
+    direction: ltr !important;
+  }
+
+  /* Preserve Arabic authoring/data-entry direction inside actual text fields. */
+  .tos-task-details-reference-v1[dir="rtl"] :where(input, textarea, [contenteditable="true"]) {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+
+  /* Let Arabic copy render with its natural bidi flow without mirroring layout. */
+  .tos-task-details-reference-v1[dir="rtl"] :where(h1, h2, h3, h4, h5, h6, p, label, dt, dd) {
+    unicode-bidi: plaintext;
+  }
+}
