@@ -1,0 +1,83 @@
+:root {
+  --tos-task-details-canonical-reference-v2-7-real-overview-rail-physical-lock-runtime: 1;
+  --tos-v27-rail-gap: 8px;
+}
+
+/*
+ * Canonical Reference V2.7
+ * Fixes the REAL canonical Overview rail introduced by V2:
+ *   .tos-task-reference-v2-rail
+ *
+ * Root cause confirmed on pushed main:
+ * - the rail uses inset-inline-end: 0 while its own direction is RTL,
+ *   so the logical inline end becomes the physical LEFT edge;
+ * - the Description/editor has a reduced fixed width but no physical margin lock,
+ *   allowing RTL formatting to keep it on the physical RIGHT.
+ *
+ * Scope only:
+ * - canonical Overview rail -> physical RIGHT
+ * - Description/editor and canonical tabs -> physical LEFT
+ * - compact rail vertical density enough to expose the existing TCS Assistant
+ *   card at the 1664x936 QA viewport.
+ *
+ * No hero, shell, task logic, API, upload, TWS, Ramzy, or TCS logic changes.
+ */
+@media (min-width: 1180px) {
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail {
+    inset-inline-start: auto !important;
+    inset-inline-end: auto !important;
+    left: auto !important;
+    right: 0 !important;
+    gap: var(--tos-v27-rail-gap) !important;
+  }
+
+  .tos-task-details-reference-v2
+    .tos-task-details-layout:has(.tos-task-reference-v2-rail)
+    .tos-task-detail-tabs,
+  .tos-task-details-reference-v2
+    .tos-task-details-layout:has(.tos-task-reference-v2-rail)
+    .tos-task-description-panel {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+  }
+
+  /* Density only; preserve every existing card and action. */
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-rail-card {
+    padding: 11px 12px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-quick-grid {
+    gap: 6px !important;
+    margin-top: 8px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-quick-grid button {
+    min-height: 32px !important;
+    height: 32px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-info-card dl {
+    gap: 4px !important;
+    margin-top: 8px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-info-card dl > div {
+    row-gap: 3px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-tags {
+    gap: 6px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-tcs-card {
+    padding: 10px 12px !important;
+    gap: 10px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-tcs-card p {
+    margin-top: 3px !important;
+    line-height: 1.35 !important;
+  }
+}
