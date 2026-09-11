@@ -1,0 +1,74 @@
+:root {
+  --tos-task-details-v2-9d-hero-internal-clip-bidi-cleanup-runtime: 1;
+  --tos-v29d-control-box-height: 76px;
+}
+
+/*
+ * TOS Task Details V2.9D
+ * Scope: clean the visible Hero defects confirmed on the live V2.8D screen.
+ *
+ * Fix only:
+ * - fully contain the four primary Hero control cards inside the Hero boundary;
+ * - keep their bottom borders/radii visible instead of clipping at the Hero edge;
+ * - constrain long mixed Arabic/English task summary text so it cannot run into
+ *   the mountain/quote visual;
+ * - preserve the already-approved Overview physical layout and right rail.
+ *
+ * No DOM moves. No task logic. No API. No TCS/Ramzy. No shell/topbar changes.
+ */
+@media (min-width: 1180px) {
+  .tos-task-details-reference-v2 .tos-task-summary-compact > div {
+    gap: 14px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-title-block {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-header-description {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-top: 5px !important;
+    line-height: 1.42 !important;
+    white-space: normal !important;
+    overflow: hidden !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    unicode-bidi: plaintext !important;
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-summary-controls {
+    align-items: stretch !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-summary-controls > *:not(.tos-task-start-date-card) {
+    box-sizing: border-box !important;
+    height: var(--tos-v29d-control-box-height) !important;
+    min-height: var(--tos-v29d-control-box-height) !important;
+    max-height: var(--tos-v29d-control-box-height) !important;
+    padding: 8px 12px !important;
+    margin: 0 !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-summary-controls select,
+  .tos-task-details-reference-v2 .tos-task-summary-controls input {
+    box-sizing: border-box !important;
+    height: 29px !important;
+    min-height: 29px !important;
+    margin-top: 2px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-v2-assignee-content {
+    margin-top: 4px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-v2-assignee-avatar,
+  .tos-task-details-reference-v2 .tos-task-v2-assignee-add {
+    box-sizing: border-box !important;
+  }
+}
