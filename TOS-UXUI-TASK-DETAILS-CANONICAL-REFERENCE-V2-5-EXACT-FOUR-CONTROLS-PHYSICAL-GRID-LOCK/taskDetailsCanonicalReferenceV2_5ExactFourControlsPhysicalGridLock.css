@@ -1,0 +1,89 @@
+:root {
+  --tos-task-details-canonical-reference-v2-5-exact-four-controls-physical-grid-runtime: 1;
+  --tos-v25-right-rail-width: 304px;
+  --tos-v25-body-gap: 20px;
+}
+
+/*
+ * Canonical Reference V2.5
+ * Final surgical geometry correction after V2.4 visual QA.
+ *
+ * Scope only:
+ * - exact four visible Hero primary controls (duplicate V2.4 Assignees card is removed in JSX)
+ * - physical Overview order: Description LEFT / Right Rail RIGHT
+ *
+ * Preserve V2.2 shell + structural LTR, V2.3 hero height/tabs placement,
+ * V2.4 advanced Start-date behavior, mountain/quote, tabs, APIs and logic.
+ */
+@media (min-width: 1180px) {
+  /* Cover both normal ancestry and portal-rendered Task Details. */
+  body:has(.tos-task-details-reference-v1[data-content-dir]) .tos-task-details-layout,
+  .tos-task-details-reference-v1[data-content-dir] .tos-task-details-layout {
+    direction: ltr !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) var(--tos-v25-right-rail-width) !important;
+    grid-auto-flow: row !important;
+    column-gap: var(--tos-v25-body-gap) !important;
+    align-items: start !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir]) .tos-task-main-column,
+  .tos-task-details-reference-v1[data-content-dir] .tos-task-main-column {
+    grid-column: 1 / 2 !important;
+    grid-row: 1 !important;
+    order: 0 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir]) .tos-task-side-rail,
+  .tos-task-details-reference-v1[data-content-dir] .tos-task-side-rail {
+    grid-column: 2 / 3 !important;
+    grid-row: 1 !important;
+    order: 0 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    left: auto !important;
+    right: auto !important;
+    align-self: start !important;
+  }
+
+  /* The V2.4-injected duplicate card must never survive as a fifth control. */
+  body:has(.tos-task-details-reference-v1[data-content-dir]) .tos-task-assignees-hero-card,
+  .tos-task-details-reference-v1[data-content-dir] .tos-task-assignees-hero-card {
+    display: none !important;
+  }
+
+  /* Keep the primary Hero row canonical. Start date remains advanced-only via V2.4. */
+  body:has(.tos-task-details-reference-v1[data-content-dir]) .tos-task-summary-controls,
+  .tos-task-details-reference-v1[data-content-dir] .tos-task-summary-controls {
+    direction: ltr !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-auto-flow: row !important;
+    gap: 12px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    align-items: stretch !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir]) .tos-task-summary-controls > *:not(.tos-task-start-date-card),
+  .tos-task-details-reference-v1[data-content-dir] .tos-task-summary-controls > *:not(.tos-task-start-date-card) {
+    grid-row: 1 !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  /* Preserve V2.4 Start-date advanced path. */
+  body:has(.tos-task-details-reference-v1[data-content-dir]) .tos-task-summary-controls > .tos-task-start-date-card,
+  .tos-task-details-reference-v1[data-content-dir] .tos-task-summary-controls > .tos-task-start-date-card {
+    display: none !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir]) .tos-task-main-column[data-more-details="true"] .tos-task-summary-controls > .tos-task-start-date-card,
+  .tos-task-details-reference-v1[data-content-dir] .tos-task-main-column[data-more-details="true"] .tos-task-summary-controls > .tos-task-start-date-card {
+    display: block !important;
+    grid-column: 1 / 2 !important;
+    grid-row: 2 !important;
+  }
+}
