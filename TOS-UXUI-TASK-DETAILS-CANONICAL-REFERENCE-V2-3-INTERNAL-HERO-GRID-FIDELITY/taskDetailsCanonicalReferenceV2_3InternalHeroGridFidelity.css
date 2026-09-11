@@ -1,0 +1,134 @@
+:root {
+  --tos-task-details-canonical-reference-v2-3-internal-fidelity-runtime: 1;
+  --tos-v23-hero-height: 236px;
+  --tos-v23-hero-control-gap: 12px;
+  --tos-v23-rail-width: 304px;
+  --tos-v23-rail-start-offset: 322px;
+}
+
+/*
+ * Canonical Reference V2.3
+ * Internal Task Details fidelity only.
+ *
+ * DO NOT touch the V2.2 app-shell/RTL structural lock.
+ * Physical shell geometry remains owned by V2.2.
+ *
+ * This layer fixes:
+ * 1) oversized hero vertical geometry
+ * 2) four hero controls into one horizontal row
+ * 3) overview two-column placement so the right rail starts with Description,
+ *    not beside/inside the Hero
+ */
+@media (min-width: 1180px) {
+  .tos-task-details-reference-v1 {
+    --tos-v23-main-gap: 20px;
+  }
+
+  /* Keep the internal page in the canonical physical order established by V2.2. */
+  .tos-task-details-reference-v1 .tos-task-details-layout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) var(--tos-v23-rail-width) !important;
+    column-gap: var(--tos-v23-main-gap) !important;
+    align-items: start !important;
+    grid-auto-flow: row !important;
+  }
+
+  .tos-task-details-reference-v1 .tos-task-main-column {
+    grid-column: 1 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .tos-task-details-reference-v1 .tos-task-side-rail {
+    grid-column: 2 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    align-self: start !important;
+    margin-top: var(--tos-v23-rail-start-offset) !important;
+  }
+
+  /*
+   * Hero: remove inherited stretch/min-height behavior that produced a large
+   * empty vertical field in V2.2. Do not change art, quote, title or shell.
+   */
+  .tos-task-details-reference-v1 .tos-task-summary-compact {
+    min-height: var(--tos-v23-hero-height) !important;
+    height: var(--tos-v23-hero-height) !important;
+    max-height: var(--tos-v23-hero-height) !important;
+    align-content: start !important;
+    align-items: start !important;
+    overflow: hidden !important;
+  }
+
+  .tos-task-details-reference-v1 .tos-task-summary-compact > div {
+    min-height: 0 !important;
+    height: auto !important;
+    align-content: start !important;
+    align-items: start !important;
+  }
+
+  /*
+   * Canonical four-control row:
+   * Assignees | Status | Priority | Due date
+   */
+  .tos-task-details-reference-v1 .tos-task-summary-controls {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-auto-flow: column !important;
+    gap: var(--tos-v23-hero-control-gap) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-top: 14px !important;
+    align-items: stretch !important;
+  }
+
+  .tos-task-details-reference-v1 .tos-task-summary-controls > * {
+    grid-column: auto !important;
+    grid-row: 1 !important;
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  /* Tabs stay directly under the corrected hero; ordering/logic is untouched. */
+  .tos-task-details-reference-v1 .tos-task-detail-tabs,
+  .tos-task-details-reference-v1 .tos-task-reference-tabs-main {
+    margin-top: 14px !important;
+    margin-bottom: 0 !important;
+  }
+
+  /*
+   * The Description/Editor stays in the main column. The side rail is offset
+   * to align with this body start and no longer consumes Hero space.
+   */
+  .tos-task-details-reference-v1 .tos-task-description-panel {
+    min-width: 0 !important;
+    width: 100% !important;
+    margin-top: 16px !important;
+  }
+
+  .tos-task-details-reference-v1 .tos-task-side-rail > * {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}
+
+/* Keep medium desktop/tablet safe: preserve content, do not force a narrow 2-col rail. */
+@media (min-width: 1024px) and (max-width: 1179px) {
+  .tos-task-details-reference-v1 .tos-task-summary-compact {
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  .tos-task-details-reference-v1 .tos-task-summary-controls {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .tos-task-details-reference-v1 .tos-task-side-rail {
+    margin-top: 0 !important;
+  }
+}
