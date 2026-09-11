@@ -1,0 +1,80 @@
+:root {
+  --tos-task-details-v2-11a-r2-hero-width-only-runtime: 1;
+}
+
+/*
+ * TOS Task Details V2.11A R2 — MICRO STEP 01 REPAIR 2
+ * Scope: HERO WIDTH ONLY.
+ *
+ * Confirmed root cause after R1 QA:
+ * V2.5 still owns a higher-specificity layout rule:
+ *   body:has(.tos-task-details-reference-v1[data-content-dir]) .tos-task-details-layout
+ * That selector keeps the Task Details body as a 2-column grid even though R1
+ * added a later, lower-specificity display:block rule. The Hero therefore stays
+ * trapped inside the first grid column.
+ *
+ * R2 deliberately uses a stronger selector than the stale V2.5 rule and changes
+ * only the layout/main width context required for the Hero to consume the full
+ * Task Details content canvas.
+ *
+ * Frozen from R1:
+ * - Task identity physical LEFT
+ * - mountain + quote physical RIGHT
+ * - title/subtitle styling
+ * - four controls
+ * - tabs
+ * - description/editor
+ * - canonical right-rail cards/content
+ * - Ramzy / TCS
+ */
+@media (min-width: 1180px) {
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-details-layout {
+    position: relative !important;
+    display: block !important;
+    grid-template-columns: none !important;
+    grid-template-rows: none !important;
+    grid-auto-flow: initial !important;
+    grid-auto-columns: initial !important;
+    column-gap: 0 !important;
+    row-gap: 0 !important;
+    gap: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-details-layout
+    > .tos-task-main-column {
+    display: block !important;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    order: 0 !important;
+    flex: 0 0 100% !important;
+    flex-basis: 100% !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    overflow: visible !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-details-layout
+    > .tos-task-main-column
+    > .tos-task-summary-compact {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
