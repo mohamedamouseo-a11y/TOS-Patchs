@@ -1,0 +1,140 @@
+:root {
+  --tos-task-details-canonical-reference-v2-4-four-control-overview-order-runtime: 1;
+  --tos-v24-rail-width: 304px;
+  --tos-v24-main-gap: 20px;
+}
+
+/*
+ * Canonical Reference V2.4
+ * Surgical correction only:
+ * - make the canonical four visible Hero controls real: Assignees / Status / Priority / Due date
+ * - preserve Start date as advanced functionality exposed only when More is open
+ * - force Overview physical order to Description LEFT / Right Rail RIGHT
+ *
+ * V2.2 owns App Shell + structural LTR.
+ * V2.3 owns normal Hero height + Tabs vertical placement.
+ * Do not alter either contract here.
+ */
+@media (min-width: 1180px) {
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir]
+  .tos-task-details-layout {
+    direction: ltr !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) var(--tos-v24-rail-width) !important;
+    grid-auto-flow: row !important;
+    column-gap: var(--tos-v24-main-gap) !important;
+    align-items: start !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir]
+  .tos-task-main-column {
+    grid-column: 1 / 2 !important;
+    grid-row: 1 !important;
+    order: 0 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir]
+  .tos-task-side-rail {
+    grid-column: 2 / 3 !important;
+    grid-row: 1 !important;
+    order: 1 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    left: auto !important;
+    right: auto !important;
+    align-self: start !important;
+  }
+
+  /* Four visible controls only, in canonical physical order. */
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir]
+  .tos-task-summary-controls {
+    direction: ltr !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-auto-flow: row !important;
+    grid-auto-rows: auto !important;
+    gap: 12px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    align-items: stretch !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir]
+  .tos-task-summary-controls > * {
+    grid-column: auto !important;
+    grid-row: 1 !important;
+    order: 0 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    margin: 0 !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir]
+  .tos-task-assignees-hero-card {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+    cursor: pointer !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir]
+  .tos-task-assignees-hero-card:focus-visible {
+    outline: 2px solid rgba(180, 123, 14, 0.5) !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Start date is preserved, but it is advanced detail rather than a fifth primary Hero control. */
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir]
+  .tos-task-summary-controls > .tos-task-start-date-card {
+    display: none !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir]
+  .tos-task-main-column[data-more-details="true"]
+  .tos-task-summary-controls > .tos-task-start-date-card {
+    display: block !important;
+    grid-column: 1 / 2 !important;
+    grid-row: 2 !important;
+    height: auto !important;
+    margin-top: 0 !important;
+  }
+
+  /* Normal V2.3 Hero stays untouched. Only More-open state may expand for advanced Start date. */
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir]
+  .tos-task-main-column[data-more-details="true"]
+  .tos-task-summary-compact {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Keep the body start clean after Tabs once physical column order is corrected. */
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir]
+  .tos-task-description-panel {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir]
+  .tos-task-side-rail > * {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}
