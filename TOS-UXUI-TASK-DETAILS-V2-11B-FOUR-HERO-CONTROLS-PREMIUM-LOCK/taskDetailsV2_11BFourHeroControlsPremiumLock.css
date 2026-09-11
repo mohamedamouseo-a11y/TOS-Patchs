@@ -1,0 +1,203 @@
+:root {
+  --tos-task-details-v2-11b-four-hero-controls-premium-lock-runtime: 1;
+  --tos-v211b-control-height: 86px;
+  --tos-v211b-control-gap: 14px;
+}
+
+/*
+ * TOS Task Details V2.11B — MICRO STEP 02
+ * Scope: FOUR HERO CONTROLS ONLY.
+ *
+ * Approved/frozen from V2.11A_R2:
+ * - Hero full canvas
+ * - Task identity physical LEFT
+ * - mountain + quote physical RIGHT
+ *
+ * This layer redesigns only:
+ * Assignees | Status | Priority | Due date
+ */
+@media (min-width: 1180px) {
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls {
+    direction: ltr !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-auto-flow: row !important;
+    align-items: stretch !important;
+    gap: var(--tos-v211b-control-gap) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: translateY(-8px) !important;
+  }
+
+  /* Lock the physical order independently from RTL/LTR content direction. */
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls > :nth-child(1) { grid-column: 1 !important; }
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls > :nth-child(2) { grid-column: 2 !important; }
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls > :nth-child(3) { grid-column: 3 !important; }
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls > :nth-child(4) { grid-column: 4 !important; }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls > *:not(.tos-task-start-date-card) {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    height: var(--tos-v211b-control-height) !important;
+    min-height: var(--tos-v211b-control-height) !important;
+    max-height: var(--tos-v211b-control-height) !important;
+    margin: 0 !important;
+    padding: 10px 13px !important;
+    overflow: hidden !important;
+    border: 1px solid #e5dfd5 !important;
+    border-radius: 15px !important;
+    background: rgba(255,255,255,.985) !important;
+    box-shadow: 0 8px 20px rgba(56,42,20,.045), inset 0 1px 0 rgba(255,255,255,.96) !important;
+  }
+
+  .tos-task-details-reference-v1[data-content-dir="rtl"]
+    .tos-task-summary-controls > *:not(.tos-task-start-date-card) {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+
+  .tos-task-details-reference-v1[data-content-dir="ltr"]
+    .tos-task-summary-controls > *:not(.tos-task-start-date-card) {
+    direction: ltr !important;
+    text-align: left !important;
+  }
+
+  /* Consistent label row. Existing icons/labels are preserved. */
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls .tos-task-v2-control-label,
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls > label > span,
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls > div > p {
+    min-height: 17px !important;
+    margin: 0 !important;
+    color: #748095 !important;
+    font-size: 10.5px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0 !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls svg {
+    width: 15px !important;
+    height: 15px !important;
+    color: #6d788a !important;
+    stroke-width: 1.8 !important;
+  }
+
+  /* Clean field surfaces. */
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls select,
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls input {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    margin-top: 5px !important;
+    padding: 0 9px !important;
+    border: 1px solid transparent !important;
+    border-radius: 9px !important;
+    background: #fbfbfa !important;
+    color: #172239 !important;
+    font-size: 12px !important;
+    font-weight: 850 !important;
+    line-height: 34px !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  /* Status gets the warm highlighted treatment from the approved concept. */
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls > label:nth-child(2) select {
+    border-color: #f2dfb7 !important;
+    background: #fff4db !important;
+    color: #a66706 !important;
+  }
+
+  /* Priority remains calmer and neutral. */
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls > label:nth-child(3) select {
+    background: #fafafa !important;
+    color: #162139 !important;
+  }
+
+  /* Assignee content density and avatar stack. */
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-assignee-content {
+    min-height: 34px !important;
+    margin-top: 5px !important;
+    gap: 10px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-assignee-avatar,
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-assignee-add {
+    box-sizing: border-box !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    border-width: 1px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-assignee-content strong {
+    color: #344057 !important;
+    font-size: 10.5px !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Start date stays advanced-only exactly as established before this micro-step. */
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-summary-controls > .tos-task-start-date-card {
+    display: none !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-main-column[data-more-details="true"]
+    .tos-task-summary-controls > .tos-task-start-date-card {
+    display: block !important;
+    grid-column: 1 / 2 !important;
+    grid-row: 2 !important;
+    transform: translateY(8px) !important;
+    height: auto !important;
+    min-height: 76px !important;
+    max-height: none !important;
+  }
+}
