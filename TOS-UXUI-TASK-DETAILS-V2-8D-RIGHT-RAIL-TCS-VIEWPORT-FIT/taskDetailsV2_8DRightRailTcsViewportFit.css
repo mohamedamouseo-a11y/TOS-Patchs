@@ -1,0 +1,110 @@
+:root {
+  --tos-task-details-v2-8d-right-rail-tcs-viewport-fit-runtime: 1;
+  --tos-v28d-rail-gap: 5px;
+}
+
+/*
+ * TOS Task Details V2.8D
+ * Scope: final viewport-fit pass for the already-correct canonical Overview rail.
+ *
+ * V2.7 already fixed physical geometry:
+ *   Description/editor = LEFT
+ *   .tos-task-reference-v2-rail = RIGHT
+ *
+ * V2.8D changes density only so the EXISTING Task Details TCS Assistant card
+ * is fully visible at 1664x936 above the fixed footer. No DOM moves, no hero,
+ * tabs, shell, API, task logic, upload, TWS, Ramzy, or TCS logic changes.
+ */
+@media (min-width: 1180px) {
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail {
+    top: 298px !important;
+    gap: var(--tos-v28d-rail-gap) !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-rail-card {
+    padding: 8px 10px !important;
+    border-radius: 13px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-rail-card h4,
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-tcs-card h4 {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-quick-grid {
+    gap: 4px !important;
+    margin-top: 6px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-quick-grid button {
+    height: 28px !important;
+    min-height: 28px !important;
+    padding: 0 9px !important;
+    font-size: 9px !important;
+    line-height: 1 !important;
+    border-radius: 9px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-info-card dl {
+    gap: 2px !important;
+    margin-top: 6px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-info-card dl > div {
+    grid-template-columns: 92px minmax(0, 1fr) !important;
+    gap: 6px !important;
+    min-height: 15px !important;
+    line-height: 1.15 !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-info-card dt,
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-info-card dd {
+    font-size: 9px !important;
+    line-height: 1.15 !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-rail-heading-row > button {
+    height: 25px !important;
+    padding: 0 8px !important;
+    font-size: 8px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-tags {
+    gap: 4px !important;
+    margin-top: 6px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-tags > span {
+    min-height: 21px !important;
+    padding: 0 8px !important;
+    font-size: 8px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-tag-plus {
+    width: 23px !important;
+    height: 23px !important;
+    font-size: 12px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-tcs-card {
+    min-height: 54px !important;
+    padding: 7px 9px !important;
+    gap: 8px !important;
+    border-radius: 13px !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-tcs-card p {
+    margin-top: 2px !important;
+    font-size: 8px !important;
+    line-height: 1.2 !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-v2-rail .tos-task-v2-tcs-card button {
+    min-height: 28px !important;
+    height: 28px !important;
+    padding: 0 9px !important;
+    font-size: 9px !important;
+    border-radius: 9px !important;
+  }
+}
