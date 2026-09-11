@@ -1,0 +1,203 @@
+:root {
+  --tos-task-details-v2-11b1-status-priority-custom-dropdowns-runtime: 1;
+}
+
+/*
+ * TOS Task Details V2.11B1 — MICRO STEP 02A
+ * Scope: STATUS + PRIORITY CUSTOM DROPDOWNS ONLY.
+ *
+ * V2.11B four-card geometry is frozen.
+ * Native selects are replaced in JSX; these rules style the new triggers and
+ * portal menus. Due Date remains native until V2.11B2.
+ */
+@media (min-width: 1180px) {
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-premium-control-head {
+    min-height: 17px !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    color: #748095 !important;
+    font-size: 10.5px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-premium-select {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-top: 5px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-premium-select-trigger {
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    width: 100% !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 0 10px !important;
+    border: 1px solid transparent !important;
+    border-radius: 9px !important;
+    background: #fafafa !important;
+    color: #172239 !important;
+    font-size: 12px !important;
+    font-weight: 850 !important;
+    line-height: 1 !important;
+    text-align: left !important;
+    box-shadow: none !important;
+    outline: none !important;
+    cursor: pointer !important;
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-premium-select-trigger:hover:not(:disabled) {
+    border-color: #d8d2c9 !important;
+    background: #ffffff !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-premium-select-trigger:focus-visible {
+    border-color: #d49a2e !important;
+    box-shadow: 0 0 0 3px rgba(201, 145, 25, .12) !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-premium-select-trigger:disabled {
+    cursor: not-allowed !important;
+    opacity: .58 !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-premium-select-trigger > span {
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-premium-select-trigger svg {
+    width: 15px !important;
+    height: 15px !important;
+    flex: 0 0 auto !important;
+    transition: transform .16s ease !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-premium-select-trigger[aria-expanded="true"] svg {
+    transform: rotate(180deg) !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-status-control .tos-task-v2-premium-select-trigger {
+    border-color: #f0dcae !important;
+    background: linear-gradient(180deg, #fff8e9 0%, #fff2d6 100%) !important;
+    color: #9a6106 !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+    .tos-task-details-reference-v1[data-content-dir]
+    .tos-task-v2-priority-control .tos-task-v2-premium-select-trigger {
+    border-color: #ece8e1 !important;
+    background: #fbfbfa !important;
+    color: #172239 !important;
+  }
+}
+
+/* Portal menu: intentionally outside Hero overflow context. */
+.tos-task-v2-premium-menu {
+  position: fixed;
+  z-index: 10050;
+  box-sizing: border-box;
+  padding: 6px;
+  overflow: hidden;
+  border: 1px solid #ded8cf;
+  border-radius: 13px;
+  background: rgba(255,255,255,.99);
+  box-shadow: 0 18px 46px rgba(23, 28, 38, .18), 0 4px 12px rgba(35, 31, 23, .08);
+  backdrop-filter: blur(14px);
+}
+
+.tos-task-v2-premium-menu[data-tone="status"] {
+  border-color: #ead6a8;
+  background: rgba(255, 253, 247, .995);
+}
+
+.tos-task-v2-premium-option {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #243149;
+  font-size: 12px;
+  font-weight: 760;
+  text-align: inherit;
+  cursor: pointer;
+  transition: background .13s ease, color .13s ease;
+}
+
+.tos-task-v2-premium-option:hover,
+.tos-task-v2-premium-option[data-active="true"] {
+  background: #f5f2ec;
+  color: #101a31;
+}
+
+.tos-task-v2-premium-menu[data-tone="status"] .tos-task-v2-premium-option:hover,
+.tos-task-v2-premium-menu[data-tone="status"] .tos-task-v2-premium-option[data-active="true"] {
+  background: #fff0cc;
+  color: #8f5905;
+}
+
+.tos-task-v2-premium-option[data-selected="true"] {
+  font-weight: 900;
+}
+
+.tos-task-v2-premium-option .tos-task-v2-premium-option-check {
+  display: grid;
+  width: 19px;
+  height: 19px;
+  flex: 0 0 19px;
+  place-items: center;
+  border-radius: 999px;
+  color: #b77709;
+  background: #fff4dc;
+}
+
+.tos-task-v2-premium-option .tos-task-v2-premium-option-check svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tos-task-v2-premium-select-trigger,
+  .tos-task-v2-premium-select-trigger svg,
+  .tos-task-v2-premium-option {
+    transition: none !important;
+  }
+}
