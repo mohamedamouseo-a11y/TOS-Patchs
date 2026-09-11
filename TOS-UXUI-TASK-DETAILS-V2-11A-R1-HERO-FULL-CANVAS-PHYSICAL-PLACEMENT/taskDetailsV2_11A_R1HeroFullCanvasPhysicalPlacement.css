@@ -1,0 +1,120 @@
+:root {
+  --tos-task-details-v2-11a-r1-hero-full-canvas-physical-placement-runtime: 1;
+  --tos-v211a-r1-hero-height: 254px;
+}
+
+/*
+ * TOS Task Details V2.11A R1 — MICRO STEP 01 REPAIR
+ * Scope: HERO WIDTH + PHYSICAL TASK IDENTITY PLACEMENT ONLY.
+ *
+ * Confirmed V2.11A QA failure:
+ * - Hero was still constrained by the old V2.6 main/rail flex workaround.
+ * - In RTL, the title block was aligned by logical flex-start instead of the
+ *   required physical LEFT edge.
+ *
+ * Repair strategy:
+ * - restore the canonical V2 body wrapper to a single full-width block canvas;
+ * - keep the existing canonical Overview rail absolutely positioned on RIGHT;
+ * - make the Hero exactly 100% of the full Task Details canvas;
+ * - force title block placement with physical margins, independent of RTL.
+ *
+ * Explicitly NOT redesigned here:
+ * controls, tabs, description/editor, canonical rail cards, Ramzy, TCS.
+ */
+@media (min-width: 1180px) {
+  /* Neutralize the stale V2.6 flex split. The canonical rail is absolute. */
+  .tos-task-details-reference-v2 .tos-task-details-layout {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+    gap: 0 !important;
+    column-gap: 0 !important;
+    grid-template-columns: none !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-main-column {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Full physical canvas: no arithmetic extension from a narrow main column. */
+  .tos-task-details-reference-v2 .tos-task-summary-compact {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    min-height: var(--tos-v211a-r1-hero-height) !important;
+    height: var(--tos-v211a-r1-hero-height) !important;
+    max-height: var(--tos-v211a-r1-hero-height) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Keep artwork and quote physically RIGHT in both language directions. */
+  .tos-task-details-reference-v2 .tos-task-summary-compact::after,
+  .tos-task-details-reference-v2[dir="rtl"] .tos-task-summary-compact::after {
+    right: 0 !important;
+    left: auto !important;
+    width: 39% !important;
+    transform: none !important;
+    background-position: center right !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-summary-compact::before,
+  .tos-task-details-reference-v2[dir="rtl"] .tos-task-summary-compact::before {
+    right: 44px !important;
+    left: auto !important;
+  }
+
+  /* Physical LEFT placement; auto right margin absorbs all remaining width. */
+  .tos-task-details-reference-v2 .tos-task-reference-title-block,
+  .tos-task-details-reference-v2[dir="rtl"] .tos-task-reference-title-block {
+    box-sizing: border-box !important;
+    width: min(760px, calc(100% - 390px)) !important;
+    max-width: min(760px, calc(100% - 390px)) !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    padding: 5px 12px 5px 94px !important;
+    text-align: left !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-title-block::before,
+  .tos-task-details-reference-v2[dir="rtl"] .tos-task-reference-title-block::before {
+    left: 0 !important;
+    right: auto !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-reference-title-block::after,
+  .tos-task-details-reference-v2[dir="rtl"] .tos-task-reference-title-block::after {
+    left: 94px !important;
+    right: auto !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-title-input,
+  .tos-task-details-reference-v2 .tos-task-header-description {
+    text-align: left !important;
+  }
+}
+
+@media (min-width: 1180px) and (max-width: 1439px) {
+  .tos-task-details-reference-v2 .tos-task-reference-title-block,
+  .tos-task-details-reference-v2[dir="rtl"] .tos-task-reference-title-block {
+    width: min(680px, calc(100% - 350px)) !important;
+    max-width: min(680px, calc(100% - 350px)) !important;
+  }
+
+  .tos-task-details-reference-v2 .tos-task-summary-compact::before,
+  .tos-task-details-reference-v2[dir="rtl"] .tos-task-summary-compact::before {
+    right: 30px !important;
+  }
+}
