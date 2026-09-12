@@ -1,0 +1,53 @@
+:root {
+  --tos-task-details-v2-11e-r1-floating-assistants-rail-collision-fix-runtime: 1;
+}
+
+/*
+ * TOS Task Details V2.11E_R1
+ * MICRO STEP: FLOATING ASSISTANTS / RIGHT-RAIL COLLISION FIX ONLY
+ *
+ * At the two failed responsive QA widths (1366 and 1280), dock the global
+ * assistant launchers into the top-bar free zone and compact their label
+ * presentation. The assistants remain clickable and their JS/business logic
+ * is untouched. V2.11E rail cards, V2.11D_R1 editor geometry, tabs and hero
+ * are not restyled by this layer.
+ */
+
+@media (min-width: 1280px) and (max-width: 1366px) {
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-wrap {
+    left: calc(100vw - 500px) !important;
+    top: 14px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-label,
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-greeting {
+    display: none !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .tos-premium-app-frame .tcs-floating-launcher {
+    left: calc(100% - 320px) !important;
+    top: 12px !important;
+    width: 56px !important;
+    min-width: 56px !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    padding: 7px !important;
+    gap: 0 !important;
+    justify-content: center !important;
+    border-radius: 18px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .tos-premium-app-frame .tcs-floating-launcher-copy {
+    display: none !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .tos-premium-app-frame .tcs-floating-launcher-icon {
+    flex: 0 0 42px !important;
+  }
+}
