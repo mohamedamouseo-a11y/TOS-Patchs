@@ -1,0 +1,159 @@
+:root {
+  --tos-task-details-v2-11d-r1-editor-right-rail-collision-fix-runtime: 1;
+}
+
+/*
+ * TOS Task Details V2.11D_R1
+ * MICRO STEP: EDITOR / RIGHT-RAIL COLLISION FIX ONLY
+ *
+ * The Right Rail remains untouched. This layer only restores the physical
+ * main-column width contract for the Description/Editor after older high-
+ * specificity rules forced the panel back to 100% width.
+ */
+
+@media (min-width: 1281px) {
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail)
+  .tos-task-description-panel {
+    width: calc(100% - 390px) !important;
+    max-width: calc(100% - 390px) !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-rich-editor-shell {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-editor-toolbar {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-editor-toolbar > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    gap: 3px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-editor-toolbar [class*="tos-editor-group"] {
+    gap: 1px !important;
+    padding: 2px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-editor-toolbar button {
+    min-width: 27px !important;
+    height: 28px !important;
+    padding: 0 5px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-editor-toolbar select {
+    min-width: 66px !important;
+    height: 28px !important;
+    padding-inline-start: 7px !important;
+    padding-inline-end: 20px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-rich-editor-content,
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-save-description-button {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (min-width: 1180px) and (max-width: 1280px) {
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail)
+  .tos-task-description-panel {
+    width: calc(100% - 348px) !important;
+    max-width: calc(100% - 348px) !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-rich-editor-shell,
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-editor-toolbar,
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-rich-editor-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-editor-toolbar > div {
+    gap: 2px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-editor-toolbar [class*="tos-editor-group"] {
+    gap: 1px !important;
+    padding: 2px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-editor-toolbar button {
+    min-width: 26px !important;
+    height: 28px !important;
+    padding: 0 4px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-editor-toolbar select {
+    min-width: 62px !important;
+    height: 28px !important;
+    padding-inline-start: 6px !important;
+    padding-inline-end: 18px !important;
+  }
+}
+
+@media (max-width: 1179px) {
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
