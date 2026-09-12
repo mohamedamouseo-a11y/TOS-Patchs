@@ -9,10 +9,8 @@
 }
 
 /*
- * R1 used a non-existent root selector:
- *   .tos-task-details-modal[data-task-details-reference="v2"]
- *
- * The live Task Details root is actually:
+ * R1 was anchored to a non-existent modal-root variant.
+ * The live Task Details root is:
  *   .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
  *
  * Use the same high-specificity live scope already used by the approved
