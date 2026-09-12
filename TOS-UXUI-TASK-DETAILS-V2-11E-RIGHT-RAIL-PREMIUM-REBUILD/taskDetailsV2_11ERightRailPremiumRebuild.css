@@ -1,0 +1,418 @@
+:root {
+  --tos-task-details-v2-11e-right-rail-premium-rebuild-runtime: 1;
+}
+
+/*
+ * TOS Task Details V2.11E
+ * MICRO STEP: RIGHT RAIL PREMIUM REBUILD ONLY
+ * Baseline: V2.11D_R1 / TOS main fd10edb0885a148dd53a8cbd6346bbea7f2d6ab4
+ *
+ * Scope:
+ * - Premium visual rebuild of the existing Overview Right Rail.
+ * - Responsive rail/main-column geometry hardening at 1440 / 1366 / 1280.
+ * - No JSX, task logic, Rich Text logic, Hero controls, Primary Tabs styling,
+ *   TCS logic, Ramzy logic, permissions, APIs, or database behavior changes.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Right Rail shell                                                    */
+/* ------------------------------------------------------------------ */
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-reference-v2-rail {
+  z-index: 4 !important;
+  gap: 14px !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-reference-v2-rail > .tos-task-v2-rail-card,
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-reference-v2-rail > .tos-task-v2-tcs-card {
+  position: relative !important;
+  overflow: hidden !important;
+  border: 1px solid #e7dfd2 !important;
+  border-radius: 18px !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.99) 0%, rgba(255,253,248,.98) 100%) !important;
+  box-shadow: 0 14px 34px rgba(45,35,20,.07), inset 0 1px 0 rgba(255,255,255,.94) !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-reference-v2-rail > .tos-task-v2-rail-card::before,
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-reference-v2-rail > .tos-task-v2-tcs-card::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 0 auto 0 !important;
+  height: 2px !important;
+  background: linear-gradient(90deg, transparent 0%, rgba(190,128,16,.58) 24%, rgba(224,169,58,.82) 52%, transparent 100%) !important;
+  pointer-events: none !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-rail-card {
+  padding: 16px 16px 15px !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-rail-card h4,
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-tcs-card h4 {
+  min-height: 28px !important;
+  gap: 10px !important;
+  color: #111c34 !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  letter-spacing: -.01em !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-rail-icon {
+  display: inline-grid !important;
+  width: 28px !important;
+  height: 28px !important;
+  flex: 0 0 28px !important;
+  place-items: center !important;
+  border: 1px solid #ecd8ad !important;
+  border-radius: 9px !important;
+  background: linear-gradient(145deg,#fff9eb,#fff3d5) !important;
+  color: #a96c08 !important;
+  font-size: 14px !important;
+  box-shadow: 0 4px 12px rgba(179,113,7,.08) !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Quick Actions                                                       */
+/* ------------------------------------------------------------------ */
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-quick-grid {
+  gap: 9px !important;
+  margin-top: 13px !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-quick-grid button {
+  min-height: 40px !important;
+  padding: 0 12px !important;
+  border: 1px solid #e7e0d6 !important;
+  border-radius: 11px !important;
+  background: linear-gradient(180deg,#fff 0%,#fbfaf7 100%) !important;
+  color: #334158 !important;
+  font-size: 10px !important;
+  font-weight: 820 !important;
+  box-shadow: 0 5px 14px rgba(45,35,20,.035) !important;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-quick-grid button:hover:not(:disabled) {
+  transform: translateY(-1px) !important;
+  border-color: #ddc99f !important;
+  background: #fffaf0 !important;
+  box-shadow: 0 8px 18px rgba(145,94,10,.08) !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-quick-grid button:disabled {
+  opacity: .62 !important;
+  background: #faf9f6 !important;
+  color: #7b8492 !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Task Information                                                    */
+/* ------------------------------------------------------------------ */
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-info-card dl {
+  gap: 0 !important;
+  margin: 12px 0 0 !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-info-card dl > div {
+  grid-template-columns: minmax(86px, 104px) minmax(0,1fr) !important;
+  gap: 12px !important;
+  min-height: 36px !important;
+  padding: 9px 0 !important;
+  align-items: center !important;
+  border-bottom: 1px solid #f0ece5 !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-info-card dl > div:last-child {
+  border-bottom: 0 !important;
+  padding-bottom: 2px !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-info-card dt {
+  color: #8a93a1 !important;
+  font-size: 9px !important;
+  font-weight: 760 !important;
+  letter-spacing: .035em !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-info-card dd {
+  color: #3d4a61 !important;
+  font-size: 10px !important;
+  font-weight: 780 !important;
+  line-height: 1.45 !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Tags                                                                */
+/* ------------------------------------------------------------------ */
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-rail-heading-row > button {
+  min-width: 62px !important;
+  height: 30px !important;
+  padding: 0 11px !important;
+  border: 1px solid #e7dfd3 !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  color: #56647a !important;
+  font-size: 9px !important;
+  font-weight: 820 !important;
+  box-shadow: 0 4px 12px rgba(45,35,20,.035) !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-tags {
+  gap: 7px !important;
+  margin-top: 13px !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-tags > span {
+  min-height: 27px !important;
+  padding: 0 10px !important;
+  border-radius: 999px !important;
+  font-size: 9px !important;
+  font-weight: 780 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.75) !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-tag-plus {
+  width: 29px !important;
+  height: 29px !important;
+  border: 1px solid #e5ded3 !important;
+  background: linear-gradient(180deg,#fff,#faf8f4) !important;
+  color: #9b650c !important;
+  box-shadow: 0 4px 12px rgba(45,35,20,.035) !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* TCS Assistant card                                                  */
+/* ------------------------------------------------------------------ */
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-reference-v2-rail > .tos-task-v2-tcs-card {
+  min-height: 100px !important;
+  padding: 15px 15px !important;
+  border-color: #ead3a2 !important;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(215,153,34,.14), transparent 30%),
+    linear-gradient(135deg,#fff8e9 0%,#fffdf8 62%,#fffaf0 100%) !important;
+  box-shadow: 0 14px 34px rgba(139,89,8,.09), inset 0 1px 0 #fff !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-tcs-card h4 {
+  color: #825207 !important;
+  font-size: 12px !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-tcs-card p {
+  max-width: 210px !important;
+  margin: 5px 0 0 !important;
+  color: #7c756b !important;
+  font-size: 9px !important;
+  line-height: 1.55 !important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-tcs-card button {
+  min-width: 78px !important;
+  height: 36px !important;
+  padding: 0 13px !important;
+  border: 1px solid #dfc184 !important;
+  border-radius: 10px !important;
+  background: linear-gradient(180deg,#fff,#fff8e9) !important;
+  color: #895707 !important;
+  font-size: 9px !important;
+  font-weight: 880 !important;
+  box-shadow: 0 6px 15px rgba(148,92,5,.08) !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive geometry: maintain a physical gap, never overlap.       */
+/* ------------------------------------------------------------------ */
+@media (min-width: 1481px) {
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-v2-rail { width: 370px !important; }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-description-panel {
+    width: calc(100% - 390px) !important;
+    max-width: calc(100% - 390px) !important;
+  }
+}
+
+@media (min-width: 1361px) and (max-width: 1480px) {
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-v2-rail { width: 346px !important; }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-description-panel {
+    width: calc(100% - 366px) !important;
+    max-width: calc(100% - 366px) !important;
+  }
+}
+
+@media (min-width: 1281px) and (max-width: 1360px) {
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-v2-rail { width: 332px !important; }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-description-panel {
+    width: calc(100% - 352px) !important;
+    max-width: calc(100% - 352px) !important;
+  }
+}
+
+@media (min-width: 1180px) and (max-width: 1280px) {
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-v2-rail { width: 330px !important; }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-description-panel {
+    width: calc(100% - 350px) !important;
+    max-width: calc(100% - 350px) !important;
+  }
+}
+
+@media (max-width: 1179px) {
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-v2-rail {
+    position: relative !important;
+    top: auto !important;
+    inset: auto !important;
+    width: 100% !important;
+    margin-top: 14px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-description-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Dark mode translation                                               */
+/* ------------------------------------------------------------------ */
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-reference-v2-rail > .tos-task-v2-rail-card,
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-reference-v2-rail > .tos-task-v2-tcs-card {
+  border-color: rgba(218,224,229,.12) !important;
+  background: linear-gradient(180deg,#121a20 0%,#0f171c 100%) !important;
+  box-shadow: 0 16px 36px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-rail-card h4,
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-tcs-card h4 { color: #f0f4f6 !important; }
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-quick-grid button,
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-rail-heading-row > button,
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-tag-plus {
+  border-color: rgba(218,224,229,.12) !important;
+  background: #151d23 !important;
+  color: #cbd3d9 !important;
+}
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-info-card dl > div { border-bottom-color: rgba(218,224,229,.08) !important; }
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-info-card dt { color: #97a3ad !important; }
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-v2-info-card dd { color: #d4dde2 !important; }
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-reference-v2-rail > .tos-task-v2-tcs-card {
+  border-color: rgba(223,179,86,.22) !important;
+  background: radial-gradient(circle at 88% 12%,rgba(223,179,86,.09),transparent 31%), linear-gradient(135deg,#171b18,#131a1e) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-v2-quick-grid button { transition: none !important; }
+}
