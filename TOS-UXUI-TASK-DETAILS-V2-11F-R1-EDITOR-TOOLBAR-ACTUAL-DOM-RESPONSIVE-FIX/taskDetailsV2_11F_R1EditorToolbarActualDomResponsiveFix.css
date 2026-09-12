@@ -1,0 +1,170 @@
+/* ================================================================
+   TOS TASK DETAILS V2.11F_R1
+   EDITOR TOOLBAR ACTUAL-DOM RESPONSIVE + MORE FORMATTING FIX
+   Scope: presentation only — no editor command/JS/business logic changes
+   ================================================================ */
+
+:root {
+  --tos-task-details-v2-11f-r1-editor-toolbar-actual-dom-responsive-fix-runtime: 1;
+}
+
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 40px !important;
+  max-height: none !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  row-gap: 4px !important;
+}
+
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar > div {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex: 1 1 100% !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  align-content: flex-start !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  gap: 4px 3px !important;
+  overflow: visible !important;
+}
+
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar [class*="tos-editor-group"] {
+  flex: 0 0 auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+/* Actual baseline group order. */
+body:has(.tos-task-details-modal[data-task-details-reference="v2"]) .tos-task-details-modal .tos-task-description-panel .tos-editor-group-history { order: 10 !important; }
+body:has(.tos-task-details-modal[data-task-details-reference="v2"]) .tos-task-details-modal .tos-task-description-panel .tos-editor-group-block { order: 20 !important; }
+body:has(.tos-task-details-modal[data-task-details-reference="v2"]) .tos-task-details-modal .tos-task-description-panel .tos-editor-group-inline { order: 30 !important; }
+body:has(.tos-task-details-modal[data-task-details-reference="v2"]) .tos-task-details-modal .tos-task-description-panel .tos-editor-group-list { order: 40 !important; }
+body:has(.tos-task-details-modal[data-task-details-reference="v2"]) .tos-task-details-modal .tos-task-description-panel .tos-editor-group-align { order: 50 !important; }
+body:has(.tos-task-details-modal[data-task-details-reference="v2"]) .tos-task-details-modal .tos-task-description-panel .tos-editor-group-color { order: 60 !important; }
+body:has(.tos-task-details-modal[data-task-details-reference="v2"]) .tos-task-details-modal .tos-task-description-panel .tos-editor-group-insert { order: 70 !important; }
+
+/*
+ * Decluttered closed state.
+ * Alignment remains visible because the actual DOM groups RTL/LTR inside it.
+ */
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="false"] .tos-editor-group-block,
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="false"] .tos-editor-group-color,
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="false"] .tos-editor-group-insert {
+  display: none !important;
+}
+
+/* Explicitly keep actual core groups available while closed. */
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="false"] .tos-editor-group-history,
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="false"] .tos-editor-group-inline,
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="false"] .tos-editor-group-list,
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="false"] .tos-editor-group-align {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* More Formatting restores every actual toolbar group. */
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="true"] .tos-editor-group-history,
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="true"] .tos-editor-group-block,
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="true"] .tos-editor-group-inline,
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="true"] .tos-editor-group-list,
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="true"] .tos-editor-group-align,
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="true"] .tos-editor-group-color,
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-toolbar[data-extended="true"] .tos-editor-group-insert {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+body:has(.tos-task-details-modal[data-task-details-reference="v2"])
+  .tos-task-details-modal
+  .tos-task-description-panel
+  .tos-task-editor-more-button {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  flex: 0 0 auto !important;
+  order: 80 !important;
+  max-width: 100% !important;
+}
+
+@media (min-width: 1501px) {
+  body:has(.tos-task-details-modal[data-task-details-reference="v2"]) .tos-task-details-modal .tos-task-description-panel .tos-task-editor-toolbar > div {
+    gap: 4px 3px !important;
+  }
+}
+
+@media (min-width: 1381px) and (max-width: 1500px) {
+  body:has(.tos-task-details-modal[data-task-details-reference="v2"]) .tos-task-details-modal .tos-task-description-panel .tos-task-editor-toolbar > div {
+    gap: 3px 2px !important;
+  }
+}
+
+@media (min-width: 1280px) and (max-width: 1380px) {
+  body:has(.tos-task-details-modal[data-task-details-reference="v2"]) .tos-task-details-modal .tos-task-description-panel .tos-task-editor-toolbar {
+    row-gap: 3px !important;
+  }
+
+  body:has(.tos-task-details-modal[data-task-details-reference="v2"]) .tos-task-details-modal .tos-task-description-panel .tos-task-editor-toolbar > div {
+    gap: 3px 1px !important;
+  }
+}
