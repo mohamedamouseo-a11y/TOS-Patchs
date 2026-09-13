@@ -1,0 +1,117 @@
+PROJECT=TOS
+VERSION=TOS_TASK_DETAILS_V2_11J_R3
+PATCH=TOS-UXUI-TASK-DETAILS-V2-11J-R3-DARK-HERO-TABS-SPECIFICITY-FIX
+MODE=APPLY_PATCH_THEN_VISUAL_QA
+
+SOURCE_PROJECT_PUSH=NO
+PUSH=NO
+
+PATCH REPO:
+Preferred: /var/www/TOS-Patchs
+Fallback: /home/openhands/TOS-Patchs
+
+Update the patch repo and verify HEAD contains the exact R3 commit supplied by ChatGPT before applying.
+Git is allowed only inside the patch repo. Do not use git inside /var/www/TOS.
+
+Apply exactly:
+python3 <PATCH_REPO>/TOS-UXUI-TASK-DETAILS-V2-11J-R3-DARK-HERO-TABS-SPECIFICITY-FIX/apply_tos_task_details_v2_11j_r3_dark_hero_tabs_specificity_fix.py /var/www/TOS
+
+If /var/www/TOS is on the already-connected remote deployment server, transfer only the prepared R3 patch directory there and run the prepared installer. Do not manually edit the payload or source.
+
+STRICT:
+- No manual CSS edits
+- No JSX/JS edits
+- No backend/API/database/permission changes
+- No manual fallback
+- No source push
+
+If installer fails, STOP and return exact stdout/stderr.
+
+EXPECTED TECHNICAL RESULT:
+VERSION=TOS_TASK_DETAILS_V2_11J_R3
+PASS/FAIL=PASS
+BUILD_RESULT=PASS
+LIVE_DEPLOY=PASS
+PATCH_SCOPE=CSS_ONLY
+HERO_CONTROLS_SPECIFICITY_FIX=YES
+PRIMARY_TABS_SPECIFICITY_FIX=YES
+R1_RESPONSIVE_GEOMETRY_CHANGED=NO
+DESCRIPTION_CHANGED=NO
+RIGHT_RAIL_CHANGED=NO
+COMMENTS_LOGIC_CHANGED=NO
+TNC_ROUTING_CHANGED=NO
+PUSH=NO
+
+VISUAL QA TARGET:
+https://tos.tamiyouz.com/tasks?projectId=cmr0j79j400h4pil9n665l1a6&taskId=cmrmjeco900a597l97yga195i
+
+Use ONLY an existing authenticated NORMAL / INTERACTIVE browser session.
+DO NOT use Playwright, Puppeteer, headless browser, automation scripts, cookie inspection/injection, JWT injection, localStorage/sessionStorage injection, CDP, programmatic authentication, or credential guessing.
+Do not request credentials.
+
+If interactive authenticated browser is unavailable, STOP and return:
+VISUAL_QA=BLOCKED
+BLOCKER=INTERACTIVE_AUTHENTICATED_BROWSER_SESSION_UNAVAILABLE
+PUSH=NO
+
+Do not edit task data. Do not save, add comments, change status, priority, assignees, due date, or Description.
+
+CAPTURE EXACTLY 4 PNG SCREENSHOTS:
+
+1) 1664x936 DARK Overview
+Filename: TOS__TASK-DETAILS__V2-11J-R3__DARK__FULL__1664x936.png
+Must prove:
+- Assignees / Status / Priority / Due Date outer cards are graphite/dark, not white
+- their inner controls are dark
+- Status may use restrained warm-gold tint
+- primary tabs strip is graphite/dark, not white
+- active Overview tab has restrained gold state
+- R2 Description and Right Rail remain intact
+
+2) 1664x936 DARK Comments
+Filename: TOS__TASK-DETAILS__V2-11J-R3__DARK__COMMENTS__1664x936.png
+Click Comments. Must show Comments active + Comments panel/editor visible. Do not type.
+
+3) 1366x768 DARK Overview
+Filename: TOS__TASK-DETAILS__V2-11J-R3__DARK__FULL__1366x768.png
+Must prove all six primary tabs are visible in one row with no clipping/overlap:
+Overview | Comments | Checklist | Attachments | Activity | Subtasks
+Also prove Hero controls and tabs strip stay dark.
+
+4) 1664x936 LIGHT sanity
+Filename: TOS__TASK-DETAILS__V2-11J-R3__LIGHT-SANITY__1664x936.png
+Must prove Light Mode remains unchanged.
+
+CREATE ONE ZIP containing exactly those 4 PNG files:
+TOS__TASK-DETAILS__V2-11J-R3__VISUAL-QA.zip
+
+Do NOT upload to Google Drive.
+Return the ZIP file directly to the user as an attachment/file so they can upload it to ChatGPT.
+
+FINAL REPORT:
+VERSION=TOS_TASK_DETAILS_V2_11J_R3
+VISUAL_QA=
+HERO_ASSIGNEE_BRIGHT_WHITE=
+HERO_STATUS_BRIGHT_WHITE=
+HERO_PRIORITY_BRIGHT_WHITE=
+HERO_DUE_DATE_BRIGHT_WHITE=
+PRIMARY_TABS_WHITE_STRIP=
+PRIMARY_TABS_DARK_SURFACE=
+ACTIVE_TAB_GOLD_STATE=
+TABS_1366_ALL_VISIBLE=
+TABS_1366_NO_CLIPPING=
+TABS_1366_NO_OVERLAP=
+COMMENTS_TAB_ACTIVE=
+COMMENTS_PANEL_VISIBLE=
+COMMENTS_EDITOR_VISIBLE=
+DESCRIPTION_REGRESSION=
+RIGHT_RAIL_REGRESSION=
+LIGHT_MODE_REGRESSION=
+ZIP_CREATED=
+ZIP_FILE_COUNT=4
+ZIP_NAME=TOS__TASK-DETAILS__V2-11J-R3__VISUAL-QA.zip
+SOURCE_PROJECT_PUSHED=NO
+PUSH=NO
+STATUS=READY_FOR_CHATGPT_VISUAL_APPROVAL
+
+STOP. DO NOT PUSH TOS SOURCE.
