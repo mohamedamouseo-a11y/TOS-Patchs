@@ -1,0 +1,212 @@
+:root{--tos-task-details-v2-11j-r2-dark-premium-polish-runtime:1}
+
+/* V2.11J_R2 — dark-mode-only visual consistency pass. */
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2{
+  --r2-dark-canvas:#090d12;
+  --r2-dark-surface:#0f151c;
+  --r2-dark-surface-2:#131b24;
+  --r2-dark-surface-3:#17212c;
+  --r2-dark-line:rgba(226,232,240,.11);
+  --r2-dark-line-strong:rgba(226,232,240,.16);
+  --r2-dark-ink:#f4f7fb;
+  --r2-dark-muted:#9ba8b8;
+  --r2-dark-gold:#d89a22;
+  --r2-dark-gold-soft:rgba(216,154,34,.12);
+  background:
+    radial-gradient(circle at 12% 0%,rgba(216,154,34,.055),transparent 28%),
+    linear-gradient(180deg,#0b0f14 0%,#090d12 100%)!important;
+  color:var(--r2-dark-ink)!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-details-modal{
+  background:transparent!important;
+}
+
+/* Hero: one graphite system, no white cards. */
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-summary-compact{
+  border-color:var(--r2-dark-line)!important;
+  background:
+    radial-gradient(circle at 82% 18%,rgba(216,154,34,.06),transparent 28%),
+    linear-gradient(180deg,#111922 0%,#0e151d 100%)!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-title-input{
+  border-color:transparent!important;
+  background:transparent!important;
+  color:#f7f9fc!important;
+  box-shadow:none!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-title-input:hover,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-title-input:focus{
+  border-color:rgba(216,154,34,.18)!important;
+  background:rgba(216,154,34,.045)!important;
+  box-shadow:0 0 0 4px rgba(216,154,34,.035)!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-summary-controls>*{
+  border-color:var(--r2-dark-line)!important;
+  background:linear-gradient(180deg,#141d27 0%,#111820 100%)!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.14)!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-v2-assignee-picker-trigger,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-summary-controls select,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-summary-controls input,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-v2-premium-select-trigger,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-v2-date-picker-trigger{
+  border-color:rgba(226,232,240,.08)!important;
+  background:#0f161e!important;
+  color:#e7edf5!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.02)!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-v2-status-control,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-v2-priority-control,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-v2-due-date-control,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-v2-assignees-card{
+  border-color:var(--r2-dark-line)!important;
+  background:linear-gradient(180deg,#141d27 0%,#10171f 100%)!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-summary-controls span,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-v2-control-label,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-v2-premium-control-head{
+  color:var(--r2-dark-muted)!important;
+}
+
+/* Primary tabs: remove bright light strip, retain restrained gold active state. */
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-detail-tabs{
+  border-color:var(--r2-dark-line)!important;
+  background:rgba(15,21,28,.94)!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.025)!important;
+  backdrop-filter:blur(16px)!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-reference-tabs-main{
+  background:transparent!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-reference-tab{
+  border-color:transparent!important;
+  background:transparent!important;
+  color:#9eabba!important;
+  box-shadow:none!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-reference-tab:hover{
+  border-color:rgba(226,232,240,.06)!important;
+  background:rgba(255,255,255,.025)!important;
+  color:#e6ebf2!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-reference-tab[data-active="true"]{
+  border-color:rgba(216,154,34,.28)!important;
+  background:linear-gradient(180deg,rgba(216,154,34,.14),rgba(216,154,34,.07))!important;
+  color:#f0bd5b!important;
+  box-shadow:inset 0 -2px 0 rgba(216,154,34,.68)!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-reference-tab-count{
+  border-color:rgba(226,232,240,.09)!important;
+  background:#18212b!important;
+  color:#aeb9c7!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-reference-tab[data-active="true"] .tos-task-reference-tab-count{
+  border-color:rgba(216,154,34,.22)!important;
+  background:rgba(216,154,34,.12)!important;
+  color:#f0bd5b!important;
+}
+
+/* Description/editor: layered graphite hierarchy instead of mixed black/white surfaces. */
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-description-panel{
+  border-color:var(--r2-dark-line)!important;
+  background:linear-gradient(180deg,#111922 0%,#0f161e 100%)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.18)!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-description-panel h3{
+  color:#f3f6fa!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-v2-description-actions button{
+  border-color:rgba(216,154,34,.18)!important;
+  background:rgba(216,154,34,.07)!important;
+  color:#efbd5d!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-rich-editor-shell{
+  border-color:var(--r2-dark-line)!important;
+  background:#0b1118!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.02)!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-rich-editor-toolbar,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-rich-editor-shell>div:first-child{
+  border-color:var(--r2-dark-line)!important;
+  background:#111922!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-rich-editor-toolbar button,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-rich-editor-shell>div:first-child button{
+  border-color:rgba(226,232,240,.08)!important;
+  background:#151e28!important;
+  color:#c3ccd7!important;
+  box-shadow:none!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-rich-editor-toolbar button:hover,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-rich-editor-shell>div:first-child button:hover{
+  border-color:rgba(216,154,34,.18)!important;
+  background:rgba(216,154,34,.08)!important;
+  color:#efbd5d!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-rich-editor-content{
+  background:#0b1118!important;
+  color:#d9e0e8!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-rich-editor-content::placeholder{
+  color:#6f7b89!important;
+}
+
+/* Comments should visually belong to the same dark system. */
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 [data-task-comments-panel],
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-comments-panel{
+  border-color:var(--r2-dark-line)!important;
+  background:linear-gradient(180deg,#111922 0%,#0f161e 100%)!important;
+}
+
+/* Right rail: harmonize cards and actions without touching their logic. */
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-details-layout>aside,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-details-layout>aside>div{
+  color:#e7edf5!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-details-layout>aside>div>div,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-details-layout>aside section{
+  border-color:var(--r2-dark-line)!important;
+  background:linear-gradient(180deg,#111922 0%,#0f161e 100%)!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.16)!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-details-layout>aside button{
+  border-color:var(--r2-dark-line)!important;
+  background:#121a23!important;
+  color:#dbe3ec!important;
+  box-shadow:none!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-details-layout>aside button:hover:not(:disabled){
+  border-color:rgba(216,154,34,.18)!important;
+  background:rgba(216,154,34,.07)!important;
+  color:#efbd5d!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-details-layout>aside p,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-details-layout>aside span{
+  border-color:var(--r2-dark-line)!important;
+}
