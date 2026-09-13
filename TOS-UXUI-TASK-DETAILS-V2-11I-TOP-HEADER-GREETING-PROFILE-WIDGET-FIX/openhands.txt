@@ -1,0 +1,204 @@
+==================================================
+PROJECT=TOS TASK DETAILS
+VERSION=TOS_TASK_DETAILS_V2_11I
+PATCH=TOS-UXUI-TASK-DETAILS-V2-11I-TOP-HEADER-GREETING-PROFILE-WIDGET-FIX
+BASELINE=TOS_TASK_DETAILS_V2_11H
+ELEMENT=TOP HEADER GREETING / PROFILE-LIKE RAMZY WIDGET
+STATUS=APPLY_PATCH_AND_RETURN_FOR_CHATGPT_VISUAL_QA
+==================================================
+
+OBJECTIVE
+Fix ONLY the top-header Ramzy avatar/greeting presentation defect visible in the V2.11H screenshots.
+
+The defect to eliminate:
+- Ramzy greeting text must NEVER collapse into a narrow vertical word stack.
+- Ramzy avatar must remain fully contained in the top-header safe band.
+- At 1664x936, greeting/identity copy must render horizontally beside the avatar.
+- At 1366x768, keep the previously approved compact avatar-only treatment; greeting/label should remain hidden.
+- The Ramzy launcher must not overlap TCS, search, user profile, breadcrumbs, buttons, Task Details Hero or page content.
+
+IMPORTANT
+This is NOT a Task Details redesign.
+This is NOT a user-profile redesign.
+This is NOT a TCS redesign.
+This is a CSS-only correction to the closed Ramzy launcher presentation while Task Details V2 is mounted.
+
+PATCH SOURCE
+Use the existing patch repository clone at `/var/www/TOS-Patchs` if available.
+Otherwise fetch the patch files from:
+https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/main/TOS-UXUI-TASK-DETAILS-V2-11I-TOP-HEADER-GREETING-PROFILE-WIDGET-FIX/
+
+Execute exactly:
+python3 \
+/var/www/TOS-Patchs/TOS-UXUI-TASK-DETAILS-V2-11I-TOP-HEADER-GREETING-PROFILE-WIDGET-FIX/apply_tos_task_details_v2_11i_top_header_greeting_profile_widget_fix.py \
+/var/www/TOS
+
+If the local patch repo does not yet contain this folder, update/fetch the patch repo first. Do not manually improvise another fix before executing the published installer.
+
+REQUIREMENTS AFTER INSTALL
+- PASS/FAIL=PASS
+- BUILD_RESULT=PASS
+- LIVE_DEPLOY=PASS
+- TOP_HEADER_GREETING_PROFILE_FIX_APPLIED=YES
+- RAMZY_LAUNCHER_COMPONENT_CHANGED=NO
+- TCS_COMPONENT_CHANGED=NO
+- TASK_DETAILS_CHANGED=NO
+- HERO_CHANGED=NO
+- DESCRIPTION_CHANGED=NO
+- DESCRIPTION_DATA_CHANGED=NO
+- PRIMARY_TABS_CHANGED=NO
+- RIGHT_RAIL_CHANGED=NO
+- WAITING_CLIENT_LAYOUT_CHANGED=NO
+
+PROTECTED AREAS — MUST NOT CHANGE
+- Task Details Hero composition/title/metadata/controls
+- Overview Description panel/editor/content
+- Waiting Client Conversation
+- Primary tabs
+- Right Rail
+- TCS launcher/component/window/logic
+- Ramzy JS/component/open panel/chat/drag/close logic
+- Top-right logged-in user profile content/style
+- Sidebar/navigation
+- Task data
+- API/backend/database
+- permissions/auth
+
+VISUAL QA
+Use LIGHT MODE.
+Test the same Task Details page used for V2.11H.
+Do not modify task data.
+Do not save/update/edit any task content during QA.
+
+VIEWPORT A = 1664x936
+Verify visually and by DOM geometry:
+1. `.ramzy-launcher-wrap` is inside the visible top-header band.
+2. Ramzy avatar/ring is not clipped.
+3. If `.ramzy-greeting` is rendered, it has a real horizontal box and the Arabic phrase is readable horizontally, with no character/word-per-line vertical stacking.
+4. If `.ramzy-launcher-label` is rendered instead, strong/small copy remains horizontal.
+5. Ramzy launcher/greeting does not overlap `.tcs-floating-launcher`.
+6. Ramzy launcher/greeting does not overlap the top-right logged-in user profile block.
+7. Ramzy launcher/greeting does not overlap search or page toolbar/breadcrumbs.
+
+VIEWPORT B = 1366x768
+Verify visually and by DOM geometry:
+1. `.ramzy-launcher-wrap` remains inside the top-header safe band.
+2. `.ramzy-greeting` visible area = 0 OR computed display:none.
+3. `.ramzy-launcher-label` visible area = 0 OR computed display:none.
+4. Avatar remains fully visible and not clipped.
+5. No overlap with TCS/search/profile/task content.
+6. No vertical text strip anywhere around the Ramzy launcher.
+
+GEOMETRY / TEXT CHECKS
+Report these exact fields:
+TOP_HEADER_RAMZY_AVATAR_WITHIN_HEADER_1664=<YES/NO>
+TOP_HEADER_RAMZY_COPY_HORIZONTAL_1664=<YES/NO>
+TOP_HEADER_RAMZY_VERTICAL_STACKING_1664=<YES/NO>
+TOP_HEADER_RAMZY_OVERLAP_TCS_1664=<YES/NO>
+TOP_HEADER_RAMZY_OVERLAP_PROFILE_1664=<YES/NO>
+TOP_HEADER_RAMZY_OVERFLOW_1664=<YES/NO>
+TOP_HEADER_RAMZY_AVATAR_WITHIN_HEADER_1366=<YES/NO>
+TOP_HEADER_RAMZY_COMPACT_COPY_HIDDEN_1366=<YES/NO>
+TOP_HEADER_RAMZY_VERTICAL_STACKING_1366=<YES/NO>
+TOP_HEADER_RAMZY_OVERLAP_TCS_1366=<YES/NO>
+TOP_HEADER_RAMZY_OVERLAP_PROFILE_1366=<YES/NO>
+TOP_HEADER_RAMZY_OVERFLOW_1366=<YES/NO>
+
+If any overlap or overflow exists, report the exact two elements and their bounding rectangles/delta. Do not return a generic failure without geometry.
+
+REGRESSION CHECKS
+HERO_TITLE_VISIBLE=YES
+HERO_DESCRIPTION_VISIBLE=NO
+OVERVIEW_DESCRIPTION_VISIBLE=YES
+DESCRIPTION_EDITOR_VISIBLE=YES
+DESCRIPTION_CONTENT_PRESERVED=YES
+PRIMARY_TABS_REGRESSION=PASS
+RIGHT_RAIL_REGRESSION=PASS
+WAITING_CLIENT_LAYOUT_REGRESSION=PASS
+TCS_REGRESSION=PASS
+USER_PROFILE_REGRESSION=PASS
+TASK_DATA_CHANGED=NO
+
+SCREENSHOTS
+Capture exactly 4 QA screenshots after deployment:
+1. TOS__TASK-DETAILS__V2-11I__HEADER__LIGHT__1664x936__<RUNSTAMP>.png
+   - full Task Details viewport, top header visible.
+2. TOS__TASK-DETAILS__V2-11I__HEADER-DETAIL__LIGHT__1664x936__<RUNSTAMP>.png
+   - close crop/viewport focused on search + Ramzy + TCS + user profile.
+3. TOS__TASK-DETAILS__V2-11I__HEADER__LIGHT__1366x768__<RUNSTAMP>.png
+   - full Task Details viewport, top header visible.
+4. TOS__TASK-DETAILS__V2-11I__HEADER-DETAIL__LIGHT__1366x768__<RUNSTAMP>.png
+   - close crop/viewport focused on search + Ramzy + TCS/profile region.
+
+GOOGLE DRIVE
+Upload all 4 screenshots to My Drive root as in the existing TOS QA workflow.
+If the Google Drive/client-side upload action is unavailable AFTER screenshots have been captured, do not invalidate completed browser QA. Report DRIVE_UPLOAD=FAILED_TOOL_UNAVAILABLE and continue.
+
+QA REPO
+Push screenshots only to the existing QA repository/workflow used for TOS screenshots.
+Do NOT push `/var/www/TOS` source yet.
+SOURCE_PROJECT_PUSHED=NO
+PUSH=NO
+
+PASS CONDITION
+Set STATUS=READY_FOR_CHATGPT_VISUAL_APPROVAL only if ALL are true:
+- BUILD_RESULT=PASS
+- LIVE_DEPLOY=PASS
+- TOP_HEADER_RAMZY_AVATAR_WITHIN_HEADER_1664=YES
+- TOP_HEADER_RAMZY_COPY_HORIZONTAL_1664=YES
+- TOP_HEADER_RAMZY_VERTICAL_STACKING_1664=NO
+- TOP_HEADER_RAMZY_OVERLAP_TCS_1664=NO
+- TOP_HEADER_RAMZY_OVERLAP_PROFILE_1664=NO
+- TOP_HEADER_RAMZY_OVERFLOW_1664=NO
+- TOP_HEADER_RAMZY_AVATAR_WITHIN_HEADER_1366=YES
+- TOP_HEADER_RAMZY_COMPACT_COPY_HIDDEN_1366=YES
+- TOP_HEADER_RAMZY_VERTICAL_STACKING_1366=NO
+- TOP_HEADER_RAMZY_OVERLAP_TCS_1366=NO
+- TOP_HEADER_RAMZY_OVERLAP_PROFILE_1366=NO
+- TOP_HEADER_RAMZY_OVERFLOW_1366=NO
+- all regression checks PASS
+
+FINAL REPORT FORMAT
+VERSION=TOS_TASK_DETAILS_V2_11I
+PATCH=TOS-UXUI-TASK-DETAILS-V2-11I-TOP-HEADER-GREETING-PROFILE-WIDGET-FIX
+PATCH_COMMIT=<patch repo commit used>
+
+PASS/FAIL=<PASS/FAIL>
+BUILD_RESULT=<PASS/FAIL>
+LIVE_DEPLOY=<PASS/FAIL>
+
+TOP_HEADER_GREETING_PROFILE_FIX_APPLIED=<YES/NO>
+TOP_HEADER_RAMZY_AVATAR_WITHIN_HEADER_1664=<YES/NO>
+TOP_HEADER_RAMZY_COPY_HORIZONTAL_1664=<YES/NO>
+TOP_HEADER_RAMZY_VERTICAL_STACKING_1664=<YES/NO>
+TOP_HEADER_RAMZY_OVERLAP_TCS_1664=<YES/NO>
+TOP_HEADER_RAMZY_OVERLAP_PROFILE_1664=<YES/NO>
+TOP_HEADER_RAMZY_OVERFLOW_1664=<YES/NO>
+TOP_HEADER_RAMZY_AVATAR_WITHIN_HEADER_1366=<YES/NO>
+TOP_HEADER_RAMZY_COMPACT_COPY_HIDDEN_1366=<YES/NO>
+TOP_HEADER_RAMZY_VERTICAL_STACKING_1366=<YES/NO>
+TOP_HEADER_RAMZY_OVERLAP_TCS_1366=<YES/NO>
+TOP_HEADER_RAMZY_OVERLAP_PROFILE_1366=<YES/NO>
+TOP_HEADER_RAMZY_OVERFLOW_1366=<YES/NO>
+
+HERO_TITLE_VISIBLE=<YES/NO>
+HERO_DESCRIPTION_VISIBLE=<YES/NO>
+OVERVIEW_DESCRIPTION_VISIBLE=<YES/NO>
+DESCRIPTION_EDITOR_VISIBLE=<YES/NO>
+DESCRIPTION_CONTENT_PRESERVED=<YES/NO>
+PRIMARY_TABS_REGRESSION=<PASS/FAIL>
+RIGHT_RAIL_REGRESSION=<PASS/FAIL>
+WAITING_CLIENT_LAYOUT_REGRESSION=<PASS/FAIL>
+TCS_REGRESSION=<PASS/FAIL>
+USER_PROFILE_REGRESSION=<PASS/FAIL>
+TASK_DATA_CHANGED=NO
+
+SCREENSHOTS_CAPTURED=4
+DRIVE_UPLOAD=<COMPLETE/FAILED_TOOL_UNAVAILABLE/PENDING>
+QA_PUSH=<result>
+QA_COMMIT_SHA=<sha>
+SOURCE_PROJECT_PUSHED=NO
+PUSH=NO
+FAILED_STEP=<NONE or exact step>
+ERROR=<NONE or exact error>
+STATUS=<READY_FOR_CHATGPT_VISUAL_APPROVAL or STOPPED>
