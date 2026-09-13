@@ -1,0 +1,139 @@
+==================================================
+PROJECT=TOS TASK DETAILS
+VERSION=TOS_TASK_DETAILS_V2_11J
+PATCH=TOS-UXUI-TASK-DETAILS-V2-11J-COMMENTS-PRIMARY-TAB-TNC-DEEP-LINK
+MODE=APPLY_PATCH_THEN_VISUAL_QA
+SOURCE_PUSH=FORBIDDEN
+==================================================
+
+OBJECTIVE
+1) Make Comments a permanent primary Task Details tab immediately after Overview.
+2) Preserve the existing comments count and existing comments/editor/submit logic.
+3) More Actions must gate Time only.
+4) Existing TNC task-comment notifications must open the task directly on Comments.
+5) Non-comment notifications and normal/manual task opens must still default to Overview.
+
+PATCH SOURCE
+Use `/var/www/TOS-Patchs` if present. Otherwise clone the official patch repo to `/var/www/TOS-Patchs` (fallback `/home/openhands/TOS-Patchs`). Git operations are allowed ONLY in the patch repo.
+Update the patch repo to current `main` and verify this folder exists:
+`TOS-UXUI-TASK-DETAILS-V2-11J-COMMENTS-PRIMARY-TAB-TNC-DEEP-LINK`
+
+Apply on the real authorized TOS server source at `/var/www/TOS` using:
+
+python3 \
+/var/www/TOS-Patchs/TOS-UXUI-TASK-DETAILS-V2-11J-COMMENTS-PRIMARY-TAB-TNC-DEEP-LINK/apply_tos_task_details_v2_11j_comments_primary_tab_tnc_deep_link.py \
+/var/www/TOS
+
+If the patch repo is at the fallback path, use the same installer from that path.
+
+STRICT RULES
+- Do NOT manually edit source.
+- Do NOT improvise a fallback patch.
+- Do NOT use Git inside `/var/www/TOS`.
+- Do NOT push `/var/www/TOS` source.
+- Do NOT alter backend/database/API/permissions.
+- Do NOT submit a comment during QA.
+- Do NOT edit/save task data during QA.
+- If installer/guard/build/deploy fails, STOP and report exact error.
+
+EXPECTED INSTALLER RESULT
+PASS/FAIL=PASS
+BUILD_RESULT=PASS
+LIVE_DEPLOY=PASS
+COMMENTS_PRIMARY_TAB=YES
+COMMENTS_POSITION_AFTER_OVERVIEW=YES
+COMMENTS_COUNT_BADGE_PRESERVED=YES
+MORE_ACTIONS_TIME_ONLY=YES
+MORE_CLOSE_COMMENTS_PRESERVED=YES
+TNC_COMMENT_DEEP_LINK=YES
+TNC_NON_COMMENT_DEFAULT_OVERVIEW=YES
+MANUAL_TASK_DEFAULT_OVERVIEW=YES
+COMMENT_SUBMIT_LOGIC_CHANGED=NO
+BACKEND_CHANGED=NO
+API_CHANGED=NO
+PUSH=NO
+
+VISUAL QA — LIGHT MODE
+Use the existing authenticated browser session and normal browser interaction.
+Test 1664x936 and 1366x768.
+Use an existing task that has comments if one is available. Do not create test comments.
+
+At BOTH viewports verify:
+- Primary tab order begins: Overview → Comments.
+- Comments is visible without opening More Actions.
+- Comments count badge is visible and matches the task's existing comment count if the count is nonzero.
+- Clicking Comments opens the existing comments panel.
+- Existing comment history/editor layout is intact.
+- No clipping/overlap in the tabs row.
+- Hero, Description, Waiting Client Conversation, Right Rail, TCS and Ramzy show no obvious regression.
+- Open More Actions: Time may appear.
+- Close More while Comments is active: Comments remains active.
+
+TNC FUNCTIONAL QA
+Open Notification Center normally.
+If an EXISTING task-comment notification is available, click it and verify:
+- correct task opens;
+- Comments is active immediately;
+- notification is handled by the existing Notification Center flow.
+Set `TNC_COMMENT_NOTIFICATION_TEST=PASS`.
+
+If no existing task-comment notification is available, DO NOT create/mutate data just to test it. Set:
+`TNC_COMMENT_NOTIFICATION_TEST=BLOCKED_NO_EXISTING_COMMENT_NOTIFICATION`
+This does not invalidate visual tab QA if installer/source wiring and build/deploy passed.
+
+If an existing non-comment task notification can be tested safely, verify it opens Overview. Otherwise report NOT_TESTED_NO_SAFE_EXISTING_NOTIFICATION.
+
+SCREENSHOTS — EXACTLY 4
+1. `TOS__TASK-DETAILS__V2-11J__PRIMARY-TABS__LIGHT__1664x936__<RUNSTAMP>.png`
+   Full Task Details viewport with primary tabs visible and Comments visible.
+2. `TOS__TASK-DETAILS__V2-11J__COMMENTS__LIGHT__1664x936__<RUNSTAMP>.png`
+   Comments tab active; comments panel/editor visible.
+3. `TOS__TASK-DETAILS__V2-11J__PRIMARY-TABS__LIGHT__1366x768__<RUNSTAMP>.png`
+4. `TOS__TASK-DETAILS__V2-11J__COMMENTS__LIGHT__1366x768__<RUNSTAMP>.png`
+
+Upload all 4 screenshots to Google Drive My Drive root using the existing TOS QA workflow. Return exact file names, IDs and links.
+
+FINAL REPORT
+VERSION=TOS_TASK_DETAILS_V2_11J
+PATCH=TOS-UXUI-TASK-DETAILS-V2-11J-COMMENTS-PRIMARY-TAB-TNC-DEEP-LINK
+PATCH_COMMIT=<actual patch repo commit used>
+PASS/FAIL=<PASS/FAIL>
+BUILD_RESULT=<PASS/FAIL>
+LIVE_DEPLOY=<PASS/FAIL>
+COMMENTS_PRIMARY_TAB=<YES/NO>
+COMMENTS_POSITION_AFTER_OVERVIEW=<YES/NO>
+COMMENTS_COUNT_BADGE_PRESERVED=<YES/NO>
+MORE_ACTIONS_TIME_ONLY=<YES/NO>
+MORE_CLOSE_COMMENTS_PRESERVED=<YES/NO>
+COMMENTS_PANEL_FUNCTIONAL=<PASS/FAIL>
+TNC_COMMENT_DEEP_LINK=<YES/NO>
+TNC_COMMENT_NOTIFICATION_TEST=<PASS/BLOCKED_NO_EXISTING_COMMENT_NOTIFICATION>
+TNC_NON_COMMENT_DEFAULT_OVERVIEW=<YES/NO/NOT_TESTED_NO_SAFE_EXISTING_NOTIFICATION>
+MANUAL_TASK_DEFAULT_OVERVIEW=<YES/NO>
+COMMENT_SUBMIT_LOGIC_CHANGED=NO
+HERO_REGRESSION=<PASS/FAIL>
+DESCRIPTION_REGRESSION=<PASS/FAIL>
+WAITING_CLIENT_REGRESSION=<PASS/FAIL>
+RIGHT_RAIL_REGRESSION=<PASS/FAIL>
+TCS_REGRESSION=<PASS/FAIL>
+RAMZY_REGRESSION=<PASS/FAIL>
+TASK_DATA_CHANGED=NO
+SCREENSHOTS_CAPTURED=<0-4>
+DRIVE_UPLOAD=<COMPLETE/FAILED_TOOL_UNAVAILABLE/PENDING>
+SCREENSHOT_1_NAME=<name>
+SCREENSHOT_1_ID=<id>
+SCREENSHOT_1_LINK=<link>
+SCREENSHOT_2_NAME=<name>
+SCREENSHOT_2_ID=<id>
+SCREENSHOT_2_LINK=<link>
+SCREENSHOT_3_NAME=<name>
+SCREENSHOT_3_ID=<id>
+SCREENSHOT_3_LINK=<link>
+SCREENSHOT_4_NAME=<name>
+SCREENSHOT_4_ID=<id>
+SCREENSHOT_4_LINK=<link>
+SOURCE_PROJECT_PUSHED=NO
+PUSH=NO
+FAILED_STEP=<NONE or exact step>
+ERROR=<NONE or exact error>
+STATUS=<READY_FOR_CHATGPT_VISUAL_APPROVAL or STOPPED>
