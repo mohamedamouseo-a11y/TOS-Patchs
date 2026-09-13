@@ -2,124 +2,100 @@
 
 MODE=IMPLEMENTATION_WITH_VERIFICATION
 
-You are already inside the live TOS project on the server. Do **not** use GitHub and do not fetch/pull/push anything.
+You are already inside the live TOS project on the server, normally `/var/www/TOS`.
 
 ## Goal
-Implement the first small prevention step only:
+Apply the prepared patch runner only. This is the first prevention step for TCRM → TOS project duplicates.
 
+Contract for this phase:
 - One TCRM `crmClientId` = one TOS operational project.
-- `crmClientId` must be present on inbound `POST /projects`.
-- If an existing delivery mapping is found, preserve the current update behavior.
-- If there is no delivery mapping, do **not** immediately create a new project when an unlinked legacy/manual TOS project looks like the same client/project.
-- In that case return HTTP `409` with code `TCRM_LEGACY_PROJECT_LINK_REQUIRED` and do not create or modify any project.
-- Do **not** auto-adopt, merge, archive, or delete anything in this phase.
-- Do **not** change database schema in this phase.
+- Existing delivery mapping must continue to update the same project.
+- If no mapping exists and an unlinked legacy/manual TOS project matches the inbound project/client name, block automatic creation with HTTP 409 `TCRM_LEGACY_PROJECT_LINK_REQUIRED`.
+- Do NOT auto-adopt, merge, archive, delete, or clean existing projects.
+- Do NOT change Prisma schema or existing project data.
 
-## Confirm current live code first
+## Hard restrictions
+Do NOT:
+- use git fetch/pull/push/reset/checkout/clean/rebase/merge;
+- modify TCRM;
+- run a real TCRM sync;
+- call production POST/PUT/PATCH/DELETE endpoints;
+- modify database rows manually;
+- run migrations;
+- deploy or restart services;
+- expose secrets, tokens, API keys, or `.env` values.
 
-From the real TOS project, inspect:
+## Step 1 — Confirm live baseline first
+
+From the real TOS project:
+
+```bash
+cd /var/www/TOS
+pwd
+git rev-parse HEAD 2>/dev/null || true
+git status --short 2>/dev/null || true
+```
+
+Inspect these files only:
 
 - `backend/src/routes/crmProjectsIntegration.routes.js`
 - `backend/prisma/schema.prisma`
 
-Confirm that current `handleTcrmProjectUpsert`:
-
+Confirm current `handleTcrmProjectUpsert` still behaves like this:
 1. reads `crmClientId` from `crmClientId || clientPoolId || crmClientNumber || clientId`;
 2. looks up `tos_crm_project_deliveries` by `source_key OR crm_client_id`;
-3. updates the mapped project when a row is found;
-4. otherwise immediately calls `tx.project.create()`;
-5. has no legacy reconciliation before create.
+3. updates the mapped project if found;
+4. otherwise reaches `tx.project.create()`;
+5. has no legacy reconciliation guard before create.
 
-If this is not true, STOP and report the difference. Do not guess.
+If that is not true, STOP and report `BASELINE_MISMATCH`. Do not apply anything.
 
-## Required code change
+## Step 2 — Download the prepared patch runner
 
-Target only:
+Use this pinned public raw file only:
 
-`backend/src/routes/crmProjectsIntegration.routes.js`
-
-### A. Require CRM client identity
-
-Change the `crmClientId` read from `normalizedText(...)` to `requiredText(..., "crmClientId")` using the existing fallback chain.
-
-### B. Add a read-only legacy candidate helper
-
-Add a helper that searches active, unarchived TOS `Project` rows that:
-
-- have **no** row in `tos_crm_project_deliveries`;
-- exactly match the inbound `projectName` case-insensitively after trim, OR exactly match inbound `clientName` case-insensitively after trim;
-- returns at most 10 rows;
-- returns only non-sensitive fields: `id`, `name`, `clientName`, `status`, `stage`, `archivedAt`, `createdAt`, `updatedAt`.
-
-Use parameterized Prisma SQL only. No string-built SQL.
-
-### C. Guard before create
-
-Immediately before the current create transaction:
-
-- call the legacy candidate helper;
-- if one or more candidates exist, **do not create anything**;
-- return HTTP 409 JSON:
-
-```json
-{
-  "success": false,
-  "code": "TCRM_LEGACY_PROJECT_LINK_REQUIRED",
-  "message": "An unlinked legacy TOS project may already represent this TCRM client. Automatic project creation was blocked to prevent a duplicate.",
-  "crmClientId": "...",
-  "projectName": "...",
-  "candidateCount": 1,
-  "candidates": [],
-  "requiredAction": "LINK_EXISTING_PROJECT_OR_CONFIRM_NEW_CLIENT_PROJECT",
-  "projectCreated": false
-}
+```bash
+curl -fsSL \
+https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/f6cb4bb90ab3cf32d217abc65fbd98dbd0fce352/TOS-TCRM-CLIENT-IDENTITY-DUPLICATE-GUARD-V1-GIT-GENERATED/apply_patch.py \
+-o /tmp/tos_tcrm_client_identity_duplicate_guard_v1.py
 ```
 
-Do not expose phone, email, website, notes, tokens, or secrets in candidates.
+Do not clone any repository.
 
-### D. Version marker
+## Step 3 — Apply to the live TOS project
 
-Change:
+```bash
+TOS_REPO=/var/www/TOS python3 /tmp/tos_tcrm_client_identity_duplicate_guard_v1.py
+```
 
-`TCRM_AUTHORITATIVE_PROJECT_RESYNC_ADD_ONLY_TEAM_V1`
+The runner is anchor-guarded. If it prints `STATUS=ABORT` or `REASON=BASELINE_ANCHOR_MISMATCH`, STOP immediately and do not hand-edit around the failure.
 
-to:
+## Step 4 — Verify source change only
 
-`TCRM_CLIENT_IDENTITY_DUPLICATE_GUARD_V1`
+Run:
 
-## Explicitly out of scope
+```bash
+cd /var/www/TOS
+git diff -- backend/src/routes/crmProjectsIntegration.routes.js
+node --check backend/src/routes/crmProjectsIntegration.routes.js
+```
 
-Do NOT:
+Then verify by source inspection only:
+- mapped-client path still updates the same project;
+- `crmClientId` is now required;
+- no-mapping + legacy candidate returns 409 before `project.create()`;
+- no-mapping + zero candidate still reaches the existing create flow;
+- no Prisma schema change happened;
+- no existing project data was changed.
 
-- auto-link a legacy project;
-- add unique DB constraints yet;
-- change Prisma schema;
-- clean duplicates;
-- archive/delete/merge projects;
-- change brief/services/team mapping;
-- change TCRM code;
-- run a real TCRM sync;
-- make POST/PUT/PATCH/DELETE requests to production endpoints;
-- git pull/fetch/push/reset/checkout/clean/rebase/merge.
-
-## Verification
-
-After editing:
-
-1. Show `git diff -- backend/src/routes/crmProjectsIntegration.routes.js`.
-2. Run:
-   `node --check backend/src/routes/crmProjectsIntegration.routes.js`
-3. Verify by source inspection only:
-   - existing mapped-client path still updates same project;
-   - no-mapping + legacy candidate path returns 409 before `project.create()`;
-   - no-mapping + zero candidate path still reaches existing create flow;
-   - no schema/data cleanup occurred.
-4. Do not call the live integration endpoint.
-5. Do not restart/deploy unless the user separately approves after reviewing the diff/report.
+Do NOT call the live endpoint.
+Do NOT deploy.
+Do NOT restart.
+Do NOT push.
 
 ## Final report
 
-Return exactly the important results:
+Return this in chat:
 
 ```text
 PATCH=TOS-TCRM-CLIENT-IDENTITY-DUPLICATE-GUARD-V1-GIT-GENERATED
@@ -127,7 +103,8 @@ MODE=IMPLEMENTATION_WITH_VERIFICATION
 PROJECT_PATH=...
 LOCAL_HEAD=...
 
-CURRENT_FLOW_CONFIRMED=YES|NO
+BASELINE_CONFIRMED=YES|NO
+PATCH_RUNNER_STATUS=APPLIED|ALREADY_APPLIED|ABORT
 CRM_CLIENT_ID_REQUIRED=YES|NO
 LEGACY_CANDIDATE_GUARD=YES|NO
 LEGACY_MATCH_RULE=...
@@ -148,3 +125,5 @@ GIT_PUSH=NO
 
 FINAL_STATUS=PASS|FAIL
 ```
+
+Also include the full `git diff -- backend/src/routes/crmProjectsIntegration.routes.js` output after the report so it can be reviewed before any deploy.
