@@ -1,0 +1,43 @@
+/* ================================================================
+   TOS TASK DETAILS V2.11G
+   WAITING CLIENT CONVERSATION BELOW DESCRIPTION
+   Scope: layout only — conversation functionality is unchanged
+   ================================================================ */
+
+:root {
+  --tos-task-details-v2-11g-waiting-client-conversation-below-description-runtime: 1;
+}
+
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+[data-tos-waiting-client-conversation="below-description"] {
+  position: relative !important;
+  inset: auto !important;
+  grid-column: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 16px 0 0 !important;
+  box-sizing: border-box !important;
+  align-self: stretch !important;
+  z-index: auto !important;
+}
+
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+[data-tos-waiting-client-conversation="below-description"]:not(:has(> *)) {
+  display: none !important;
+}
+
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+[data-tos-waiting-client-conversation="below-description"] > * {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 1380px) {
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  [data-tos-waiting-client-conversation="below-description"] {
+    margin-top: 12px !important;
+  }
+}
