@@ -1,0 +1,47 @@
+:root{--tos-task-details-v2-11j-r1-primary-tabs-responsive-fix-runtime:1}
+
+@media (min-width:1024px) and (max-width:1440px){
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-reference-tabs-main{
+    display:flex!important;
+    align-items:stretch!important;
+    justify-content:space-between!important;
+    width:100%!important;
+    min-width:0!important;
+    gap:2px!important;
+    overflow:visible!important;
+  }
+
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-reference-tab{
+    flex:1 1 0!important;
+    min-width:0!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+    min-height:53px!important;
+    padding:0 5px!important;
+    gap:3px!important;
+    white-space:nowrap!important;
+  }
+
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-reference-tab svg{
+    flex:0 0 auto!important;
+    width:14px!important;
+    height:14px!important;
+  }
+
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-reference-tab>span:not(.tos-task-reference-tab-count){
+    min-width:0!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+    font-size:10px!important;
+  }
+
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-reference-tab-count{
+    flex:0 0 auto!important;
+    min-width:17px!important;
+    height:17px!important;
+    padding:0 4px!important;
+    font-size:9px!important;
+    line-height:17px!important;
+  }
+}
