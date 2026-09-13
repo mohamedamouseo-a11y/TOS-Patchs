@@ -1,0 +1,225 @@
+:root{--tos-task-details-v2-11j-r3-dark-hero-tabs-specificity-fix-runtime:1}
+
+/*
+ * V2.11J_R3
+ * Scope is intentionally tiny: the two R2 visual misses only.
+ * The selectors mirror the later V2.11B/V2.11C body:has(...) specificity
+ * so Dark Mode can actually beat their light !important declarations.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Hero controls — outer cards                                        */
+/* ------------------------------------------------------------------ */
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls > *:not(.tos-task-start-date-card),
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls > *:not(.tos-task-start-date-card){
+  border-color:rgba(226,232,240,.11)!important;
+  background:linear-gradient(180deg,#141d27 0%,#10171f 100%)!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+
+/* Generic fallback for installations where .dark sits above the task shell. */
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls > *:not(.tos-task-start-date-card){
+  border-color:rgba(226,232,240,.11)!important;
+  background:linear-gradient(180deg,#141d27 0%,#10171f 100%)!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+
+/* Assignee picker trigger. */
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-assignee-picker-trigger,
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-assignee-picker-trigger,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-assignee-picker-trigger{
+  border-color:rgba(226,232,240,.09)!important;
+  background:#0f161e!important;
+  color:#e7edf5!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.02)!important;
+}
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-assignee-picker-trigger:hover:not(:disabled),
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-assignee-picker-trigger:hover:not(:disabled),
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-assignee-picker-trigger:hover:not(:disabled){
+  border-color:rgba(216,154,34,.20)!important;
+  background:#131c25!important;
+}
+
+/* Premium Status/Priority triggers — beat the later light V2.11B locks. */
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-v2-status-control .tos-task-v2-premium-select-trigger,
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-v2-status-control .tos-task-v2-premium-select-trigger,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-v2-status-control .tos-task-v2-premium-select-trigger{
+  border-color:rgba(216,154,34,.23)!important;
+  background:linear-gradient(180deg,rgba(216,154,34,.12),rgba(216,154,34,.065))!important;
+  color:#efbd5d!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.02)!important;
+}
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-v2-priority-control .tos-task-v2-premium-select-trigger,
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-v2-priority-control .tos-task-v2-premium-select-trigger,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-v2-priority-control .tos-task-v2-premium-select-trigger{
+  border-color:rgba(226,232,240,.09)!important;
+  background:#0f161e!important;
+  color:#e7edf5!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.02)!important;
+}
+
+/* Due-date trigger uses a different live class than the original R2 guess. */
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-date-trigger,
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-date-trigger,
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-date-trigger{
+  border-color:rgba(226,232,240,.09)!important;
+  background:#0f161e!important;
+  color:#e7edf5!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.02)!important;
+}
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-date-trigger:hover:not(:disabled),
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-date-trigger[aria-expanded="true"]{
+  border-color:rgba(216,154,34,.20)!important;
+  background:#131c25!important;
+  box-shadow:0 0 0 3px rgba(216,154,34,.05)!important;
+}
+
+/* Labels and glyphs inside the four cards. */
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-control-label,
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-premium-control-head,
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-control-label,
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls .tos-task-v2-premium-control-head{
+  color:#9ba8b8!important;
+}
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls svg,
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-summary-controls svg{
+  color:#8996a6!important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Primary tabs — force the live V2.11C shell off white                */
+/* ------------------------------------------------------------------ */
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-detail-tabs,
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-detail-tabs{
+  border-color:rgba(226,232,240,.11)!important;
+  background:linear-gradient(180deg,#121922 0%,#0f161e 100%)!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+
+.dark .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2 .tos-task-detail-tabs{
+  border-color:rgba(226,232,240,.11)!important;
+  background:linear-gradient(180deg,#121922 0%,#0f161e 100%)!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-tabs-main,
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-tabs-main{
+  background:transparent!important;
+}
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-tab,
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-tab{
+  border-color:transparent!important;
+  background:transparent!important;
+  color:#9eabba!important;
+  box-shadow:none!important;
+}
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-tab:hover,
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-tab:hover{
+  border-color:rgba(226,232,240,.07)!important;
+  background:rgba(255,255,255,.035)!important;
+  color:#edf2f7!important;
+}
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-tab[data-active="true"],
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-tab[data-active="true"]{
+  border-color:rgba(216,154,34,.26)!important;
+  background:linear-gradient(180deg,rgba(216,154,34,.14),rgba(216,154,34,.075))!important;
+  color:#f0bd5b!important;
+  box-shadow:inset 0 -2px 0 rgba(216,154,34,.68)!important;
+}
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-tab-count,
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-tab-count{
+  border-color:rgba(226,232,240,.09)!important;
+  background:#18212b!important;
+  color:#aeb9c7!important;
+}
+
+html.dark body:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-tab[data-active="true"] .tos-task-reference-tab-count,
+body.dark:has(.tos-task-details-reference-v1[data-content-dir])
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-tab[data-active="true"] .tos-task-reference-tab-count{
+  border-color:rgba(216,154,34,.22)!important;
+  background:rgba(216,154,34,.12)!important;
+  color:#f0bd5b!important;
+}
+
+/* R3 must never alter R1 responsive geometry. No width/grid/flex/order rules here. */
