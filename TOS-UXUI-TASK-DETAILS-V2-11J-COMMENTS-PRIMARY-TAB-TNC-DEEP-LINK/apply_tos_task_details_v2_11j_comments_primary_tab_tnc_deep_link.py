@@ -131,6 +131,20 @@ selected_state_old = '  const [selectedTask, setSelectedTask] = useState(null);\
 selected_state_new = '  const [selectedTask, setSelectedTask] = useState(null);\n  const [selectedTaskInitialTab, setSelectedTaskInitialTab] = useState("overview");\n  const selectedTaskRef = useRef(null);'
 board_updated = replace_once(board_updated, selected_state_old, selected_state_new, "selected task initial-tab state")
 
+# Any non-parent/session gateway open must start from Overview.
+gateway_old = '    setQuickViewTask(null);\n    setSelectedTask(resolvedEntry.task);'
+gateway_new = '    setQuickViewTask(null);\n    setSelectedTaskInitialTab("overview");\n    setSelectedTask(resolvedEntry.task);'
+board_updated = replace_once(board_updated, gateway_old, gateway_new, "session gateway default tab")
+
+# Parent-driven task opens may request Comments; clearing the prop resets the handled ref so the same task can be opened again later.
+initial_guard_old = '    if (!initialTaskId || !activeTaskProject?.id) return undefined;'
+initial_guard_new = '''    if (!initialTaskId) {
+      initialTaskHandledIdRef.current = "";
+      return undefined;
+    }
+    if (!activeTaskProject?.id) return undefined;'''
+board_updated = replace_once(board_updated, initial_guard_old, initial_guard_new, "initial task repeat-open guard")
+
 initial_open_old = '''        initialTaskHandledIdRef.current = initialTaskId;
         setQuickViewTask(null);
         setSelectedTask(fullTask);
@@ -173,6 +187,8 @@ if board_updated.count('if (!nextOpen && activeTaskTab === "time") setActiveTask
     fail("More toggle preservation contract missing")
 if 'initialTaskTab={pendingOpenTask?.projectId === activeProjectId ? pendingOpenTask.taskTab || "overview" : "overview"}' not in app_updated:
     fail("App -> ProfessionalTaskBoard initialTaskTab wiring missing")
+if 'setSelectedTaskInitialTab(initialTaskTab === "comments" ? "comments" : "overview");' not in board_updated:
+    fail("parent-driven initial tab selection missing")
 if 'initialTab={selectedTaskInitialTab}' not in board_updated:
     fail("Board -> CardDetailsModal initialTab wiring missing")
 if sha256_text(extract_add_comment(board_updated)) != comment_logic_hash:
@@ -267,6 +283,7 @@ print("MORE_CLOSE_COMMENTS_PRESERVED=YES")
 print("TNC_COMMENT_DEEP_LINK=YES")
 print("TNC_NON_COMMENT_DEFAULT_OVERVIEW=YES")
 print("MANUAL_TASK_DEFAULT_OVERVIEW=YES")
+print("REPEAT_SAME_TASK_NOTIFICATION_OPEN=YES")
 print("COMMENT_SUBMIT_LOGIC_CHANGED=NO")
 print("BACKEND_CHANGED=NO")
 print("API_CHANGED=NO")
