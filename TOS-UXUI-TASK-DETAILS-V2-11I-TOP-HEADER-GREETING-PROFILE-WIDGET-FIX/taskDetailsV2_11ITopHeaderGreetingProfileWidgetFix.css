@@ -1,0 +1,184 @@
+:root {
+  --tos-task-details-v2-11i-top-header-greeting-profile-widget-fix-runtime: 1;
+}
+
+/*
+ * TOS Task Details V2.11I
+ * TOP HEADER GREETING / PROFILE-LIKE RAMZY WIDGET FIX ONLY
+ *
+ * Fix the visual defect seen in V2.11H QA where the Ramzy avatar/greeting
+ * presentation in the top header free zone could collapse into a very narrow
+ * vertical text column and/or appear visually detached from the header.
+ *
+ * Scope is deliberately limited to the CLOSED Ramzy launcher presentation
+ * while Task Details V2 is mounted. TCS, Task Details, Hero, Description,
+ * Primary Tabs, Right Rail and all assistant logic remain untouched.
+ */
+
+/* Desktop: keep the avatar fully inside the top-header safe band and give the
+   greeting/identity copy an explicit horizontal box so shrink-to-fit can never
+   collapse it into a vertical word stack. */
+@media (min-width: 1440px) {
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-wrap {
+    left: calc(50vw - 45px) !important;
+    top: 8px !important;
+    width: 60px !important;
+    min-width: 60px !important;
+    max-width: 60px !important;
+    height: 60px !important;
+    min-height: 60px !important;
+    max-height: 60px !important;
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-avatar-wrap,
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-avatar-ring {
+    width: 60px !important;
+    min-width: 60px !important;
+    max-width: 60px !important;
+    height: 60px !important;
+    min-height: 60px !important;
+    max-height: 60px !important;
+    flex: 0 0 60px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-wrap.is-left .ramzy-launcher-label,
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-wrap.is-right .ramzy-launcher-label,
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-wrap.is-left .ramzy-greeting,
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-wrap.is-right .ramzy-greeting {
+    left: calc(100% + 12px) !important;
+    right: auto !important;
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    transform: none !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-greeting {
+    box-sizing: border-box !important;
+    width: 156px !important;
+    min-width: 156px !important;
+    max-width: 156px !important;
+    min-height: 42px !important;
+    max-height: 54px !important;
+    padding: 8px 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 14px !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+    text-align: center !important;
+    line-height: 1.35 !important;
+    font-size: 11px !important;
+    overflow: hidden !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-greeting > span {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    direction: rtl !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    line-height: 1.35 !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-label {
+    box-sizing: border-box !important;
+    width: 132px !important;
+    min-width: 132px !important;
+    max-width: 132px !important;
+    min-height: 46px !important;
+    padding: 8px 12px !important;
+    border-radius: 14px !important;
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    overflow: hidden !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-label strong,
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-label small {
+    display: block !important;
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    white-space: nowrap !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-close {
+    top: -5px !important;
+    right: -5px !important;
+    left: auto !important;
+  }
+}
+
+/* 1366-class viewport: preserve the approved compact assistant treatment from
+   V2.11E_R1, but explicitly lock the avatar inside the header and ensure no
+   greeting/identity text can reappear as a vertical strip. */
+@media (min-width: 1280px) and (max-width: 1366px) {
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-wrap {
+    left: calc(100vw - 500px) !important;
+    top: 12px !important;
+    width: 58px !important;
+    min-width: 58px !important;
+    max-width: 58px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    max-height: 58px !important;
+    writing-mode: horizontal-tb !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-avatar-wrap,
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-avatar-ring {
+    width: 58px !important;
+    min-width: 58px !important;
+    max-width: 58px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    max-height: 58px !important;
+    flex: 0 0 58px !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-label,
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-greeting {
+    display: none !important;
+    writing-mode: horizontal-tb !important;
+  }
+
+  body:has(.tos-task-details-reference-v1.tos-task-details-reference-v2)
+  .ramzy-assistant-root .ramzy-launcher-close {
+    top: -4px !important;
+    right: -4px !important;
+    left: auto !important;
+  }
+}
