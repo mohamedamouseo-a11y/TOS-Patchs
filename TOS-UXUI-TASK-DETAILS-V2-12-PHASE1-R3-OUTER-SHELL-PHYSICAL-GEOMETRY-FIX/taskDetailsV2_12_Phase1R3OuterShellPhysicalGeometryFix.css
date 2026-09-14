@@ -1,0 +1,86 @@
+:root{--tos-task-details-v2-12-phase1-r3-outer-shell-physical-geometry-runtime:1}
+
+/*
+ * TOS Task Details V2.12 — Phase 1 R3
+ * Screenshot-confirmed regression fix.
+ *
+ * Root cause:
+ * R1 changed the FULLSCREEN shell itself to dir=rtl. That shell is a physical
+ * fixed-position canvas and must not inherit RTL geometry. R2 then reinforced
+ * RTL direction on the same outer root. On production this can place the Task
+ * Details workspace off-canvas to the physical right, leaving only the normal
+ * TOS sidebar visible.
+ *
+ * Contract:
+ * - Outer fullscreen shell = physical LTR geometry only.
+ * - data-content-dir continues to carry the real content direction.
+ * - Inner Task Details content remains RTL when Arabic.
+ * - R1 assignee containment and R2 tabs/description fixes stay untouched.
+ */
+
+/* Outer fullscreen positioning boundary: never let RTL change physical canvas geometry. */
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]{
+  direction:ltr!important;
+  top:0!important;
+  right:0!important;
+  bottom:0!important;
+  left:0!important;
+  inset:0!important;
+  width:auto!important;
+  max-width:none!important;
+  margin:0!important;
+  transform:none!important;
+}
+
+/* The modal frame also stays a physical full-width canvas. */
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]
+.tos-task-details-modal{
+  direction:ltr!important;
+  width:100%!important;
+  max-width:none!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  transform:none!important;
+}
+
+/* Re-apply semantic RTL ONLY to actual content surfaces. */
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]
+.tos-task-reference-v2-topbar,
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]
+.tos-task-reference-v2-header,
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]
+.tos-task-main-column,
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]
+.tos-task-summary-compact,
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]
+.tos-task-detail-tabs,
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]
+.tos-task-description-panel,
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]
+.tos-task-reference-v2-rail,
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]
+.tos-task-side-rail{
+  direction:rtl!important;
+}
+
+/* Keep the actual workspace bounded to its own viewport instead of drifting right. */
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+.tos-task-details-modal > div[class*="overflow-y-auto"]{
+  width:100%!important;
+  max-width:100%!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  box-sizing:border-box!important;
+}
+
+/* Preserve R1/R2 inner geometry. This rule only prevents accidental horizontal escape. */
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+.tos-task-details-layout,
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+.tos-task-main-column{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+/* TCS/Chat System and Ramzy are intentionally untouched. */

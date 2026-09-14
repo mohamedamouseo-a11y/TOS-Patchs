@@ -1,0 +1,170 @@
+MODE=APPLY_EXISTING_PATCH_ONLY
+
+PROJECT=TOS
+LIVE_PROJECT_PATH=/var/www/TOS
+
+PATCH_REPOSITORY=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+PATCH_SOURCE_PATH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R3-OUTER-SHELL-PHYSICAL-GEOMETRY-FIX
+
+GOAL:
+Apply the existing V2.12 Phase 1 R3 outer-shell physical geometry fix exactly as packaged.
+
+DO NOT create a new patch.
+DO NOT redesign anything.
+DO NOT improvise.
+
+NO_BROWSER_QA=YES
+NO_SCREENSHOTS=YES
+NO_VISUAL_QA=YES
+
+Do not open a browser.
+Do not attempt authentication.
+Do not capture screenshots.
+Do not ask the user to log in.
+
+Your responsibility ends after:
+PATCH -> BUILD -> DEPLOY -> TECHNICAL REPORT
+
+IMPORTANT TERMINOLOGY:
+TCS = Chat System / team conversation.
+Ramzy / رمزي = AI Assistant.
+They are separate systems.
+Do not modify either one.
+
+STEP 1 — UPDATE PATCH REPOSITORY
+Update /var/www/TOS-Patchs and use ONLY:
+TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R3-OUTER-SHELL-PHYSICAL-GEOMETRY-FIX
+
+Read PATCH_INFO.md before applying.
+
+STEP 2 — VERIFY BASELINE
+cd /var/www/TOS
+
+Report:
+PRE_PATCH_COMMIT=
+GIT_STATUS=
+
+Verify existing runtime markers:
+--tos-task-details-v2-11j-r3-dark-hero-tabs-specificity-fix-runtime
+--tos-task-details-v2-12-phase1-zero-overlap-runtime
+--tos-task-details-v2-12-phase1-r1-rtl-description-zero-overlap-runtime
+--tos-task-details-v2-12-phase1-r2-rtl-tabs-description-runtime
+
+Verify ProfessionalTaskBoard.jsx currently contains outer root:
+dir={modalDirection} data-content-dir={modalDirection}
+
+Verify the INNER Task Details layout still contains:
+dir={modalDirection}
+
+Verify the R1 assignee geometry remains:
+const estimatedHeight = Math.min(300, Math.max(220, filteredMembers.length * 48 + 112));
+
+If any baseline requirement is missing:
+STOP.
+Do not repair previous patches automatically.
+
+STEP 3 — APPLY R3
+Run exactly:
+
+python3 \
+/var/www/TOS-Patchs/TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R3-OUTER-SHELL-PHYSICAL-GEOMETRY-FIX/apply_tos_task_details_v2_12_phase1_r3_outer_shell_physical_geometry_fix.py \
+/var/www/TOS
+
+If installer fails:
+STOP and return the exact error.
+Do not manually patch around the installer.
+
+EXPECTED SOURCE CHANGE
+ProfessionalTaskBoard.jsx may change ONLY for:
+
+1) Outer Task Details fullscreen root:
+FROM:
+dir={modalDirection} data-content-dir={modalDirection}
+
+TO:
+dir="ltr" data-content-dir={modalDirection}
+
+2) One CSS import:
+import "../styles/taskDetailsV2_12_Phase1R3OuterShellPhysicalGeometryFix.css";
+
+The inner Task Details layout MUST remain:
+dir={modalDirection}
+
+DO NOT change any other JSX.
+
+EXPECTED R3 OUTCOME
+- Task Details fullscreen canvas opens in the correct physical viewport.
+- It must not drift or render off-screen to the right.
+- Outer shell geometry is LTR/stable.
+- Arabic content remains RTL via data-content-dir and inner direction.
+- R1 Assignee overlap fix remains untouched.
+- R2 Tabs/Description fix remains untouched.
+
+FROZEN — DO NOT CHANGE
+- taskBoardParts.jsx
+- App.jsx
+- taskDetailsCanonicalReferenceV2.css
+- taskDetailsV2_12_Phase1ZeroOverlap.css
+- taskDetailsV2_12_Phase1R1RtlDescriptionZeroOverlapFix.css
+- taskDetailsV2_12_Phase1R2RtlTabsDescriptionFix.css
+- backend
+- database
+- APIs
+- auth
+- permissions
+- task logic
+- assignee business logic
+- status/priority logic
+- timer
+- comments
+- attachments
+- TCS / Chat System
+- Ramzy
+
+AFTER BUILD
+Verify built/live CSS contains:
+--tos-task-details-v2-12-phase1-r3-outer-shell-physical-geometry-runtime
+
+And preserves:
+--tos-task-details-v2-12-phase1-r2-rtl-tabs-description-runtime
+--tos-task-details-v2-12-phase1-r1-rtl-description-zero-overlap-runtime
+--tos-task-details-v2-12-phase1-zero-overlap-runtime
+--tos-task-details-v2-11j-r3-dark-hero-tabs-specificity-fix-runtime
+
+Verify:
+https://tos.tamiyouz.com
+LIVE_HTTP_STATUS=200
+
+Do NOT perform browser QA.
+
+FINAL REPORT
+PATCH_VERSION=
+PATCH_COMMIT=
+PRE_PATCH_COMMIT=
+FILES_BACKED_UP=
+FILES_CHANGED=
+OUTER_SHELL_DIR_CHANGED=
+INNER_LAYOUT_DIR_PRESERVED=
+R3_MARKER=
+R2_MARKER_PRESERVED=
+R1_MARKER_PRESERVED=
+PHASE1_MARKER_PRESERVED=
+OLD_R3_MARKER_PRESERVED=
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+PROFESSIONAL_TASK_BOARD_OTHER_CHANGES=
+ASSIGNEE_R1_GEOMETRY_CHANGED=
+R2_CSS_CHANGED=
+CANONICAL_CSS_CHANGED=
+TASK_BOARD_PARTS_CHANGED=
+APP_JS_CHANGED=
+BACKEND_CHANGED=
+DATABASE_CHANGED=
+CHAT_SYSTEM_TCS_PRESERVED=
+RAMZY_PRESERVED=
+NO_BROWSER_QA=YES
+NO_SCREENSHOTS=YES
+PUSH=NO
+ROLLBACK_AVAILABLE=
+FINAL_STATUS=
