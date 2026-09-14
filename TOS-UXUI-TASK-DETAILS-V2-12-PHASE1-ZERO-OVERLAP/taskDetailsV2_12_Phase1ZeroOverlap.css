@@ -1,0 +1,233 @@
+:root{--tos-task-details-v2-12-phase1-zero-overlap-runtime:1}
+
+/*
+ * TOS Task Details V2.12 — Phase 1: ZERO OVERLAP
+ * Scope: CSS-only geometry/layering hardening.
+ * Priority: eliminate accidental collisions before any further visual redesign.
+ * Frozen: APIs, backend, DB, permissions, task workflow, Chat System/TCS, Ramzy.
+ */
+
+/* --------------------------------------------------------------- */
+/* 1) Stable task canvas / main-vs-rail geometry                    */
+/* --------------------------------------------------------------- */
+body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2){
+  overflow-x:hidden;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2{
+  isolation:isolate;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-details-layout,
+body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-main-column,
+body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-description-panel,
+body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-detail-tabs{
+  min-width:0!important;
+  max-width:100%;
+  box-sizing:border-box!important;
+}
+
+body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-reference-v2-rail{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+/* Desktop: reserve a physical rail gap so primary content never renders below it. */
+@media (min-width:1481px){
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-v2-rail{width:370px!important;}
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-description-panel{
+    width:calc(100% - 390px)!important;
+    max-width:calc(100% - 390px)!important;
+  }
+}
+
+@media (min-width:1361px) and (max-width:1480px){
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-v2-rail{width:346px!important;}
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-description-panel{
+    width:calc(100% - 366px)!important;
+    max-width:calc(100% - 366px)!important;
+  }
+}
+
+@media (min-width:1281px) and (max-width:1360px){
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-v2-rail{width:332px!important;}
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-description-panel{
+    width:calc(100% - 352px)!important;
+    max-width:calc(100% - 352px)!important;
+  }
+}
+
+@media (min-width:1180px) and (max-width:1280px){
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-v2-rail{width:330px!important;}
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-reference-v2-rail) .tos-task-description-panel{
+    width:calc(100% - 348px)!important;
+    max-width:calc(100% - 348px)!important;
+  }
+}
+
+/* Narrower screens: rail returns to normal document flow. */
+@media (max-width:1179px){
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-reference-v2-rail{
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    max-width:none!important;
+    margin-top:14px!important;
+  }
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-detail-tabs,
+  body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+  .tos-task-description-panel{
+    width:100%!important;
+    max-width:100%!important;
+  }
+}
+
+/* --------------------------------------------------------------- */
+/* 2) Portal dropdowns/popovers: bounded, scroll internally         */
+/* --------------------------------------------------------------- */
+body>.tos-task-v2-assignee-popover{
+  z-index:10060!important;
+  width:min(336px,calc(100vw - 24px))!important;
+  max-width:calc(100vw - 24px)!important;
+  max-height:min(420px,calc(100vh - 24px))!important;
+  max-height:min(420px,calc(100dvh - 24px))!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  overscroll-behavior:contain;
+  box-sizing:border-box!important;
+}
+
+body>.tos-task-v2-assignee-popover .tos-task-v2-assignee-popover-head,
+body>.tos-task-v2-assignee-popover .tos-task-v2-assignee-search,
+body>.tos-task-v2-assignee-popover .tos-task-v2-assignee-saving,
+body>.tos-task-v2-assignee-popover .tos-task-v2-assignee-error{
+  flex:0 0 auto!important;
+  min-width:0!important;
+}
+
+body>.tos-task-v2-assignee-popover .tos-task-v2-assignee-list{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  max-height:min(292px,calc(100vh - 150px))!important;
+  max-height:min(292px,calc(100dvh - 150px))!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+}
+
+body>.tos-task-v2-assignee-popover .tos-task-v2-assignee-option,
+body>.tos-task-v2-assignee-popover .tos-task-v2-assignee-option-copy{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+body>.tos-task-v2-assignee-popover .tos-task-v2-assignee-option-copy strong,
+body>.tos-task-v2-assignee-popover .tos-task-v2-assignee-option-copy span{
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+body>.tos-task-v2-premium-menu{
+  z-index:10050!important;
+  max-width:min(320px,calc(100vw - 24px))!important;
+  max-height:min(360px,calc(100vh - 24px))!important;
+  max-height:min(360px,calc(100dvh - 24px))!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  box-sizing:border-box!important;
+}
+
+body>.tos-task-v2-calendar-popover{
+  z-index:10055!important;
+  width:min(320px,calc(100vw - 24px))!important;
+  max-width:calc(100vw - 24px)!important;
+  max-height:calc(100vh - 24px)!important;
+  max-height:calc(100dvh - 24px)!important;
+  overflow:auto!important;
+  overscroll-behavior:contain;
+  box-sizing:border-box!important;
+}
+
+/* --------------------------------------------------------------- */
+/* 3) Legacy/detail flyout containment observed on Task Details     */
+/* --------------------------------------------------------------- */
+body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+.animate-in.fade-in.zoom-in-95.relative.z-\[45\],
+body:has(.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2)
+[class*="absolute"][class*="z-[45]"][class*="min-w"]{
+  max-width:min(360px,calc(100vw - 24px))!important;
+  max-height:min(70vh,calc(100vh - 24px))!important;
+  max-height:min(70dvh,calc(100dvh - 24px))!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  box-sizing:border-box!important;
+}
+
+/* --------------------------------------------------------------- */
+/* 4) Content must never grow underneath a floating surface         */
+/* --------------------------------------------------------------- */
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-description-panel,
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-rich-editor-shell,
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-rich-editor-content,
+.tos-task-details-reference-v1[data-content-dir].tos-task-details-reference-v2
+.tos-task-detail-tabs{
+  min-width:0!important;
+  overflow-wrap:anywhere;
+}
+
+/* Keep intentional Chat System/TCS and Ramzy windows untouched.
+ * They are separate product surfaces and are NOT part of this patch. */

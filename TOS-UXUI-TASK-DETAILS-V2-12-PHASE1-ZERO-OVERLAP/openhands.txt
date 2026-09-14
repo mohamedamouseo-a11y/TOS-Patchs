@@ -1,0 +1,143 @@
+PROJECT=TOS
+MODE=APPLY_EXISTING_PATCH_ONLY
+PHASE=V2.12_PHASE1_ZERO_OVERLAP
+
+LIVE_PROJECT_PATH=/var/www/TOS
+PATCH_REPOSITORY=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+PATCH_SOURCE_PATH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-ZERO-OVERLAP
+BASELINE_REQUIRED=TOS_TASK_DETAILS_V2_11J_R3
+
+GOAL:
+Apply ONLY the existing Phase 1 Zero Overlap patch to TOS Task Details, then build/deploy and verify it.
+
+IMPORTANT TERMINOLOGY:
+- TCS is the Chat System / team conversation surface.
+- TCS is NOT an assistant.
+- Ramzy / رمزي is the AI assistant.
+- Chat System/TCS and Ramzy are separate features.
+- Do not rename, merge, or change either feature.
+
+STRICT SCOPE:
+- Use the patch exactly from TOS-Patchs.
+- Do not redesign Task Details beyond this patch.
+- Do not create another patch unless this installer fails for a verified source-contract mismatch.
+- No DB/schema/backend/API/auth changes.
+- No task-data edits.
+- No unrelated source changes.
+- Do not reapply V2.11J_R3; verify its runtime marker only.
+- Do not push to the TOS application repository.
+
+STEP 1 — VERIFY TARGET
+cd /var/www/TOS
+
+Report:
+- current git commit
+- git status
+- existence of frontend/src/styles/taskDetailsCanonicalReferenceV2.css
+- existence of deployment/tos-production-runtime.json
+- presence of runtime marker:
+  --tos-task-details-v2-11j-r3-dark-hero-tabs-specificity-fix-runtime
+
+If the R3 runtime marker is missing: STOP. Do not apply Phase 1.
+
+STEP 2 — GET PATCH REPOSITORY
+Use the existing /var/www/TOS-Patchs checkout if present.
+Otherwise clone/pull:
+https://github.com/mohamedamouseo-a11y/TOS-Patchs
+
+Use this exact folder:
+TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-ZERO-OVERLAP
+
+Read PATCH_INFO.md before execution.
+Do not edit the patch payload.
+
+STEP 3 — APPLY
+Run:
+
+python3 \
+  /var/www/TOS-Patchs/TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-ZERO-OVERLAP/apply_tos_task_details_v2_12_phase1_zero_overlap.py \
+  /var/www/TOS
+
+The installer must create rollback backups, append the CSS payload once, build the frontend, publish the build, and preserve JS hashes.
+
+STEP 4 — VERIFY FILE SCOPE
+After apply:
+- Phase 1 runtime marker exists exactly once in the source stylesheet.
+- Phase 1 runtime marker exists in built CSS.
+- Phase 1 runtime marker exists in published live CSS.
+- R3 marker is still present.
+- App.jsx unchanged.
+- ProfessionalTaskBoard.jsx unchanged.
+- No backend/database/API files changed.
+
+STEP 5 — LIVE HEALTH
+Verify:
+https://tos.tamiyouz.com
+
+Expected HTTP status: 200.
+Do not treat HTTP 200 as visual QA success.
+
+STEP 6 — VISUAL QA IF AUTHENTICATED BROWSER IS AVAILABLE
+Target Task ID:
+cmrmjeco900a597l97yga195i
+
+Use interactive authenticated browser only.
+Do not inject cookies/JWT/localStorage and do not programmatically authenticate.
+
+At 1440x900 and 1366x768, Arabic RTL, verify:
+1. Full Task Details Light.
+2. Assignee dropdown open — do not select anyone.
+3. Status dropdown open — do not change status.
+4. Priority dropdown open — do not change priority.
+5. Due-date picker open — do not change date.
+6. Description section vs right rail — ZERO accidental collision.
+7. Tabs vs right rail — ZERO accidental collision.
+8. Any auxiliary/legacy details flyout remains bounded and internally scrollable.
+9. Dark Mode repeat for main Task Details + dropdown geometry.
+10. Chat System/TCS remains separate and unchanged.
+11. Ramzy remains separate and unchanged.
+
+DO NOT:
+- save/update task
+- change status
+- change priority
+- change assignee
+- add/remove tags
+- change dates
+- start/stop timer
+- send Chat System messages
+- use Ramzy
+- upload/delete attachments
+- archive/delete task
+
+If authenticated browser is unavailable, report VISUAL_QA=PENDING_AUTHENTICATED_BROWSER and do not invent screenshot results.
+
+FINAL REPORT:
+PATCH_VERSION=
+PATCH_COMMIT=
+PRE_PATCH_COMMIT=
+FILES_BACKED_UP=
+FILES_CHANGED=
+PHASE1_MARKER=
+R3_MARKER_PRESERVED=
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+MAIN_RAIL_OVERLAP_TEST=
+ASSIGNEE_DROPDOWN_TEST=
+STATUS_DROPDOWN_TEST=
+PRIORITY_DROPDOWN_TEST=
+DATE_PICKER_TEST=
+LEGACY_FLYOUT_TEST=
+RTL_TEST=
+LIGHT_MODE_TEST=
+DARK_MODE_TEST=
+CHAT_SYSTEM_TCS_PRESERVED=
+RAMZY_PRESERVED=
+DATABASE_CHANGED=
+BACKEND_LOGIC_CHANGED=
+SCREENSHOTS=
+ROLLBACK_AVAILABLE=
+FINAL_STATUS=
+
+PUSH=NO
