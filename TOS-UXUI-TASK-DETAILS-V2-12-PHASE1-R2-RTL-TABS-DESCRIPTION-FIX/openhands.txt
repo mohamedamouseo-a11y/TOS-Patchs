@@ -1,0 +1,233 @@
+MODE=APPLY_EXISTING_PATCH_ONLY
+
+PROJECT=TOS
+LIVE_PROJECT_PATH=/var/www/TOS
+
+PATCH_REPOSITORY=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+PATCH_SOURCE_PATH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R2-RTL-TABS-DESCRIPTION-FIX
+
+GOAL:
+Apply the existing V2.12 Phase 1 R2 patch exactly as packaged.
+
+Do not create a new patch.
+Do not redesign Task Details.
+Do not improvise extra fixes.
+
+==================================================
+NO BROWSER / NO SCREENSHOTS / NO VISUAL QA
+==================================================
+
+NO_BROWSER_QA=YES
+NO_SCREENSHOTS=YES
+NO_VISUAL_QA=YES
+
+Do not open a browser.
+Do not attempt login.
+Do not take screenshots.
+Do not request browser authentication.
+
+Your responsibility ends after:
+PATCH -> BUILD -> DEPLOY -> TECHNICAL REPORT
+
+Manual visual QA is performed separately by the user + ChatGPT.
+
+==================================================
+IMPORTANT TERMINOLOGY
+==================================================
+
+TCS = Chat System / team conversation.
+TCS is NOT Ramzy.
+
+Ramzy / رمزي = AI Assistant.
+
+Do not modify, merge, rename or rewire either system.
+
+==================================================
+STEP 1 — UPDATE PATCH REPOSITORY
+==================================================
+
+Update the existing TOS-Patchs checkout.
+
+Use ONLY:
+TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R2-RTL-TABS-DESCRIPTION-FIX
+
+Read PATCH_INFO.md first.
+
+==================================================
+STEP 2 — VERIFY BASELINE
+==================================================
+
+cd /var/www/TOS
+
+Report:
+PRE_PATCH_COMMIT=
+GIT_STATUS=
+
+Verify these existing markers/contracts before applying:
+
+R3 marker:
+--tos-task-details-v2-11j-r3-dark-hero-tabs-specificity-fix-runtime
+
+Phase 1 marker:
+--tos-task-details-v2-12-phase1-zero-overlap-runtime
+
+R1 marker:
+--tos-task-details-v2-12-phase1-r1-rtl-description-zero-overlap-runtime
+
+Also verify ProfessionalTaskBoard.jsx still contains:
+
+dir={modalDirection} data-content-dir={modalDirection}
+
+and Task Details layout uses:
+
+dir={modalDirection}
+
+and Assignee estimate is still:
+
+const estimatedHeight = Math.min(300, Math.max(220, filteredMembers.length * 48 + 112));
+
+If any R1 baseline contract is missing:
+STOP.
+Do not repair or reapply old patches automatically.
+
+==================================================
+STEP 3 — APPLY R2
+==================================================
+
+Run exactly:
+
+python3 \
+/var/www/TOS-Patchs/TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R2-RTL-TABS-DESCRIPTION-FIX/apply_tos_task_details_v2_12_phase1_r2_rtl_tabs_description_fix.py \
+/var/www/TOS
+
+If installer fails:
+STOP and return the exact failure.
+Do not manually patch around it.
+
+==================================================
+R2 SCOPE
+==================================================
+
+R2 fixes ONLY the remaining RTL visual order + Description editor presentation.
+
+Expected:
+
+1. PRIMARY TABS RTL
+- Arabic primary tabs use real RTL order.
+- Overview must logically begin from the RTL side.
+- Do not change tab logic or tab IDs.
+
+2. HERO CONTROLS RTL
+- Assignee / Status / Priority / Due Date controls read RTL.
+- Existing values and business logic remain unchanged.
+
+3. PORTAL CONTROLS RTL
+- Assignee / Status / Priority / Date popovers respect existing dir="rtl".
+- Do not change dropdown behavior or selections.
+
+4. DESCRIPTION
+- Description panel is RTL.
+- Toolbar is horizontal.
+- No clipped vertical-looking controls.
+- Toolbar groups may wrap safely.
+- No horizontal-scroll fragment caused by older nowrap rules.
+- Editor content starts from the RTL side.
+- Empty editor height is reduced.
+
+==================================================
+STRICTLY FROZEN
+==================================================
+
+DO NOT CHANGE:
+
+- Phase 1 Assignee geometry
+- R1 Assignee Hero reservation
+- R1 More Details geometry
+- backend
+- database
+- schema
+- APIs
+- authentication
+- permissions
+- task workflow
+- status logic
+- priority logic
+- assignee business logic
+- comments logic
+- attachments logic
+- timer logic
+- TCS / Chat System
+- Ramzy
+- taskBoardParts.jsx
+- App.jsx
+- taskDetailsCanonicalReferenceV2.css
+- taskDetailsV2_12_Phase1ZeroOverlap.css
+- taskDetailsV2_12_Phase1R1RtlDescriptionZeroOverlapFix.css
+
+ProfessionalTaskBoard.jsx may change ONLY by adding this import:
+
+import "../styles/taskDetailsV2_12_Phase1R2RtlTabsDescriptionFix.css";
+
+No other JSX changes are allowed.
+
+==================================================
+AFTER BUILD / DEPLOY
+==================================================
+
+Verify live/built CSS contains:
+
+--tos-task-details-v2-12-phase1-r2-rtl-tabs-description-runtime
+
+Verify these are still present:
+
+--tos-task-details-v2-12-phase1-r1-rtl-description-zero-overlap-runtime
+--tos-task-details-v2-12-phase1-zero-overlap-runtime
+--tos-task-details-v2-11j-r3-dark-hero-tabs-specificity-fix-runtime
+
+Verify:
+https://tos.tamiyouz.com
+
+Expected:
+LIVE_HTTP_STATUS=200
+
+Do NOT perform visual QA.
+
+==================================================
+FINAL REPORT
+==================================================
+
+PATCH_VERSION=
+PRE_PATCH_COMMIT=
+FILES_BACKED_UP=
+FILES_CHANGED=
+
+R2_CSS_IMPORT_ADDED=
+R2_MARKER=
+R1_MARKER_PRESERVED=
+PHASE1_MARKER_PRESERVED=
+R3_MARKER_PRESERVED=
+
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+
+PROFESSIONAL_TASK_BOARD_OTHER_CHANGES=
+TASK_BOARD_PARTS_CHANGED=
+APP_JS_CHANGED=
+CANONICAL_CSS_CHANGED=
+PHASE1_CSS_CHANGED=
+R1_CSS_CHANGED=
+
+ASSIGNEE_R1_GEOMETRY_CHANGED=
+MORE_DETAILS_R1_GEOMETRY_CHANGED=
+
+BACKEND_CHANGED=
+DATABASE_CHANGED=
+CHAT_SYSTEM_TCS_PRESERVED=
+RAMZY_PRESERVED=
+
+NO_BROWSER_QA=YES
+NO_SCREENSHOTS=YES
+PUSH=NO
+ROLLBACK_AVAILABLE=
+FINAL_STATUS=

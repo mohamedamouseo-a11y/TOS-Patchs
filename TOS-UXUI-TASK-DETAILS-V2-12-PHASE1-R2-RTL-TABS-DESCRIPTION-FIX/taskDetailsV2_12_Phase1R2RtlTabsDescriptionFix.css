@@ -1,0 +1,259 @@
+:root{--tos-task-details-v2-12-phase1-r2-rtl-tabs-description-runtime:1}
+
+/*
+ * TOS Task Details V2.12 — Phase 1 R2
+ * Scope: remaining RTL visual-order defects + Description editor hardening.
+ * Based on manual production QA after R1.
+ * Frozen: Assignee geometry that already passed, More Details geometry, task logic,
+ * backend/API/DB, TCS/Chat System, Ramzy.
+ */
+
+/* ================================================================== */
+/* 1) High-specificity RTL contract for the surfaces still reading LTR */
+/* ================================================================== */
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-reference-tabs-main{
+  direction:rtl!important;
+  unicode-bidi:isolate!important;
+}
+
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-reference-tab{
+  direction:rtl!important;
+  text-align:center!important;
+}
+
+/* The DOM order is Overview -> Comments -> Checklist -> Attachments -> Activity -> Subtasks.
+ * In RTL, direction:rtl on the flex row makes Overview the physical RIGHT-most tab.
+ * Do not use row-reverse here; that would double-reverse RTL flex layout. */
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-summary-controls{
+  direction:rtl!important;
+  unicode-bidi:isolate!important;
+}
+
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-summary-controls > *{
+  direction:rtl!important;
+  text-align:start!important;
+}
+
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-v2-assignee-picker-trigger,
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-v2-premium-select-trigger,
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-v2-date-trigger{
+  direction:rtl!important;
+  text-align:start!important;
+}
+
+/* Popovers are portals under body; use their own dir attribute as the authoritative RTL signal. */
+body > .tos-task-v2-assignee-popover[dir="rtl"],
+body > .tos-task-v2-premium-menu[dir="rtl"],
+body > .tos-task-v2-calendar-popover[dir="rtl"]{
+  direction:rtl!important;
+  text-align:start!important;
+}
+
+body > .tos-task-v2-assignee-popover[dir="rtl"] .tos-task-v2-assignee-popover-head,
+body > .tos-task-v2-assignee-popover[dir="rtl"] .tos-task-v2-assignee-option,
+body > .tos-task-v2-assignee-popover[dir="rtl"] .tos-task-v2-assignee-option-copy,
+body > .tos-task-v2-premium-menu[dir="rtl"] .tos-task-v2-premium-option{
+  direction:rtl!important;
+  text-align:start!important;
+}
+
+/* ================================================================== */
+/* 2) Description panel — strong RTL + horizontal toolbar guarantee    */
+/* ================================================================== */
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel{
+  direction:rtl!important;
+  text-align:start!important;
+  min-width:0!important;
+  overflow:hidden!important;
+}
+
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel > div:first-child{
+  direction:rtl!important;
+  flex-direction:row!important;
+  text-align:start!important;
+}
+
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-rich-editor-shell{
+  direction:rtl!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-editor-toolbar{
+  direction:rtl!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  padding:7px 9px!important;
+  overflow:visible!important;
+  box-sizing:border-box!important;
+}
+
+/* Override all older nowrap / horizontal-scroll rules with a real wrapped row.
+ * Every toolbar control stays horizontal and visible; no vertical-looking fragments. */
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-editor-toolbar > div{
+  direction:rtl!important;
+  display:flex!important;
+  flex-flow:row wrap!important;
+  align-items:center!important;
+  align-content:flex-start!important;
+  justify-content:flex-start!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  gap:5px 4px!important;
+  overflow:visible!important;
+  white-space:normal!important;
+  box-sizing:border-box!important;
+}
+
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-editor-toolbar [class*="tos-editor-group"]{
+  direction:rtl!important;
+  display:inline-flex!important;
+  flex:0 0 auto!important;
+  flex-flow:row nowrap!important;
+  align-items:center!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:auto!important;
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+  white-space:nowrap!important;
+  box-sizing:border-box!important;
+}
+
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-editor-toolbar button{
+  flex:0 0 auto!important;
+  min-width:28px!important;
+  width:auto!important;
+  height:28px!important;
+  padding-inline:6px!important;
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+  white-space:nowrap!important;
+}
+
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-editor-toolbar select{
+  flex:0 1 auto!important;
+  min-width:64px!important;
+  max-width:118px!important;
+  height:28px!important;
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+  white-space:nowrap!important;
+}
+
+/* Preserve deterministic toolbar group order. In RTL flex rows, the lowest order begins on the right. */
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-editor-group-history{order:10!important}
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-editor-group-inline{order:20!important}
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-editor-group-list{order:30!important}
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-editor-group-align{order:40!important}
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-editor-group-block{order:50!important}
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-editor-group-color{order:60!important}
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-editor-group-insert{order:70!important}
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-editor-more-button{order:100!important}
+
+/* Editor canvas: correct Arabic start side and reduce the giant empty state without changing editing logic. */
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-rich-editor-content{
+  direction:rtl!important;
+  unicode-bidi:plaintext!important;
+  text-align:start!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:180px!important;
+  padding:18px 20px!important;
+  writing-mode:horizontal-tb!important;
+  overflow-wrap:anywhere!important;
+  box-sizing:border-box!important;
+}
+
+html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-rich-editor-content:empty:before{
+  direction:rtl!important;
+  text-align:right!important;
+  unicode-bidi:plaintext!important;
+}
+
+/* ================================================================== */
+/* 3) Responsive hardening — keep RTL fixes from reintroducing overlap */
+/* ================================================================== */
+@media (min-width:1180px) and (max-width:1440px){
+  html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+  .tos-task-reference-tabs-main{
+    direction:rtl!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+
+  html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-editor-toolbar > div{
+    gap:4px 3px!important;
+  }
+}
+
+@media (max-width:760px){
+  html body:has(.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2)
+  .tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+  .tos-task-description-panel .tos-task-rich-editor-content{
+    min-height:150px!important;
+    padding:16px!important;
+  }
+}
+
+/* Phase 1 R1 Assignee and More Details geometry are deliberately untouched. */
+/* Chat System/TCS and Ramzy are deliberately untouched. */
