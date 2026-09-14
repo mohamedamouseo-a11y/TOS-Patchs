@@ -1,0 +1,20 @@
+Apply this existing patch only.
+
+PATCH_REPOSITORY=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+PATCH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R4-SHELL-RTL-PHYSICAL-OVERLAY-LOCK
+TARGET=/var/www/TOS
+
+Use the patch repository directly. Clone/update it in any temporary working directory, verify the requested patch exists, then run its installer against TARGET.
+
+Do not modify anything manually.
+Do not use a browser.
+Do not take screenshots.
+Do not push.
+Do not touch backend, DB, TCS, or Ramzy.
+
+Return only:
+PATCH_APPLIED=
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+FINAL_STATUS=
