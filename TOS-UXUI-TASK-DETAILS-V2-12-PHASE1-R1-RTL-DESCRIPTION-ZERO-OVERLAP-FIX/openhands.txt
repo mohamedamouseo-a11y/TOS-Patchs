@@ -1,0 +1,234 @@
+MODE=APPLY_EXISTING_PATCH_ONLY
+
+PROJECT=TOS
+PATCH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R1-RTL-DESCRIPTION-ZERO-OVERLAP-FIX
+LIVE_PROJECT_PATH=/var/www/TOS
+PATCH_REPOSITORY=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+
+GOAL:
+Apply the existing Phase 1 R1 hotfix exactly as packaged.
+
+This patch fixes the real screenshot-confirmed issues:
+- hardcoded LTR root in Arabic Task Details
+- broken/clipped Description editor toolbar
+- Assignee popup still covering Tabs/Description
+- More Details side rail still floating over task content
+
+DO NOT DESIGN A NEW UI.
+DO NOT CREATE ANOTHER PATCH.
+DO NOT CHANGE BUSINESS LOGIC.
+
+==================================================
+IMPORTANT TERMINOLOGY
+==================================================
+
+TCS = Chat System / team conversation.
+TCS is NOT an AI assistant.
+
+Ramzy / رمزي = AI assistant.
+
+TCS and Ramzy are separate systems.
+Do not modify, rename or merge either one.
+
+==================================================
+NO BROWSER / NO SCREENSHOTS
+==================================================
+
+NO_BROWSER_QA=YES
+NO_SCREENSHOTS=YES
+NO_VISUAL_QA=YES
+
+Do not open a browser.
+Do not attempt login.
+Do not collect screenshots.
+Do not ask for an authenticated session.
+
+Your responsibility ends at:
+PATCH -> BUILD -> DEPLOY -> TECHNICAL REPORT
+
+Manual visual QA will be done separately by the user and ChatGPT.
+
+==================================================
+STEP 1 — UPDATE PATCH REPOSITORY
+==================================================
+
+Use the existing TOS-Patchs checkout if available.
+
+Otherwise clone:
+https://github.com/mohamedamouseo-a11y/TOS-Patchs
+
+Pull main.
+
+Use ONLY:
+TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R1-RTL-DESCRIPTION-ZERO-OVERLAP-FIX
+
+Read:
+PATCH_INFO.md
+
+Do not modify the patch package.
+
+==================================================
+STEP 2 — VERIFY BASELINE
+==================================================
+
+cd /var/www/TOS
+
+Report:
+PRE_PATCH_COMMIT=
+GIT_STATUS=
+
+Verify the deployed Phase 1 baseline exists.
+
+Required marker:
+--tos-task-details-v2-12-phase1-zero-overlap-runtime
+
+Also verify R3 baseline marker:
+--tos-task-details-v2-11j-r3-dark-hero-tabs-specificity-fix-runtime
+
+If either baseline is missing:
+STOP.
+Do not improvise.
+Do not reapply older patches automatically.
+
+==================================================
+STEP 3 — APPLY R1
+==================================================
+
+Run exactly:
+
+python3 \
+  /var/www/TOS-Patchs/TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R1-RTL-DESCRIPTION-ZERO-OVERLAP-FIX/apply_tos_task_details_v2_12_phase1_r1_rtl_description_zero_overlap_fix.py \
+  /var/www/TOS
+
+Do not manually edit files unless the installer itself reports a precise failure.
+If it fails, stop and report the exact error.
+
+==================================================
+EXPECTED INTENTIONAL SOURCE CHANGES
+==================================================
+
+ProfessionalTaskBoard.jsx may change ONLY for:
+
+1. Task Details outer root direction:
+   dir="ltr"
+   ->
+   dir={modalDirection}
+
+2. Task Details layout wrapper direction:
+   dir="ltr"
+   ->
+   dir={modalDirection}
+
+3. Assignee popup estimated-height cap:
+   480 max
+   ->
+   300 max
+
+4. One stylesheet import:
+   taskDetailsV2_12_Phase1R1RtlDescriptionZeroOverlapFix.css
+
+Do not make any other JSX change.
+
+==================================================
+EXPECTED CSS FIXES
+==================================================
+
+The R1 CSS must provide:
+
+- real RTL inheritance for Arabic Task Details
+- RTL primary tabs order
+- Description toolbar wrapping instead of clipping
+- horizontal toolbar controls only
+- logical start alignment in Description editor
+- smaller practical Description minimum height
+- bounded Assignee popup with internal scroll
+- Hero layout reservation while Assignee is open
+- More Details side rail changed from floating fixed surface to real layout space
+- narrow-screen flow fallback
+
+==================================================
+STRICTLY FROZEN
+==================================================
+
+DO NOT CHANGE:
+
+- backend
+- database
+- schema
+- API
+- authentication
+- permissions
+- task workflow
+- taskBoardParts.jsx
+- App.jsx
+- Chat System / TCS
+- Ramzy
+- comments logic
+- attachments logic
+- timer logic
+- status business logic
+- priority business logic
+
+Do not push TOS source.
+
+PUSH=NO
+
+==================================================
+TECHNICAL VERIFICATION ONLY
+==================================================
+
+After installer finishes, verify:
+
+R1 marker exists in built CSS:
+--tos-task-details-v2-12-phase1-r1-rtl-description-zero-overlap-runtime
+
+Phase 1 marker remains present:
+--tos-task-details-v2-12-phase1-zero-overlap-runtime
+
+R3 marker remains present in source baseline.
+
+Verify production HTTP:
+https://tos.tamiyouz.com
+
+Expected:
+HTTP_STATUS=200
+
+DO NOT perform interactive UI QA.
+
+==================================================
+FINAL REPORT
+==================================================
+
+PATCH_VERSION=
+PATCH_COMMIT=
+PRE_PATCH_COMMIT=
+FILES_BACKED_UP=
+FILES_CHANGED=
+
+ROOT_RTL_SOURCE_CHANGED=
+LAYOUT_RTL_SOURCE_CHANGED=
+ASSIGNEE_HEIGHT_SOURCE_CHANGED=
+
+R1_MARKER=
+PHASE1_MARKER_PRESERVED=
+R3_MARKER_PRESERVED=
+
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+
+TASK_BOARD_PARTS_CHANGED=
+APP_JS_CHANGED=
+CANONICAL_CSS_CHANGED=
+BACKEND_CHANGED=
+DATABASE_CHANGED=
+
+CHAT_SYSTEM_TCS_PRESERVED=
+RAMZY_PRESERVED=
+
+NO_BROWSER_QA=YES
+NO_SCREENSHOTS=YES
+PUSH=NO
+
+ROLLBACK_AVAILABLE=
+FINAL_STATUS=

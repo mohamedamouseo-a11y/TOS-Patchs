@@ -1,0 +1,303 @@
+:root{--tos-task-details-v2-12-phase1-r1-rtl-description-zero-overlap-runtime:1}
+
+/*
+ * TOS Task Details V2.12 — Phase 1 R1
+ * Root-cause follow-up from real production screenshots.
+ * Scope: RTL direction contract + Description/editor containment + Assignee no-overlap
+ *        + More Details side-rail no-overlap.
+ * Frozen: task/business logic, backend, API, DB, TCS/Chat System, Ramzy.
+ */
+
+/* ================================================================== */
+/* 1) Real RTL contract                                                */
+/* ================================================================== */
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2{
+  direction:rtl!important;
+}
+
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-main-column,
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-summary-compact,
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel,
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-reference-v2-rail,
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-side-rail{
+  direction:rtl!important;
+  text-align:start!important;
+}
+
+/* Primary navigation tabs must read in true RTL order in Arabic. */
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-reference-tabs-main{
+  direction:rtl!important;
+}
+
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-reference-tab{
+  direction:rtl!important;
+  text-align:center!important;
+}
+
+/* Keep the physical desktop workspace composition stable while content itself is RTL. */
+@media (min-width:1180px){
+  .tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+  .tos-task-details-layout{
+    direction:ltr!important;
+  }
+}
+
+/* ================================================================== */
+/* 2) Description/editor — no clipped/vertical toolbar controls        */
+/* ================================================================== */
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-rich-editor-shell{
+  direction:rtl!important;
+  min-width:0!important;
+  max-width:100%!important;
+}
+
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-editor-toolbar{
+  direction:rtl!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+  overflow:visible!important;
+}
+
+/* The previous nowrap + horizontal-scroll contract is what produced the clipped
+ * vertical-looking controls visible at the left edge of the real screenshot.
+ * In the decluttered Description state we wrap groups instead of clipping them. */
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-editor-toolbar > div{
+  direction:rtl!important;
+  display:flex!important;
+  flex-flow:row wrap!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  gap:4px!important;
+  overflow:visible!important;
+  box-sizing:border-box!important;
+}
+
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-editor-toolbar [class*="tos-editor-group"]{
+  direction:rtl!important;
+  display:inline-flex!important;
+  flex:0 0 auto!important;
+  flex-wrap:nowrap!important;
+  min-width:max-content!important;
+  max-width:100%!important;
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+}
+
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-editor-toolbar button,
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-editor-toolbar select{
+  flex:0 0 auto!important;
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+  white-space:nowrap!important;
+}
+
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-rich-editor-content{
+  direction:inherit!important;
+  text-align:start!important;
+  min-width:0!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-height:220px!important;
+  box-sizing:border-box!important;
+  overflow-wrap:anywhere!important;
+}
+
+.tos-task-details-reference-v1[data-content-dir="rtl"].tos-task-details-reference-v2
+.tos-task-description-panel .tos-task-rich-editor-content:empty:before{
+  direction:rtl!important;
+  text-align:right!important;
+}
+
+/* Keep Description from becoming an oversized empty canvas. */
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-description-panel{
+  min-height:0!important;
+}
+
+/* ================================================================== */
+/* 3) Assignee popover — reserve real layout space while open          */
+/* ================================================================== */
+body>.tos-task-v2-assignee-popover{
+  width:min(320px,calc(100vw - 24px))!important;
+  max-width:calc(100vw - 24px)!important;
+  max-height:min(300px,calc(100dvh - 24px))!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+
+body>.tos-task-v2-assignee-popover .tos-task-v2-assignee-list{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  max-height:min(188px,calc(100dvh - 138px))!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+}
+
+/* Critical zero-overlap behavior:
+ * when Assignee opens, Hero reserves a dedicated vertical lane for the portal.
+ * Tabs/Description are pushed down instead of being covered by the member list. */
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-summary-compact:has(.tos-task-v2-assignee-picker-trigger[aria-expanded="true"]){
+  min-height:520px!important;
+  padding-bottom:326px!important;
+  overflow:visible!important;
+}
+
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-summary-compact:has(.tos-task-v2-assignee-picker-trigger[aria-expanded="true"]):before,
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-summary-compact:has(.tos-task-v2-assignee-picker-trigger[aria-expanded="true"]):after{
+  pointer-events:none!important;
+}
+
+@media (max-height:780px){
+  body>.tos-task-v2-assignee-popover{
+    max-height:min(260px,calc(100dvh - 20px))!important;
+  }
+  body>.tos-task-v2-assignee-popover .tos-task-v2-assignee-list{
+    max-height:min(150px,calc(100dvh - 128px))!important;
+  }
+  .tos-task-details-reference-v1.tos-task-details-reference-v2
+  .tos-task-summary-compact:has(.tos-task-v2-assignee-picker-trigger[aria-expanded="true"]){
+    min-height:480px!important;
+    padding-bottom:286px!important;
+  }
+}
+
+/* ================================================================== */
+/* 4) More Details / advanced side rail — stop floating over content  */
+/* ================================================================== */
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-side-rail[data-more-details="true"]{
+  display:block!important;
+  position:relative!important;
+  z-index:4!important;
+  top:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  left:auto!important;
+  inset:auto!important;
+  width:280px!important;
+  min-width:280px!important;
+  max-width:280px!important;
+  max-height:none!important;
+  margin:0!important;
+  overflow:visible!important;
+  align-self:flex-start!important;
+  box-sizing:border-box!important;
+}
+
+/* Desktop: the advanced rail becomes a real flex column. It consumes space;
+ * it never floats above Task Progress / Description. */
+@media (min-width:1440px){
+  .tos-task-details-reference-v1.tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-side-rail[data-more-details="true"]){
+    display:flex!important;
+    flex-flow:row nowrap!important;
+    align-items:flex-start!important;
+    gap:18px!important;
+  }
+
+  .tos-task-details-reference-v1.tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-side-rail[data-more-details="true"])
+  .tos-task-main-column{
+    flex:1 1 auto!important;
+    min-width:0!important;
+  }
+
+  .tos-task-details-reference-v1.tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-side-rail[data-more-details="true"])
+  .tos-task-side-rail[data-more-details="true"]{
+    flex:0 0 280px!important;
+    order:0!important;
+  }
+}
+
+/* 1180–1439: use a slimmer real column so no floating panel can cover progress. */
+@media (min-width:1180px) and (max-width:1439px){
+  .tos-task-details-reference-v1.tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-side-rail[data-more-details="true"]){
+    display:flex!important;
+    flex-flow:row nowrap!important;
+    align-items:flex-start!important;
+    gap:14px!important;
+  }
+
+  .tos-task-details-reference-v1.tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-side-rail[data-more-details="true"])
+  .tos-task-side-rail[data-more-details="true"]{
+    flex:0 0 230px!important;
+    width:230px!important;
+    min-width:230px!important;
+    max-width:230px!important;
+    order:0!important;
+  }
+}
+
+/* Narrow screens: the panel returns to document flow at full width. */
+@media (max-width:1179px){
+  .tos-task-details-reference-v1.tos-task-details-reference-v2
+  .tos-task-details-layout:has(.tos-task-side-rail[data-more-details="true"]){
+    display:flex!important;
+    flex-direction:column!important;
+    flex-wrap:nowrap!important;
+    gap:14px!important;
+  }
+
+  .tos-task-details-reference-v1.tos-task-details-reference-v2
+  .tos-task-side-rail[data-more-details="true"]{
+    order:2!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    flex:0 0 auto!important;
+  }
+}
+
+/* Make the advanced rail itself compact and internally safe. */
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-side-rail[data-more-details="true"] > *{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+/* ================================================================== */
+/* 5) Generic containment                                               */
+/* ================================================================== */
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-main-column,
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-description-panel,
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-rich-editor-shell,
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-detail-tabs{
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+
+/* Chat System/TCS and Ramzy are intentionally untouched. */
