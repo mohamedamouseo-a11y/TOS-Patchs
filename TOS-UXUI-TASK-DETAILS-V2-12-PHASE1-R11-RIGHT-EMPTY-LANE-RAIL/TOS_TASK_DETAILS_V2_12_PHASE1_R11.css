@@ -1,0 +1,149 @@
+:root{--tos-task-details-v2-12-phase1-r11-right-empty-lane-rail-runtime:1}
+
+/*
+ * R11 — keep the Task card exactly where it is and use ONLY the existing
+ * empty lane on the physical RIGHT for the Overview rail cards.
+ *
+ * R10 changed the whole Task Details body into a two-column grid, which shrank
+ * the Task card itself. R11 reverses ONLY that inner-grid decision.
+ * R10's shell containment and single-scroll ownership remain untouched.
+ */
+
+@media (min-width:1180px){
+  /* Restore the original full-width Task/main canvas. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout{
+    position:relative!important;
+    display:block!important;
+    grid-template-columns:none!important;
+    grid-template-rows:none!important;
+    grid-template-areas:none!important;
+    direction:ltr!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-main-column{
+    position:relative!important;
+    grid-area:auto!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    order:0!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+
+  /* The Task/Hero card must NOT be resized or moved for the rail. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-summary-compact{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Reuse the old empty right lane only for Tabs/Description versus the rail.
+   * This is the canonical lane seen in the user's approved layout before R10. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-description-panel{
+    width:calc(100% - 390px)!important;
+    min-width:0!important;
+    max-width:calc(100% - 390px)!important;
+    margin-left:0!important;
+    margin-right:auto!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Put the existing rail cards in that empty lane; do not overlay Task/Hero. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail{
+    position:absolute!important;
+    grid-area:auto!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    order:1!important;
+    top:238px!important;
+    right:0!important;
+    bottom:auto!important;
+    left:auto!important;
+    inset-inline-start:auto!important;
+    inset-inline-end:auto!important;
+    transform:none!important;
+    width:370px!important;
+    min-width:0!important;
+    max-width:370px!important;
+    margin:0!important;
+    justify-self:auto!important;
+    align-self:auto!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:14px!important;
+    max-height:none!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+    z-index:4!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-reference-v2-rail > *{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    flex:0 0 auto!important;
+    box-sizing:border-box!important;
+  }
+}
+
+/* At the production desktop size the Hero is 248px high + 10px lower gap.
+ * Start the rail exactly where the empty Overview lane begins. */
+@media (min-width:1440px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail{
+    top:258px!important;
+  }
+}
+
+/* On smaller layouts keep the existing safe normal-flow behavior. */
+@media (max-width:1179px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-main-column,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+  }
+}
+
+/* Preserve semantic content direction while geometry remains physically stable. */
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]
+.tos-task-main-column,
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]
+.tos-task-reference-v2-rail{
+  direction:rtl!important;
+  text-align:start!important;
+}
+
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="ltr"]
+.tos-task-main-column,
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="ltr"]
+.tos-task-reference-v2-rail{
+  direction:ltr!important;
+  text-align:start!important;
+}
+
+/* R10 owns the one-scroll contract. Sidebar, backend, DB, TCS and Ramzy untouched. */
