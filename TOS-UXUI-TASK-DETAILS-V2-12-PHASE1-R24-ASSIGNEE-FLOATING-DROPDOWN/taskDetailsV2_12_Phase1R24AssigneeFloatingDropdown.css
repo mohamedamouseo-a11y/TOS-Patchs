@@ -1,0 +1,73 @@
+:root{--tos-task-details-v2-12-phase1-r24-assignee-floating-dropdown-runtime:1}
+
+/* R24 — Assignees is a true floating viewport dropdown.
+ * It must never reserve Hero space, stretch Task Details, or push Tabs/Description. */
+body > .tos-task-v2-assignee-popover{
+  position:fixed!important;
+  z-index:2147483000!important;
+  width:min(336px,calc(100vw - 24px))!important;
+  max-width:calc(100vw - 24px)!important;
+  max-height:min(420px,var(--tos-assignee-available-height,calc(100dvh - 24px)))!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  isolation:isolate!important;
+  margin:0!important;
+}
+
+body > .tos-task-v2-assignee-popover .tos-task-v2-assignee-popover-head,
+body > .tos-task-v2-assignee-popover .tos-task-v2-assignee-search,
+body > .tos-task-v2-assignee-popover .tos-task-v2-assignee-saving,
+body > .tos-task-v2-assignee-popover .tos-task-v2-assignee-error{
+  flex:0 0 auto!important;
+}
+
+body > .tos-task-v2-assignee-popover .tos-task-v2-assignee-list{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+}
+
+/* Kill the old R1 workaround that stretched the Hero by ~300px while open. */
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-summary-compact:has(.tos-task-v2-assignee-picker-trigger[aria-expanded="true"]){
+  padding-bottom:22px!important;
+  overflow:hidden!important;
+}
+
+@media (min-width:1180px){
+  .tos-task-details-reference-v1.tos-task-details-reference-v2
+  .tos-task-summary-compact:has(.tos-task-v2-assignee-picker-trigger[aria-expanded="true"]){
+    min-height:var(--tos-v23-hero-height,236px)!important;
+    height:var(--tos-v23-hero-height,236px)!important;
+    max-height:var(--tos-v23-hero-height,236px)!important;
+  }
+}
+
+@media (max-width:1179px){
+  .tos-task-details-reference-v1.tos-task-details-reference-v2
+  .tos-task-summary-compact:has(.tos-task-v2-assignee-picker-trigger[aria-expanded="true"]){
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+  }
+}
+
+@media (max-width:760px){
+  .tos-task-details-reference-v1.tos-task-details-reference-v2
+  .tos-task-summary-compact:has(.tos-task-v2-assignee-picker-trigger[aria-expanded="true"]){
+    padding-bottom:18px!important;
+  }
+}
+
+@media (max-height:780px){
+  body > .tos-task-v2-assignee-popover{
+    max-height:min(360px,var(--tos-assignee-available-height,calc(100dvh - 20px)))!important;
+  }
+}
+
+/* R23 scroll lock, right rail, Sidebar, backend, TCS and Ramzy are untouched. */
