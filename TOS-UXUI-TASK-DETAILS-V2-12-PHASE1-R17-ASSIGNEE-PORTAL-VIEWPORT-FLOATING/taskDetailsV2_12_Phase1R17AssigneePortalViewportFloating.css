@@ -1,0 +1,53 @@
+:root{--tos-task-details-v2-12-phase1-r17-assignee-portal-viewport-floating-runtime:1}
+
+/* R17 — Assignees must be a true floating body portal.
+ * Do not reserve Hero space and do not let the Task frame clip the picker. */
+
+body > .tos-task-v2-assignee-popover{
+  position:fixed!important;
+  z-index:2147483000!important;
+  width:min(336px,calc(100vw - 24px))!important;
+  max-width:calc(100vw - 24px)!important;
+  max-height:min(420px,var(--tos-assignee-available-height,calc(100dvh - 24px)))!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  isolation:isolate!important;
+}
+
+body > .tos-task-v2-assignee-popover .tos-task-v2-assignee-list{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+}
+
+/* Undo R1's old workaround that expanded the Hero by ~300px while the portal was open.
+ * The body portal now owns its own viewport geometry and must never push Task content. */
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-summary-compact:has(.tos-task-v2-assignee-picker-trigger[aria-expanded="true"]){
+  min-height:0!important;
+  padding-bottom:0!important;
+  overflow:visible!important;
+}
+
+@media (max-height:780px){
+  body > .tos-task-v2-assignee-popover{
+    max-height:min(360px,var(--tos-assignee-available-height,calc(100dvh - 20px)))!important;
+  }
+
+  body > .tos-task-v2-assignee-popover .tos-task-v2-assignee-list{
+    max-height:none!important;
+  }
+
+  .tos-task-details-reference-v1.tos-task-details-reference-v2
+  .tos-task-summary-compact:has(.tos-task-v2-assignee-picker-trigger[aria-expanded="true"]){
+    min-height:0!important;
+    padding-bottom:0!important;
+  }
+}
+
+/* R13/R16 right rail placement, shell, Sidebar, TCS and Ramzy are untouched. */
