@@ -1,0 +1,12 @@
+:root{--tos-task-details-v2-12-phase1-r23-late-layout-scroll-lock-runtime:1}
+
+.tos-task-details-fullpage,
+.tos-task-details-reference-v1,
+.tos-premium-page-viewport,
+[data-tos-task-scroll-owner="r23"]{
+  overflow-anchor:none!important;
+}
+
+[data-tos-task-scroll-owner="r23"]{
+  scroll-behavior:auto!important;
+}
