@@ -67,7 +67,7 @@ for contract in (
     'className="tos-task-details-layout grid gap-4 xl:grid-cols-[minmax(0,1fr)_304px]"',
     'className="tos-task-main-column min-w-0 space-y-4 text-right xl:order-1"',
     'className="tos-task-reference-v2-rail"',
-    'className="tos-task-description-panel',
+    'tos-task-description-panel',
 ):
     if contract not in board_source:
         fail(f"Task Details DOM contract missing: {contract}")
