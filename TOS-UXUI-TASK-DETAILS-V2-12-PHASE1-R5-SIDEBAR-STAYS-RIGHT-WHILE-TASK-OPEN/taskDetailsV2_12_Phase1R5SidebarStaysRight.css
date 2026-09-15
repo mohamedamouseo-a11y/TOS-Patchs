@@ -1,0 +1,38 @@
+:root{--tos-task-details-v2-12-phase1-r5-sidebar-stays-right-runtime:1}
+
+/*
+ * R5 — Desktop app shell direction lock.
+ * Production video after R4 showed the global TOS Sidebar visually switching
+ * from physical right to physical left while Task Details was open.
+ * Lock the actual app flex shell independently from modal/content direction.
+ */
+
+@media (min-width:1024px){
+  html body .tos-premium-system-v14[dir="rtl"] > .tos-premium-app-frame{
+    direction:rtl!important;
+    flex-direction:row!important;
+  }
+
+  html body .tos-premium-system-v14[dir="rtl"] > .tos-premium-app-frame > .tos-premium-sidebar{
+    order:0!important;
+  }
+
+  html body .tos-premium-system-v14[dir="rtl"] > .tos-premium-app-frame > .tos-premium-main-shell{
+    order:1!important;
+  }
+
+  html body .tos-premium-system-v14[dir="ltr"] > .tos-premium-app-frame{
+    direction:ltr!important;
+    flex-direction:row!important;
+  }
+
+  html body .tos-premium-system-v14[dir="ltr"] > .tos-premium-app-frame > .tos-premium-sidebar{
+    order:0!important;
+  }
+
+  html body .tos-premium-system-v14[dir="ltr"] > .tos-premium-app-frame > .tos-premium-main-shell{
+    order:1!important;
+  }
+}
+
+/* Task Details internals, TCS and Ramzy intentionally untouched. */
