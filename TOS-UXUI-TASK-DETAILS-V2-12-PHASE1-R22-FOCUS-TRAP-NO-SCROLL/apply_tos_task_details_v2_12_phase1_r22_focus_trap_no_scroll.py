@@ -8,7 +8,7 @@ import time
 
 VERSION = "TOS_TASK_DETAILS_V2_12_PHASE1_R22_FOCUS_TRAP_NO_SCROLL"
 PATCH_NAME = "TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R22-FOCUS-TRAP-NO-SCROLL"
-R21_MARKER = "--tos-task-details-v2-12-phase1-r21-r20-recovery-scroll-stabilize-runtime"
+R20_MARKER = "--tos-task-details-v2-12-phase1-r20-keyed-scroll-container-remount-runtime"
 R22_MARKER = "--tos-task-details-v2-12-phase1-r22-focus-trap-no-scroll-runtime"
 
 ROOT = Path(sys.argv[1] if len(sys.argv) > 1 else "/var/www/TOS")
@@ -18,7 +18,7 @@ BOARD = FRONTEND / "src/components/ProfessionalTaskBoard.jsx"
 PARTS = FRONTEND / "src/features/tasks/taskBoardParts.jsx"
 APP = FRONTEND / "src/App.jsx"
 SIDEBAR = FRONTEND / "src/components/layout/Sidebar.jsx"
-R21_STYLE = STYLE_DIR / "taskDetailsV2_12_Phase1R21R20RecoveryScrollStabilize.css"
+R20_STYLE = STYLE_DIR / "taskDetailsV2_12_Phase1R20KeyedScrollContainerRemount.css"
 R22_STYLE = STYLE_DIR / "taskDetailsV2_12_Phase1R22FocusTrapNoScroll.css"
 MANIFEST = ROOT / "deployment/tos-production-runtime.json"
 PATCH_DIR = Path(__file__).resolve().parent
@@ -37,7 +37,7 @@ def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-for path in (FRONTEND, STYLE_DIR, BOARD, PARTS, APP, SIDEBAR, R21_STYLE, MANIFEST, PAYLOAD):
+for path in (FRONTEND, STYLE_DIR, BOARD, PARTS, APP, SIDEBAR, R20_STYLE, MANIFEST, PAYLOAD):
     if not path.exists():
         fail(f"required path missing: {path}")
 for command in ("node", "npm"):
@@ -46,11 +46,11 @@ for command in ("node", "npm"):
 
 board_source = BOARD.read_text()
 parts_source = PARTS.read_text()
-r21_source = R21_STYLE.read_text()
+r20_source = R20_STYLE.read_text()
 payload_css = PAYLOAD.read_text()
 
-if R21_MARKER not in r21_source:
-    fail("required R21 baseline marker missing")
+if R20_MARKER not in r20_source:
+    fail("required R20 baseline marker missing")
 if R22_STYLE.exists() or R22_MARKER in board_source or R22_MARKER in parts_source:
     fail("Phase 1 R22 already appears to be applied")
 if R22_MARKER not in payload_css:
@@ -75,13 +75,13 @@ if updated_parts.count(old_restore_focus) != 1:
     fail(f"expected exactly one modal restore focus contract, found {updated_parts.count(old_restore_focus)}")
 updated_parts = updated_parts.replace(old_restore_focus, new_restore_focus, 1)
 
-r21_import = 'import "../styles/taskDetailsV2_12_Phase1R21R20RecoveryScrollStabilize.css";'
+r20_import = 'import "../styles/taskDetailsV2_12_Phase1R20KeyedScrollContainerRemount.css";'
 r22_import = 'import "../styles/taskDetailsV2_12_Phase1R22FocusTrapNoScroll.css";'
-if r21_import not in updated_board:
-    fail("R21 stylesheet import missing")
+if r20_import not in updated_board:
+    fail("R20 stylesheet import missing")
 if r22_import in updated_board:
     fail("R22 stylesheet import already exists")
-updated_board = updated_board.replace(r21_import, r21_import + "\n" + r22_import, 1)
+updated_board = updated_board.replace(r20_import, r20_import + "\n" + r22_import, 1)
 
 for contract in (
     'useModalFocusTrap(modalRef, closeButtonRef, onClose, "task-details-modal")',
@@ -150,8 +150,8 @@ try:
 
     built_css = "\n".join(p.read_text(errors="ignore") for p in DIST.rglob("*.css"))
     built_js = "\n".join(p.read_text(errors="ignore") for p in DIST.rglob("*.js"))
-    if R22_MARKER not in built_css or R21_MARKER not in built_css:
-        fail("required R21/R22 runtime marker missing from built CSS")
+    if R22_MARKER not in built_css or R20_MARKER not in built_css:
+        fail("required R20/R22 runtime marker missing from built CSS")
     if "task-details-modal" not in built_js or "preventScroll" not in built_js:
         fail("R22 focus behavior missing from built JS")
 
@@ -167,8 +167,8 @@ try:
 
     live_css = "\n".join(p.read_text(errors="ignore") for p in LIVE.rglob("*.css"))
     live_js = "\n".join(p.read_text(errors="ignore") for p in LIVE.rglob("*.js"))
-    if R22_MARKER not in live_css or R21_MARKER not in live_css:
-        fail("required R21/R22 runtime marker missing from live CSS")
+    if R22_MARKER not in live_css or R20_MARKER not in live_css:
+        fail("required R20/R22 runtime marker missing from live CSS")
     if "task-details-modal" not in live_js or "preventScroll" not in live_js:
         fail("R22 focus behavior missing from live JS")
 
@@ -200,7 +200,7 @@ print("LIVE_DEPLOY=PASS")
 print("TASK_DETAILS_FOCUS_TRAP_STABLE_ACROSS_TASK_CHANGE=YES")
 print("MODAL_INITIAL_FOCUS_PREVENT_SCROLL=YES")
 print("MODAL_RESTORE_FOCUS_PREVENT_SCROLL=YES")
-print("R21_SCROLL_STABILIZATION_PRESERVED=YES")
+print("R20_BASELINE_PRESERVED=YES")
 print("LAYOUT_CHANGED=NO")
 print("APP_JS_CHANGED=NO")
 print("SIDEBAR_JS_CHANGED=NO")
