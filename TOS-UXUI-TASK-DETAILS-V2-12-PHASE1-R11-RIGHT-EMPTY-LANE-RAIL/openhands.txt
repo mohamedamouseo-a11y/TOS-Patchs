@@ -1,0 +1,22 @@
+Apply existing patch only.
+
+REPO=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+COMMIT=TO_BE_FILLED_AFTER_CREATE
+PATCH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R11-RIGHT-EMPTY-LANE-RAIL
+TARGET=/var/www/TOS
+
+Fresh clone REPO to /tmp/TOS-Patchs-R11, checkout COMMIT, then run:
+python3 /tmp/TOS-Patchs-R11/TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R11-RIGHT-EMPTY-LANE-RAIL/apply_tos_task_details_v2_12_phase1_r11_right_empty_lane_rail.py /var/www/TOS
+
+NO_BROWSER_QA=YES
+NO_SCREENSHOTS=YES
+NO_VISUAL_QA=YES
+No manual edits.
+No push.
+
+Return only:
+PATCH_APPLIED=
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+FINAL_STATUS=
