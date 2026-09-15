@@ -1,0 +1,5 @@
+:root{--tos-task-details-v2-12-phase1-r18-scroll-reset-on-task-change-runtime:1}
+
+/* R18 is a JS behavior fix only. This marker stylesheet exists so build/live
+ * verification can prove the patch bundle was published without changing
+ * any Task Details visual geometry. */
