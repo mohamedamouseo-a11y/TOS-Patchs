@@ -1,0 +1,51 @@
+:root{--tos-task-details-v2-12-phase1-r16-r13-recovery-safe-bottom-flow-runtime:1}
+
+/* R16 — recover the visually-correct R13 composition after R14/R15 bottom-flow regressions.
+ * Keep the structural physical-right rail slot, Task/Hero geometry, and single scroll owner.
+ * Remove the artificial/auto-height experiments and add only a small normal-flow scroll reserve.
+ */
+
+@media (min-width:1180px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail-slot){
+    min-height:0!important;
+    padding-bottom:0!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Restore the R13 zero-height structural slot. The rail itself remains visually docked
+   * in the physical RIGHT lane and does not participate in normal document flow. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail-slot{
+    height:0!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-reference-v2-rail-slot > .tos-task-reference-v2-rail{
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+
+  /* Small in-flow reserve only: enough to reach the last rail card without creating
+   * the large blank canvas introduced by R14. This pseudo-element participates in
+   * normal layout, so the existing single Task Details scroller can reach the bottom. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail-slot)::after{
+    content:"";
+    display:block;
+    width:100%;
+    height:120px;
+    min-height:120px;
+    max-height:120px;
+    pointer-events:none;
+  }
+}
+
+/* Preserve R13 physical-right placement and R9 single-scroll ownership.
+ * Sidebar, backend, database, TCS and Ramzy remain untouched. */
