@@ -2,7 +2,7 @@
 
 VERSION=TOS_TASK_DETAILS_V2_12_PHASE1_R11_RIGHT_EMPTY_LANE_RAIL
 PATCH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R11-RIGHT-EMPTY-LANE-RAIL
-BASELINE=LIVE_R10
+BASELINE=LIVE_R9
 PATCH_SCOPE=KEEP_TASK_CARD_IN_PLACE_AND_USE_EXISTING_RIGHT_EMPTY_LANE
 
 ## User-confirmed target
@@ -19,7 +19,7 @@ Desktop:
 - Tabs + Description reserve the canonical 390px right lane.
 - `.tos-task-reference-v2-rail` is 370px wide and occupies that lane on the physical RIGHT.
 - Rail starts below the Hero where the empty Overview lane begins: 238px for 1180–1439, 258px for >=1440.
-- R10 single-scroll ownership is preserved unchanged.
+- R9 single-scroll ownership is preserved unchanged.
 
 ## Frozen
 - App.jsx
