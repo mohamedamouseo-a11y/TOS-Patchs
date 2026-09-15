@@ -8,7 +8,7 @@ import time
 
 VERSION = "TOS_TASK_DETAILS_V2_12_PHASE1_R11_RIGHT_EMPTY_LANE_RAIL"
 PATCH_NAME = "TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R11-RIGHT-EMPTY-LANE-RAIL"
-R10_MARKER = "--tos-task-details-v2-12-phase1-r10-top-right-grid-single-scroll-runtime"
+R9_MARKER = "--tos-task-details-v2-12-phase1-r9-top-right-rail-single-scroll-runtime"
 R11_MARKER = "--tos-task-details-v2-12-phase1-r11-right-empty-lane-rail-runtime"
 
 ROOT = Path(sys.argv[1] if len(sys.argv) > 1 else "/var/www/TOS")
@@ -17,7 +17,7 @@ STYLE_DIR = FRONTEND / "src/styles"
 BOARD = FRONTEND / "src/components/ProfessionalTaskBoard.jsx"
 APP = FRONTEND / "src/App.jsx"
 SIDEBAR = FRONTEND / "src/components/layout/Sidebar.jsx"
-R10_STYLE = STYLE_DIR / "taskDetailsV2_12_Phase1R10TopRightGridSingleScroll.css"
+R9_STYLE = STYLE_DIR / "taskDetailsV2_12_Phase1R9TopRightRailSingleScroll.css"
 R11_STYLE = STYLE_DIR / "taskDetailsV2_12_Phase1R11RightEmptyLaneRail.css"
 MANIFEST = ROOT / "deployment/tos-production-runtime.json"
 PATCH_DIR = Path(__file__).resolve().parent
@@ -36,7 +36,7 @@ def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-for path in (FRONTEND, STYLE_DIR, BOARD, APP, SIDEBAR, R10_STYLE, MANIFEST, PAYLOAD):
+for path in (FRONTEND, STYLE_DIR, BOARD, APP, SIDEBAR, R9_STYLE, MANIFEST, PAYLOAD):
     if not path.exists():
         fail(f"required path missing: {path}")
 for command in ("node", "npm"):
@@ -44,11 +44,11 @@ for command in ("node", "npm"):
         fail(f"required command not found: {command}")
 
 board_source = BOARD.read_text()
-r10_source = R10_STYLE.read_text()
+r9_source = R9_STYLE.read_text()
 payload_css = PAYLOAD.read_text()
 
-if R10_MARKER not in r10_source:
-    fail("required R10 baseline marker missing")
+if R9_MARKER not in r9_source:
+    fail("required R9 baseline marker missing")
 if R11_STYLE.exists() or R11_MARKER in board_source:
     fail("Phase 1 R11 already appears to be applied")
 if R11_MARKER not in payload_css:
@@ -64,13 +64,13 @@ for contract in (
     if contract not in board_source:
         fail(f"Task Details DOM contract missing: {contract}")
 
-r10_import = 'import "../styles/taskDetailsV2_12_Phase1R10TopRightGridSingleScroll.css";'
+r9_import = 'import "../styles/taskDetailsV2_12_Phase1R9TopRightRailSingleScroll.css";'
 r11_import = 'import "../styles/taskDetailsV2_12_Phase1R11RightEmptyLaneRail.css";'
-if r10_import not in board_source:
-    fail("R10 stylesheet import missing")
+if r9_import not in board_source:
+    fail("R9 stylesheet import missing")
 if r11_import in board_source:
     fail("R11 stylesheet import already exists")
-updated_board = board_source.replace(r10_import, r10_import + "\n" + r11_import, 1)
+updated_board = board_source.replace(r9_import, r9_import + "\n" + r11_import, 1)
 
 for contract in (
     'display:block!important',
@@ -133,7 +133,7 @@ try:
         fail("frontend dist missing after build")
 
     built_css = "\n".join(p.read_text(errors="ignore") for p in DIST.rglob("*.css"))
-    for marker in (R11_MARKER, R10_MARKER):
+    for marker in (R11_MARKER, R9_MARKER):
         if marker not in built_css:
             fail(f"required runtime marker missing from built CSS: {marker}")
 
@@ -148,7 +148,7 @@ try:
     live_swapped = True
 
     live_css = "\n".join(p.read_text(errors="ignore") for p in LIVE.rglob("*.css"))
-    for marker in (R11_MARKER, R10_MARKER):
+    for marker in (R11_MARKER, R9_MARKER):
         if marker not in live_css:
             fail(f"required runtime marker missing from live CSS: {marker}")
 
@@ -182,7 +182,7 @@ print("RIGHT_EMPTY_LANE_USED=YES")
 print("RIGHT_RAIL_PHYSICAL_SIDE=RIGHT")
 print("RIGHT_RAIL_OVERLAP=NO")
 print("TASK_SCROLL_OWNERS=1")
-print("R10_SINGLE_SCROLL_PRESERVED=YES")
+print("R9_SINGLE_SCROLL_PRESERVED=YES")
 print("APP_JS_CHANGED=NO")
 print("SIDEBAR_JS_CHANGED=NO")
 print("PRIOR_PHASE1_CSS_CHANGED=NO")
