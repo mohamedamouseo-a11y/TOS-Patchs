@@ -1,0 +1,4 @@
+:root{--tos-task-details-v2-12-phase1-r19-reset-actual-scroll-owners-runtime:1}
+
+/* R19 is a JS behavior fix only. Marker stylesheet for build/live verification.
+ * No Task Details visual geometry is changed here. */
