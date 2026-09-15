@@ -1,0 +1,17 @@
+Apply existing patch only.
+
+REPO=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+PATCH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R24-ASSIGNEE-FLOATING-DROPDOWN
+TARGET=/var/www/TOS
+
+Fresh clone, checkout supplied commit, run installer against TARGET.
+
+No browser/screenshots/visual QA/manual edits/push.
+Do not touch backend, DB, TCS, Ramzy, or R23 logic.
+
+Return only:
+PATCH_APPLIED=
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+FINAL_STATUS=
