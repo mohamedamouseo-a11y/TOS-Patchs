@@ -1,0 +1,136 @@
+:root{--tos-task-details-v2-12-phase1-r9-top-right-rail-single-scroll-runtime:1}
+
+/*
+ * R9 — restore the right-side cards beside the Task card at the TOP,
+ * and remove the nested/double vertical scroll introduced by shell containment.
+ * R7/R8 shell clipping fixes stay intact; this only corrects rail placement
+ * and scroll ownership inside Task Details.
+ */
+
+/* While Task Details is open, the app page viewport must not be a second scroller.
+ * The Task Details body below remains the single vertical scrolling surface. */
+html body .tos-premium-main-shell:has(.tos-task-details-fullpage) .tos-premium-page-viewport{
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+}
+
+html body .tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir],
+html body .tos-task-details-fullpage[data-content-dir] .tos-task-details-modal{
+  overflow:hidden!important;
+}
+
+html body .tos-task-details-fullpage[data-content-dir]
+.tos-task-details-modal > div[class*="overflow-y-auto"]{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+}
+
+@media (min-width:1180px){
+  /* Use the original Task Details rail width from the component contract (304px).
+   * The rail is absolute on the physical RIGHT, while the main column reserves
+   * exactly one lane for it. This places Quick Actions / Task Information / Tags
+   * beside the Task/Hero card instead of hundreds of pixels below it. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout{
+    position:relative!important;
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    --tos-r9-rail-width:304px;
+    --tos-r9-rail-gap:16px;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-main-column{
+    position:relative!important;
+    width:calc(100% - var(--tos-r9-rail-width) - var(--tos-r9-rail-gap))!important;
+    min-width:0!important;
+    max-width:calc(100% - var(--tos-r9-rail-width) - var(--tos-r9-rail-gap))!important;
+    margin-left:0!important;
+    margin-right:auto!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail{
+    position:absolute!important;
+    top:0!important;
+    right:0!important;
+    bottom:auto!important;
+    left:auto!important;
+    inset-inline-start:auto!important;
+    inset-inline-end:auto!important;
+    width:var(--tos-r9-rail-width)!important;
+    min-width:var(--tos-r9-rail-width)!important;
+    max-width:var(--tos-r9-rail-width)!important;
+    margin:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:14px!important;
+    max-height:none!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+    z-index:4!important;
+  }
+
+  /* R8 reserved only Tabs/Description. R9 reserves the whole main column,
+   * therefore all main surfaces return to 100% of that column. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-summary-compact,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-description-panel{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Rail cards themselves must never create an internal vertical scroller. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-reference-v2-rail > *{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    flex:0 0 auto!important;
+    box-sizing:border-box!important;
+  }
+}
+
+/* On narrower screens keep the safe single-column flow; there is still only
+ * one vertical Task Details scroll surface. */
+@media (max-width:1179px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-main-column,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+  }
+}
+
+/* Preserve Description/editor containment from R7/R8. */
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+.tos-task-description-panel,
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+.tos-task-rich-editor-shell,
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+.tos-task-editor-toolbar{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+/* Semantic RTL/LTR content remains untouched. Sidebar, TCS, Ramzy, backend and
+ * task business logic are intentionally unchanged. */
