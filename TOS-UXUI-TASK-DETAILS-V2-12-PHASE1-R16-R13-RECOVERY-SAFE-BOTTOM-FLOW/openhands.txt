@@ -1,0 +1,21 @@
+Apply existing patch only.
+
+REPO=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+PATCH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R16-R13-RECOVERY-SAFE-BOTTOM-FLOW
+TARGET=/var/www/TOS
+
+Fresh clone REPO to /tmp/TOS-Patchs-R16, checkout the supplied commit, then run:
+python3 /tmp/TOS-Patchs-R16/TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R16-R13-RECOVERY-SAFE-BOTTOM-FLOW/apply_tos_task_details_v2_12_phase1_r16_r13_recovery_safe_bottom_flow.py /var/www/TOS
+
+NO_BROWSER_QA=YES
+NO_SCREENSHOTS=YES
+NO_VISUAL_QA=YES
+No manual edits.
+No push.
+
+Return only:
+PATCH_APPLIED=
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+FINAL_STATUS=
