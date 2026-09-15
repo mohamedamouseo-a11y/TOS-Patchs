@@ -1,0 +1,16 @@
+Apply existing patch only.
+
+REPO=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+PATCH=TOS-MY-WORKSPACE-REVIEW-COLUMN-OPEN-FIX-V2
+TARGET=/var/www/TOS
+
+Fresh clone to /tmp/TOS-MYWS-REVIEW-V2, checkout supplied commit, run:
+python3 /tmp/TOS-MYWS-REVIEW-V2/TOS-MY-WORKSPACE-REVIEW-COLUMN-OPEN-FIX-V2/apply_tos_my_workspace_review_column_open_fix_v2.py /var/www/TOS
+
+No browser/screenshots/visual QA/manual edits/push.
+Return only:
+PATCH_APPLIED=
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+FINAL_STATUS=
