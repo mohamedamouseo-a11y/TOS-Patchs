@@ -1,0 +1,21 @@
+Apply existing patch only.
+
+REPO=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+COMMIT=__USE_CURRENT_MAIN_HEAD__
+PATCH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R10-TOP-RIGHT-GRID-SINGLE-SCROLL
+TARGET=/var/www/TOS
+
+Fresh clone REPO to /tmp/TOS-Patchs-R10, checkout COMMIT, then run the R10 installer against TARGET.
+
+NO_BROWSER_QA=YES
+NO_SCREENSHOTS=YES
+NO_VISUAL_QA=YES
+No manual edits.
+No push.
+
+Return only:
+PATCH_APPLIED=
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+FINAL_STATUS=
