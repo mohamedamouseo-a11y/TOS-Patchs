@@ -1,0 +1,39 @@
+:root{--tos-task-details-v2-12-phase1-r15-rail-auto-height-scroll-recovery-runtime:1}
+
+/* R15 — replace R14's artificial 900px floor with the rail's real content height.
+ * R13 placement was correct. The issue was that the structural rail slot had
+ * height:0, so lower rail cards lived only in visual overflow. R14 tried to
+ * compensate with a fixed min-height and created an oversized blank scroll floor.
+ *
+ * Keep R13 physical-right placement unchanged. Make the absolute slot size to its
+ * real child content and let the existing Task Details scroller include that box.
+ */
+
+@media (min-width:1180px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail-slot){
+    min-height:0!important;
+    padding-bottom:0!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail-slot{
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-reference-v2-rail-slot > .tos-task-reference-v2-rail{
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+}
+
+/* R13 right-side position, R9 single-scroll ownership, Task/Hero geometry,
+ * Sidebar, backend, DB, TCS and Ramzy are unchanged. */
