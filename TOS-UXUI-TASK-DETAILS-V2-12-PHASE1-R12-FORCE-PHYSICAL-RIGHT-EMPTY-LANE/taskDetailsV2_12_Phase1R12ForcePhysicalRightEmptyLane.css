@@ -1,0 +1,86 @@
+:root{--tos-task-details-v2-12-phase1-r12-force-physical-right-empty-lane-runtime:1}
+
+/* R12 — QA after R11 confirmed the empty lane exists on the physical RIGHT,
+ * but the rail itself is still anchored on the physical LEFT and overlays the
+ * Description. Do not change any sizing, vertical placement, or scroll owner.
+ * Only force the rail into the already-reserved physical right lane. */
+
+@media (min-width:1180px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout{
+    position:relative!important;
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Preserve R11: Task/Hero remains full width and unmoved. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-main-column,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-summary-compact{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Preserve the existing empty lane on the RIGHT of Tabs/Description. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-description-panel{
+    width:calc(100% - 390px)!important;
+    min-width:0!important;
+    max-width:calc(100% - 390px)!important;
+    margin-left:0!important;
+    margin-right:auto!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Critical fix: use an explicit physical LEFT coordinate equal to
+   * container width minus rail width. This avoids all RTL/logical-inset/order
+   * interactions that kept resolving the rail to the left edge in R9/R11. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail{
+    position:absolute!important;
+    top:238px!important;
+    left:calc(100% - 370px)!important;
+    right:auto!important;
+    bottom:auto!important;
+    inset-inline-start:auto!important;
+    inset-inline-end:auto!important;
+    transform:none!important;
+    width:370px!important;
+    min-width:370px!important;
+    max-width:370px!important;
+    margin:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:14px!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+    z-index:4!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-reference-v2-rail > *{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+}
+
+@media (min-width:1440px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail{
+    top:258px!important;
+  }
+}
+
+/* R9/R11 single-scroll ownership, Sidebar, backend, DB, TCS and Ramzy untouched. */
