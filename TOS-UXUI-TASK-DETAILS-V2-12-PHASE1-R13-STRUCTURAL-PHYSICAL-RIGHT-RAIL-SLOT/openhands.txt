@@ -1,0 +1,21 @@
+Apply existing patch only.
+
+REPO=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+PATCH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R13-STRUCTURAL-PHYSICAL-RIGHT-RAIL-SLOT
+TARGET=/var/www/TOS
+
+Fresh clone REPO to /tmp/TOS-Patchs-R13, checkout the supplied commit, then run:
+python3 /tmp/TOS-Patchs-R13/TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R13-STRUCTURAL-PHYSICAL-RIGHT-RAIL-SLOT/apply_tos_task_details_v2_12_phase1_r13_structural_physical_right_rail_slot.py /var/www/TOS
+
+NO_BROWSER_QA=YES
+NO_SCREENSHOTS=YES
+NO_VISUAL_QA=YES
+No manual edits.
+No push.
+
+Return only:
+PATCH_APPLIED=
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+FINAL_STATUS=
