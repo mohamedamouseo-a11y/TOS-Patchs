@@ -1,0 +1,22 @@
+Apply existing patch only.
+
+REPO=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+PATCH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R23-LATE-LAYOUT-SCROLL-LOCK
+TARGET=/var/www/TOS
+
+Fresh clone REPO to /tmp/TOS-Patchs-R23, checkout the supplied commit, then run:
+python3 /tmp/TOS-Patchs-R23/TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R23-LATE-LAYOUT-SCROLL-LOCK/apply_tos_task_details_v2_12_phase1_r23_late_layout_scroll_lock.py /var/www/TOS
+
+NO_BROWSER_QA=YES
+NO_SCREENSHOTS=YES
+NO_VISUAL_QA=YES
+No manual edits.
+No push.
+Do not touch backend, DB, TCS, or Ramzy.
+
+Return only:
+PATCH_APPLIED=
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+FINAL_STATUS=
