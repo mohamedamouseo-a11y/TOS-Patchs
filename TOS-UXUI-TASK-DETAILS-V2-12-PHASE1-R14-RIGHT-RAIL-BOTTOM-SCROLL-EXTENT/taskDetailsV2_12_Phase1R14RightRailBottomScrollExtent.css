@@ -1,0 +1,34 @@
+:root{--tos-task-details-v2-12-phase1-r14-right-rail-bottom-scroll-extent-runtime:1}
+
+/* R14 — R13 places the rail correctly in the physical RIGHT empty lane, but
+ * its absolute zero-height slot does not contribute to the layout scrollHeight.
+ * Result: the lower rail cards can be cut off at the bottom even though their
+ * horizontal placement is now correct.
+ *
+ * Keep R13 placement unchanged. Only guarantee enough document-flow height for
+ * the complete rail so the existing single Task Details scroller can reach it.
+ */
+
+@media (min-width:1180px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail-slot){
+    /* Rail starts at 238px (258px on >=1440) and its production cards need
+     * roughly 560px. 900px is a safe floor; if main content is taller it wins. */
+    min-height:900px!important;
+    padding-bottom:24px!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+
+  /* Never clip the structural slot/rail at the layout edge. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-reference-v2-rail-slot,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-reference-v2-rail-slot > .tos-task-reference-v2-rail{
+    max-height:none!important;
+    overflow:visible!important;
+  }
+}
+
+/* R13 physical-right placement, task card geometry, one-scroll ownership,
+ * Sidebar, backend, DB, TCS and Ramzy are untouched. */
