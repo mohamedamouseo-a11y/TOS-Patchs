@@ -1,0 +1,22 @@
+Apply existing patch only.
+
+REPO=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+COMMIT=<R12_COMMIT>
+PATCH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R12-FORCE-PHYSICAL-RIGHT-EMPTY-LANE
+TARGET=/var/www/TOS
+
+Fresh clone REPO, checkout COMMIT, run:
+python3 <clone>/$PATCH/apply_tos_task_details_v2_12_phase1_r12_force_physical_right_empty_lane.py /var/www/TOS
+
+NO_BROWSER_QA=YES
+NO_SCREENSHOTS=YES
+NO_VISUAL_QA=YES
+No manual edits.
+No push.
+
+Return only:
+PATCH_APPLIED=
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+FINAL_STATUS=
