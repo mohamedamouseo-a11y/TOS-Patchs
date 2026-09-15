@@ -1,0 +1,11 @@
+:root{--tos-task-details-v2-12-phase1-r21-r20-recovery-scroll-stabilize-runtime:1}
+
+/* R21 — recover from the R20 keyed-remount regression.
+ * Visual/layout geometry is unchanged. The real Task Details scroll owner
+ * disables browser scroll anchoring so a newly opened task stays at the top
+ * while its content finishes laying out.
+ */
+[data-tos-task-scroll-owner="true"]{
+  overflow-anchor:none!important;
+  scroll-behavior:auto!important;
+}
