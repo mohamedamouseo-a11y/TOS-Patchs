@@ -1,0 +1,159 @@
+:root{--tos-task-details-v2-12-phase1-r8-restore-canonical-right-rail-no-clip-runtime:1}
+
+/*
+ * R8 — restore the approved canonical Overview composition after R7.
+ * R7 correctly contained the full Task Details overlay inside the main shell,
+ * but its inner two-column grid moved the canonical right rail out of its old
+ * absolute slot. Keep R7 shell containment; undo only that inner layout change.
+ */
+
+@media (min-width:1180px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout{
+    position:relative!important;
+    display:block!important;
+    direction:ltr!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-main-column{
+    position:relative!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Restore the old physical RIGHT rail. Do not let RTL logical insets move it. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail{
+    position:absolute!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    inset-inline-start:auto!important;
+    inset-inline-end:auto!important;
+    right:0!important;
+    left:auto!important;
+    bottom:auto!important;
+    width:370px!important;
+    min-width:0!important;
+    max-width:370px!important;
+    margin:0!important;
+    justify-self:auto!important;
+    align-self:auto!important;
+    box-sizing:border-box!important;
+    z-index:4!important;
+  }
+
+  /* Recreate the canonical reserved lane beside the rail. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-description-panel{
+    width:calc(100% - 390px)!important;
+    min-width:0!important;
+    max-width:calc(100% - 390px)!important;
+    margin-left:0!important;
+    margin-right:auto!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Preserve the canonical rail start beside the Overview body. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-reference-v2-rail{
+    top:298px!important;
+  }
+}
+
+@media (min-width:1440px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-reference-v2-rail{
+    top:var(--tos-v210d-rail-top,310px)!important;
+  }
+}
+
+@media (min-width:1180px) and (max-width:1280px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail{
+    width:330px!important;
+    max-width:330px!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-description-panel{
+    width:calc(100% - 348px)!important;
+    max-width:calc(100% - 348px)!important;
+  }
+}
+
+/* Below the desktop rail breakpoint retain the safe one-column flow from R7. */
+@media (max-width:1179px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout{
+    display:flex!important;
+    flex-direction:column!important;
+    flex-wrap:nowrap!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail{
+    position:relative!important;
+    inset:auto!important;
+    top:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    left:auto!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+  }
+}
+
+/* Keep the no-clipping hardening that R7 added to the Description editor. */
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+.tos-task-description-panel,
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+.tos-task-rich-editor-shell,
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+.tos-task-editor-toolbar{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+.tos-task-description-panel .tos-task-editor-toolbar > div{
+  display:flex!important;
+  flex-flow:row wrap!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:visible!important;
+  writing-mode:horizontal-tb!important;
+  box-sizing:border-box!important;
+}
+
+/* Content direction remains semantic; only the rail's PHYSICAL slot is fixed right. */
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"] .tos-task-main-column,
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"] .tos-task-reference-v2-rail{
+  direction:rtl!important;
+}
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="ltr"] .tos-task-main-column,
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="ltr"] .tos-task-reference-v2-rail{
+  direction:ltr!important;
+}
+
+/* R7 main-shell containment, R5 Sidebar lock, TCS and Ramzy are untouched. */
