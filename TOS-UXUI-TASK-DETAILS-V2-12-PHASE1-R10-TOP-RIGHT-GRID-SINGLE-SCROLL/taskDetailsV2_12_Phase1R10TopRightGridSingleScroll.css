@@ -1,0 +1,194 @@
+:root{--tos-task-details-v2-12-phase1-r10-top-right-grid-single-scroll-runtime:1}
+
+/* R10 — production video after R9: the rail was physically LEFT and overlaying
+ * the hero/tabs/Description. Put the existing rail in one explicit top-right
+ * grid column and make Task Details own exactly one vertical scrollbar. */
+
+/* Single scroll owner while Task Details is open. */
+html:has(.tos-task-details-fullpage),
+body:has(.tos-task-details-fullpage){
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+}
+
+html body .tos-premium-app-frame:has(.tos-task-details-fullpage),
+html body .tos-premium-main-shell:has(.tos-task-details-fullpage),
+html body .tos-premium-main-shell:has(.tos-task-details-fullpage) .tos-premium-page-viewport,
+html body .tos-task-details-fullpage[data-content-dir],
+html body .tos-task-details-fullpage[data-content-dir] .tos-task-details-modal{
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+}
+
+html body .tos-task-details-fullpage[data-content-dir] .tos-task-details-modal{
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
+}
+
+/* This is the existing taskDetailsBodyRef surface. It is the only task scroller. */
+html body .tos-task-details-fullpage[data-content-dir]
+.tos-task-details-modal > div[class*="overflow-y-auto"]{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  scrollbar-gutter:stable!important;
+}
+
+@media (min-width:1180px){
+  /* Physical composition only: main LEFT + rail RIGHT. Content direction is reset below. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout{
+    position:relative!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) 304px!important;
+    grid-template-rows:auto!important;
+    grid-template-areas:"main rail"!important;
+    direction:ltr!important;
+    align-items:start!important;
+    gap:16px!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-main-column{
+    grid-area:main!important;
+    grid-column:1!important;
+    grid-row:1!important;
+    position:relative!important;
+    order:0!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail{
+    grid-area:rail!important;
+    grid-column:2!important;
+    grid-row:1!important;
+    position:relative!important;
+    order:1!important;
+    top:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    left:auto!important;
+    inset:auto!important;
+    inset-inline-start:auto!important;
+    inset-inline-end:auto!important;
+    transform:none!important;
+    width:304px!important;
+    min-width:304px!important;
+    max-width:304px!important;
+    margin:0!important;
+    justify-self:end!important;
+    align-self:start!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:14px!important;
+    max-height:none!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+    z-index:4!important;
+  }
+
+  /* R8/R9 width subtraction is no longer needed because the rail owns a real column. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-summary-compact,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-detail-tabs,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail) .tos-task-description-panel{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-reference-v2-rail > *{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    flex:0 0 auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+}
+
+/* Narrower layouts remain one normal-flow column with the same single task scroll. */
+@media (max-width:1179px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout{
+    display:flex!important;
+    flex-direction:column!important;
+    flex-wrap:nowrap!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    gap:14px!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-main-column,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail{
+    position:relative!important;
+    inset:auto!important;
+    top:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    left:auto!important;
+    transform:none!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+    overflow:visible!important;
+  }
+}
+
+/* Semantic direction belongs to content, not physical grid geometry. */
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]
+.tos-task-main-column,
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="rtl"]
+.tos-task-reference-v2-rail{
+  direction:rtl!important;
+  text-align:start!important;
+}
+
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="ltr"]
+.tos-task-main-column,
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir="ltr"]
+.tos-task-reference-v2-rail{
+  direction:ltr!important;
+  text-align:start!important;
+}
+
+/* Preserve editor containment. */
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+.tos-task-description-panel,
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+.tos-task-rich-editor-shell,
+html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+.tos-task-editor-toolbar{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+/* Sidebar, backend, DB, TCS behavior and Ramzy are untouched. */
