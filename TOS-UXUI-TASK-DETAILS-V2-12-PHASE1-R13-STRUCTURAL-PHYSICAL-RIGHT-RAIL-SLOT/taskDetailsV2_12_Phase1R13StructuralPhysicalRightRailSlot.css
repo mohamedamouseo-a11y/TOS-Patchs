@@ -1,0 +1,132 @@
+:root{--tos-task-details-v2-12-phase1-r13-structural-physical-right-rail-slot-runtime:1}
+
+/* R13 — structural placement fix.
+ * R12's direct left/right rules did not move the rail in production.
+ * Do not move/shrink the Task/Hero. The new wrapper spans the full Task Details
+ * canvas and physically docks the existing rail into the already-empty RIGHT lane.
+ */
+
+@media (min-width:1180px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout{
+    position:relative!important;
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Hero remains exactly where it is and keeps full width. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-main-column,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-summary-compact{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Preserve the existing empty lane on the physical RIGHT. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail-slot) .tos-task-detail-tabs,
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout:has(> .tos-task-reference-v2-rail-slot) .tos-task-description-panel{
+    width:calc(100% - 390px)!important;
+    min-width:0!important;
+    max-width:calc(100% - 390px)!important;
+    margin-left:0!important;
+    margin-right:auto!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Structural physical docking: this wrapper, not RTL-sensitive rail insets,
+   * owns horizontal placement. direction:ltr + flex-end = physical RIGHT. */
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail-slot{
+    position:absolute!important;
+    top:238px!important;
+    left:0!important;
+    right:0!important;
+    bottom:auto!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    height:0!important;
+    margin:0!important;
+    padding:0!important;
+    display:flex!important;
+    flex-direction:row!important;
+    direction:ltr!important;
+    justify-content:flex-end!important;
+    align-items:flex-start!important;
+    overflow:visible!important;
+    pointer-events:none!important;
+    box-sizing:border-box!important;
+    z-index:4!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-reference-v2-rail-slot > .tos-task-reference-v2-rail{
+    position:relative!important;
+    top:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    left:auto!important;
+    inset:auto!important;
+    inset-inline-start:auto!important;
+    inset-inline-end:auto!important;
+    transform:none!important;
+    width:370px!important;
+    min-width:370px!important;
+    max-width:370px!important;
+    margin:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:14px!important;
+    overflow:visible!important;
+    pointer-events:auto!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-reference-v2-rail-slot > .tos-task-reference-v2-rail > *{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+}
+
+@media (min-width:1440px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail-slot{
+    top:258px!important;
+  }
+}
+
+@media (max-width:1179px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail-slot{
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    display:block!important;
+    pointer-events:auto!important;
+  }
+
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-reference-v2-rail-slot > .tos-task-reference-v2-rail{
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+}
+
+/* R9/R11 single-scroll ownership, Sidebar, backend, DB, TCS and Ramzy untouched. */
