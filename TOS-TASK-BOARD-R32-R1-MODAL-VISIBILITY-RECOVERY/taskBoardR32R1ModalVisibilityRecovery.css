@@ -1,0 +1,25 @@
+:root{--tos-task-board-r32-r1-modal-visibility-runtime:1}
+
+/* R32_R1 — recover the Trello-like task dialog when the backdrop renders
+   but Framer Motion leaves the dialog visually suppressed. */
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2.tos-task-details-trello-overlay-r32 .tos-task-details-modal{
+  display:flex!important;
+  position:relative!important;
+  z-index:2!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+  transform:none!important;
+  animation:tos-task-r32-r1-dialog-in .16s cubic-bezier(.22,1,.36,1) both!important;
+}
+
+@keyframes tos-task-r32-r1-dialog-in{
+  from{opacity:.01;transform:translateY(10px) scale(.992)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2.tos-task-details-trello-overlay-r32 .tos-task-details-modal{
+    animation:none!important;
+  }
+}
