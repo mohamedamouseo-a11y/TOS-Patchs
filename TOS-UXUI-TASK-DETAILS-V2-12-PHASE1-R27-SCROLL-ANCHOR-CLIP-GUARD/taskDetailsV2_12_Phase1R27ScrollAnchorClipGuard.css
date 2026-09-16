@@ -1,0 +1,31 @@
+:root{--tos-task-details-v2-12-phase1-r27-scroll-anchor-clip-guard-runtime:1}
+
+/* R27 — protect the Task Details scroll viewport from landing on a chopped card
+ * after More expands/collapses. R26 still owns dynamic right-rail alignment. */
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+[data-tos-task-scroll-owner="r23"]{
+  scroll-padding-block-start:16px!important;
+  scroll-padding-block-end:28px!important;
+  overscroll-behavior-y:contain!important;
+}
+
+/* Give major content blocks a safe top landing position for any existing
+ * scrollIntoView/focus navigation without creating a second scroll owner. */
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+[data-tos-task-scroll-owner="r23"] .tos-task-detail-tabs,
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+[data-tos-task-scroll-owner="r23"] .tos-task-description-panel,
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+[data-tos-task-scroll-owner="r23"] .tos-task-main-column > section{
+  scroll-margin-block-start:16px!important;
+}
+
+/* Do not clip normal-flow cards at the layout boundary. */
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+[data-tos-task-scroll-owner="r23"] .tos-task-details-layout,
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+[data-tos-task-scroll-owner="r23"] .tos-task-main-column{
+  overflow:visible!important;
+}
+
+/* R23 single-scroll ownership, R24 Assignee, R25 Tags and R26 rail alignment preserved. */
