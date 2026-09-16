@@ -1,0 +1,10 @@
+Apply only. No analysis/QA/screenshots/push/manual edits.
+
+REPO=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+COMMIT=<PATCH_COMMIT>
+TARGET=/var/www/TOS
+
+cd /tmp && rm -rf tos-r32 && git clone -q $REPO tos-r32 && cd tos-r32 && git checkout -q $COMMIT
+python3 TOS-TASK-BOARD-R32-TRELLO-LIKE-CARD-MODAL-NAVIGATION/apply_r32_production.py $TARGET
+
+Return only command output. On failure stop.
