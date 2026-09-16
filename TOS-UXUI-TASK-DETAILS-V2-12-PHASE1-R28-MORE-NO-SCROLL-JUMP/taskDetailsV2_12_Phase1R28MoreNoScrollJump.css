@@ -1,0 +1,19 @@
+:root{--tos-task-details-v2-12-phase1-r28-more-no-scroll-jump-runtime:1}
+
+/* R28 — More may expand/collapse Task Details, but must never move the user's
+ * viewport. R26 continues to align the physical-right rail dynamically. */
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+[data-tos-task-scroll-owner="r23"]{
+  overflow-anchor:none!important;
+  scroll-behavior:auto!important;
+}
+
+/* Keep expanded content in normal flow and visible. */
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-main-column[data-more-details="true"],
+.tos-task-details-reference-v1.tos-task-details-reference-v2
+.tos-task-main-column[data-more-details="true"] .tos-task-summary-compact{
+  overflow:visible!important;
+}
+
+/* R23 single-scroll ownership and R24/R25/R26 behavior remain unchanged. */
