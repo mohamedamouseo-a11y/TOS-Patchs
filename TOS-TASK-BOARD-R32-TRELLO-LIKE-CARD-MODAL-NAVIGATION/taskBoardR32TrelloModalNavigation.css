@@ -1,0 +1,149 @@
+:root{--tos-task-board-r32-trello-card-modal-runtime:1}
+
+/* R32 — contextual task modal over the existing board. */
+.tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2.tos-task-details-trello-overlay-r32{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:clamp(16px,2.1vw,32px)!important;
+  background:rgba(15,23,42,.43)!important;
+  backdrop-filter:blur(3px) saturate(.98)!important;
+  -webkit-backdrop-filter:blur(3px) saturate(.98)!important;
+  animation:tos-task-r32-backdrop-in .14s ease-out both;
+}
+html.dark .tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2.tos-task-details-trello-overlay-r32{
+  background:rgba(0,0,0,.60)!important;
+}
+
+.tos-task-details-trello-overlay-r32 .tos-task-details-modal{
+  width:min(1480px,calc(100vw - 40px))!important;
+  max-width:1480px!important;
+  height:min(92dvh,960px)!important;
+  max-height:min(92dvh,960px)!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  border:1px solid rgba(222,216,205,.96)!important;
+  border-radius:26px!important;
+  background:#f8f6f1!important;
+  box-shadow:0 34px 90px rgba(15,23,42,.28),0 8px 26px rgba(15,23,42,.14)!important;
+  transform-origin:center center;
+}
+html.dark .tos-task-details-trello-overlay-r32 .tos-task-details-modal{
+  border-color:rgba(255,255,255,.12)!important;
+  background:#09090b!important;
+  box-shadow:0 38px 100px rgba(0,0,0,.62),0 10px 30px rgba(0,0,0,.42)!important;
+}
+
+/* The board already has the real app top bar. Do not render a second fake page top bar inside the modal. */
+.tos-task-details-trello-overlay-r32 .tos-task-reference-v2-topbar{
+  display:none!important;
+}
+
+.tos-task-details-trello-overlay-r32 .tos-task-reference-v2-header{
+  min-height:64px!important;
+  flex:0 0 64px!important;
+  padding:0 20px!important;
+  background:rgba(255,253,248,.96)!important;
+  backdrop-filter:blur(16px)!important;
+  -webkit-backdrop-filter:blur(16px)!important;
+}
+html.dark .tos-task-details-trello-overlay-r32 .tos-task-reference-v2-header{
+  background:rgba(18,18,20,.96)!important;
+}
+
+.tos-task-details-trello-overlay-r32 .tos-task-v2-header-actions{
+  gap:8px!important;
+}
+.tos-task-details-trello-overlay-r32 .tos-task-v2-header-actions .tos-task-v2-icon-action{
+  flex:0 0 40px;
+}
+
+.tos-task-v2-card-nav-r32{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  height:40px;
+  padding:3px;
+  border:1px solid #e5e0d8;
+  border-radius:12px;
+  background:rgba(255,255,255,.9);
+  box-shadow:0 4px 14px rgba(51,39,22,.035);
+}
+html.dark .tos-task-v2-card-nav-r32{
+  border-color:rgba(255,255,255,.1);
+  background:rgba(39,39,42,.92);
+}
+.tos-task-v2-card-nav-r32 button{
+  width:32px!important;
+  height:32px!important;
+  min-width:32px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:9px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.tos-task-v2-card-nav-r32 button:hover:not(:disabled){
+  background:#fff5df!important;
+  color:#9f6508!important;
+  transform:none!important;
+}
+html.dark .tos-task-v2-card-nav-r32 button:hover:not(:disabled){
+  background:rgba(245,158,11,.12)!important;
+  color:#fbbf24!important;
+}
+.tos-task-v2-card-nav-r32 button:disabled{opacity:.28!important}
+.tos-task-v2-card-nav-r32 span{
+  min-width:48px;
+  padding:0 4px;
+  text-align:center;
+  color:#7a8595;
+  font-size:10px;
+  font-weight:900;
+  line-height:1;
+  white-space:nowrap;
+}
+html.dark .tos-task-v2-card-nav-r32 span{color:#a1a1aa}
+
+/* Keep the Task Details scroll owner inside the modal window, not the viewport. */
+.tos-task-details-trello-overlay-r32 [data-tos-task-scroll-owner="r23"]{
+  overscroll-behavior:contain!important;
+}
+
+@keyframes tos-task-r32-backdrop-in{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+@media(max-width:1180px){
+  .tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2.tos-task-details-trello-overlay-r32{
+    padding:12px!important;
+  }
+  .tos-task-details-trello-overlay-r32 .tos-task-details-modal{
+    width:calc(100vw - 24px)!important;
+    max-width:none!important;
+    height:calc(100dvh - 24px)!important;
+    max-height:calc(100dvh - 24px)!important;
+    border-radius:20px!important;
+  }
+  .tos-task-details-trello-overlay-r32 .tos-task-reference-v2-header{
+    padding:0 14px!important;
+  }
+}
+
+@media(max-width:900px){
+  .tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2.tos-task-details-trello-overlay-r32{
+    padding:0!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+  }
+  .tos-task-details-trello-overlay-r32 .tos-task-details-modal{
+    width:100vw!important;
+    max-width:none!important;
+    height:100dvh!important;
+    max-height:100dvh!important;
+    border:0!important;
+    border-radius:0!important;
+  }
+  .tos-task-v2-card-nav-r32 span{display:none}
+}
