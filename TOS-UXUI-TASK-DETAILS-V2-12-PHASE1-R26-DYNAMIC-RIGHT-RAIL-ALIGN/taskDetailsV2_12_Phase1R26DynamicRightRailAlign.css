@@ -1,0 +1,30 @@
+:root{--tos-task-details-v2-12-phase1-r26-dynamic-right-rail-align-runtime:1}
+
+/* R26 — keep the canonical RIGHT rail aligned with the body start after More expands.
+ * R13/R16 own the physical right-lane slot. R26 only replaces the old fixed top
+ * with a runtime-measured top that follows the real Tabs/body position.
+ */
+@media (min-width:1180px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail-slot[data-tos-r26-dynamic-align="true"]{
+    top:var(--tos-r26-right-rail-top,258px)!important;
+    transition:top .18s ease!important;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail-slot[data-tos-r26-dynamic-align="true"]{
+    transition:none!important;
+  }
+}
+
+/* Narrow layouts remain in normal document flow exactly as before. */
+@media (max-width:1179px){
+  html body .tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-layout > .tos-task-reference-v2-rail-slot[data-tos-r26-dynamic-align="true"]{
+    top:auto!important;
+  }
+}
+
+/* No changes to Tags, Time Tracking logic, TCS, Ramzy, backend or DB. */
