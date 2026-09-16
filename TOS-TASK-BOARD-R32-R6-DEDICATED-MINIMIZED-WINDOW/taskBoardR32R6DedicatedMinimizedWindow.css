@@ -1,0 +1,133 @@
+:root{--tos-task-board-r32-r6-dedicated-minimized-window-runtime:1}
+
+/* R32_R6 — dedicated minimized UI wins over all legacy Task Details layout rules. */
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r5="true"][data-tos-task-window-minimized="true"]{
+  overflow:hidden!important;
+  min-width:0!important;
+  min-height:64px!important;
+  max-height:64px!important;
+  border-radius:18px!important;
+  background:transparent!important;
+}
+
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r5="true"][data-tos-task-window-minimized="true"] > *:not(.tos-task-r32-r6-mini-window){
+  display:none!important;
+}
+
+.tos-task-r32-r6-mini-window{
+  display:none;
+}
+
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r5="true"][data-tos-task-window-minimized="true"] > .tos-task-r32-r6-mini-window{
+  display:flex!important;
+  align-items:center;
+  width:100%!important;
+  height:64px!important;
+  min-height:64px!important;
+  padding:0 10px 0 16px;
+  gap:12px;
+  border:1px solid rgba(180,137,54,.32);
+  border-radius:18px;
+  background:rgba(255,253,248,.98);
+  box-shadow:0 18px 42px rgba(15,23,42,.18),0 2px 8px rgba(15,23,42,.08);
+  backdrop-filter:blur(18px) saturate(1.08);
+  -webkit-backdrop-filter:blur(18px) saturate(1.08);
+  cursor:grab;
+  user-select:none;
+  overflow:hidden;
+}
+
+.tos-task-r32-r6-mini-window:active{cursor:grabbing}
+
+.tos-task-r32-r6-mini-accent{
+  width:8px;
+  height:32px;
+  flex:0 0 8px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#d9aa49,#a16207);
+  box-shadow:0 0 0 4px rgba(217,170,73,.10);
+}
+
+.tos-task-r32-r6-mini-copy{
+  min-width:0;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  line-height:1.15;
+}
+
+.tos-task-r32-r6-mini-label{
+  color:#a16207;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.tos-task-r32-r6-mini-title{
+  margin-top:3px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#172033;
+  font-size:13px;
+  font-weight:900;
+}
+
+.tos-task-r32-r6-mini-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex:0 0 auto;
+}
+
+.tos-task-r32-r6-mini-action{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:38px;
+  height:38px;
+  padding:0;
+  border:1px solid rgba(148,163,184,.30);
+  border-radius:12px;
+  background:rgba(255,255,255,.86);
+  color:#334155;
+  cursor:pointer!important;
+  transition:background .15s ease,border-color .15s ease,transform .15s ease;
+}
+
+.tos-task-r32-r6-mini-action:hover{
+  background:#fff;
+  border-color:rgba(180,137,54,.42);
+  transform:translateY(-1px);
+}
+
+html.dark .tos-task-r32-r6-mini-window{
+  border-color:rgba(217,170,73,.28);
+  background:rgba(24,24,27,.96);
+  box-shadow:0 18px 44px rgba(0,0,0,.46),0 2px 8px rgba(0,0,0,.28);
+}
+html.dark .tos-task-r32-r6-mini-title{color:#f4f4f5}
+html.dark .tos-task-r32-r6-mini-action{
+  border-color:rgba(113,113,122,.55);
+  background:rgba(39,39,42,.92);
+  color:#f4f4f5;
+}
+html.dark .tos-task-r32-r6-mini-action:hover{
+  background:#3f3f46;
+  border-color:rgba(217,170,73,.40);
+}
+
+.tos-task-details-trello-overlay-r32:has(.tos-task-details-modal[data-tos-task-window-r32-r5="true"][data-tos-task-window-minimized="true"]){
+  background:rgba(15,23,42,.08)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.dark .tos-task-details-trello-overlay-r32:has(.tos-task-details-modal[data-tos-task-window-r32-r5="true"][data-tos-task-window-minimized="true"]){
+  background:rgba(0,0,0,.16)!important;
+}
+
+@media(max-width:900px){
+  .tos-task-r32-r6-mini-window{display:none!important}
+}
