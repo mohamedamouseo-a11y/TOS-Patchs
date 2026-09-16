@@ -1,0 +1,30 @@
+:root{--tos-task-board-r32-r5-inline-window-geometry-runtime:1}
+
+/* R32_R5 — state geometry is computed in React and exposed as inline custom properties.
+   This bridge only outranks legacy !important geometry from R32_R3/R32_R4. */
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r3="true"][data-tos-task-window-r32-r5="true"]{
+  position:absolute!important;
+  left:var(--tos-r32-r5-window-left)!important;
+  top:var(--tos-r32-r5-window-top)!important;
+  width:var(--tos-r32-r5-window-width)!important;
+  height:var(--tos-r32-r5-window-height)!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+}
+
+@media(max-width:900px){
+  .tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r3="true"][data-tos-task-window-r32-r5="true"]{
+    position:relative!important;
+    left:auto!important;
+    top:auto!important;
+    width:100vw!important;
+    height:100dvh!important;
+    min-width:0!important;
+    min-height:0!important;
+    max-width:none!important;
+    max-height:none!important;
+    border-radius:0!important;
+  }
+}
