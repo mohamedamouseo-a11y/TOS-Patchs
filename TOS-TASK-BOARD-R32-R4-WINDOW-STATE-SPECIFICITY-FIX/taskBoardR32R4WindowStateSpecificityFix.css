@@ -1,0 +1,41 @@
+:root{--tos-task-board-r32-r4-window-state-specificity-runtime:1}
+
+/* R32_R4 — state selectors intentionally outrank the normal R32_R3 window geometry. */
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r3="true"][data-tos-task-window-minimized="true"]{
+  width:min(520px,calc(100vw - 24px))!important;
+  height:64px!important;
+  min-width:min(360px,calc(100vw - 24px))!important;
+  min-height:64px!important;
+  max-width:min(520px,calc(100vw - 24px))!important;
+  max-height:64px!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+}
+
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r3="true"][data-tos-task-window-maximized="true"]{
+  left:12px!important;
+  top:12px!important;
+  width:calc(100vw - 24px)!important;
+  height:calc(100dvh - 24px)!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:calc(100vw - 24px)!important;
+  max-height:calc(100dvh - 24px)!important;
+  border-radius:18px!important;
+}
+
+@media(max-width:900px){
+  .tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r3="true"][data-tos-task-window-minimized="true"],
+  .tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r3="true"][data-tos-task-window-maximized="true"]{
+    position:relative!important;
+    left:auto!important;
+    top:auto!important;
+    width:100vw!important;
+    height:100dvh!important;
+    min-width:0!important;
+    min-height:0!important;
+    max-width:none!important;
+    max-height:none!important;
+    border-radius:0!important;
+  }
+}
