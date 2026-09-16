@@ -1,0 +1,24 @@
+:root{--tos-task-details-v2-12-phase1-r29-remove-legacy-side-details-runtime:1}
+
+/* R29 — the old Side details rail is obsolete in the current Task Details UX.
+ * Canonical right rail + More own the visible task metadata/actions now.
+ * Hide only the legacy side rail; do not touch data, backend, TCS or Ramzy. */
+.tos-task-details-reference-v1.tos-task-details-reference-v2 .tos-task-side-rail,
+.tos-task-details-fullpage .tos-task-side-rail{
+  display:none!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  position:static!important;
+  width:0!important;
+  height:0!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:0!important;
+  max-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  overflow:hidden!important;
+}
+
+/* R23/R24/R25/R26/R28 remain authoritative for scroll, popovers and right-rail geometry. */
