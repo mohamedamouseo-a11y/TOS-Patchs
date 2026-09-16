@@ -1,0 +1,27 @@
+Apply only.
+
+REPO=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+COMMIT=<COMMIT>
+TARGET=/var/www/TOS
+
+rm -rf /tmp/r28
+git clone -q $REPO /tmp/r28
+cd /tmp/r28 && git checkout -q $COMMIT
+python3 TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R28-MORE-NO-SCROLL-JUMP/apply_r28_production.py $TARGET
+
+NO_BROWSER_QA=YES
+NO_SCREENSHOTS=YES
+NO_VISUAL_QA=YES
+No browser.
+No screenshots.
+No visual QA.
+No manual edits.
+No push.
+Do not touch backend, DB, TCS, Ramzy, or R26 logic.
+
+Return only:
+PATCH_APPLIED=
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+FINAL_STATUS=
