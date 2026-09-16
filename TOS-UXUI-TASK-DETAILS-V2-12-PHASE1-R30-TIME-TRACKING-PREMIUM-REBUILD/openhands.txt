@@ -1,0 +1,116 @@
+PROJECT=TOS
+VERSION=TOS_TASK_DETAILS_V2_12_PHASE1_R30
+PATCH=TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R30-TIME-TRACKING-PREMIUM-REBUILD
+MODE=APPLY_THEN_VISUAL_QA
+
+REPO=https://github.com/mohamedamouseo-a11y/TOS-Patchs
+COMMIT=<PATCH_COMMIT>
+TARGET=/var/www/TOS
+
+==================================================
+APPLY
+==================================================
+
+Use the already-connected TOS production server.
+
+Clone/update the patch repo OUTSIDE /var/www/TOS and checkout exactly COMMIT.
+Git is forbidden inside /var/www/TOS.
+
+Run exactly:
+
+python3 TOS-UXUI-TASK-DETAILS-V2-12-PHASE1-R30-TIME-TRACKING-PREMIUM-REBUILD/apply_r30_production.py /var/www/TOS
+
+STRICT:
+- no manual code/CSS edits
+- no fallback implementation
+- no backend/API/DB changes
+- no timer logic changes
+- no permission changes
+- no source push
+
+If installer fails: STOP and return exact error.
+
+Expected:
+BUILD_STATUS=PASS
+DEPLOY_STATUS=PASS
+TIME_TRACKING_PREMIUM_REBUILD=YES
+TIME_TRACKING_LOGIC_CHANGED=NO
+TIMER_FUNCTIONS_CHANGED=NO
+R29_PRESERVED=YES
+PUSH=NO
+
+==================================================
+VISUAL QA
+==================================================
+
+Open production TOS using ONLY the existing authenticated normal interactive browser session.
+
+Target task:
+https://tos.tamiyouz.com/tasks?projectId=cmsujrvnd0012aql9kqchwd1g&taskId=cmrloobj901n7xdl9c867k0iw
+
+Open Task Details → Time Tracking.
+Do not change any data.
+Do not start/pause/end a timer.
+Do not edit Expected time.
+Do not save anything.
+
+No Playwright/Puppeteer/headless/CDP/cookie injection/JWT/localStorage/sessionStorage/credential guessing.
+If interactive authenticated browser is unavailable: STOP with VISUAL_QA=BLOCKED and PUSH=NO.
+
+Capture exactly 4 screenshots:
+
+1) LIGHT 1664x936
+TOS__TASK-DETAILS__V2-12-R30__TIME-TRACKING__LIGHT__1664x936.png
+Must show full Time Tracking panel, all 4 metric cards, tracked-time ring, and bottom timer controls.
+
+2) DARK 1664x936
+TOS__TASK-DETAILS__V2-12-R30__TIME-TRACKING__DARK__1664x936.png
+Same composition in Dark Mode.
+
+3) LIGHT 1366x768
+TOS__TASK-DETAILS__V2-12-R30__TIME-TRACKING__LIGHT__1366x768.png
+Must prove no clipping/overlap and all controls remain inside panel.
+
+4) DARK 1366x768
+TOS__TASK-DETAILS__V2-12-R30__TIME-TRACKING__DARK__1366x768.png
+Must prove no clipping/overlap and dark hierarchy remains consistent.
+
+Visual requirements:
+- premium cream/white Light Mode with restrained warm-gold accents
+- premium graphite Dark Mode
+- Expected / Remaining / Variance / Task total cards visually distinct but consistent
+- central Tracked time ring centered and compact
+- bottom Resume / Pause / session clock / End session aligned cleanly
+- no oversized empty space
+- no broken text or clipped values
+- top Time Tracking tab/navigation unchanged
+
+==================================================
+ZIP
+==================================================
+
+Create ONE ZIP containing exactly the 4 PNG files:
+
+TOS__TASK-DETAILS__V2-12-R30__TIME-TRACKING__VISUAL-QA.zip
+
+Do NOT upload to Google Drive.
+Return the ZIP directly to the user as a file/attachment.
+
+Return only:
+PATCH_APPLIED=
+BUILD_STATUS=
+DEPLOY_STATUS=
+LIVE_HTTP_STATUS=
+VISUAL_QA=
+LIGHT_1664=
+DARK_1664=
+LIGHT_1366=
+DARK_1366=
+ZIP_CREATED=
+ZIP_FILE_COUNT=4
+ZIP_NAME=TOS__TASK-DETAILS__V2-12-R30__TIME-TRACKING__VISUAL-QA.zip
+SOURCE_PROJECT_PUSHED=NO
+PUSH=NO
+FINAL_STATUS=
+
+STOP. DO NOT PUSH TOS SOURCE.
