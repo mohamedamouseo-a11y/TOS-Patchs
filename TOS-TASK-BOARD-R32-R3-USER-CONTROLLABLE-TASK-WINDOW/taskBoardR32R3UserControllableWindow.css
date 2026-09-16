@@ -1,0 +1,187 @@
+:root{--tos-task-board-r32-r3-user-controllable-window-runtime:1}
+
+/* R32_R3 — desktop-like task window controls on top of the approved R32_R2 body portal. */
+.tos-task-r32-r2-portal-host>.tos-task-details-trello-overlay-r32{
+  background:rgba(15,23,42,.30)!important;
+  backdrop-filter:blur(1.5px) saturate(.98)!important;
+  -webkit-backdrop-filter:blur(1.5px) saturate(.98)!important;
+}
+html.dark .tos-task-r32-r2-portal-host>.tos-task-details-trello-overlay-r32{
+  background:rgba(0,0,0,.48)!important;
+}
+
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r3="true"]{
+  position:absolute!important;
+  left:var(--tos-r32-r3-window-left,24px)!important;
+  top:var(--tos-r32-r3-window-top,24px)!important;
+  width:var(--tos-r32-r3-window-width,1280px)!important;
+  height:var(--tos-r32-r3-window-height,820px)!important;
+  max-width:calc(100vw - 24px)!important;
+  max-height:calc(100dvh - 24px)!important;
+  min-width:min(960px,calc(100vw - 24px))!important;
+  min-height:min(640px,calc(100dvh - 24px))!important;
+  margin:0!important;
+  translate:none!important;
+  will-change:left,top,width,height;
+  transition:box-shadow .16s ease,border-radius .16s ease!important;
+}
+
+.tos-task-details-modal[data-tos-task-window-r32-r3="true"] .tos-task-reference-v2-header{
+  cursor:grab;
+  user-select:none;
+}
+.tos-task-details-modal[data-tos-task-window-r32-r3="true"] .tos-task-reference-v2-header:active{
+  cursor:grabbing;
+}
+.tos-task-details-modal[data-tos-task-window-r32-r3="true"] button,
+.tos-task-details-modal[data-tos-task-window-r32-r3="true"] input,
+.tos-task-details-modal[data-tos-task-window-r32-r3="true"] select,
+.tos-task-details-modal[data-tos-task-window-r32-r3="true"] textarea,
+.tos-task-details-modal[data-tos-task-window-r32-r3="true"] a{
+  cursor:auto;
+}
+
+.tos-task-r32-r3-window-controls{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.tos-task-r32-r3-window-controls>button{
+  width:40px!important;
+  min-width:40px!important;
+  padding:0!important;
+}
+.tos-task-r32-r3-mini-title{
+  display:none;
+  min-width:0;
+  flex:1;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#243049;
+  font-size:12px;
+  font-weight:900;
+}
+html.dark .tos-task-r32-r3-mini-title{color:#f4f4f5}
+
+.tos-task-r32-r3-resize-handle{
+  position:absolute;
+  z-index:40;
+  display:block;
+  background:transparent;
+  touch-action:none;
+}
+.tos-task-r32-r3-resize-handle--right{
+  top:16px;
+  right:-5px;
+  bottom:16px;
+  width:10px;
+  cursor:ew-resize;
+}
+.tos-task-r32-r3-resize-handle--bottom{
+  right:16px;
+  bottom:-5px;
+  left:16px;
+  height:10px;
+  cursor:ns-resize;
+}
+.tos-task-r32-r3-resize-handle--corner{
+  right:-3px;
+  bottom:-3px;
+  width:22px;
+  height:22px;
+  cursor:nwse-resize;
+}
+.tos-task-r32-r3-resize-handle--corner:after{
+  content:"";
+  position:absolute;
+  right:5px;
+  bottom:5px;
+  width:10px;
+  height:10px;
+  border-right:2px solid rgba(161,98,7,.58);
+  border-bottom:2px solid rgba(161,98,7,.58);
+  border-radius:0 0 4px 0;
+}
+
+.tos-task-details-modal[data-tos-task-window-maximized="true"]{
+  left:12px!important;
+  top:12px!important;
+  width:calc(100vw - 24px)!important;
+  height:calc(100dvh - 24px)!important;
+  max-width:calc(100vw - 24px)!important;
+  max-height:calc(100dvh - 24px)!important;
+  border-radius:18px!important;
+}
+.tos-task-details-modal[data-tos-task-window-maximized="true"] .tos-task-r32-r3-resize-handle,
+.tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-r32-r3-resize-handle{
+  display:none!important;
+}
+
+.tos-task-details-modal[data-tos-task-window-minimized="true"]{
+  width:min(520px,calc(100vw - 24px))!important;
+  height:64px!important;
+  min-width:min(360px,calc(100vw - 24px))!important;
+  min-height:64px!important;
+  max-height:64px!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+}
+.tos-task-details-modal[data-tos-task-window-minimized="true"]>.tos-task-reference-v2-topbar,
+.tos-task-details-modal[data-tos-task-window-minimized="true"]>.tos-task-reference-header,
+.tos-task-details-modal[data-tos-task-window-minimized="true"]>[data-tos-task-scroll-owner="r23"]{
+  display:none!important;
+}
+.tos-task-details-modal[data-tos-task-window-minimized="true"]>.tos-task-reference-v2-header{
+  display:flex!important;
+  min-height:64px!important;
+  height:64px!important;
+  flex:0 0 64px!important;
+  border-bottom:0!important;
+}
+.tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-v2-breadcrumb,
+.tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-v2-card-nav-r32,
+.tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-v2-more-trigger,
+.tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-v2-archive-action,
+.tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-v2-save-action{
+  display:none!important;
+}
+.tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-r32-r3-mini-title{
+  display:block;
+}
+.tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-v2-header-actions{
+  margin-inline-start:auto;
+}
+.tos-task-details-trello-overlay-r32:has(.tos-task-details-modal[data-tos-task-window-minimized="true"]){
+  background:rgba(15,23,42,.10)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.dark .tos-task-details-trello-overlay-r32:has(.tos-task-details-modal[data-tos-task-window-minimized="true"]){
+  background:rgba(0,0,0,.18)!important;
+}
+
+@media(max-width:900px){
+  .tos-task-r32-r2-portal-host>.tos-task-details-trello-overlay-r32{
+    background:rgba(15,23,42,.43)!important;
+  }
+  .tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r3="true"]{
+    position:relative!important;
+    left:auto!important;
+    top:auto!important;
+    width:100vw!important;
+    height:100dvh!important;
+    max-width:none!important;
+    max-height:none!important;
+    min-width:0!important;
+    min-height:0!important;
+    border-radius:0!important;
+  }
+  .tos-task-r32-r3-window-controls,
+  .tos-task-r32-r3-resize-handle{
+    display:none!important;
+  }
+  .tos-task-details-modal[data-tos-task-window-r32-r3="true"] .tos-task-reference-v2-header{
+    cursor:default;
+  }
+}
