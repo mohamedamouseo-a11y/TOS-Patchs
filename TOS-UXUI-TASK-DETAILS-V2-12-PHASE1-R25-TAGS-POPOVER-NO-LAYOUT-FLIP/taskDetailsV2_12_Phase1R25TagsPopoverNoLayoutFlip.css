@@ -1,0 +1,123 @@
+:root{--tos-task-details-v2-12-phase1-r25-tags-popover-no-layout-flip-runtime:1}
+
+/* R25 — Tags are an isolated floating workflow.
+ * Opening Add Tag must never open Advanced/Tracking Time or reflow Task Details. */
+body > .tos-task-v2-tags-popover{
+  position:fixed!important;
+  z-index:2147482990!important;
+  width:min(320px,calc(100vw - 24px))!important;
+  max-width:calc(100vw - 24px)!important;
+  max-height:min(420px,calc(100dvh - 24px))!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  border:1px solid #e5ded3!important;
+  border-radius:16px!important;
+  background:#fff!important;
+  box-shadow:0 24px 64px rgba(34,28,18,.20)!important;
+}
+
+.tos-task-v2-tags-popover-head{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  padding:13px 14px 10px!important;
+  border-bottom:1px solid #eee8df!important;
+}
+.tos-task-v2-tags-popover-head strong{color:#142039!important;font-size:13px!important;font-weight:900!important}
+.tos-task-v2-tags-popover-head span{color:#8a94a3!important;font-size:10px!important;font-weight:700!important}
+
+.tos-task-v2-tags-search{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  margin:10px 12px 8px!important;
+  padding:0 10px!important;
+  height:38px!important;
+  border:1px solid #e5e0d8!important;
+  border-radius:10px!important;
+  background:#faf9f7!important;
+  color:#8a94a3!important;
+}
+.tos-task-v2-tags-search svg{width:15px!important;height:15px!important;flex:0 0 auto!important}
+.tos-task-v2-tags-search input{
+  min-width:0!important;
+  width:100%!important;
+  height:100%!important;
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  color:#1d2940!important;
+  font-size:11px!important;
+  font-weight:700!important;
+}
+
+.tos-task-v2-tags-options{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  padding:4px 8px 8px!important;
+}
+.tos-task-v2-tags-option{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  width:100%!important;
+  min-height:38px!important;
+  padding:6px 9px!important;
+  border:0!important;
+  border-radius:9px!important;
+  background:transparent!important;
+  color:#354158!important;
+  text-align:start!important;
+  font-size:11px!important;
+  font-weight:800!important;
+}
+.tos-task-v2-tags-option:hover{background:#faf6ed!important}
+.tos-task-v2-tags-option[data-selected="true"]{background:#fff7e7!important;color:#8f5c08!important}
+.tos-task-v2-tags-option-label{display:flex!important;align-items:center!important;gap:9px!important;min-width:0!important}
+.tos-task-v2-tags-dot{width:9px!important;height:9px!important;flex:0 0 9px!important;border-radius:999px!important;background:var(--tos-tag-color,#94a3b8)!important}
+.tos-task-v2-tags-check{width:16px!important;height:16px!important;flex:0 0 16px!important;color:#b8790c!important}
+.tos-task-v2-tags-empty{padding:18px 10px!important;text-align:center!important;color:#9aa3b0!important;font-size:11px!important;font-weight:700!important}
+
+.tos-task-v2-tags-create{
+  display:grid!important;
+  grid-template-columns:44px minmax(0,1fr) auto!important;
+  gap:8px!important;
+  align-items:center!important;
+  padding:10px 12px 12px!important;
+  border-top:1px solid #eee8df!important;
+  background:#fffdf9!important;
+}
+.tos-task-v2-tags-create input[type="color"]{
+  width:44px!important;height:34px!important;padding:2px!important;border:1px solid #e3ddd4!important;border-radius:9px!important;background:#fff!important;
+}
+.tos-task-v2-tags-create input[type="text"]{
+  min-width:0!important;width:100%!important;height:34px!important;padding:0 10px!important;border:1px solid #e3ddd4!important;border-radius:9px!important;outline:0!important;background:#fff!important;color:#233047!important;font-size:11px!important;font-weight:700!important;
+}
+.tos-task-v2-tags-create button{
+  height:34px!important;padding:0 12px!important;border:1px solid #b9780c!important;border-radius:9px!important;background:linear-gradient(135deg,#a66a08,#cf9018)!important;color:#fff!important;font-size:10px!important;font-weight:900!important;
+}
+.tos-task-v2-tags-create button:disabled{opacity:.45!important;cursor:not-allowed!important}
+
+/* Explicitly keep the Task canvas geometry frozen while Tags is open. */
+body:has(> .tos-task-v2-tags-popover) .tos-task-details-reference-v1 .tos-task-summary-compact,
+body:has(> .tos-task-v2-tags-popover) .tos-task-details-reference-v1 .tos-task-details-layout,
+body:has(> .tos-task-v2-tags-popover) .tos-task-details-reference-v1 .tos-task-reference-v2-rail{
+  transform:none!important;
+}
+
+html.dark body > .tos-task-v2-tags-popover{border-color:rgba(255,255,255,.12)!important;background:#11181e!important;box-shadow:0 24px 70px rgba(0,0,0,.45)!important}
+html.dark .tos-task-v2-tags-popover-head{border-bottom-color:rgba(255,255,255,.09)!important}
+html.dark .tos-task-v2-tags-popover-head strong{color:#f1f4f6!important}
+html.dark .tos-task-v2-tags-search{border-color:rgba(255,255,255,.1)!important;background:#0d1419!important}
+html.dark .tos-task-v2-tags-search input{color:#edf1f4!important}
+html.dark .tos-task-v2-tags-option{color:#d6dde2!important}
+html.dark .tos-task-v2-tags-option:hover{background:#182027!important}
+html.dark .tos-task-v2-tags-option[data-selected="true"]{background:rgba(206,145,31,.12)!important;color:#e3b45a!important}
+html.dark .tos-task-v2-tags-create{border-top-color:rgba(255,255,255,.09)!important;background:#0e151a!important}
+html.dark .tos-task-v2-tags-create input[type="text"],html.dark .tos-task-v2-tags-create input[type="color"]{border-color:rgba(255,255,255,.11)!important;background:#11181e!important;color:#eef2f4!important}
