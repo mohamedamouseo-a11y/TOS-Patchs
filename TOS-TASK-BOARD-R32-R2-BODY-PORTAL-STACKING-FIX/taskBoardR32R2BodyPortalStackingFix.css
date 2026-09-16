@@ -1,0 +1,37 @@
+:root{--tos-task-board-r32-r2-body-portal-runtime:1}
+
+/* R32_R2 — escape transformed/clipped Tasks ancestors and make the dialog
+   a true viewport-level overlay while preserving the existing R32 modal. */
+.tos-task-r32-r2-portal-host{
+  position:fixed!important;
+  inset:0!important;
+  z-index:9800!important;
+  pointer-events:none!important;
+  isolation:isolate!important;
+}
+
+.tos-task-r32-r2-portal-host>.tos-task-details-trello-overlay-r32{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  z-index:1!important;
+  pointer-events:auto!important;
+}
+
+.tos-task-r32-r2-portal-host .tos-task-details-modal{
+  position:relative!important;
+  z-index:2!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
+
+@media(max-width:900px){
+  .tos-task-r32-r2-portal-host>.tos-task-details-trello-overlay-r32{
+    width:100vw!important;
+    height:100dvh!important;
+  }
+}
