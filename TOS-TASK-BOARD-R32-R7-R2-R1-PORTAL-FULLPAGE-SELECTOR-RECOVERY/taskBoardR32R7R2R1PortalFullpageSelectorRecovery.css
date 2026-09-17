@@ -1,0 +1,45 @@
+:root{--tos-task-board-r32-r7-r2-r1-portal-fullpage-selector-recovery-runtime:1}
+
+@media(min-width:901px){
+  html body .tos-task-r32-r2-portal-host
+  .tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-modal[data-tos-task-window-r32-r3="true"][data-tos-task-window-r32-r5="true"][data-tos-task-window-r32-r7="true"][data-tos-task-window-r32-r7-r1="true"]{
+    box-sizing:border-box!important;
+    position:absolute!important;
+    inset:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    left:var(--tos-r32-r5-window-left)!important;
+    top:var(--tos-r32-r5-window-top)!important;
+    width:var(--tos-r32-r5-window-width)!important;
+    height:var(--tos-r32-r5-window-height)!important;
+    min-width:0!important;
+    min-height:0!important;
+    max-width:none!important;
+    max-height:none!important;
+    margin:0!important;
+    margin-inline:0!important;
+    transform:none!important;
+  }
+}
+
+@media(max-width:900px){
+  html body .tos-task-r32-r2-portal-host
+  .tos-task-details-fullpage.tos-task-details-reference-v1.tos-task-details-reference-v2[data-content-dir]
+  .tos-task-details-modal[data-tos-task-window-r32-r3="true"][data-tos-task-window-r32-r5="true"][data-tos-task-window-r32-r7="true"][data-tos-task-window-r32-r7-r1="true"]{
+    position:relative!important;
+    inset:auto!important;
+    left:auto!important;
+    top:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    width:100vw!important;
+    height:100dvh!important;
+    min-width:0!important;
+    min-height:0!important;
+    max-width:none!important;
+    max-height:none!important;
+    margin:0!important;
+    border-radius:0!important;
+  }
+}
