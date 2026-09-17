@@ -1,0 +1,7 @@
+Apply only. No analysis/QA/screenshots/push/manual edits.
+
+cd /tmp && rm -rf p && git clone -q https://github.com/mohamedamouseo-a11y/TOS-Patchs p && cd p && git checkout -q d6f74efea607718684ce0d9ce0f45f1b89f5e4e3
+
+python3 TOS-TASK-BOARD-R32-R7-R1-R1-CONTRACT-RECOVERY/apply_r32_r7_r1_r1_production.py /var/www/TOS
+
+Return only command output. On failure stop.
