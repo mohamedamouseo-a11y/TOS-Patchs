@@ -1,0 +1,24 @@
+:root{--tos-task-board-r32-r7-r1-desktop-window-proportion-tuning-runtime:1}
+
+@media(min-width:901px){
+  .tos-task-r32-r7-resize-handle--left{left:-7px;width:14px}
+  .tos-task-r32-r7-resize-handle--right{right:-7px;width:14px}
+  .tos-task-r32-r7-resize-handle--top{top:-7px;height:14px}
+  .tos-task-r32-r7-resize-handle--bottom{bottom:-7px;height:14px}
+  .tos-task-r32-r7-resize-handle--top-left,
+  .tos-task-r32-r7-resize-handle--top-right,
+  .tos-task-r32-r7-resize-handle--bottom-left,
+  .tos-task-r32-r7-resize-handle--bottom-right{
+    width:28px;
+    height:28px;
+  }
+  .tos-task-r32-r7-resize-handle--top-left{left:-7px;top:-7px}
+  .tos-task-r32-r7-resize-handle--top-right{right:-7px;top:-7px}
+  .tos-task-r32-r7-resize-handle--bottom-left{left:-7px;bottom:-7px}
+  .tos-task-r32-r7-resize-handle--bottom-right{right:-7px;bottom:-7px}
+
+  .tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r7-r1="true"]{
+    min-width:0!important;
+    min-height:0!important;
+  }
+}
