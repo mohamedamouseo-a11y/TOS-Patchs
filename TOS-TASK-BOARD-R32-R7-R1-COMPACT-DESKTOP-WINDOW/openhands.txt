@@ -1,0 +1,6 @@
+Apply only. No analysis/QA/screenshots/push/manual edits.
+
+cd /tmp && rm -rf p && git clone -q https://github.com/mohamedamouseo-a11y/TOS-Patchs p && cd p && git checkout -q __PATCH_COMMIT__
+python3 TOS-TASK-BOARD-R32-R7-R1-COMPACT-DESKTOP-WINDOW/apply_r32_r7_r1_production.py /var/www/TOS
+
+Return only command output. On failure stop.
