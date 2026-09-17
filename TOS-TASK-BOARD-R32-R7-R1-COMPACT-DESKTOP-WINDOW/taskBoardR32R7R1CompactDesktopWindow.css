@@ -1,0 +1,62 @@
+:root{--tos-task-board-r32-r7-r1-compact-desktop-window-runtime:1}
+
+@media(min-width:901px){
+  .tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r7-r1="true"]{
+    min-width:600px!important;
+    min-height:420px!important;
+    max-width:calc(100vw - 24px)!important;
+    max-height:calc(100dvh - 24px)!important;
+  }
+
+  .tos-task-details-modal[data-tos-task-window-r32-r7-r1="true"] .tos-task-r32-r7-resize-handle{
+    z-index:220!important;
+    pointer-events:auto!important;
+  }
+
+  .tos-task-details-modal[data-tos-task-window-r32-r7-r1="true"] .tos-task-r32-r7-resize-handle--left{
+    left:0!important;top:24px!important;bottom:24px!important;width:12px!important;
+  }
+  .tos-task-details-modal[data-tos-task-window-r32-r7-r1="true"] .tos-task-r32-r7-resize-handle--right{
+    right:0!important;top:24px!important;bottom:24px!important;width:12px!important;
+  }
+  .tos-task-details-modal[data-tos-task-window-r32-r7-r1="true"] .tos-task-r32-r7-resize-handle--top{
+    top:0!important;left:24px!important;right:24px!important;height:12px!important;
+  }
+  .tos-task-details-modal[data-tos-task-window-r32-r7-r1="true"] .tos-task-r32-r7-resize-handle--bottom{
+    bottom:0!important;left:24px!important;right:24px!important;height:12px!important;
+  }
+  .tos-task-details-modal[data-tos-task-window-r32-r7-r1="true"] .tos-task-r32-r7-resize-handle--top-left{
+    left:0!important;top:0!important;width:28px!important;height:28px!important;
+  }
+  .tos-task-details-modal[data-tos-task-window-r32-r7-r1="true"] .tos-task-r32-r7-resize-handle--top-right{
+    right:0!important;top:0!important;width:28px!important;height:28px!important;
+  }
+  .tos-task-details-modal[data-tos-task-window-r32-r7-r1="true"] .tos-task-r32-r7-resize-handle--bottom-left{
+    left:0!important;bottom:0!important;width:28px!important;height:28px!important;
+  }
+  .tos-task-details-modal[data-tos-task-window-r32-r7-r1="true"] .tos-task-r32-r7-resize-handle--bottom-right{
+    right:0!important;bottom:0!important;width:28px!important;height:28px!important;
+  }
+  .tos-task-details-modal[data-tos-task-window-r32-r7-r1="true"] .tos-task-r32-r7-resize-handle--bottom-right:after{
+    content:"";
+    position:absolute;
+    right:7px;
+    bottom:7px;
+    width:10px;
+    height:10px;
+    border-right:2px solid rgba(161,98,7,.55);
+    border-bottom:2px solid rgba(161,98,7,.55);
+    border-radius:0 0 3px 0;
+    pointer-events:none;
+  }
+
+  .tos-task-details-modal[data-tos-task-window-r32-r7-r1="true"][data-tos-task-window-minimized="true"]{
+    min-width:360px!important;
+    min-height:64px!important;
+    max-height:64px!important;
+  }
+}
+
+@media(max-width:900px){
+  .tos-task-r32-r7-resize-handle{display:none!important}
+}
