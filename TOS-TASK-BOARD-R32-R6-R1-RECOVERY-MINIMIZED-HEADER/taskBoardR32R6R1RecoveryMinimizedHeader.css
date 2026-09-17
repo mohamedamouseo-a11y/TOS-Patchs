@@ -1,0 +1,111 @@
+:root{--tos-task-board-r32-r6-r1-recovery-minimized-header-runtime:1}
+
+/* R32_R6_R1 — recover to the proven R5 render path and use the existing header as the minimized window. */
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r5="true"][data-tos-task-window-minimized="true"]{
+  overflow:hidden!important;
+  min-width:0!important;
+  min-height:64px!important;
+  max-height:64px!important;
+  border-radius:18px!important;
+  background:transparent!important;
+  box-shadow:0 18px 42px rgba(15,23,42,.18),0 2px 8px rgba(15,23,42,.08)!important;
+}
+
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r5="true"][data-tos-task-window-minimized="true"] > *{
+  display:none!important;
+}
+
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r5="true"][data-tos-task-window-minimized="true"] > .tos-task-reference-v2-header{
+  display:flex!important;
+  align-items:center!important;
+  width:100%!important;
+  min-height:64px!important;
+  height:64px!important;
+  flex:0 0 64px!important;
+  padding:0 10px 0 18px!important;
+  border:1px solid rgba(180,137,54,.32)!important;
+  border-radius:18px!important;
+  border-bottom:1px solid rgba(180,137,54,.32)!important;
+  background:rgba(255,253,248,.985)!important;
+  box-shadow:none!important;
+  cursor:grab!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-r32-r5="true"][data-tos-task-window-minimized="true"] > .tos-task-reference-v2-header:before{
+  content:"";
+  width:8px;
+  height:32px;
+  flex:0 0 8px;
+  margin-inline-end:12px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#d9aa49,#a16207);
+  box-shadow:0 0 0 4px rgba(217,170,73,.10);
+}
+
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-v2-breadcrumb,
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-v2-card-nav-r32,
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-v2-more-trigger,
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-v2-archive-action,
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-v2-save-action{
+  display:none!important;
+}
+
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-r32-r3-mini-title{
+  display:block!important;
+  min-width:0!important;
+  flex:1 1 auto!important;
+  margin:0!important;
+  color:#172033!important;
+  font-size:13px!important;
+  font-weight:900!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-v2-header-actions{
+  display:flex!important;
+  align-items:center!important;
+  margin-inline-start:auto!important;
+  gap:6px!important;
+  flex:0 0 auto!important;
+}
+
+/* In minimized mode: keep Close + Restore only; hide the maximize control. */
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-r32-r3-window-controls > button:last-child{
+  display:none!important;
+}
+
+.tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-v2-icon-action{
+  width:38px!important;
+  min-width:38px!important;
+  height:38px!important;
+  padding:0!important;
+  border-radius:12px!important;
+  background:rgba(255,255,255,.88)!important;
+  border:1px solid rgba(148,163,184,.30)!important;
+}
+
+/* Let the user continue working with the board while the task is minimized. */
+.tos-task-r32-r2-portal-host > .tos-task-details-trello-overlay-r32:has(.tos-task-details-modal[data-tos-task-window-minimized="true"]){
+  background:rgba(15,23,42,.04)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  pointer-events:none!important;
+}
+.tos-task-r32-r2-portal-host > .tos-task-details-trello-overlay-r32:has(.tos-task-details-modal[data-tos-task-window-minimized="true"]) .tos-task-details-modal{
+  pointer-events:auto!important;
+}
+
+html.dark .tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-minimized="true"] > .tos-task-reference-v2-header{
+  background:rgba(24,24,27,.97)!important;
+  border-color:rgba(217,170,73,.28)!important;
+}
+html.dark .tos-task-r32-r2-portal-host .tos-task-details-modal[data-tos-task-window-minimized="true"] .tos-task-r32-r3-mini-title{color:#f4f4f5!important}
+html.dark .tos-task-r32-r2-portal-host > .tos-task-details-trello-overlay-r32:has(.tos-task-details-modal[data-tos-task-window-minimized="true"]){background:rgba(0,0,0,.08)!important}
+
+@media(max-width:900px){
+  .tos-task-r32-r2-portal-host > .tos-task-details-trello-overlay-r32:has(.tos-task-details-modal[data-tos-task-window-minimized="true"]){pointer-events:auto!important}
+}
