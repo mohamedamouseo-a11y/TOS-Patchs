@@ -1,0 +1,176 @@
+diff --git a/frontend/src/App.jsx b/frontend/src/App.jsx
+--- a/frontend/src/App.jsx
++++ b/frontend/src/App.jsx
+@@ -753,5 +753,5 @@
+   const hasDesignQueueAccess = canUseDesignQueue(user);
+   const centralChatEmbed = isCentralChatEmbed();
+-  const { unreadCount: tncUnreadCount } = useTncNotifications();
++  const { unreadCount: tncUnreadCount, categoryUnreadCounts: tncCategoryUnreadCounts } = useTncNotifications();
+   const {
+     unreadCount: globalTcsUnreadCount,
+@@ -762,6 +762,7 @@
+     userId: user?.id,
+     activePage: tcsWindowOpen ? "chat" : active,
+-    onOpen: openTcsWindow,
+-  });
++    onOpen: openTcsWindow,
++    authoritativeUnreadCount: tncCategoryUnreadCounts?.TCS || 0,
++  });
+ 
+   useEffect(() => {
+@@ -986,10 +987,25 @@
+     let lastSentAt = 0;
+ 
+-    const sendHeartbeat = async ({ force = false } = {}) => {
+-      if (disposed || workHeartbeatInFlightRef.current) return;
+-      const now = Date.now();
+-      if (!force && now - lastSentAt < 15 * 1000) return;
+-      lastSentAt = now;
+-      workHeartbeatInFlightRef.current = true;
++    const heartbeatStorageKey = `tos.workHeartbeat.lastSent:${user.id}`;
++    const minHeartbeatGapMs = 50 * 1000;
++    const sharedLastSentAt = () => {
++      try {
++        const value = Number(window.localStorage.getItem(heartbeatStorageKey) || 0);
++        return Number.isFinite(value) ? value : 0;
++      } catch {
++        return 0;
++      }
++    };
++    const rememberHeartbeat = (value) => {
++      try { window.localStorage.setItem(heartbeatStorageKey, String(value)); } catch {}
++    };
++
++    const sendHeartbeat = async () => {
++      if (disposed || workHeartbeatInFlightRef.current || document.visibilityState === "hidden") return;
++      const now = Date.now();
++      if (now - Math.max(lastSentAt, sharedLastSentAt()) < minHeartbeatGapMs) return;
++      lastSentAt = now;
++      rememberHeartbeat(now);
++      workHeartbeatInFlightRef.current = true;
+       try {
+         await api.employeeWork.heartbeat();
+@@ -1001,12 +1017,12 @@
+     };
+ 
+-    const handleFocus = () => sendHeartbeat({ force: true });
+-    const handleOnline = () => sendHeartbeat({ force: true });
+-    const handlePageShow = () => sendHeartbeat({ force: true });
+-    const handleVisibilityChange = () => {
+-      if (document.visibilityState === "visible") sendHeartbeat({ force: true });
+-    };
+-
+-    sendHeartbeat({ force: true });
++    const handleFocus = () => sendHeartbeat();
++    const handleOnline = () => sendHeartbeat();
++    const handlePageShow = () => sendHeartbeat();
++    const handleVisibilityChange = () => {
++      if (document.visibilityState === "visible") sendHeartbeat();
++    };
++
++    sendHeartbeat();
+     const interval = window.setInterval(() => sendHeartbeat(), 60 * 1000);
+     window.addEventListener("focus", handleFocus);
+
+diff --git a/frontend/src/hooks/useGlobalTcsUnread.js b/frontend/src/hooks/useGlobalTcsUnread.js
+--- a/frontend/src/hooks/useGlobalTcsUnread.js
++++ b/frontend/src/hooks/useGlobalTcsUnread.js
+@@ -11,5 +11,5 @@
+ }
+ 
+-export function useGlobalTcsUnread({ userId = "", activePage = "", onOpen = null } = {}) {
++export function useGlobalTcsUnread({ userId = "", activePage = "", onOpen = null, authoritativeUnreadCount = 0 } = {}) {
+   const [unreadCount, setUnreadCount] = useState(0);
+   const [alert, setAlert] = useState(null);
+@@ -22,21 +22,13 @@
+   }, [onOpen]);
+ 
+-  const hydrate = useCallback(async () => {
+-    if (!userId) {
+-      setUnreadCount(0);
+-      setAlert(null);
+-      seenNotificationIdsRef.current.clear();
+-      return;
+-    }
+-    try {
+-      const response = await api.chat.notifications({ limit: 100 });
+-      setUnreadCount(Math.max(0, Number(response?.unreadCount) || 0));
+-      (Array.isArray(response?.notifications) ? response.notifications : []).forEach((notification) => {
+-        if (notification?.id) seenNotificationIdsRef.current.add(String(notification.id));
+-      });
+-    } catch {
+-      // Global awareness is helpful but must never block navigation.
+-    }
+-  }, [userId]);
++  const hydrate = useCallback(async () => {
++    if (!userId) {
++      setUnreadCount(0);
++      setAlert(null);
++      seenNotificationIdsRef.current.clear();
++      return;
++    }
++    setUnreadCount(Math.max(0, Number(authoritativeUnreadCount) || 0));
++  }, [authoritativeUnreadCount, userId]);
+ 
+   const scheduleHydrate = useCallback(() => {
+
+diff --git a/frontend/src/hooks/useTncNotifications.jsx b/frontend/src/hooks/useTncNotifications.jsx
+--- a/frontend/src/hooks/useTncNotifications.jsx
++++ b/frontend/src/hooks/useTncNotifications.jsx
+@@ -9,6 +9,7 @@
+ const CATEGORIES = ["TCS", "TASKS", "TWS", "SYSTEM"];
+ const THRESHOLDS = ["NORMAL", "IMPORTANT", "URGENT"];
+-const REFRESH_DEBOUNCE_MS = 160;
+-const RESILIENCE_POLL_MS = 5 * 60 * 1000;
++const REFRESH_DEBOUNCE_MS = 160;
++const PASSIVE_REFRESH_MIN_MS = 60 * 1000;
++const RESILIENCE_POLL_MS = 10 * 60 * 1000;
+ const DEFAULT_TIMEZONE = "Africa/Cairo";
+ 
+@@ -45,5 +46,5 @@
+   const [categoryUnreadCounts, setCategoryUnreadCounts] = useState({ ALL: 0, UNREAD: 0, ATTENTION: 0, DIGEST: 0, ACTION_CENTER: 0, TCS: 0, TASKS: 0, TWS: 0, SYSTEM: 0 });
+   const [preferences, setPreferences] = useState(defaultPreferences); const [globalPolicy, setGlobalPolicy] = useState({ inAppEnabled: true, soundEnabled: true, desktopNotifications: true, systemAlertsEnabled: true }); const [preferenceMeta, setPreferenceMeta] = useState({ snoozeActive: false, quietHoursActive: false });
+-  const [preferencesReady, setPreferencesReady] = useState(!userId); const preferencesReadyRef = useRef(!userId); const [loading, setLoading] = useState(false); const [error, setError] = useState(""); const [alert, setAlert] = useState(null); const seenIdsRef = useRef(new Set()); const itemsRef = useRef([]); const refreshTimerRef = useRef(null); const mountedRef = useRef(true);
++  const [preferencesReady, setPreferencesReady] = useState(!userId); const preferencesReadyRef = useRef(!userId); const [loading, setLoading] = useState(false); const [error, setError] = useState(""); const [alert, setAlert] = useState(null); const seenIdsRef = useRef(new Set()); const itemsRef = useRef([]); const refreshTimerRef = useRef(null); const mountedRef = useRef(true); const lastHydratedAtRef = useRef(0); const preferencesUserIdRef = useRef("");
+ 
+   const hydratePreferences = useCallback(async () => {
+@@ -54,6 +55,7 @@
+ 
+   const hydrate = useCallback(async (nextFilter = filter, { silent = false, includePreferences = false } = {}) => {
+-    if (!userId) { setItems([]); setDigest(null); setUnreadCount(0); setCategoryUnreadCounts({ ALL: 0, UNREAD: 0, ATTENTION: 0, DIGEST: 0, ACTION_CENTER: 0, TCS: 0, TASKS: 0, TWS: 0, SYSTEM: 0 }); return; }
+-    if (!silent) setLoading(true);
++    if (!userId) { lastHydratedAtRef.current = 0; setItems([]); setDigest(null); setUnreadCount(0); setCategoryUnreadCounts({ ALL: 0, UNREAD: 0, ATTENTION: 0, DIGEST: 0, ACTION_CENTER: 0, TCS: 0, TASKS: 0, TWS: 0, SYSTEM: 0 }); return; }
++    lastHydratedAtRef.current = Date.now();
++    if (!silent) setLoading(true);
+     try {
+       const feedCategory = nextFilter === "DIGEST" ? "ALL" : nextFilter;
+@@ -65,6 +67,14 @@
+   }, [filter, hydratePreferences, userId]);
+ 
+-  const scheduleHydrate = useCallback((silent = true) => { if (refreshTimerRef.current) window.clearTimeout(refreshTimerRef.current); refreshTimerRef.current = window.setTimeout(() => { refreshTimerRef.current = null; hydrate(filter, { silent }); }, REFRESH_DEBOUNCE_MS); }, [filter, hydrate]);
+-  useEffect(() => { mountedRef.current = true; let cancelled = false; (async () => { await hydratePreferences().catch(() => null); if (!cancelled) await hydrate(filter, { includePreferences: false }); })(); return () => { cancelled = true; mountedRef.current = false; if (refreshTimerRef.current) window.clearTimeout(refreshTimerRef.current); }; }, [filter, userId]);
++  const scheduleHydrate = useCallback((silent = true, { minAgeMs = 0 } = {}) => {
++    if (minAgeMs && Date.now() - lastHydratedAtRef.current < minAgeMs) return;
++    if (refreshTimerRef.current) window.clearTimeout(refreshTimerRef.current);
++    refreshTimerRef.current = window.setTimeout(() => {
++      refreshTimerRef.current = null;
++      if (minAgeMs && Date.now() - lastHydratedAtRef.current < minAgeMs) return;
++      hydrate(filter, { silent });
++    }, REFRESH_DEBOUNCE_MS);
++  }, [filter, hydrate]);
++  useEffect(() => { mountedRef.current = true; let cancelled = false; (async () => { if (preferencesUserIdRef.current !== userId) { await hydratePreferences().catch(() => null); preferencesUserIdRef.current = userId; } if (!cancelled) await hydrate(filter, { includePreferences: false }); })(); return () => { cancelled = true; mountedRef.current = false; if (refreshTimerRef.current) window.clearTimeout(refreshTimerRef.current); }; }, [filter, hydrate, hydratePreferences, userId]);
+   useEffect(() => {
+     if (!userId) return undefined; const socket = connectSocket();
+@@ -71,5 +81,9 @@
+     const onChatNotification = async (payload = {}) => { const item = normalizeChatNotification(payload); if (!item || seenIdsRef.current.has(item.id)) return; seenIdsRef.current.add(item.id); const isActiveActionCenter = filter === "ACTION_CENTER"; setItems((current) => isActiveActionCenter ? (Boolean(item.source) && Boolean(item.nativeId) ? [item, ...current.filter((existing) => keyFor(existing) !== item.id)] : current) : itemMatchesFilter(item, filter) ? [item, ...current.filter((existing) => keyFor(existing) !== item.id)] : current); if (!item.readAt) { setUnreadCount((count) => count + 1); setCategoryUnreadCounts((counts) => ({ ...counts, ALL: (counts.ALL || 0) + 1, UNREAD: (counts.UNREAD || 0) + 1, TCS: (counts.TCS || 0) + 1 })); try { if (!preferencesReadyRef.current) await hydratePreferences(); const response = await api.notificationCenter.presentation(item.source, item.nativeId); const authoritativeItem = response?.item || item; setItems((current) => current.map((candidate) => keyFor(candidate) === keyFor(item) ? authoritativeItem : candidate)); if (mountedRef.current && canSurfaceServerAlert(authoritativeItem, true)) setAlert((current) => current || authoritativeItem); } catch { /* preserve item and counts; no client policy fallback */ } } };
+-    const onGenericNotification = () => scheduleHydrate(false); const onConnect = () => scheduleHydrate(false); const onVisibility = () => { if (document.visibilityState === "visible") scheduleHydrate(false); }; const onStateSync = (event) => { const resources = Array.isArray(event?.detail?.resources) ? event.detail.resources : []; if (resources.includes("notifications") && !resources.includes("chat")) scheduleHydrate(); };
+-    socket.on("chat:notification", onChatNotification); socket.on("tnc:notification", onGenericNotification); socket.on("connect", onConnect); window.addEventListener(STATE_SYNC_EVENT, onStateSync); document.addEventListener("visibilitychange", onVisibility); const timer = window.setInterval(() => hydrate(filter, { silent: true }), RESILIENCE_POLL_MS);
+-    return () => { socket.off("chat:notification", onChatNotification); socket.off("tnc:notification", onGenericNotification); socket.off("connect", onConnect); window.removeEventListener(STATE_SYNC_EVENT, onStateSync); document.removeEventListener("visibilitychange", onVisibility); window.clearInterval(timer); };
++    const onMessagesRead = (payload = {}) => { if (payload.userId === userId) scheduleHydrate(true); };
++    const onGenericNotification = () => scheduleHydrate(false);
++    const onConnect = () => scheduleHydrate(true, { minAgeMs: PASSIVE_REFRESH_MIN_MS });
++    const onVisibility = () => { if (document.visibilityState === "visible") scheduleHydrate(true, { minAgeMs: PASSIVE_REFRESH_MIN_MS }); };
++    const onStateSync = (event) => { const resources = Array.isArray(event?.detail?.resources) ? event.detail.resources : []; if (resources.includes("notifications") && !resources.includes("chat")) scheduleHydrate(); };
++    socket.on("chat:notification", onChatNotification); socket.on("messages:read", onMessagesRead); socket.on("tnc:notification", onGenericNotification); socket.on("connect", onConnect); window.addEventListener(STATE_SYNC_EVENT, onStateSync); document.addEventListener("visibilitychange", onVisibility); const timer = window.setInterval(() => { if (document.visibilityState === "visible") hydrate(filter, { silent: true }); }, RESILIENCE_POLL_MS);
++    return () => { socket.off("chat:notification", onChatNotification); socket.off("messages:read", onMessagesRead); socket.off("tnc:notification", onGenericNotification); socket.off("connect", onConnect); window.removeEventListener(STATE_SYNC_EVENT, onStateSync); document.removeEventListener("visibilitychange", onVisibility); window.clearInterval(timer); };
+   }, [filter, hydrate, scheduleHydrate, userId]);
