@@ -1,0 +1,351 @@
+diff --git a/frontend/src/App.jsx b/frontend/src/App.jsx
+--- a/frontend/src/App.jsx
++++ b/frontend/src/App.jsx
+@@ -1040,14 +1040,28 @@
+     };
+   }, [centralChatEmbed, hasWorkHubAccess, user?.id]);
+ 
+-  useRealtimeRefresh(["projects", "tasks", "dashboard", "integrations", "meetings"], () => reload({ showLoading: false }), {
+-    debounceMs: 350,
+-    minIntervalMs: 800,
+-    predicate: (detail) => {
+-      const resources = Array.isArray(detail?.resources) ? detail.resources : [];
+-      return !(resources.includes("chat") && !resources.includes("projects"));
+-    },
+-  });
++  useRealtimeRefresh(["projects", "tasks", "dashboard", "integrations", "meetings"], (detail = {}) => {
++    const resources = Array.isArray(detail?.resources) ? detail.resources : [];
++    const path = String(detail?.path || "");
++    const eventName = String(detail?.eventName || "");
++    const summaryPageActive = ["dashboard", "projects", "teamPerformance"].includes(active);
++    const userDriven = /\/api\/(?:users|permissions)(?:\/|$)/.test(path) || eventName.startsWith("presence:");
++    const taskOrFileDriven = /\/api\/(?:tasks|files)(?:\/|$)/.test(path)
++      || /^(?:task:|board:|comment:|file:)/.test(eventName)
++      || resources.includes("tasks")
++      || resources.includes("files");
++
++    if (userDriven) return;
++    if (taskOrFileDriven && !summaryPageActive) return;
++    reload({ showLoading: false });
++  }, {
++    debounceMs: 350,
++    minIntervalMs: 1200,
++    predicate: (detail) => {
++      const resources = Array.isArray(detail?.resources) ? detail.resources : [];
++      return !(resources.includes("chat") && !resources.includes("projects"));
++    },
++  });
+   useRealtimeRefresh(["clients"], () => loadClients(), { debounceMs: 350, minIntervalMs: 800 });
+   useRealtimeRefresh(["files"], () => {
+     if (active === "dashboard") loadFiles();
+@@ -1331,10 +1345,10 @@
+                 openDetailsProjectId={projectDetailsRequest.projectId}
+                 openDetailsSignal={projectDetailsRequest.signal}
+                 setActiveProjectId={setActiveProjectId}
+-                createProject={async (payload) => { const project = await createProject(payload); await reload({ showLoading: false }); return project; }}
+-                updateProject={async (projectId, payload) => { const project = await updateProject(projectId, payload); await reload({ showLoading: false }); return project; }}
+-                archiveProject={async (projectId) => { const project = await archiveProject(projectId); await reload({ showLoading: false }); return project; }}
+-                restoreProject={async (projectId) => { const project = await restoreProject(projectId); await reload({ showLoading: false }); return project; }}
++                createProject={createProject}
++                updateProject={updateProject}
++                archiveProject={archiveProject}
++                restoreProject={restoreProject}
+                 onOpenTasks={(projectId) => {
+                   setActiveProjectId(projectId);
+                   setActive("tasks");
+@@ -1377,7 +1391,7 @@
+             )}
+             {!loading && active === "files" && <FilesHub user={user} activeProjectId={activeProjectId} activeProject={activeProject} projects={projects} uploadSignal={fileUploadSignal} />}
+             {!loading && active === "tws" && <TwsPage user={user} projects={projects} />}
+-            {active === "team" && <TeamPage user={user} inviteSignal={teamInviteSignal} />}
++            {active === "team" && <TeamPage user={user} projects={projects} inviteSignal={teamInviteSignal} />}
+             {active === "permissions" && canViewPermissions && <PermissionsPage user={user} />}
+             {active === "workHub" && hasWorkHubAccess && <EmployeeWorkHub user={user} />}
+             {active === "profile" && <ProfilePage user={user} />}
+
+diff --git a/frontend/src/hooks/useProjects.js b/frontend/src/hooks/useProjects.js
+--- a/frontend/src/hooks/useProjects.js
++++ b/frontend/src/hooks/useProjects.js
+@@ -2,8 +2,9 @@
+ import { api } from "../lib/api";
+ import { getErrorMessage } from "../lib/errors";
+ 
+-const PROJECT_SUMMARY_CACHE_PREFIX = "tos.projects.summary.fast-refresh.v1";
+-const PROJECT_SUMMARY_CACHE_MAX_AGE_MS = 30 * 60 * 1000;
++const PROJECT_SUMMARY_CACHE_PREFIX = "tos.projects.summary.fast-refresh.v1";
++const PROJECT_SUMMARY_CACHE_MAX_AGE_MS = 30 * 60 * 1000;
++const PROJECT_SUMMARY_REFRESH_COOLDOWN_MS = 1200;
+ 
+ function projectCacheKey(userId = "") {
+   return `${PROJECT_SUMMARY_CACHE_PREFIX}.${String(userId || "anonymous")}`;
+@@ -41,25 +42,45 @@
+   if (initialCacheRef.current === null) initialCacheRef.current = readProjectCache(userId);
+   const initialCache = initialCacheRef.current;
+   const [projects, setProjects] = useState(() => initialCache.projects);
+-  const [activeProjectId, setActiveProjectId] = useState(null);
+-  const [loading, setLoading] = useState(() => !initialCache.hit);
+-  const [error, setError] = useState("");
+-
+-  async function loadProjects({ showLoading = false } = {}) {
+-    try {
+-      setError("");
+-      if (showLoading) setLoading(true);
+-      const data = await api.projects.list({ summary: true });
+-      const next = Array.isArray(data) ? data : [];
+-      setProjects(next);
+-      writeProjectCache(userId, next);
+-      setActiveProjectId((old) => next.some((project) => project.id === old) ? old : null);
+-    } catch (err) {
+-      setError(getErrorMessage(err, "تعذر تحميل المشاريع."));
+-    } finally {
+-      setLoading(false);
+-    }
+-  }
++  const [activeProjectId, setActiveProjectId] = useState(null);
++  const [loading, setLoading] = useState(() => !initialCache.hit);
++  const [error, setError] = useState("");
++  const loadInFlightRef = useRef(null);
++  const lastLoadedAtRef = useRef(0);
++
++  async function loadProjects({ showLoading = false, force = false } = {}) {
++    if (!force && loadInFlightRef.current) return loadInFlightRef.current;
++    if (!force && lastLoadedAtRef.current && Date.now() - lastLoadedAtRef.current < PROJECT_SUMMARY_REFRESH_COOLDOWN_MS) {
++      if (showLoading) setLoading(false);
++      return null;
++    }
++
++    const request = (async () => {
++      try {
++        setError("");
++        if (showLoading) setLoading(true);
++        const data = await api.projects.list({ summary: true });
++        const next = Array.isArray(data) ? data : [];
++        setProjects(next);
++        writeProjectCache(userId, next);
++        setActiveProjectId((old) => next.some((project) => project.id === old) ? old : null);
++        lastLoadedAtRef.current = Date.now();
++        return next;
++      } catch (err) {
++        setError(getErrorMessage(err, "تعذر تحميل المشاريع."));
++        return null;
++      } finally {
++        setLoading(false);
++      }
++    })();
++
++    loadInFlightRef.current = request;
++    try {
++      return await request;
++    } finally {
++      if (loadInFlightRef.current === request) loadInFlightRef.current = null;
++    }
++  }
+ 
+   function commitProjects(updater) {
+     setProjects((previous) => {
+@@ -82,17 +103,18 @@
+     return project;
+   }
+ 
+-  async function archiveProject(projectId) {
+-    const project = await api.projects.archive(projectId);
+-    await loadProjects({ showLoading: false });
+-    return project;
+-  }
+-
+-  async function restoreProject(projectId) {
+-    const project = await api.projects.restore(projectId);
+-    await loadProjects({ showLoading: false });
+-    return project;
+-  }
++  async function archiveProject(projectId) {
++    const project = await api.projects.archive(projectId);
++    commitProjects((prev) => prev.filter((item) => item.id !== projectId));
++    setActiveProjectId((old) => old === projectId ? null : old);
++    return project;
++  }
++
++  async function restoreProject(projectId) {
++    const project = await api.projects.restore(projectId);
++    commitProjects((prev) => [project, ...prev.filter((item) => item.id !== projectId)]);
++    return project;
++  }
+ 
+   useEffect(() => {
+     const cached = readProjectCache(userId);
+@@ -94,9 +116,11 @@
+     return project;
+   }
+ 
+-  useEffect(() => {
+-    const cached = readProjectCache(userId);
+-    if (cached.hit) {
++  useEffect(() => {
++    loadInFlightRef.current = null;
++    lastLoadedAtRef.current = 0;
++    const cached = readProjectCache(userId);
++    if (cached.hit) {
+       setProjects(cached.projects);
+       setLoading(false);
+       loadProjects({ showLoading: false });
+
+diff --git a/frontend/src/pages/TeamPage.jsx b/frontend/src/pages/TeamPage.jsx
+--- a/frontend/src/pages/TeamPage.jsx
++++ b/frontend/src/pages/TeamPage.jsx
+@@ -1621,11 +1621,11 @@
+   );
+ }
+ 
+-export function TeamPage({ user, inviteSignal = 0 }) {
+-  const { lang = "ar", isAr = true } = usePreferences();
+-  const [users, setUsers] = useState([]);
+-  const [projects, setProjects] = useState([]);
+-  const [departments, setDepartments] = useState([]);
++export function TeamPage({ user, projects: sharedProjects = [], inviteSignal = 0 }) {
++  const { lang = "ar", isAr = true } = usePreferences();
++  const [users, setUsers] = useState([]);
++  const projects = Array.isArray(sharedProjects) ? sharedProjects : [];
++  const [departments, setDepartments] = useState([]);
+   const [form, setForm] = useState(initialForm);
+   const [editing, setEditing] = useState(null);
+   const [showEditNewPassword, setShowEditNewPassword] = useState(false);
+@@ -1648,9 +1648,11 @@
+   const [roleFilter, setRoleFilter] = useState("ALL");
+   const [departmentFilter, setDepartmentFilter] = useState("ALL");
+   const [expandedUserId, setExpandedUserId] = useState("");
+-  const [assignProject, setAssignProject] = useState({ user: null, projectId: "", role: "MEMBER" });
+-  const [separationRequest, setSeparationRequest] = useState({ user: null, reason: "" });
+-  const inviteFormRef = useRef(null);
++  const [assignProject, setAssignProject] = useState({ user: null, projectId: "", role: "MEMBER" });
++  const [separationRequest, setSeparationRequest] = useState({ user: null, reason: "" });
++  const inviteFormRef = useRef(null);
++  const teamLoadInFlightRef = useRef(null);
++  const teamLastLoadedAtRef = useRef(0);
+ 
+   const roleOptions = useMemo(() => roleOptionsFor(user.role), [user.role]);
+   const departmentOptions = useMemo(() => departmentOptionsFrom(departments), [departments]);
+@@ -1657,36 +1659,46 @@
+   const canManageTeamUsers = ["SUPER_ADMIN", "ADMIN"].includes(user.role);
+   const canViewFormerEmployees = user.role === "SUPER_ADMIN";
+ 
+-  async function load() {
+-    try {
+-      setError("");
+-      setLoading(true);
+-      const [usersResult, projectsResult, departmentsResult] = await Promise.allSettled([api.users.list({ summary: true }), api.projects.list({ summary: true }), api.users.departments({ summary: true })]);
+-
+-      if (usersResult.status === "fulfilled") {
+-        setUsers(usersResult.value || []);
+-      } else {
+-        setUsers([]);
+-        showError("team", getErrorMessage(usersResult.reason, "تعذر تحميل المستخدمين."));
+-      }
+-
+-      if (projectsResult.status === "fulfilled") {
+-        setProjects(projectsResult.value || []);
+-      } else {
+-        setProjects([]);
+-      }
+-
+-      if (departmentsResult.status === "fulfilled") {
+-        setDepartments(departmentsResult.value || []);
+-      } else {
+-        setDepartments(DEFAULT_DEPARTMENTS);
+-      }
+-    } finally {
+-      setLoading(false);
+-    }
+-  }
+-
+-  useEffect(() => { load(); }, []);
++  async function load({ force = false } = {}) {
++    if (!force && teamLoadInFlightRef.current) return teamLoadInFlightRef.current;
++    if (!force && teamLastLoadedAtRef.current && Date.now() - teamLastLoadedAtRef.current < 1200) return null;
++
++    const request = (async () => {
++      try {
++        setError("");
++        setLoading(true);
++        const [usersResult, departmentsResult] = await Promise.allSettled([
++          api.users.list({ summary: true }),
++          api.users.departments({ summary: true }),
++        ]);
++
++        if (usersResult.status === "fulfilled") {
++          setUsers(usersResult.value || []);
++        } else {
++          setUsers([]);
++          showError("team", getErrorMessage(usersResult.reason, "تعذر تحميل المستخدمين."));
++        }
++
++        if (departmentsResult.status === "fulfilled") {
++          setDepartments(departmentsResult.value || []);
++        } else {
++          setDepartments(DEFAULT_DEPARTMENTS);
++        }
++        teamLastLoadedAtRef.current = Date.now();
++      } finally {
++        setLoading(false);
++      }
++    })();
++
++    teamLoadInFlightRef.current = request;
++    try {
++      return await request;
++    } finally {
++      if (teamLoadInFlightRef.current === request) teamLoadInFlightRef.current = null;
++    }
++  }
++
++  useEffect(() => { load({ force: true }); }, []);
+ 
+   function shouldRefreshTeamAfterRealtime(detail = {}) {
+     const path = String(detail?.path || "");
+@@ -1697,11 +1709,11 @@
+     return true;
+   }
+ 
+-  useRealtimeRefresh(["users", "team", "projects", "permissions"], () => load(), {
+-    debounceMs: 450,
+-    minIntervalMs: 900,
+-    predicate: shouldRefreshTeamAfterRealtime,
+-  });
++  useRealtimeRefresh(["users", "team", "permissions"], () => load(), {
++    debounceMs: 450,
++    minIntervalMs: 1200,
++    predicate: shouldRefreshTeamAfterRealtime,
++  });
+ 
+   useEffect(() => {
+     if (!inviteSignal) return;
+
+diff --git a/frontend/src/pages/ProjectsPage.jsx b/frontend/src/pages/ProjectsPage.jsx
+--- a/frontend/src/pages/ProjectsPage.jsx
++++ b/frontend/src/pages/ProjectsPage.jsx
+@@ -3838,13 +3838,19 @@
+       loadDetailsFiles(detailsProjectId);
+     }
+   }, [detailsProjectId]);
+-  useRealtimeRefresh(["projects", "tasks", "files", "team", "meetings"], () => {
+-    if (detailsProjectId) {
+-      loadDetails(detailsProjectId, true);
+-      loadDetailsFiles(detailsProjectId, true);
+-    }
+-    if (showArchived) loadArchivedProjects();
+-  }, { debounceMs: 400, minIntervalMs: 900, scope: { projectId: detailsProjectId || null } });
++  useRealtimeRefresh(["projects", "tasks", "files", "team", "meetings"], (detail = {}) => {
++    const resources = Array.isArray(detail?.resources) ? detail.resources : [];
++    const userDriven = resources.includes("users") || resources.includes("permissions");
++    if (detailsProjectId) {
++      if (resources.some((resource) => ["projects", "tasks", "team", "meetings"].includes(resource))) {
++        loadDetails(detailsProjectId, true);
++      }
++      if (resources.includes("files")) {
++        loadDetailsFiles(detailsProjectId, true);
++      }
++    }
++    if (showArchived && resources.includes("projects") && !userDriven) loadArchivedProjects();
++  }, { debounceMs: 400, minIntervalMs: 1200, scope: { projectId: detailsProjectId || null } });
+ 
+   async function loadArchivedProjects() {
+     try {
