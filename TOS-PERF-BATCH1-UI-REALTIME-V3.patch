@@ -1,0 +1,125 @@
+diff --git a/frontend/src/lib/globalLanguageGuard.js b/frontend/src/lib/globalLanguageGuard.js
+--- a/frontend/src/lib/globalLanguageGuard.js
++++ b/frontend/src/lib/globalLanguageGuard.js
+@@ -567,3 +567,11 @@
+-function translateElementText(root) {
+-  root.querySelectorAll("body *").forEach((element) => {
++function matchingElements(root, selector = "*") {
++  if (!root) return [];
++  const elements = [];
++  if (root.nodeType === 1 && (selector === "*" || root.matches?.(selector))) elements.push(root);
++  if (root.querySelectorAll) elements.push(...root.querySelectorAll(selector));
++  return elements;
++}
++
++function translateElementText(root) {
++  matchingElements(root).forEach((element) => {
+     if (["SCRIPT", "STYLE", "TEXTAREA", "INPUT", "SELECT"].includes(element.tagName)) return;
+@@ -579,3 +587,3 @@
+ function restoreElementText(root) {
+-  root.querySelectorAll("[data-i18n-original-text]").forEach((element) => {
++  matchingElements(root, "[data-i18n-original-text]").forEach((element) => {
+     element.textContent = element.dataset.i18nOriginalText || element.textContent || "";
+@@ -588,3 +596,3 @@
+   const selector = attrs.map((attr) => `[${attr}]`).join(",");
+-  root.querySelectorAll(selector).forEach((element) => {
++  matchingElements(root, selector).forEach((element) => {
+     attrs.forEach((attr) => {
+@@ -602,3 +610,3 @@
+   const attrs = ["placeholder", "aria-label", "title", "alt"];
+-  root.querySelectorAll("*").forEach((element) => {
++  matchingElements(root).forEach((element) => {
+     attrs.forEach((attr) => {
+@@ -630,6 +638,31 @@
+-    const observer = new MutationObserver(() => {
+-      if (lang === "en") requestAnimationFrame(apply);
+-    });
+-    observer.observe(root, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["placeholder", "aria-label", "title", "alt"] });
+-    return () => observer.disconnect();
++    let frameId = 0;
++    const pendingRoots = new Set();
++    const flushPending = () => {
++      frameId = 0;
++      const roots = Array.from(pendingRoots);
++      pendingRoots.clear();
++      roots.forEach((element) => {
++        translateElementText(element);
++        translateElementAttributes(element);
++      });
++    };
++    const queueNode = (node) => {
++      const element = node?.nodeType === 3 ? node.parentElement : node?.nodeType === 1 ? node : null;
++      if (!element) return;
++      pendingRoots.add(element);
++      if (!frameId) frameId = requestAnimationFrame(flushPending);
++    };
++    const observer = new MutationObserver((mutations) => {
++      if (lang !== "en") return;
++      mutations.forEach((mutation) => {
++        if (mutation.type === "childList") mutation.addedNodes.forEach(queueNode);
++        else queueNode(mutation.target);
++      });
++    });
++    observer.observe(root, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["placeholder", "aria-label", "title", "alt"] });
++    return () => {
++      observer.disconnect();
++      if (frameId) cancelAnimationFrame(frameId);
++      pendingRoots.clear();
++    };
+   }, [lang]);
+
+diff --git a/frontend/src/components/ChatPanel.jsx b/frontend/src/components/ChatPanel.jsx
+--- a/frontend/src/components/ChatPanel.jsx
++++ b/frontend/src/components/ChatPanel.jsx
+@@ -2621,6 +2621,6 @@
+   }, [isDirectMode, projectId]);
+-  useEffect(() => {
+-    loadFullPins();
+-    loadScopedFiles();
+-  }, [isDirectMode, activeConversationId, activeChannelId, projectId, messages.length]);
++  useEffect(() => {
++    loadFullPins();
++    loadScopedFiles();
++  }, [isDirectMode, activeConversationId, activeChannelId, projectId]);
+ 
+
+diff --git a/frontend/src/App.jsx b/frontend/src/App.jsx
+--- a/frontend/src/App.jsx
++++ b/frontend/src/App.jsx
+@@ -1026,3 +1026,10 @@
+ 
+-  useRealtimeRefresh(["projects", "tasks", "dashboard", "integrations", "meetings"], () => reload({ showLoading: false }), { debounceMs: 350, minIntervalMs: 800 });
++  useRealtimeRefresh(["projects", "tasks", "dashboard", "integrations", "meetings"], () => reload({ showLoading: false }), {
++    debounceMs: 350,
++    minIntervalMs: 800,
++    predicate: (detail) => {
++      const resources = Array.isArray(detail?.resources) ? detail.resources : [];
++      return !(resources.includes("chat") && !resources.includes("projects"));
++    },
++  });
+   useRealtimeRefresh(["clients"], () => loadClients(), { debounceMs: 350, minIntervalMs: 800 });
+
+diff --git a/frontend/src/hooks/useGlobalTcsUnread.js b/frontend/src/hooks/useGlobalTcsUnread.js
+--- a/frontend/src/hooks/useGlobalTcsUnread.js
++++ b/frontend/src/hooks/useGlobalTcsUnread.js
+@@ -77,5 +77,6 @@
+     };
+-    const handleStateSync = (event) => {
+-      if (isChatResource(event?.detail || {})) scheduleHydrate();
+-    };
++    const handleStateSync = (event) => {
++      const resources = Array.isArray(event?.detail?.resources) ? event.detail.resources : [];
++      if (resources.includes("notifications") && !resources.includes("chat")) scheduleHydrate();
++    };
+ 
+
+diff --git a/frontend/src/hooks/useTncNotifications.jsx b/frontend/src/hooks/useTncNotifications.jsx
+--- a/frontend/src/hooks/useTncNotifications.jsx
++++ b/frontend/src/hooks/useTncNotifications.jsx
+@@ -70,4 +70,4 @@
+     if (!userId) return undefined; const socket = connectSocket();
+-    const onChatNotification = async (payload = {}) => { const item = normalizeChatNotification(payload); if (!item || seenIdsRef.current.has(item.id)) { scheduleHydrate(); return; } seenIdsRef.current.add(item.id); const isActiveActionCenter = filter === "ACTION_CENTER"; setItems((current) => isActiveActionCenter ? (Boolean(item.source) && Boolean(item.nativeId) ? [item, ...current.filter((existing) => keyFor(existing) !== item.id)] : current) : itemMatchesFilter(item, filter) ? [item, ...current.filter((existing) => keyFor(existing) !== item.id)] : current); if (!item.readAt) { setUnreadCount((count) => count + 1); setCategoryUnreadCounts((counts) => ({ ...counts, ALL: (counts.ALL || 0) + 1, UNREAD: (counts.UNREAD || 0) + 1, TCS: (counts.TCS || 0) + 1 })); try { if (!preferencesReadyRef.current) await hydratePreferences(); const response = await api.notificationCenter.presentation(item.source, item.nativeId); const authoritativeItem = response?.item || item; setItems((current) => current.map((candidate) => keyFor(candidate) === keyFor(item) ? authoritativeItem : candidate)); if (mountedRef.current && canSurfaceServerAlert(authoritativeItem, true)) setAlert((current) => current || authoritativeItem); } catch { /* preserve item and counts; no client policy fallback */ } } scheduleHydrate(); };
+-    const onGenericNotification = () => scheduleHydrate(false); const onConnect = () => scheduleHydrate(false); const onVisibility = () => { if (document.visibilityState === "visible") scheduleHydrate(false); }; const onStateSync = (event) => { const resources = Array.isArray(event?.detail?.resources) ? event.detail.resources : []; if (resources.includes("notifications") || resources.includes("chat")) scheduleHydrate(); };
++    const onChatNotification = async (payload = {}) => { const item = normalizeChatNotification(payload); if (!item || seenIdsRef.current.has(item.id)) return; seenIdsRef.current.add(item.id); const isActiveActionCenter = filter === "ACTION_CENTER"; setItems((current) => isActiveActionCenter ? (Boolean(item.source) && Boolean(item.nativeId) ? [item, ...current.filter((existing) => keyFor(existing) !== item.id)] : current) : itemMatchesFilter(item, filter) ? [item, ...current.filter((existing) => keyFor(existing) !== item.id)] : current); if (!item.readAt) { setUnreadCount((count) => count + 1); setCategoryUnreadCounts((counts) => ({ ...counts, ALL: (counts.ALL || 0) + 1, UNREAD: (counts.UNREAD || 0) + 1, TCS: (counts.TCS || 0) + 1 })); try { if (!preferencesReadyRef.current) await hydratePreferences(); const response = await api.notificationCenter.presentation(item.source, item.nativeId); const authoritativeItem = response?.item || item; setItems((current) => current.map((candidate) => keyFor(candidate) === keyFor(item) ? authoritativeItem : candidate)); if (mountedRef.current && canSurfaceServerAlert(authoritativeItem, true)) setAlert((current) => current || authoritativeItem); } catch { /* preserve item and counts; no client policy fallback */ } } };
++    const onGenericNotification = () => scheduleHydrate(false); const onConnect = () => scheduleHydrate(false); const onVisibility = () => { if (document.visibilityState === "visible") scheduleHydrate(false); }; const onStateSync = (event) => { const resources = Array.isArray(event?.detail?.resources) ? event.detail.resources : []; if (resources.includes("notifications") && !resources.includes("chat")) scheduleHydrate(); };
+     socket.on("chat:notification", onChatNotification); socket.on("tnc:notification", onGenericNotification); socket.on("connect", onConnect); window.addEventListener(STATE_SYNC_EVENT, onStateSync); document.addEventListener("visibilitychange", onVisibility); const timer = window.setInterval(() => hydrate(filter, { silent: true }), RESILIENCE_POLL_MS);
