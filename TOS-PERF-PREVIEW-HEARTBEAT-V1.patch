@@ -1,34 +1,56 @@
 diff --git a/frontend/src/App.jsx b/frontend/src/App.jsx
 --- a/frontend/src/App.jsx
 +++ b/frontend/src/App.jsx
-@@
+@@ -1022,7 +1022,7 @@
+       window.removeEventListener("pageshow", handlePageShow);
+       document.removeEventListener("visibilitychange", handleVisibilityChange);
+     };
 -  }, [centralChatEmbed, hasWorkHubAccess, user?.id, active]);
 +  }, [centralChatEmbed, hasWorkHubAccess, user?.id]);
+ 
+   useRealtimeRefresh(["projects", "tasks", "dashboard", "integrations", "meetings"], () => reload({ showLoading: false }), { debounceMs: 350, minIntervalMs: 800 });
+   useRealtimeRefresh(["clients"], () => loadClients(), { debounceMs: 350, minIntervalMs: 800 });
 
 diff --git a/frontend/src/components/ChatPanel.jsx b/frontend/src/components/ChatPanel.jsx
 --- a/frontend/src/components/ChatPanel.jsx
 +++ b/frontend/src/components/ChatPanel.jsx
-@@
+@@ -1473,22 +1473,41 @@
+   );
+ }
+ 
 -function MessageFiles({ files = [], canDeleteFile = () => false, onDeleteFile = () => {} }) {
+-  if (!files.length) return null;
+-  return (
+-    <div className="mt-2 grid gap-2 sm:grid-cols-2">
+-      {files.map((file) => {
+-        const imageFile = isImageFile(file);
+-        const videoFile = isVideoFile(file);
+-        const audioFile = isAudioFile(file);
+-        const previewUrl = api.files.previewUrl(file.id);
+-        return (
+-          <div key={file.id} className="overflow-hidden rounded-3xl border border-zinc-100 bg-white text-xs shadow-sm dark:border-white/10 dark:bg-zinc-900">
+-            {imageFile && (
+-              <a href={previewUrl} target="_blank" rel="noreferrer" className="block bg-zinc-50 dark:bg-zinc-950" title="معاينة الصورة">
+-                <img src={previewUrl} alt={file.name} loading="lazy" className="h-36 w-full object-cover" />
+-              </a>
+-            )}
 +const failedImagePreviewIds = new Set();
 +
 +function MessageFiles({ files = [], canDeleteFile = () => false, onDeleteFile = () => {} }) {
 +  const [, bumpFailedPreviewVersion] = useState(0);
-   if (!files.length) return null;
-   return (
-     <div className="mt-2 grid gap-2 sm:grid-cols-2">
-       {files.map((file) => {
-         const imageFile = isImageFile(file);
-         const videoFile = isVideoFile(file);
-         const audioFile = isAudioFile(file);
-         const previewUrl = api.files.previewUrl(file.id);
++  if (!files.length) return null;
++  return (
++    <div className="mt-2 grid gap-2 sm:grid-cols-2">
++      {files.map((file) => {
++        const imageFile = isImageFile(file);
++        const videoFile = isVideoFile(file);
++        const audioFile = isAudioFile(file);
++        const previewUrl = api.files.previewUrl(file.id);
 +        const imagePreviewFailed = imageFile && failedImagePreviewIds.has(String(file.id));
-         return (
-           <div key={file.id} className="overflow-hidden rounded-3xl border border-zinc-100 bg-white text-xs shadow-sm dark:border-white/10 dark:bg-zinc-900">
--            {imageFile && (
++        return (
++          <div key={file.id} className="overflow-hidden rounded-3xl border border-zinc-100 bg-white text-xs shadow-sm dark:border-white/10 dark:bg-zinc-900">
 +            {imageFile && !imagePreviewFailed && (
-               <a href={previewUrl} target="_blank" rel="noreferrer" className="block bg-zinc-50 dark:bg-zinc-950" title="معاينة الصورة">
--                <img src={previewUrl} alt={file.name} loading="lazy" className="h-36 w-full object-cover" />
++              <a href={previewUrl} target="_blank" rel="noreferrer" className="block bg-zinc-50 dark:bg-zinc-950" title="معاينة الصورة">
 +                <img
 +                  src={previewUrl}
 +                  alt={file.name}
@@ -39,11 +61,14 @@ diff --git a/frontend/src/components/ChatPanel.jsx b/frontend/src/components/Cha
 +                    bumpFailedPreviewVersion((value) => value + 1);
 +                  }}
 +                />
-               </a>
-             )}
++              </a>
++            )}
 +            {imageFile && imagePreviewFailed && (
 +              <div className="flex h-36 items-center justify-center gap-2 bg-zinc-50 px-3 text-zinc-400 dark:bg-zinc-950">
 +                <ImageIcon size={18} />
 +                <span>{currentChatLang() === "en" ? "Preview unavailable" : "المعاينة غير متاحة"}</span>
 +              </div>
 +            )}
+             {videoFile && (
+               <div className="bg-black">
+                 <video
