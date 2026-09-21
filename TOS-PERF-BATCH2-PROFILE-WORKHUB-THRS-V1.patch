@@ -1,0 +1,233 @@
+diff --git a/backend/src/services/employeeWorkRequests.service.js b/backend/src/services/employeeWorkRequests.service.js
+--- a/backend/src/services/employeeWorkRequests.service.js
++++ b/backend/src/services/employeeWorkRequests.service.js
+@@ -538,13 +538,40 @@
+ }
+ 
+-async function enrich(rows = [], viewer = null) {
+-  const userIds = rows.flatMap((row) => {
+-    const metadata = safeMetadata(row?.metadata);
+-    const shadowing = safeMetadata(metadata.shadowing);
+-    return [row.requesterId, row.teamLeadReviewerId, row.hrReviewerId, metadata.shadowMemberId || shadowing.memberId];
+-  });
+-  const users = await getUsersByIds(userIds);
+-  return rows.map((row) => safeRequest(row, users, viewer));
+-}
++async function enrich(rows = [], viewer = null) {
++  const userIds = rows.flatMap((row) => {
++    const metadata = safeMetadata(row?.metadata);
++    const shadowing = safeMetadata(metadata.shadowing);
++    return [row.requesterId, row.teamLeadReviewerId, row.hrReviewerId, metadata.shadowMemberId || shadowing.memberId];
++  });
++  const users = await getUsersByIds(userIds);
++  return rows.map((row) => safeRequest(row, users, viewer));
++}
++
++export async function serializeEmployeeWorkRequestsForViewer(rows = [], actorTokenUser = null) {
++  const actor = actorTokenUser?.status ? actorTokenUser : await getFullUser(actorTokenUser?.id);
++  if (!actor || actor.status !== "ACTIVE" || !STAFF_ROLES.has(actor.role)) throw new AppError("Staff account was not found", 403);
++  return enrich(rows, actor);
++}
++
++export async function getEmployeeWorkRequestsForProfile(actorTokenUser, profileUserId) {
++  if (!hasRequestModel()) return [];
++  if (!isTosStaffRole(actorTokenUser?.role)) throw new AppError("Employee Work Hub is available for staff accounts only.", 403);
++
++  const actor = await getFullUser(actorTokenUser.id);
++  if (!actor || actor.status !== "ACTIVE" || !STAFF_ROLES.has(actor.role)) throw new AppError("Staff account was not found", 403);
++
++  const targetUserId = cleanText(profileUserId, 120);
++  if (!targetUserId) throw new AppError("profile user id is required", 400);
++  if (targetUserId !== actor.id && !["SUPER_ADMIN", "ADMIN"].includes(actor.role)) {
++    throw new AppError("You are not allowed to view this employee request history", 403);
++  }
++
++  const rows = await prisma.employeeWorkRequest.findMany({
++    where: { requesterId: targetUserId },
++    orderBy: { createdAt: "desc" },
++    take: 300,
++  });
++  return enrich(rows, actor);
++}
+ 
+ function isHrReviewer(actor) {
+@@ -1227,10 +1254,7 @@
+   if (!isTosStaffRole(actorTokenUser?.role)) throw new AppError("Employee Work Hub is available for staff accounts only.", 403);
+ 
+-  const actor = await getFullUser(actorTokenUser.id);
+-  if (!actor || actor.status !== "ACTIVE" || !STAFF_ROLES.has(actor.role)) throw new AppError("Staff account was not found", 403);
+-  if (canReconcileThrsFinalStatuses(actor)) {
+-    await syncPendingThrsFinalStatuses(actor, { force: false, limit: 20 }).catch(() => null);
+-  }
+-  const filters = cleanRequestFilters(query);
++  const actor = await getFullUser(actorTokenUser.id);
++  if (!actor || actor.status !== "ACTIVE" || !STAFF_ROLES.has(actor.role)) throw new AppError("Staff account was not found", 403);
++  const filters = cleanRequestFilters(query);
+ 
+   const minePromise = prisma.employeeWorkRequest.findMany({
+
+diff --git a/backend/src/routes/employeeWork.routes.js b/backend/src/routes/employeeWork.routes.js
+--- a/backend/src/routes/employeeWork.routes.js
++++ b/backend/src/routes/employeeWork.routes.js
+@@ -9,3 +9,3 @@
+ import { ensureDailyCheckIn, getEmployeeAttendanceView, getAttendanceVisibleEmployees, getHrWorkSchedule, getOperationsSettings, getPublicOperationsSettings, getWorkSessionSummary, isTosStaffRole, recordDailyCheckOut, recordWorkHeartbeat, saveOperationsSettings, saveOperationsShadowingSettings } from "../services/employeeWork.service.js";
+-import { addEmployeeWorkRequestComment, archiveEmployeeWorkRequest, bulkActionEmployeeWorkRequests, cancelEmployeeWorkRequest, createEmployeeWorkRequest, evaluateEmployeeWorkRequestShadowing, getEmployeeWorkRequests, getEmployeeWorkShadowCandidates, getThrsEmployees, getThrsEmployeeMappingsForEmployeeWork, syncThrsEmployeeMappingsForEmployeeWork, getThrsLeaveTypesForEmployeeWork, getThrsRequestFormOptions, getThrsWorkflowConfig, reassignEmployeeWorkShadowMember, respondToEmployeeWorkShadowRequest, restoreArchivedEmployeeWorkRequest, reviewEmployeeWorkRequest, retryEmployeeWorkRequestThrsSync, recordThrsEmployeeWorkRequestDecision, syncPendingThrsFinalStatuses } from "../services/employeeWorkRequests.service.js";
++import { addEmployeeWorkRequestComment, archiveEmployeeWorkRequest, bulkActionEmployeeWorkRequests, cancelEmployeeWorkRequest, createEmployeeWorkRequest, evaluateEmployeeWorkRequestShadowing, getEmployeeWorkRequests, getEmployeeWorkRequestsForProfile, getEmployeeWorkShadowCandidates, getThrsEmployees, getThrsEmployeeMappingsForEmployeeWork, serializeEmployeeWorkRequestsForViewer, syncThrsEmployeeMappingsForEmployeeWork, getThrsLeaveTypesForEmployeeWork, getThrsRequestFormOptions, getThrsWorkflowConfig, reassignEmployeeWorkShadowMember, respondToEmployeeWorkShadowRequest, restoreArchivedEmployeeWorkRequest, reviewEmployeeWorkRequest, retryEmployeeWorkRequestThrsSync, recordThrsEmployeeWorkRequestDecision, syncPendingThrsFinalStatuses } from "../services/employeeWorkRequests.service.js";
+ import { getThrsHrSyncCallbackTokenCandidates, getThrsHrSyncSettings, saveThrsHrSyncSettings, testThrsHrSyncConnection } from "../services/thrsHrSyncSettings.service.js";
+@@ -154,38 +154,30 @@
+ }));
+ 
+-router.get("/attendance/view", asyncHandler(async (req, res) => {
+-  const month = req.query.month;
+-  const year = req.query.year;
+-  const employeeId = req.query.employeeId || req.user.id;
+-  const [view, requestsPayload] = await Promise.all([
+-    getEmployeeAttendanceView(req.user, { employeeId, month, year }),
+-    getEmployeeWorkRequests(req.user, req.query || {}),
+-  ]);
+-  const targetId = view?.employee?.id;
+-  const isAggregateView = Boolean(view?.employee?.aggregate);
+-  const visibleEmployeeIds = new Set((view?.employees || []).map((employee) => employee.id).filter(Boolean));
+-  const allowedRequests = [
+-    ...(requestsPayload?.mine || []),
+-    ...(requestsPayload?.pendingTeamReview || []),
+-    ...(requestsPayload?.pendingHrReview || []),
+-    ...(requestsPayload?.teamRequests || []),
+-    ...(requestsPayload?.all || []),
+-    ...(requestsPayload?.allUnfiltered || []),
+-  ];
+-  const requestMap = new Map();
+-  for (const request of allowedRequests) {
+-    const requesterId = request?.requesterId;
+-    const inScope = isAggregateView ? visibleEmployeeIds.has(requesterId) : requesterId === targetId;
+-    if (inScope && request?.id && !requestMap.has(request.id)) requestMap.set(request.id, request);
+-  }
+-  res.json({
+-    ok: true,
+-    source: isAggregateView ? "TOS_THRS_ATTENDANCE_TEAM_VIEW_V1" : "TOS_THRS_ATTENDANCE_EMPLOYEE_VIEW_V1",
+-    employee: view.employee,
+-    employees: view.employees || [],
+-    localAttendance: view.localAttendance,
+-    requests: Array.from(requestMap.values()),
+-  });
+-}));
++router.get("/attendance/view", asyncHandler(async (req, res) => {
++  const month = req.query.month;
++  const year = req.query.year;
++  const employeeId = req.query.employeeId || req.user.id;
++  const view = await getEmployeeAttendanceView(req.user, { employeeId, month, year });
++  const targetId = view?.employee?.id;
++  const isAggregateView = Boolean(view?.employee?.aggregate);
++  const visibleEmployeeIds = (view?.employees || []).map((employee) => employee.id).filter(Boolean);
++  const requesterIds = isAggregateView ? visibleEmployeeIds : [targetId].filter(Boolean);
++  const requestRows = requesterIds.length
++    ? await prisma.employeeWorkRequest.findMany({
++        where: { requesterId: { in: requesterIds } },
++        orderBy: { createdAt: "desc" },
++        take: 600,
++      })
++    : [];
++  const requests = await serializeEmployeeWorkRequestsForViewer(requestRows, req.user);
++  res.json({
++    ok: true,
++    source: isAggregateView ? "TOS_THRS_ATTENDANCE_TEAM_VIEW_V2" : "TOS_THRS_ATTENDANCE_EMPLOYEE_VIEW_V2",
++    employee: view.employee,
++    employees: view.employees || [],
++    localAttendance: view.localAttendance,
++    requests,
++  });
++}));
+ 
+ router.post("/check-in", asyncHandler(async (req, res) => {
+@@ -395,8 +387,13 @@
+ }));
+ 
+-router.get("/requests", asyncHandler(async (req, res) => {
+-  const requests = await getEmployeeWorkRequests(req.user, req.query || {});
+-  res.json({ ok: true, source: "THRS_REQUESTS_PROFESSIONAL_FOUNDATION", requests });
+-}));
++router.get("/requests/profile/:userId", asyncHandler(async (req, res) => {
++  const requests = await getEmployeeWorkRequestsForProfile(req.user, req.params.userId);
++  res.json({ ok: true, source: "THRS_PROFILE_REQUESTS_FAST_V1", requests });
++}));
++
++router.get("/requests", asyncHandler(async (req, res) => {
++  const requests = await getEmployeeWorkRequests(req.user, req.query || {});
++  res.json({ ok: true, source: "THRS_REQUESTS_PROFESSIONAL_FOUNDATION", requests });
++}));
+ 
+ router.post("/requests", asyncHandler(async (req, res) => {
+
+diff --git a/frontend/src/lib/api.js b/frontend/src/lib/api.js
+--- a/frontend/src/lib/api.js
++++ b/frontend/src/lib/api.js
+@@ -424,12 +424,13 @@
+     },
+     evaluateShadowing: (payload = {}) => request("/api/employee-work/shadowing/evaluate", { method: "POST", body: JSON.stringify(payload || {}) }),
+-    requests: (filters = {}) => {
+-      const params = new URLSearchParams();
+-      Object.entries(filters || {}).forEach(([key, value]) => {
+-        if (value !== undefined && value !== null && String(value).trim() !== "") params.set(key, String(value));
+-      });
+-      const query = params.toString();
+-      return request(`/api/employee-work/requests${query ? `?${query}` : ""}`);
+-    },
++    requests: (filters = {}) => {
++      const params = new URLSearchParams();
++      Object.entries(filters || {}).forEach(([key, value]) => {
++        if (value !== undefined && value !== null && String(value).trim() !== "") params.set(key, String(value));
++      });
++      const query = params.toString();
++      return request(`/api/employee-work/requests${query ? `?${query}` : ""}`);
++    },
++    profileRequests: (userId) => request(`/api/employee-work/requests/profile/${encodeURIComponent(userId)}`),
+     employees: () => request("/api/employee-work/employees"),
+     employeeMappings: () => request("/api/employee-work/employee-mappings"),
+
+diff --git a/frontend/src/pages/ProfilePage.jsx b/frontend/src/pages/ProfilePage.jsx
+--- a/frontend/src/pages/ProfilePage.jsx
++++ b/frontend/src/pages/ProfilePage.jsx
+@@ -305,19 +305,7 @@
+       setError("");
+       setMessage("");
+-      const data = profileId === user.id ? await api.users.myProfile() : await api.users.profile(profileId);
+-      setProfile(data);
+-      try {
+-        const thrsPayload = await api.employeeWork.requests();
+-        const requestGroups = thrsPayload?.requests || {};
+-        const sourceRows = Array.isArray(requestGroups.allUnfiltered) && requestGroups.allUnfiltered.length
+-          ? requestGroups.allUnfiltered
+-          : [...(requestGroups.mine || []), ...(requestGroups.pendingTeamReview || []), ...(requestGroups.pendingHrReview || []), ...(requestGroups.all || [])];
+-        const unique = new Map();
+-        sourceRows.forEach((item) => { if (item?.id && item.requesterId === profileId) unique.set(item.id, item); });
+-        setThrsRequests(Array.from(unique.values()));
+-      } catch {
+-        setThrsRequests([]);
+-      }
+-      setForm({
++      const data = profileId === user.id ? await api.users.myProfile() : await api.users.profile(profileId);
++      setProfile(data);
++      setForm({
+         avatarUrl: data.avatarUrl || "",
+         phone: normalizePhoneForForm(data.phone),
+@@ -335,6 +323,18 @@
+   }
+ 
+-  useEffect(() => { loadProfiles(); }, [user.id, user.role]);
+-  useEffect(() => { loadProfile(selectedProfileId); }, [selectedProfileId]);
++  useEffect(() => { loadProfiles(); }, [user.id, user.role]);
++  useEffect(() => { loadProfile(selectedProfileId); }, [selectedProfileId]);
++  useEffect(() => {
++    let cancelled = false;
++    setThrsRequests([]);
++    api.employeeWork.profileRequests(selectedProfileId)
++      .then((payload) => {
++        if (!cancelled) setThrsRequests(Array.isArray(payload?.requests) ? payload.requests : []);
++      })
++      .catch(() => {
++        if (!cancelled) setThrsRequests([]);
++      });
++    return () => { cancelled = true; };
++  }, [selectedProfileId]);
+ 
+   async function handleAvatarFile(event) {
