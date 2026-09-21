@@ -1,0 +1,46 @@
+diff --git a/backend/src/routes/tasks.routes.js b/backend/src/routes/tasks.routes.js
+--- a/backend/src/routes/tasks.routes.js
++++ b/backend/src/routes/tasks.routes.js
+@@ -836,21 +836,18 @@
+   } : null;
+ }
+ 
+-function safeDependencyCandidateTask(task) {
+-  return task ? {
+-    id: task.id,
+-    title: task.title,
+-    status: task.status,
+-    priority: task.priority,
+-    dueDate: task.dueDate,
+-    projectId: task.projectId,
+-    boardId: task.boardId,
+-    service: safeTaskService(task.service),
+-    assignee: sanitizeUser(task.assignee),
+-    assignees: (task.assignees || []).map((item) => sanitizeUser(item.user)).filter(Boolean),
+-    assigneeIds: taskAssigneeIds(task),
+-  } : null;
+-}
++function safeDependencyCandidateTask(task) {
++  return task ? {
++    id: task.id,
++    title: task.title,
++    status: task.status,
++    priority: task.priority,
++    dueDate: task.dueDate,
++    projectId: task.projectId,
++    boardId: task.boardId,
++    archivedAt: task.archivedAt || null,
++  } : null;
++}
+ 
+ function safeDependency(item, direction = "dependsOn", parentBoardId = null) {
+   const task = direction === "blocks" ? item.task : item.dependsOnTask;
+@@ -3088,7 +3085,7 @@
+         ...(hiddenLists.length ? { AND: [{ OR: [{ listId: null }, { listId: { in: visibleListIds } }] }] } : {}),
+         ...(!canManageScoped(access, req.user) ? assignedOrCreatedTaskWhere(req.user.id) : {}),
+       },
+-      select: { id: true, title: true, status: true, priority: true, dueDate: true, projectId: true, boardId: true, service: true, assignee: true, assignees: { include: { user: true } } },
++      select: { id: true, title: true, status: true, priority: true, dueDate: true, projectId: true, boardId: true, archivedAt: true },
+       orderBy: [{ position: "asc" }, { dueDate: "asc" }, { createdAt: "desc" }],
+       take: 500,
+     }),
