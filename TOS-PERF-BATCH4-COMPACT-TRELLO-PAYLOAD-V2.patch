@@ -1,0 +1,285 @@
+diff --git a/backend/src/routes/tasks.routes.js b/backend/src/routes/tasks.routes.js
+--- a/backend/src/routes/tasks.routes.js
++++ b/backend/src/routes/tasks.routes.js
+@@ -185,7 +185,7 @@
+     },
+   },
+-  files: { where: { deletedAt: null }, select: { id: true }, orderBy: { createdAt: "desc" } },
+-  links: { include: { createdBy: true }, orderBy: { createdAt: "desc" } },
+-  comments: { include: { user: true }, orderBy: { createdAt: "asc" } },
++  files: { where: { deletedAt: null }, include: { uploadedBy: true }, orderBy: { createdAt: "desc" } },
++  links: { include: { createdBy: true }, orderBy: { createdAt: "desc" } },
++  comments: { include: { user: true }, orderBy: { createdAt: "asc" } },
+   checklist: { include: { createdBy: true, completedBy: true }, orderBy: [{ order: "asc" }, { createdAt: "asc" }] },
+   labels: { include: { label: true }, orderBy: { createdAt: "asc" } },
+@@ -239,7 +239,7 @@
+     },
+   },
+-  files: { where: { deletedAt: null }, include: { uploadedBy: true }, orderBy: { createdAt: "desc" } },
+-  labels: { include: { label: true }, orderBy: { createdAt: "asc" } },
+-  dependsOn: {
++  files: { where: { deletedAt: null }, select: { id: true }, orderBy: { createdAt: "desc" } },
++  labels: { include: { label: true }, orderBy: { createdAt: "asc" } },
++  dependsOn: {
+     include: {
+       dependsOnTask: {
+@@ -1360,74 +1360,178 @@
+ }
+ 
+-function compactBoardDesignRequest(value) {
+-  if (!value || typeof value !== "object" || Array.isArray(value)) return value ? { present: true } : null;
+-  return {
+-    present: true,
+-    requesterDepartment: value.requesterDepartment || null,
+-    lifecycleStatus: value.lifecycleStatus || null,
+-    requestType: value.requestType || value.type || null,
+-    platform: value.platform || null,
+-  };
+-}
+-
+-function isTcrmReplyActivity(activity) {
+-  const metadata = activity?.metadata && typeof activity.metadata === "object" && !Array.isArray(activity.metadata)
+-    ? activity.metadata
+-    : {};
+-  const source = String(metadata.source || metadata?.payload?.source || "").toUpperCase();
+-  const eventType = String(metadata.eventType || metadata?.payload?.eventType || "").toLowerCase();
+-  return source === "TCRM" && eventType === "comment.created";
+-}
+-
+-function safeTaskCardForBoardUser(user, access, task, options = {}) {
+-  const safe = safeTaskForBoardUser(user, access, task, options);
+-  return {
+-    id: safe.id,
+-    title: safe.title,
+-    description: compactBoardDescription(safe.description),
+-    status: safe.status,
+-    priority: safe.priority,
+-    serviceType: safe.serviceType,
+-    serviceId: safe.serviceId,
+-    department: safe.department,
+-    designRequest: compactBoardDesignRequest(safe.designRequest),
+-    designRequestedById: safe.designRequestedById,
+-    approvalStatus: safe.approvalStatus,
+-    startDate: safe.startDate,
+-    dueDate: safe.dueDate,
+-    slaDueAt: safe.slaDueAt,
+-    completedAt: safe.completedAt,
+-    progress: safe.progress,
+-    position: safe.position,
+-    estimatedHours: safe.estimatedHours,
+-    blockedReason: safe.blockedReason,
+-    coverColor: safe.coverColor,
+-    archivedAt: safe.archivedAt,
+-    projectId: safe.projectId,
+-    personalOwnerId: safe.personalOwnerId,
+-    boardId: safe.boardId,
+-    listId: safe.listId,
+-    assigneeId: safe.assigneeId,
+-    createdById: safe.createdById,
+-    createdAt: safe.createdAt,
+-    updatedAt: safe.updatedAt,
+-    sla: safe.sla,
+-    service: safe.service,
+-    assignee: safe.assignee,
+-    createdBy: safe.createdBy,
+-    designRequestedBy: safe.designRequestedBy,
+-    assignees: safe.assignees || [],
+-    assigneeIds: safe.assigneeIds || [],
+-    board: safe.board,
+-    list: safe.list,
+-    project: safe.project,
+-    files: (safe.files || []).map((file) => ({ id: file.id })).filter((file) => file.id),
+-    labels: safe.labels || [],
+-    dependencies: safe.dependencies || [],
+-    blocking: safe.blocking || [],
+-    activities: (safe.activities || []).filter(isTcrmReplyActivity).slice(0, 3),
+-    permissions: safe.permissions || {},
+-  };
+-}
++function compactBoardDesignRequest(value) {
++  if (!value || typeof value !== "object" || Array.isArray(value)) return value ? { present: true } : null;
++  return {
++    present: true,
++    requesterDepartment: value.requesterDepartment || null,
++    lifecycleStatus: value.lifecycleStatus || null,
++    requestType: value.requestType || value.type || null,
++    platform: value.platform || null,
++  };
++}
++
++function compactBoardUser(user) {
++  if (!user) return null;
++  const safe = sanitizeUser(user);
++  const avatarUrl = String(safe?.avatarUrl || "").trim();
++  const id = safe?.id || user.id;
++  return {
++    id,
++    name: safe?.name || user.name || null,
++    email: safe?.email || user.email || null,
++    role: safe?.role || user.role || null,
++    status: safe?.status || user.status || "ACTIVE",
++    department: safe?.department || user.department || null,
++    avatarUrl: /^data:image\//i.test(avatarUrl) && id ? `/api/users/${encodeURIComponent(id)}/avatar` : (avatarUrl || null),
++    avatarUpdatedAt: safe?.avatarUpdatedAt || user.avatarUpdatedAt || null,
++  };
++}
++
++function compactBoardService(service) {
++  if (!service) return null;
++  return {
++    id: service.id,
++    name: service.name,
++    department: service.department || null,
++    color: service.color || null,
++    isActive: service.isActive !== false,
++  };
++}
++
++function compactBoardProject(project) {
++  if (!project) return null;
++  return {
++    id: project.id,
++    name: project.name,
++    type: project.type || null,
++    status: project.status || null,
++    stage: project.stage || null,
++    priority: project.priority || null,
++    progress: project.progress || 0,
++    startDate: project.startDate || null,
++    dueDate: project.dueDate || null,
++    deliveryDate: project.deliveryDate || null,
++    clientName: project.clientName || null,
++  };
++}
++
++function compactBoardAssignees(items = []) {
++  return (items || []).map((item) => ({
++    id: item.id || null,
++    taskId: item.taskId || null,
++    userId: item.userId || item.user?.id || null,
++    createdAt: item.createdAt || null,
++    user: compactBoardUser(item.user || item),
++  })).filter((item) => item.userId);
++}
++
++function compactBoardDependency(item) {
++  if (!item) return null;
++  if (!item.task) return { id: item.id, taskId: item.taskId, dependsOnTaskId: item.dependsOnTaskId, createdAt: item.createdAt, task: null };
++  if (item.task.restricted) return { id: item.id, taskId: item.taskId, dependsOnTaskId: item.dependsOnTaskId, createdAt: item.createdAt, task: { id: item.task.id, restricted: true } };
++  return {
++    id: item.id,
++    taskId: item.taskId,
++    dependsOnTaskId: item.dependsOnTaskId,
++    createdAt: item.createdAt,
++    task: {
++      id: item.task.id,
++      title: item.task.title,
++      status: item.task.status,
++      priority: item.task.priority,
++      dueDate: item.task.dueDate,
++      boardId: item.task.boardId,
++      service: compactBoardService(item.task.service),
++      assignee: compactBoardUser(item.task.assignee),
++      assignees: (item.task.assignees || []).map(compactBoardUser).filter(Boolean),
++      assigneeIds: item.task.assigneeIds || [],
++    },
++  };
++}
++
++function isTcrmReplyActivity(activity) {
++  const metadata = activity?.metadata && typeof activity.metadata === "object" && !Array.isArray(activity.metadata)
++    ? activity.metadata
++    : {};
++  const source = String(metadata.source || metadata?.payload?.source || "").toUpperCase();
++  const eventType = String(metadata.eventType || metadata?.payload?.eventType || "").toLowerCase();
++  return source === "TCRM" && eventType === "comment.created";
++}
++
++function compactBoardTcrmReplyActivity(activity) {
++  const metadata = activity?.metadata && typeof activity.metadata === "object" && !Array.isArray(activity.metadata)
++    ? activity.metadata
++    : {};
++  const comment = metadata.comment || metadata?.payload?.comment || {};
++  const actor = metadata.actor || metadata?.payload?.actor || {};
++  return {
++    id: activity.id,
++    taskId: activity.taskId,
++    type: activity.type,
++    createdAt: comment.createdAt || activity.createdAt,
++    user: compactBoardUser(activity.user),
++    metadata: {
++      source: "TCRM",
++      eventType: "comment.created",
++      actor: { name: actor.name || null },
++      comment: {
++        body: String(comment.body || "").slice(0, 1200),
++        authorName: comment.authorName || actor.name || null,
++        createdAt: comment.createdAt || activity.createdAt,
++      },
++    },
++  };
++}
++
++function safeTaskCardForBoardUser(user, access, task, options = {}) {
++  const safe = safeTaskForBoardUser(user, access, task, options);
++  return {
++    id: safe.id,
++    title: safe.title,
++    description: compactBoardDescription(safe.description),
++    status: safe.status,
++    priority: safe.priority,
++    serviceType: safe.serviceType,
++    serviceId: safe.serviceId,
++    department: safe.department,
++    designRequest: compactBoardDesignRequest(safe.designRequest),
++    designRequestedById: safe.designRequestedById,
++    approvalStatus: safe.approvalStatus,
++    startDate: safe.startDate,
++    dueDate: safe.dueDate,
++    slaDueAt: safe.slaDueAt,
++    completedAt: safe.completedAt,
++    progress: safe.progress,
++    position: safe.position,
++    estimatedHours: safe.estimatedHours,
++    blockedReason: safe.blockedReason,
++    coverColor: safe.coverColor,
++    archivedAt: safe.archivedAt,
++    projectId: safe.projectId,
++    personalOwnerId: safe.personalOwnerId,
++    boardId: safe.boardId,
++    listId: safe.listId,
++    assigneeId: safe.assigneeId,
++    createdById: safe.createdById,
++    createdAt: safe.createdAt,
++    updatedAt: safe.updatedAt,
++    sla: safe.sla,
++    service: compactBoardService(safe.service),
++    assignee: compactBoardUser(safe.assignee),
++    createdBy: compactBoardUser(safe.createdBy),
++    designRequestedBy: compactBoardUser(safe.designRequestedBy),
++    assignees: compactBoardAssignees(safe.assignees || []),
++    assigneeIds: safe.assigneeIds || [],
++    board: safe.board ? { id: safe.board.id, name: safe.board.name, projectId: safe.board.projectId, workspaceId: safe.board.workspaceId } : null,
++    list: safe.list,
++    project: compactBoardProject(safe.project),
++    files: (safe.files || []).map((file) => ({ id: file.id })).filter((file) => file.id),
++    labels: safe.labels || [],
++    dependencies: (safe.dependencies || []).map(compactBoardDependency).filter(Boolean),
++    blocking: (safe.blocking || []).map(compactBoardDependency).filter(Boolean),
++    activities: (safe.activities || []).filter(isTcrmReplyActivity).slice(0, 3).map(compactBoardTcrmReplyActivity),
++    permissions: safe.permissions || {},
++  };
++}
+ 
+ function parseTcrmTaskPayload(value) {
+@@ -3020,7 +3124,7 @@
+     taskTemplates: taskTemplates.map(safeTaskTemplate),
+     taskWorkflowRules: taskWorkflowRules.map(safeWorkflowRule),
+-    members: visibleMembers.map(safeScopedMember),
+-    projectMembers: visibleProjectMembers.map(safeProjectMember),
+-    availableProjectUsers: availableProjectUsers.map(safeAvailableProjectUser),
++    members: visibleMembers.map((member) => ({ id: member.id, role: normalizeScopedRole(member.role), user: compactBoardUser(member.user), createdAt: member.createdAt })),
++    projectMembers: visibleProjectMembers.map((member) => ({ id: member.id, role: normalizeScopedRole(member.role), user: compactBoardUser(member.user), createdAt: member.createdAt })),
++    availableProjectUsers: availableProjectUsers.map(compactBoardUser),
+     permissions: permissionsFor(req.user, access),
+   });
