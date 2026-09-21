@@ -1,0 +1,302 @@
+diff --git a/backend/src/routes/tasks.routes.js b/backend/src/routes/tasks.routes.js
+--- a/backend/src/routes/tasks.routes.js
++++ b/backend/src/routes/tasks.routes.js
+@@ -153,60 +153,112 @@
+ }
+ 
+-const taskInclude = {
+-  assignee: true,
+-  createdBy: true,
+-  designRequestedBy: true,
+-  assignees: { include: { user: true, assignedBy: true }, orderBy: { createdAt: "asc" } },
+-  service: true,
+-  template: true,
+-  board: true,
+-  list: true,
+-  project: {
+-    select: {
+-      id: true,
+-      name: true,
+-      type: true,
+-      status: true,
+-      stage: true,
+-      priority: true,
+-      progress: true,
+-      startDate: true,
+-      dueDate: true,
+-      deliveryDate: true,
+-      clientName: true,
+-      clientWebsite: true,
+-      clientAccessDetails: true,
+-      timeTrackingEnabled: true,
+-      defaultTaskEstimatedHours: true,
+-      estimatedTimeEditorIds: true,
+-      links: { orderBy: { createdAt: "desc" } },
+-      taskServices: { where: { isActive: true }, select: { id: true, name: true, department: true, isActive: true }, orderBy: { createdAt: "asc" } },
+-      files: { where: { deletedAt: null, taskId: null, messageId: null }, include: { uploadedBy: { select: { id: true, role: true } } }, orderBy: { createdAt: "desc" } },
+-    },
+-  },
+-  files: { where: { deletedAt: null }, include: { uploadedBy: true }, orderBy: { createdAt: "desc" } },
+-  links: { include: { createdBy: true }, orderBy: { createdAt: "desc" } },
+-  comments: { include: { user: true }, orderBy: { createdAt: "asc" } },
+-  checklist: { include: { createdBy: true, completedBy: true }, orderBy: [{ order: "asc" }, { createdAt: "asc" }] },
+-  labels: { include: { label: true }, orderBy: { createdAt: "asc" } },
+-  watchers: { include: { user: true }, orderBy: { createdAt: "asc" } },
+-  dependsOn: {
+-    include: {
+-      dependsOnTask: {
+-        select: { id: true, title: true, status: true, priority: true, dueDate: true, boardId: true, service: true, assignee: true, assignees: { include: { user: true } } },
+-      },
+-    },
+-    orderBy: { createdAt: "asc" },
+-  },
+-  blockedBy: {
+-    include: {
+-      task: {
+-        select: { id: true, title: true, status: true, priority: true, dueDate: true, boardId: true, service: true, assignee: true, assignees: { include: { user: true } } },
+-      },
+-    },
+-    orderBy: { createdAt: "asc" },
+-  },
+-  activities: { include: { user: true }, orderBy: { createdAt: "desc" }, take: 300 },
+-};
++const taskInclude = {
++  assignee: true,
++  createdBy: true,
++  designRequestedBy: true,
++  assignees: { include: { user: true, assignedBy: true }, orderBy: { createdAt: "asc" } },
++  service: true,
++  template: true,
++  board: true,
++  list: true,
++  project: {
++    select: {
++      id: true,
++      name: true,
++      type: true,
++      status: true,
++      stage: true,
++      priority: true,
++      progress: true,
++      startDate: true,
++      dueDate: true,
++      deliveryDate: true,
++      clientName: true,
++      clientWebsite: true,
++      clientAccessDetails: true,
++      timeTrackingEnabled: true,
++      defaultTaskEstimatedHours: true,
++      estimatedTimeEditorIds: true,
++      links: { orderBy: { createdAt: "desc" } },
++      taskServices: { where: { isActive: true }, select: { id: true, name: true, department: true, isActive: true }, orderBy: { createdAt: "asc" } },
++      files: { where: { deletedAt: null, taskId: null, messageId: null }, include: { uploadedBy: { select: { id: true, role: true } } }, orderBy: { createdAt: "desc" } },
++    },
++  },
++  files: { where: { deletedAt: null }, include: { uploadedBy: true }, orderBy: { createdAt: "desc" } },
++  links: { include: { createdBy: true }, orderBy: { createdAt: "desc" } },
++  comments: { include: { user: true }, orderBy: { createdAt: "asc" } },
++  checklist: { include: { createdBy: true, completedBy: true }, orderBy: [{ order: "asc" }, { createdAt: "asc" }] },
++  labels: { include: { label: true }, orderBy: { createdAt: "asc" } },
++  watchers: { include: { user: true }, orderBy: { createdAt: "asc" } },
++  dependsOn: {
++    include: {
++      dependsOnTask: {
++        select: { id: true, title: true, status: true, priority: true, dueDate: true, boardId: true, service: true, assignee: true, assignees: { include: { user: true } } },
++      },
++    },
++    orderBy: { createdAt: "asc" },
++  },
++  blockedBy: {
++    include: {
++      task: {
++        select: { id: true, title: true, status: true, priority: true, dueDate: true, boardId: true, service: true, assignee: true, assignees: { include: { user: true } } },
++      },
++    },
++    orderBy: { createdAt: "asc" },
++  },
++  activities: { include: { user: true }, orderBy: { createdAt: "desc" }, take: 300 },
++};
++
++const taskBoardInclude = {
++  assignee: true,
++  createdBy: true,
++  designRequestedBy: true,
++  assignees: { include: { user: true, assignedBy: true }, orderBy: { createdAt: "asc" } },
++  service: true,
++  template: true,
++  board: true,
++  list: true,
++  project: {
++    select: {
++      id: true,
++      name: true,
++      type: true,
++      status: true,
++      stage: true,
++      priority: true,
++      progress: true,
++      startDate: true,
++      dueDate: true,
++      deliveryDate: true,
++      clientName: true,
++      clientWebsite: true,
++      clientAccessDetails: true,
++      timeTrackingEnabled: true,
++      defaultTaskEstimatedHours: true,
++      estimatedTimeEditorIds: true,
++    },
++  },
++  files: { where: { deletedAt: null }, include: { uploadedBy: true }, orderBy: { createdAt: "desc" } },
++  labels: { include: { label: true }, orderBy: { createdAt: "asc" } },
++  dependsOn: {
++    include: {
++      dependsOnTask: {
++        select: { id: true, title: true, status: true, priority: true, dueDate: true, boardId: true, service: true, assignee: true, assignees: { include: { user: true } } },
++      },
++    },
++    orderBy: { createdAt: "asc" },
++  },
++  blockedBy: {
++    include: {
++      task: {
++        select: { id: true, title: true, status: true, priority: true, dueDate: true, boardId: true, service: true, assignee: true, assignees: { include: { user: true } } },
++      },
++    },
++    orderBy: { createdAt: "asc" },
++  },
++  // Cards only need a short recent activity window (mainly TCRM reply context).
++  // Full comments/checklist/links/watchers/activity history are loaded by GET /api/tasks/:taskId when a card opens.
++  activities: { include: { user: true }, orderBy: { createdAt: "desc" }, take: 40 },
++};
+ 
+ 
+@@ -2833,5 +2885,5 @@
+   const canSeeProjectMembers = canManageScoped(access, req.user) || canCreateProjectTasks;
+   const [tasks, dependencyTasks, labels, members, projectMembers, availableProjectUsers, taskServices, taskTemplates, taskWorkflowRules] = await Promise.all([
+-    prisma.task.findMany({ where, include: taskInclude, orderBy: [{ position: "asc" }, { dueDate: "asc" }, { createdAt: "desc" }] }),
++    prisma.task.findMany({ where, include: taskBoardInclude, orderBy: [{ position: "asc" }, { dueDate: "asc" }, { createdAt: "desc" }] }),
+     prisma.task.findMany({
+       where: {
+
+diff --git a/frontend/src/components/ProfessionalTaskBoard.jsx b/frontend/src/components/ProfessionalTaskBoard.jsx
+--- a/frontend/src/components/ProfessionalTaskBoard.jsx
++++ b/frontend/src/components/ProfessionalTaskBoard.jsx
+@@ -5693,5 +5693,6 @@
+   const [projectSwitcherOpen, setProjectSwitcherOpen] = useState(false);
+-  const projectSwitcherRef = useRef(null);
+-  const boardLoadRequestRef = useRef(0);
+-  const skipNextBoardLoadRef = useRef("");
++  const projectSwitcherRef = useRef(null);
++  const boardLoadRequestRef = useRef(0);
++  const taskSummaryLoadRequestRef = useRef(0);
++  const skipNextBoardLoadRef = useRef("");
+   const pendingTaskOpenInFlightRef = useRef("");
+@@ -6076,22 +6077,18 @@
+       setSuccess("");
+       setLoading(true);
+-      const [data, summaryReport] = await Promise.all([
+-        tasksApi.getTrelloBoard(projectId, {
+-          boardId,
+-          due: dueFilter,
+-          status: statusFilter,
+-          search: debouncedQuery.trim(),
+-          priority: priorityFilter,
+-          serviceType: serviceTypeFilter,
+-          serviceId: serviceIdFilter,
+-          department: departmentFilter,
+-          assigneeId: assigneeFilter,
+-          labelId: labelFilter,
+-        }),
+-        tasksApi.getTaskSummaryReport(projectId, { boardId }).catch(() => null),
+-      ]);
+-      if (requestId !== boardLoadRequestRef.current) return null;
+-      setBoardLoadFailure(null);
+-      setTaskSummaryReport(summaryReport);
++      const data = await tasksApi.getTrelloBoard(projectId, {
++        boardId,
++        due: dueFilter,
++        status: statusFilter,
++        search: debouncedQuery.trim(),
++        priority: priorityFilter,
++        serviceType: serviceTypeFilter,
++        serviceId: serviceIdFilter,
++        department: departmentFilter,
++        assigneeId: assigneeFilter,
++        labelId: labelFilter,
++      });
++      if (requestId !== boardLoadRequestRef.current) return null;
++      setBoardLoadFailure(null);
+       setWorkspaces(data.workspaces || []);
+       setBoards(data.boards || []);
+@@ -6115,8 +6112,7 @@
+       setSelectedTask((current) => current ? normalizeTaskForModal(current) : null);
+       return data;
+-    } catch (err) {
+-      if (requestId !== boardLoadRequestRef.current) return null;
+-      setTaskSummaryReport(null);
+-      setBoardLoadFailure({ projectId, boardId: requestedBoardId, message: err.message || "Failed to load board" });
++    } catch (err) {
++      if (requestId !== boardLoadRequestRef.current) return null;
++      setBoardLoadFailure({ projectId, boardId: requestedBoardId, message: err.message || "Failed to load board" });
+       if (requestedBoardId && activeBoard?.id && activeBoard.id !== requestedBoardId) {
+         skipNextBoardLoadRef.current = activeBoard.id;
+@@ -6130,11 +6126,29 @@
+   }
+ 
+-  useEffect(() => {
+-    boardLoadRequestRef.current += 1;
+-    skipNextBoardLoadRef.current = "";
+-    pendingTaskOpenInFlightRef.current = "";
+-    setBoardLoadFailure(null);
+-    pendingTaskResolvedRef.current = null;
+-    if (!projectId) {
++  async function loadTaskSummaryReport(boardId = activeBoardId) {
++    if (!projectId || !boardId) {
++      setTaskSummaryReport(null);
++      return null;
++    }
++    const requestId = ++taskSummaryLoadRequestRef.current;
++    try {
++      const report = await tasksApi.getTaskSummaryReport(projectId, { boardId });
++      if (requestId !== taskSummaryLoadRequestRef.current) return null;
++      setTaskSummaryReport(report);
++      return report;
++    } catch {
++      if (requestId === taskSummaryLoadRequestRef.current) setTaskSummaryReport(null);
++      return null;
++    }
++  }
++
++  useEffect(() => {
++    boardLoadRequestRef.current += 1;
++    taskSummaryLoadRequestRef.current += 1;
++    skipNextBoardLoadRef.current = "";
++    pendingTaskOpenInFlightRef.current = "";
++    setBoardLoadFailure(null);
++    pendingTaskResolvedRef.current = null;
++    if (!projectId) {
+       setLoading(false);
+       setError("");
+@@ -6148,7 +6162,19 @@
+       setActiveWorkspaceId("");
+     }
+-  }, [projectId]);
+-
+-  useRealtimeRefresh(["tasks", "files", "projects", "team"], (detail) => {
++  }, [projectId]);
++
++  useEffect(() => {
++    if (!projectId || !activeBoardId) {
++      setTaskSummaryReport(null);
++      return;
++    }
++    loadTaskSummaryReport(activeBoardId);
++  }, [projectId, activeBoardId]);
++
++  useRealtimeRefresh(["tasks"], () => {
++    if (activeBoardId) loadTaskSummaryReport(activeBoardId);
++  }, { debounceMs: 1200, minIntervalMs: 1500, scope: { projectId, boardId: activeBoardId } });
++
++  useRealtimeRefresh(["tasks", "files", "projects", "team"], (detail) => {
+     if (!activeBoardId) return;
+     if (selectedTaskRef.current?.id && (detail?.resources || []).some((resource) => ["tasks", "files"].includes(resource))) return;
