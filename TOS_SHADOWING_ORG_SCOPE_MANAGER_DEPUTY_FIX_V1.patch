@@ -1,34 +1,132 @@
 diff --git a/backend/src/services/employeeWorkShadowing.service.js b/backend/src/services/employeeWorkShadowing.service.js
 --- a/backend/src/services/employeeWorkShadowing.service.js
 +++ b/backend/src/services/employeeWorkShadowing.service.js
-@@ -65,6 +65,7 @@ export function evaluateShadowingRule({
-   settings,
-   requestType,
-   requesterDepartment,
+@@ -63,21 +63,28 @@
+   return Number.isFinite(duration) && duration > 0 ? duration : 0;
+ }
+ 
+-export function evaluateShadowingRule({
+-  settings,
+-  requestType,
+-  requesterDepartment,
+-  leaveTypeId,
+-  leaveCalculationUnit,
+-  startTime,
+-  endTime,
+-} = {}) {
+-  const normalized = normalizeShadowingSettings(settings);
+-  const canonicalType = String(requestType || "").trim().toUpperCase();
+-  const calculationUnit = String(leaveCalculationUnit || "").trim().toUpperCase();
+-  const durationMinutes = timeDurationMinutes(startTime, endTime);
+-
+-  if (isShadowingExemptDepartment(requesterDepartment)) {
++export function evaluateShadowingRule({
++  settings,
++  requestType,
++  requesterDepartment,
 +  requesterDepartments,
-   leaveTypeId,
-   leaveCalculationUnit,
-   startTime,
-@@ -74,6 +75,12 @@ export function evaluateShadowingRule({
-   const canonicalType = String(requestType || "").trim().toUpperCase();
-   const calculationUnit = String(leaveCalculationUnit || "").trim().toUpperCase();
-   const durationMinutes = timeDurationMinutes(startTime, endTime);
++  leaveTypeId,
++  leaveCalculationUnit,
++  startTime,
++  endTime,
++} = {}) {
++  const normalized = normalizeShadowingSettings(settings);
++  const canonicalType = String(requestType || "").trim().toUpperCase();
++  const calculationUnit = String(leaveCalculationUnit || "").trim().toUpperCase();
++  const durationMinutes = timeDurationMinutes(startTime, endTime);
 +  const scopedDepartments = Array.isArray(requesterDepartments)
 +    ? requesterDepartments.map((value) => String(value || "").trim()).filter(Boolean)
 +    : [];
 +  const departmentExempt = scopedDepartments.length
 +    ? scopedDepartments.every(isShadowingExemptDepartment)
 +    : isShadowingExemptDepartment(requesterDepartment);
- 
--  if (isShadowingExemptDepartment(requesterDepartment)) {
++
 +  if (departmentExempt) {
      return { applicable: false, mode: "OFF", required: false, optional: false, durationMinutes, settings: normalized, reason: "DEPARTMENT_EXEMPT" };
    }
  
-@@ -205,13 +211,55 @@ async function conflictingRequestForCandidate(candidateId, period = {}, excludeRe
+@@ -205,84 +212,122 @@
    return conflicts.get(String(candidateId || "").trim()) || null;
  }
  
+-export async function getShadowCandidates(requester, period = {}, { excludeRequestId = null, includeAvailability = false } = {}) {
+-  const department = String(requester?.department || "").trim();
+-  if (!requester?.id || !department) return [];
+-
+-  const canonicalDepartment = normalizeDepartmentName(department) || department;
+-  const departmentUnit = await prisma.departmentUnit.findFirst({
+-    where: { name: canonicalDepartment, isActive: true },
+-    select: { managerId: true },
+-  });
+-  const assignedManagerId = String(departmentUnit?.managerId || "").trim();
+-
+-  const users = await prisma.user.findMany({
+-    where: {
+-      id: { not: requester.id },
+-      status: "ACTIVE",
+-      role: { in: STAFF_ROLES },
+-      OR: [
+-        { department: canonicalDepartment },
+-        ...(assignedManagerId ? [{ id: assignedManagerId }] : []),
+-      ],
+-    },
+-    orderBy: [{ role: "asc" }, { name: "asc" }, { email: "asc" }],
+-    select: { id: true, name: true, email: true, role: true, department: true, avatarUrl: true },
+-    take: 200,
+-  });
+-
+-  if (!includeAvailability || !period?.startDate) return users.map(safeCandidate);
+-  const conflicts = await conflictingRequestsForCandidates(users.map((user) => user.id), period, excludeRequestId);
+-  return users.map((user) => {
+-    const conflict = conflicts.get(user.id) || null;
+-    return {
+-      ...safeCandidate(user),
+-      available: !conflict,
+-      conflictRequestId: conflict?.id || null,
+-      conflictReason: conflict ? (conflict.requesterId === user.id ? "EMPLOYEE_ABSENCE" : "ALREADY_COVERING") : null,
+-    };
+-  });
+-}
+-
+-export async function assertShadowCandidateAvailable(requester, candidateId, period = {}, { excludeRequestId = null } = {}) {
+-  const id = String(candidateId || "").trim();
+-  if (!id) throw new AppError("Shadow member is required", 400);
+-  if (id === requester?.id) throw new AppError("You cannot select yourself as the shadow member", 400);
+-  const department = String(requester?.department || "").trim();
+-  if (!department) throw new AppError("Your department is required before selecting a shadow member", 400);
+-
+-  const canonicalDepartment = normalizeDepartmentName(department) || department;
+-  const departmentUnit = await prisma.departmentUnit.findFirst({
+-    where: { name: canonicalDepartment, isActive: true },
+-    select: { managerId: true },
+-  });
+-  const assignedManagerId = String(departmentUnit?.managerId || "").trim();
+-
+-  const candidate = await prisma.user.findFirst({
+-    where: {
+-      id,
+-      status: "ACTIVE",
+-      role: { in: STAFF_ROLES },
+-      OR: [
+-        { department: canonicalDepartment },
+-        ...(assignedManagerId ? [{ id: assignedManagerId }] : []),
+-      ],
+-    },
+-    select: { id: true, name: true, email: true, role: true, department: true, avatarUrl: true },
+-  });
+-  if (!candidate) throw new AppError("The selected shadow member must be an active employee in the same department or its assigned leader", 400);
+-
+-  const conflict = await conflictingRequestForCandidate(candidate.id, period, excludeRequestId);
+-  if (conflict) {
+-    throw new AppError(
+-      conflict.requesterId === candidate.id
+-        ? "The selected shadow member has an overlapping leave or permission request"
+-        : "The selected shadow member is already covering another employee during this period",
+-      400,
+-    );
+-  }
+-  return safeCandidate(candidate);
+-}
 +export async function getShadowRequesterScope(requester) {
 +  const requesterId = String(requester?.id || "").trim();
 +  const rawDepartment = String(requester?.department || "").trim();
@@ -76,170 +174,254 @@ diff --git a/backend/src/services/employeeWorkShadowing.service.js b/backend/src
 +  };
 +}
 +
- export async function getShadowCandidates(requester, period = {}, { excludeRequestId = null, includeAvailability = false } = {}) {
--  const department = String(requester?.department || "").trim();
--  if (!requester?.id || !department) return [];
++export async function getShadowCandidates(requester, period = {}, { excludeRequestId = null, includeAvailability = false } = {}) {
 +  if (!requester?.id) return [];
- 
--  const canonicalDepartment = normalizeDepartmentName(department) || department;
--  const departmentUnit = await prisma.departmentUnit.findFirst({
--    where: { name: canonicalDepartment, isActive: true },
--    select: { managerId: true },
--  });
--  const assignedManagerId = String(departmentUnit?.managerId || "").trim();
++
 +  const scope = await getShadowRequesterScope(requester);
 +  if (!scope.departmentNames.length || scope.exempt) return [];
- 
-   const users = await prisma.user.findMany({
-     where: {
-@@ -222,8 +270,8 @@ export async function getShadowCandidates(requester, period = {}, { excludeRequest
-       status: "ACTIVE",
-       role: { in: STAFF_ROLES },
-       OR: [
--        { department: canonicalDepartment },
--        ...(assignedManagerId ? [{ id: assignedManagerId }] : []),
++
++  const users = await prisma.user.findMany({
++    where: {
++      id: { not: requester.id },
++      status: "ACTIVE",
++      role: { in: STAFF_ROLES },
++      OR: [
 +        { department: { in: scope.departmentNames } },
 +        ...(scope.leadershipIds.length ? [{ id: { in: scope.leadershipIds } }] : []),
-       ],
-     },
-     orderBy: [{ role: "asc" }, { name: "asc" }, { email: "asc" }],
-@@ -248,13 +296,9 @@ export async function assertShadowCandidateAvailable(requester, candidateId, period
-   const id = String(candidateId || "").trim();
-   if (!id) throw new AppError("Shadow member is required", 400);
-   if (id === requester?.id) throw new AppError("You cannot select yourself as the shadow member", 400);
--  const department = String(requester?.department || "").trim();
--  if (!department) throw new AppError("Your department is required before selecting a shadow member", 400);
- 
--  const canonicalDepartment = normalizeDepartmentName(department) || department;
--  const departmentUnit = await prisma.departmentUnit.findFirst({
--    where: { name: canonicalDepartment, isActive: true },
--    select: { managerId: true },
--  });
--  const assignedManagerId = String(departmentUnit?.managerId || "").trim();
++      ],
++    },
++    orderBy: [{ role: "asc" }, { name: "asc" }, { email: "asc" }],
++    select: { id: true, name: true, email: true, role: true, department: true, avatarUrl: true },
++    take: 200,
++  });
++
++  if (!includeAvailability || !period?.startDate) return users.map(safeCandidate);
++  const conflicts = await conflictingRequestsForCandidates(users.map((user) => user.id), period, excludeRequestId);
++  return users.map((user) => {
++    const conflict = conflicts.get(user.id) || null;
++    return {
++      ...safeCandidate(user),
++      available: !conflict,
++      conflictRequestId: conflict?.id || null,
++      conflictReason: conflict ? (conflict.requesterId === user.id ? "EMPLOYEE_ABSENCE" : "ALREADY_COVERING") : null,
++    };
++  });
++}
++
++export async function assertShadowCandidateAvailable(requester, candidateId, period = {}, { excludeRequestId = null } = {}) {
++  const id = String(candidateId || "").trim();
++  if (!id) throw new AppError("Shadow member is required", 400);
++  if (id === requester?.id) throw new AppError("You cannot select yourself as the shadow member", 400);
++
 +  const scope = await getShadowRequesterScope(requester);
 +  if (!scope.departmentNames.length || scope.exempt) {
 +    throw new AppError("No shadowing department is available for this employee", 400);
 +  }
- 
-   const candidate = await prisma.user.findFirst({
-     where: {
-@@ -264,12 +308,12 @@ export async function assertShadowCandidateAvailable(requester, candidateId, period
-       status: "ACTIVE",
-       role: { in: STAFF_ROLES },
-       OR: [
--        { department: canonicalDepartment },
--        ...(assignedManagerId ? [{ id: assignedManagerId }] : []),
++
++  const candidate = await prisma.user.findFirst({
++    where: {
++      id,
++      status: "ACTIVE",
++      role: { in: STAFF_ROLES },
++      OR: [
 +        { department: { in: scope.departmentNames } },
 +        ...(scope.leadershipIds.length ? [{ id: { in: scope.leadershipIds } }] : []),
-       ],
-     },
-     select: { id: true, name: true, email: true, role: true, department: true, avatarUrl: true },
-   });
--  if (!candidate) throw new AppError("The selected shadow member must be an active employee in the same department or its assigned leader", 400);
++      ],
++    },
++    select: { id: true, name: true, email: true, role: true, department: true, avatarUrl: true },
++  });
 +  if (!candidate) throw new AppError("The selected shadow member must be an active employee in your eligible department scope", 400);
++
++  const conflict = await conflictingRequestForCandidate(candidate.id, period, excludeRequestId);
++  if (conflict) {
++    throw new AppError(
++      conflict.requesterId === candidate.id
++        ? "The selected shadow member has an overlapping leave or permission request"
++        : "The selected shadow member is already covering another employee during this period",
++      400,
++    );
++  }
++  return safeCandidate(candidate);
++}
  
-   const conflict = await conflictingRequestForCandidate(candidate.id, period, excludeRequestId);
-   if (conflict) {
+ export async function createShadowNotification({ recipientId, actorId = null, type, title, body = null, requestId, metadata = {} }) {
+   if (!recipientId) return null;
 diff --git a/backend/src/services/employeeWorkRequests.service.js b/backend/src/services/employeeWorkRequests.service.js
 --- a/backend/src/services/employeeWorkRequests.service.js
 +++ b/backend/src/services/employeeWorkRequests.service.js
-@@ -9 +9 @@
+@@ -6,7 +6,7 @@
+ import { fetchEmployeeAffairsRequestStatusFromThrs, getThrsEmployeeAffairsMapping, getThrsLeaveTypeOptions, getThrsShiftSwapOptions, isLegacyEmployeeAffairsRequestType, normalizeEmployeeAffairsRequestType, sendEmployeeAffairsRequestToThrs } from "./thrsEmployeeAffairsSync.service.js";
+ import { getManagedDepartmentNames } from "./companyDepartments.service.js";
+ import { getThrsEmployeeMappingStatus, resolveThrsEmployeeForTosUser, syncThrsEmployeeDirectory } from "./thrsEmployeeMapping.service.js";
 -import { assertShadowCandidateAvailable, createShadowNotification, evaluateShadowingRule, getShadowCandidates, isShadowingExemptDepartment, normalizeShadowingSettings } from "./employeeWorkShadowing.service.js";
 +import { assertShadowCandidateAvailable, createShadowNotification, evaluateShadowingRule, getShadowCandidates, getShadowRequesterScope, normalizeShadowingSettings } from "./employeeWorkShadowing.service.js";
-@@ -810,13 +810,14 @@ export async function getThrsRequestFormOptions(actorTokenUser, requestId = null) {
-   const mapping = await resolveThrsEmployeeForTosUser(targetUser);
+ 
+ const STAFF_ROLES = new Set(["SUPER_ADMIN", "ADMIN", "MANAGER", "PROJECT_MANAGER", "TEAM_MEMBER"]);
+ const HR_REVIEW_ROLES = new Set(["SUPER_ADMIN", "ADMIN"]);
+@@ -808,17 +808,18 @@
+     targetRequestId = request.id;
+   }
+ 
+-  const mapping = await resolveThrsEmployeeForTosUser(targetUser);
 -  const [leaveTypesResult, shiftSwapResult, operationsSettings, shadowCandidates] = await Promise.all([
-+  const [leaveTypesResult, shiftSwapResult, operationsSettings, shadowScope] = await Promise.all([
-     getThrsLeaveTypeOptions(),
-     mapping?.thrsEmployeeId
-       ? getThrsShiftSwapOptions(mapping.thrsEmployeeId)
-       : Promise.resolve({ ok: false, requesterAssignments: [], targetAssignments: [], message: "Employee is not mapped to THRS" }),
-     getOperationsSettings(),
+-    getThrsLeaveTypeOptions(),
+-    mapping?.thrsEmployeeId
+-      ? getThrsShiftSwapOptions(mapping.thrsEmployeeId)
+-      : Promise.resolve({ ok: false, requesterAssignments: [], targetAssignments: [], message: "Employee is not mapped to THRS" }),
+-    getOperationsSettings(),
 -    getShadowCandidates(targetUser),
-+    getShadowRequesterScope(targetUser),
-   ]);
-   const shadowingSettings = normalizeShadowingSettings(operationsSettings?.shadowingSettings || operationsSettings?.generalSettings?.shadowingSettings);
+-  ]);
+-  const shadowingSettings = normalizeShadowingSettings(operationsSettings?.shadowingSettings || operationsSettings?.generalSettings?.shadowingSettings);
 -  const shadowingExempt = isShadowingExemptDepartment(targetUser.department);
++  const mapping = await resolveThrsEmployeeForTosUser(targetUser);
++  const [leaveTypesResult, shiftSwapResult, operationsSettings, shadowScope] = await Promise.all([
++    getThrsLeaveTypeOptions(),
++    mapping?.thrsEmployeeId
++      ? getThrsShiftSwapOptions(mapping.thrsEmployeeId)
++      : Promise.resolve({ ok: false, requesterAssignments: [], targetAssignments: [], message: "Employee is not mapped to THRS" }),
++    getOperationsSettings(),
++    getShadowRequesterScope(targetUser),
++  ]);
++  const shadowingSettings = normalizeShadowingSettings(operationsSettings?.shadowingSettings || operationsSettings?.generalSettings?.shadowingSettings);
 +  const shadowCandidates = shadowScope.exempt ? [] : await getShadowCandidates(targetUser);
 +  const requesterDepartment = shadowScope.departmentNames[0] || targetUser.department || null;
  
    return {
      ok: true,
-@@ -845,9 +846,10 @@ export async function getThrsRequestFormOptions(actorTokenUser, requestId = null) {
-     shadowing: {
-       settings: shadowingSettings,
+@@ -843,13 +844,14 @@
+     },
+     workModels: Array.from(THRS_WORK_MODELS),
+     attendanceCorrectionTypes: Array.from(ATTENDANCE_CORRECTION_TYPES),
+-    shadowing: {
+-      settings: shadowingSettings,
 -      candidates: shadowingExempt ? [] : shadowCandidates,
 -      requesterDepartment: targetUser.department || null,
 -      exempt: shadowingExempt,
 -      exemptionReason: shadowingExempt ? "MANAGEMENT_DEPARTMENT" : null,
+-    },
++    shadowing: {
++      settings: shadowingSettings,
 +      candidates: shadowCandidates,
 +      requesterDepartment,
 +      requesterDepartments: shadowScope.departmentNames,
 +      exempt: shadowScope.exempt,
 +      exemptionReason: shadowScope.exempt ? "MANAGEMENT_DEPARTMENT" : null,
-     },
++    },
    };
  }
-@@ -881,7 +883,10 @@ export async function getEmployeeWorkShadowCandidates(actorTokenUser, query = {}) {
+ 
+@@ -878,23 +880,27 @@
+   if ((startTime && !endTime) || (!startTime && endTime)) throw new AppError("startTime and endTime must be provided together", 400);
+   if (startTime && endTime && startDate === endDate && endTime <= startTime) throw new AppError("endTime must be after startTime", 400);
+ 
 -  if (isShadowingExemptDepartment(requester.department)) {
+-    return {
+-      ok: true,
+-      requesterDepartment: requester.department || null,
+-      exempt: true,
+-      exemptionReason: "MANAGEMENT_DEPARTMENT",
+-      period: startDate ? { startDate, endDate: endDate || startDate, startTime: startTime || null, endTime: endTime || null } : null,
+-      candidates: [],
+-      unavailableCount: 0,
+-    };
+-  }
+-
+-  const candidates = await getShadowCandidates(requester, { startDate, endDate, startTime, endTime }, { excludeRequestId, includeAvailability: Boolean(startDate) });
+-  const available = candidates.filter((candidate) => candidate.available !== false);
+-  return {
+-    ok: true,
+-    requesterDepartment: requester.department || null,
 +  const shadowScope = await getShadowRequesterScope(requester);
 +  const requesterDepartment = shadowScope.departmentNames[0] || requester.department || null;
 +  if (shadowScope.exempt) {
-     return {
-       ok: true,
--      requesterDepartment: requester.department || null,
++    return {
++      ok: true,
 +      requesterDepartment,
 +      requesterDepartments: shadowScope.departmentNames,
-       exempt: true,
-       exemptionReason: "MANAGEMENT_DEPARTMENT",
-       period: startDate ? { startDate, endDate: endDate || startDate, startTime: startTime || null, endTime: endTime || null } : null,
-@@ -894,7 +899,8 @@ export async function getEmployeeWorkShadowCandidates(actorTokenUser, query = {}) {
-   const available = candidates.filter((candidate) => candidate.available !== false);
-   return {
-     ok: true,
--    requesterDepartment: requester.department || null,
++      exempt: true,
++      exemptionReason: "MANAGEMENT_DEPARTMENT",
++      period: startDate ? { startDate, endDate: endDate || startDate, startTime: startTime || null, endTime: endTime || null } : null,
++      candidates: [],
++      unavailableCount: 0,
++    };
++  }
++
++  const candidates = await getShadowCandidates(requester, { startDate, endDate, startTime, endTime }, { excludeRequestId, includeAvailability: Boolean(startDate) });
++  const available = candidates.filter((candidate) => candidate.available !== false);
++  return {
++    ok: true,
 +    requesterDepartment,
 +    requesterDepartments: shadowScope.departmentNames,
      period: startDate ? { startDate, endDate: endDate || startDate, startTime: startTime || null, endTime: endTime || null } : null,
      candidates: available,
      unavailableCount: candidates.length - available.length,
-@@ -941,8 +947,12 @@ export async function evaluateEmployeeWorkRequestShadowing(actorTokenUser, body = {
+@@ -938,12 +944,16 @@
+     if (endTime <= startTime) throw new AppError("endTime must be after startTime", 400);
+   }
+ 
 -  const operationsSettings = await getOperationsSettings();
+-  const rule = evaluateShadowingRule({
+-    settings: operationsSettings?.shadowingSettings || operationsSettings?.generalSettings?.shadowingSettings,
+-    requestType: canonicalRequestType,
+-    requesterDepartment: actor.department,
+-    leaveTypeId,
 +  const [operationsSettings, shadowScope] = await Promise.all([
 +    getOperationsSettings(),
 +    getShadowRequesterScope(actor),
 +  ]);
-   const rule = evaluateShadowingRule({
-     settings: operationsSettings?.shadowingSettings || operationsSettings?.generalSettings?.shadowingSettings,
-     requestType: canonicalRequestType,
-     requesterDepartment: actor.department,
++  const rule = evaluateShadowingRule({
++    settings: operationsSettings?.shadowingSettings || operationsSettings?.generalSettings?.shadowingSettings,
++    requestType: canonicalRequestType,
++    requesterDepartment: actor.department,
 +    requesterDepartments: shadowScope.departmentNames,
-     leaveTypeId,
++    leaveTypeId,
      leaveCalculationUnit,
      startTime,
-@@ -968,7 +978,8 @@ export async function evaluateEmployeeWorkRequestShadowing(actorTokenUser, body = {
-     rule: safeRule,
-     candidates,
-     unavailableCount: allCandidates.length - candidates.length,
+     endTime,
+@@ -965,11 +975,12 @@
+       code: leaveType.code || null,
+       calculationUnit: leaveCalculationUnit,
+     },
+-    rule: safeRule,
+-    candidates,
+-    unavailableCount: allCandidates.length - candidates.length,
 -    requesterDepartment: actor.department || null,
+-    period,
++    rule: safeRule,
++    candidates,
++    unavailableCount: allCandidates.length - candidates.length,
 +    requesterDepartment: shadowScope.departmentNames[0] || actor.department || null,
 +    requesterDepartments: shadowScope.departmentNames,
-     period,
++    period,
    };
  }
-@@ -1026,12 +1037,14 @@ export async function createEmployeeWorkRequest(actorTokenUser, body = {}) {
+ 
+@@ -1023,16 +1034,18 @@
+     targetAssignment: canonicalRequestType === "SHIFT_SWAP" ? matchAssignment(shiftSwapOptions?.targetAssignments, payload.metadata.targetAssignmentId) : null,
+   };
+ 
 -  const [hrSyncContext, operationsSettings, attachments] = await Promise.all([
+-    getThrsHrSyncContextAsync(),
+-    getOperationsSettings(),
+-    resolveEmployeeWorkAttachments(actor.id, body.attachmentIds),
+-  ]);
+-  const shadowRule = evaluateShadowingRule({
+-    settings: operationsSettings?.shadowingSettings || operationsSettings?.generalSettings?.shadowingSettings,
+-    requestType: payload.requestType,
+-    requesterDepartment: actor.department,
+-    leaveTypeId: payload.metadata?.leaveTypeId,
 +  const [hrSyncContext, operationsSettings, attachments, shadowScope] = await Promise.all([
-     getThrsHrSyncContextAsync(),
-     getOperationsSettings(),
-     resolveEmployeeWorkAttachments(actor.id, body.attachmentIds),
++    getThrsHrSyncContextAsync(),
++    getOperationsSettings(),
++    resolveEmployeeWorkAttachments(actor.id, body.attachmentIds),
 +    getShadowRequesterScope(actor),
-   ]);
-   const shadowRule = evaluateShadowingRule({
-     settings: operationsSettings?.shadowingSettings || operationsSettings?.generalSettings?.shadowingSettings,
-     requestType: payload.requestType,
-     requesterDepartment: actor.department,
++  ]);
++  const shadowRule = evaluateShadowingRule({
++    settings: operationsSettings?.shadowingSettings || operationsSettings?.generalSettings?.shadowingSettings,
++    requestType: payload.requestType,
++    requesterDepartment: actor.department,
 +    requesterDepartments: shadowScope.departmentNames,
-     leaveTypeId: payload.metadata?.leaveTypeId,
++    leaveTypeId: payload.metadata?.leaveTypeId,
      leaveCalculationUnit: payload.metadata?.leaveCalculationUnit,
      startTime: payload.startTime,
+     endTime: payload.endTime,
