@@ -1,0 +1,20 @@
+Apply TOS-TASK-WAITING-CLIENT-PREMIUM-MODAL-V1 to live TOS only.
+
+Download and run:
+https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/main/TOS-TASK-WAITING-CLIENT-PREMIUM-MODAL-V1/apply_waiting_client_premium_modal_v1.py
+against /var/www/TOS.
+
+Then build frontend, deploy atomically using the existing proven TOS production flow, and verify /tasks returns HTTP 200.
+
+Do not change backend, DB, or unrelated files. Do not push.
+
+Return only:
+PATCH=
+BUILD=
+DEPLOY=
+HTTP=
+BROWSER_PROMPT_REMOVED=
+PREMIUM_MODAL=
+QUICK_REASONS=
+BACKEND_UNCHANGED=
+ERROR=
