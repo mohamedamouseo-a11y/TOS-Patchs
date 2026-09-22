@@ -1,0 +1,215 @@
+diff --git a/frontend/src/App.jsx b/frontend/src/App.jsx
+--- a/frontend/src/App.jsx
++++ b/frontend/src/App.jsx
+@@ -1040,9 +1040,9 @@
+     };
+   }, [centralChatEmbed, hasWorkHubAccess, user?.id]);
+ 
+-  useRealtimeRefresh(["projects", "tasks", "dashboard", "integrations", "meetings"], () => reload({ showLoading: false }), {
+-    debounceMs: 350,
+-    minIntervalMs: 800,
++  useRealtimeRefresh(["projects", "tasks", "dashboard", "integrations", "meetings"], () => reload({ showLoading: false }), {
++    debounceMs: 600,
++    minIntervalMs: 2500,
+     predicate: (detail) => {
+       const resources = Array.isArray(detail?.resources) ? detail.resources : [];
+       return !(resources.includes("chat") && !resources.includes("projects"));
+@@ -1331,10 +1331,10 @@
+                 openDetailsProjectId={projectDetailsRequest.projectId}
+                 openDetailsSignal={projectDetailsRequest.signal}
+                 setActiveProjectId={setActiveProjectId}
+-                createProject={async (payload) => { const project = await createProject(payload); await reload({ showLoading: false }); return project; }}
+-                updateProject={async (projectId, payload) => { const project = await updateProject(projectId, payload); await reload({ showLoading: false }); return project; }}
+-                archiveProject={async (projectId) => { const project = await archiveProject(projectId); await reload({ showLoading: false }); return project; }}
+-                restoreProject={async (projectId) => { const project = await restoreProject(projectId); await reload({ showLoading: false }); return project; }}
++                createProject={createProject}
++                updateProject={updateProject}
++                archiveProject={archiveProject}
++                restoreProject={restoreProject}
+                 onOpenTasks={(projectId) => {
+                   setActiveProjectId(projectId);
+                   setActive("tasks");
+@@ -1377,7 +1377,7 @@
+             )}
+             {!loading && active === "files" && <FilesHub user={user} activeProjectId={activeProjectId} activeProject={activeProject} projects={projects} uploadSignal={fileUploadSignal} />}
+             {!loading && active === "tws" && <TwsPage user={user} projects={projects} />}
+-            {active === "team" && <TeamPage user={user} inviteSignal={teamInviteSignal} />}
++            {active === "team" && <TeamPage user={user} inviteSignal={teamInviteSignal} projects={projects} />}
+             {active === "permissions" && canViewPermissions && <PermissionsPage user={user} />}
+             {active === "workHub" && hasWorkHubAccess && <EmployeeWorkHub user={user} />}
+             {active === "profile" && <ProfilePage user={user} />}
+
+diff --git a/frontend/src/pages/TeamPage.jsx b/frontend/src/pages/TeamPage.jsx
+--- a/frontend/src/pages/TeamPage.jsx
++++ b/frontend/src/pages/TeamPage.jsx
+@@ -1621,11 +1621,11 @@
+   );
+ }
+ 
+-export function TeamPage({ user, inviteSignal = 0 }) {
+-  const { lang = "ar", isAr = true } = usePreferences();
+-  const [users, setUsers] = useState([]);
+-  const [projects, setProjects] = useState([]);
+-  const [departments, setDepartments] = useState([]);
++export function TeamPage({ user, inviteSignal = 0, projects: projectSummaries = [] }) {
++  const { lang = "ar", isAr = true } = usePreferences();
++  const [users, setUsers] = useState([]);
++  const [departments, setDepartments] = useState([]);
++  const projects = Array.isArray(projectSummaries) ? projectSummaries : [];
+   const [form, setForm] = useState(initialForm);
+   const [editing, setEditing] = useState(null);
+   const [showEditNewPassword, setShowEditNewPassword] = useState(false);
+@@ -1650,9 +1650,11 @@
+   const [expandedUserId, setExpandedUserId] = useState("");
+   const [assignProject, setAssignProject] = useState({ user: null, projectId: "", role: "MEMBER" });
+   const [separationRequest, setSeparationRequest] = useState({ user: null, reason: "" });
+-  const inviteFormRef = useRef(null);
+-
+-  const roleOptions = useMemo(() => roleOptionsFor(user.role), [user.role]);
++  const inviteFormRef = useRef(null);
++  const loadInFlightRef = useRef(null);
++  const lastLoadedAtRef = useRef(0);
++
++  const roleOptions = useMemo(() => roleOptionsFor(user.role), [user.role]);
+   const departmentOptions = useMemo(() => departmentOptionsFrom(departments), [departments]);
+   const canManageTeamUsers = ["SUPER_ADMIN", "ADMIN"].includes(user.role);
+   const canViewFormerEmployees = user.role === "SUPER_ADMIN";
+@@ -1657,36 +1659,46 @@
+   const canManageTeamUsers = ["SUPER_ADMIN", "ADMIN"].includes(user.role);
+   const canViewFormerEmployees = user.role === "SUPER_ADMIN";
+ 
+-  async function load() {
+-    try {
+-      setError("");
+-      setLoading(true);
+-      const [usersResult, projectsResult, departmentsResult] = await Promise.allSettled([api.users.list({ summary: true }), api.projects.list({ summary: true }), api.users.departments({ summary: true })]);
+-
+-      if (usersResult.status === "fulfilled") {
+-        setUsers(usersResult.value || []);
+-      } else {
+-        setUsers([]);
+-        showError("team", getErrorMessage(usersResult.reason, "تعذر تحميل المستخدمين."));
+-      }
+-
+-      if (projectsResult.status === "fulfilled") {
+-        setProjects(projectsResult.value || []);
+-      } else {
+-        setProjects([]);
+-      }
+-
+-      if (departmentsResult.status === "fulfilled") {
+-        setDepartments(departmentsResult.value || []);
+-      } else {
+-        setDepartments(DEFAULT_DEPARTMENTS);
+-      }
+-    } finally {
+-      setLoading(false);
+-    }
+-  }
+-
+-  useEffect(() => { load(); }, []);
++  async function load({ force = false } = {}) {
++    if (!force && loadInFlightRef.current) return loadInFlightRef.current;
++    if (!force && lastLoadedAtRef.current && Date.now() - lastLoadedAtRef.current < 1500) return null;
++
++    const request = (async () => {
++      try {
++        setError("");
++        setLoading(true);
++        const [usersResult, departmentsResult] = await Promise.allSettled([
++          api.users.list({ summary: true }),
++          api.users.departments({ summary: true }),
++        ]);
++
++        if (usersResult.status === "fulfilled") {
++          setUsers(usersResult.value || []);
++        } else {
++          setUsers([]);
++          showError("team", getErrorMessage(usersResult.reason, "تعذر تحميل المستخدمين."));
++        }
++
++        if (departmentsResult.status === "fulfilled") {
++          setDepartments(departmentsResult.value || []);
++        } else {
++          setDepartments(DEFAULT_DEPARTMENTS);
++        }
++        lastLoadedAtRef.current = Date.now();
++      } finally {
++        setLoading(false);
++      }
++    })();
++
++    loadInFlightRef.current = request;
++    try {
++      return await request;
++    } finally {
++      if (loadInFlightRef.current === request) loadInFlightRef.current = null;
++    }
++  }
++
++  useEffect(() => { load({ force: true }); }, []);
+ 
+   function shouldRefreshTeamAfterRealtime(detail = {}) {
+     const path = String(detail?.path || "");
+@@ -1688,20 +1700,21 @@
+ 
+   useEffect(() => { load(); }, []);
+ 
+-  function shouldRefreshTeamAfterRealtime(detail = {}) {
+-    const path = String(detail?.path || "");
+-    // Generating manual password reset/invite links is an ephemeral admin action.
+-    // It does not change the visible team list, so avoid reloading the page
+-    // while the admin is trying to copy the returned manual URL.
+-    if (/\/api\/users\/[^/]+\/(?:password-reset|resend-invite)(?:$|[?#])/.test(path)) return false;
+-    return true;
+-  }
+-
+-  useRealtimeRefresh(["users", "team", "projects", "permissions"], () => load(), {
+-    debounceMs: 450,
+-    minIntervalMs: 900,
+-    predicate: shouldRefreshTeamAfterRealtime,
+-  });
++  function shouldRefreshTeamAfterRealtime(detail = {}) {
++    const path = String(detail?.path || "");
++    const resources = Array.isArray(detail?.resources) ? detail.resources : [];
++    if (/\/api\/users\/[^/]+\/(?:password-reset|resend-invite)(?:$|[?#])/.test(path)) return false;
++    if (resources.includes("projects") && !resources.some((resource) => ["users", "team", "permissions"].includes(resource))) {
++      return /\/api\/projects\/[^/]+\/members(?:\/|$|[?#])/.test(path);
++    }
++    return true;
++  }
++
++  useRealtimeRefresh(["users", "team", "projects", "permissions"], () => load(), {
++    debounceMs: 600,
++    minIntervalMs: 2000,
++    predicate: shouldRefreshTeamAfterRealtime,
++  });
+ 
+   useEffect(() => {
+     if (!inviteSignal) return;
+
+diff --git a/frontend/src/hooks/useProjects.js b/frontend/src/hooks/useProjects.js
+--- a/frontend/src/hooks/useProjects.js
++++ b/frontend/src/hooks/useProjects.js
+@@ -4,7 +4,7 @@
+ 
+ const PROJECT_SUMMARY_CACHE_PREFIX = "tos.projects.summary.fast-refresh.v1";
+ const PROJECT_SUMMARY_CACHE_MAX_AGE_MS = 30 * 60 * 1000;
+-const PROJECT_SUMMARY_REFRESH_COOLDOWN_MS = 1200;
++const PROJECT_SUMMARY_REFRESH_COOLDOWN_MS = 2500;
+ 
+ function projectCacheKey(userId = "") {
+   return `${PROJECT_SUMMARY_CACHE_PREFIX}.${String(userId || "anonymous")}`;
+
+diff --git a/frontend/src/pages/ProjectsPage.jsx b/frontend/src/pages/ProjectsPage.jsx
+--- a/frontend/src/pages/ProjectsPage.jsx
++++ b/frontend/src/pages/ProjectsPage.jsx
+@@ -3850,7 +3850,7 @@
+       }
+     }
+     if (showArchived && resources.includes("projects") && !userDriven) loadArchivedProjects();
+-  }, { debounceMs: 400, minIntervalMs: 1200, scope: { projectId: detailsProjectId || null } });
++  }, { debounceMs: 600, minIntervalMs: 2000, scope: { projectId: detailsProjectId || null } });
+ 
+   async function loadArchivedProjects() {
+     try {
