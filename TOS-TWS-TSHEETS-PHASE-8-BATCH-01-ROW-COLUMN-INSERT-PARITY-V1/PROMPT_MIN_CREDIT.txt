@@ -1,0 +1,5 @@
+Apply `TOS-TWS-TSHEETS-PHASE-8-BATCH-01-ROW-COLUMN-INSERT-PARITY-V1` from TOS-Patchs to live `/var/www/TOS` using its runner only. Do not manually edit, commit, or push.
+
+Then browser-test live TSheets: verify Insert > Rows > above/below and Insert > Columns > left/right shift existing values correctly; verify one simple same-sheet formula still references the shifted cell; verify undo; check console for new errors. If browser/auth is unavailable, report `BROWSER_TEST=BLOCKED` without guessing.
+
+Return only: PATCH, BUILD, DEPLOY, HTTP, UNIT_TESTS, BROWSER_TEST, ROW_ABOVE, ROW_BELOW, COL_LEFT, COL_RIGHT, FORMULA_SHIFT, UNDO, CONSOLE, GIT_STATUS, ERROR.
