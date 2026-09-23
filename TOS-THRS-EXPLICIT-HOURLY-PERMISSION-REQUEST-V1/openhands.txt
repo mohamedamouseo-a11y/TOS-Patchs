@@ -1,0 +1,28 @@
+Apply TOS-THRS-EXPLICIT-HOURLY-PERMISSION-REQUEST-V1 to live TOS only.
+
+Download and run:
+https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/main/TOS-THRS-EXPLICIT-HOURLY-PERMISSION-REQUEST-V1/apply_thrs_explicit_hourly_permission_request_v1.py
+against /var/www/TOS.
+
+Then build frontend, deploy atomically using the existing proven TOS production flow, and verify /thrs returns HTTP 200.
+
+Important:
+- Do not add a new backend request type.
+- HOURLY_PERMISSION is UI-only; canonical backend/THRS type must stay LEAVE with calculationUnit HOURS.
+- Do not change backend, DB, THRS endpoints, shadowing rules, approval workflow, or unrelated files.
+- Do not push.
+
+Return only:
+PATCH=
+BUILD=
+DEPLOY=
+HTTP=
+EXPLICIT_PERMISSION=
+HOURLY_TYPES_FILTER=
+DAY_LEAVE_TYPES_FILTER=
+CANONICAL_BACKEND_TYPE=
+THRS_SYNC_PRESERVED=
+SHADOWING_PRESERVED=
+BACKEND_UNCHANGED=
+DB_UNCHANGED=
+ERROR=
