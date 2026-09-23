@@ -174,7 +174,7 @@ new_cleanup = '''      setSelectedFiles([]);
       if (composerRef.current) composerRef.current.style.height = "auto";'''
 if old_cleanup in src:
     src = src.replace(old_cleanup, new_cleanup, 1)
-elif "prev.some((item) => item.status === "failed") ? prev : []" not in src:
+elif 'prev.some((item) => item.status === "failed") ? prev : []' not in src:
     raise SystemExit(f"{PATCH}: upload queue cleanup anchor not found")
 
 # Update the stale generic error: attachment failures no longer cancel/delete the sent message.
