@@ -156,4 +156,150 @@ grouped_replacement = '''  }, [filteredTasks, filters.sort]);
     const orderedIds = tasks.map((item) => item.id).filter((id) => id !== taskId);
     if (targetTaskId && orderedIds.includes(targetTaskId)) {
       const targetIndex = orderedIds.indexOf(targetTaskId);
-      orderedIds.s
+      orderedIds.splice(edge === "before" ? targetIndex : targetIndex + 1, 0, taskId);
+      return orderedIds;
+    }
+
+    const targetColumnTaskIds = tasks
+      .filter((item) => item.id !== taskId && getColumnForTask(item) === targetColumnId)
+      .map((item) => item.id);
+    const lastTargetId = targetColumnTaskIds[targetColumnTaskIds.length - 1];
+    const insertIndex = lastTargetId && orderedIds.includes(lastTargetId)
+      ? orderedIds.indexOf(lastTargetId) + 1
+      : orderedIds.length;
+    orderedIds.splice(insertIndex, 0, taskId);
+    return orderedIds;
+  }
+
+  async function commitWorkspaceMove(task, targetColumn, targetTaskId = "", edge = "after", blockedReason = undefined) {
+    if (!task?.id || !targetColumn?.id || dragBusyTaskId) return;
+    const targetStatus = normalizeStatus(targetColumn.statuses?.[0] || "TODO");
+    const currentStatus = normalizeStatus(task.status);
+    const nextOrderIds = buildWorkspaceOrder(task.id, targetColumn.id, targetTaskId, edge);
+    const previousTasks = tasks;
+
+    const optimisticTask = {
+      ...task,
+      status: targetStatus,
+      ...(targetStatus === "WAITING_CLIENT" && blockedReason !== undefined ? { blockedReason } : {}),
+      ...(currentStatus === "WAITING_CLIENT" && targetStatus !== "WAITING_CLIENT" ? { blockedReason: null } : {}),
+    };
+    const optimisticMap = new Map(tasks.map((item) => [item.id, item.id === task.id ? optimisticTask : item]));
+    setTasks(nextOrderIds.map((id) => optimisticMap.get(id)).filter(Boolean));
+    setDragBusyTaskId(task.id);
+    setError("");
+
+    try {
+      if (targetStatus !== currentStatus) {
+        const statusPatch = {
+          status: targetStatus,
+          ...(targetStatus === "WAITING_CLIENT" && blockedReason !== undefined ? { blockedReason } : {}),
+        };
+        if (task.personalOwnerId === user?.id) {
+          await tasksApi.updateMyWorkspaceTask(task.id, statusPatch);
+        } else {
+          await tasksApi.updateTask(task.id, statusPatch);
+        }
+      }
+      await tasksApi.reorderMyWorkspace({ taskIds: nextOrderIds });
+      await loadWorkspace({ showLoading: false });
+    } catch (err) {
+      setTasks(previousTasks);
+      setError(err?.message || (isAr ? "تعذر نقل المهمة. تمت إعادة اللوحة لحالتها السابقة." : "Could not move the task. The board was restored."));
+      await loadWorkspace({ showLoading: false }).catch(() => null);
+    } finally {
+      setDragBusyTaskId("");
+      resetWorkspaceDragUi();
+    }
+  }
+
+  function requestWorkspaceMove(task, targetColumn, targetTaskId = "", edge = "after") {
+    if (!task?.id || !targetColumn?.id || dragBusyTaskId) return;
+    const targetStatus = normalizeStatus(targetColumn.statuses?.[0] || "TODO");
+    const currentStatus = normalizeStatus(task.status);
+    if (targetStatus === "WAITING_CLIENT" && currentStatus !== "WAITING_CLIENT") {
+      setWaitingClientMoveDraft({
+        task,
+        targetColumn,
+        targetTaskId,
+        edge,
+        reason: "",
+      });
+      resetWorkspaceDragUi();
+      return;
+    }
+    commitWorkspaceMove(task, targetColumn, targetTaskId, edge).catch(() => null);
+  }
+
+  function confirmWaitingClientMove() {
+    const draft = waitingClientMoveDraft;
+    const reason = String(draft?.reason || "").trim();
+    if (!draft?.task || !draft?.targetColumn || !reason) return;
+    setWaitingClientMoveDraft(null);
+    commitWorkspaceMove(draft.task, draft.targetColumn, draft.targetTaskId, draft.edge, reason).catch(() => null);
+  }
+
+  function handleWorkspaceDragStart(event, task) {
+    if (!event?.dataTransfer || !task?.id || dragBusyTaskId || filters.sort) {
+      event?.preventDefault?.();
+      return;
+    }
+    setDraggedTaskId(task.id);
+    setDragOverTaskId("");
+    setDragInsertEdge("");
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("application/x-tos-my-workspace-task", task.id);
+    event.dataTransfer.setData("text/plain", task.id);
+  }
+
+  function handleWorkspaceDragEnd() {
+    resetWorkspaceDragUi();
+  }
+
+  function handleWorkspaceCardDragOver(event, targetTask) {
+    if (!draggedTaskId || !targetTask?.id || targetTask.id === draggedTaskId) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = "move";
+    const rect = event.currentTarget.getBoundingClientRect();
+    setDragOverTaskId(targetTask.id);
+    setDragInsertEdge(event.clientY < rect.top + rect.height / 2 ? "before" : "after");
+    setDropTargetColumnId(getColumnForTask(targetTask));
+  }
+
+  function handleWorkspaceCardDrop(event, targetTask) {
+    event.preventDefault();
+    event.stopPropagation();
+    const taskId = event.dataTransfer?.getData("application/x-tos-my-workspace-task")
+      || event.dataTransfer?.getData("text/plain")
+      || draggedTaskId;
+    const task = tasks.find((item) => item.id === taskId);
+    const targetColumn = workspaceColumns.find((column) => column.id === getColumnForTask(targetTask));
+    const edge = dragOverTaskId === targetTask.id && dragInsertEdge ? dragInsertEdge : "after";
+    resetWorkspaceDragUi();
+    if (!task || !targetColumn || task.id === targetTask.id) return;
+    requestWorkspaceMove(task, targetColumn, targetTask.id, edge);
+  }
+
+  function handleWorkspaceColumnDragOver(event, column) {
+    if (!draggedTaskId || !column?.id) return;
+    event.preventDefault();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = "move";
+    setDropTargetColumnId(column.id);
+  }
+
+  function handleWorkspaceColumnDrop(event, column) {
+    if (event.target?.closest?.("[data-my-workspace-card-id]")) return;
+    event.preventDefault();
+    const taskId = event.dataTransfer?.getData("application/x-tos-my-workspace-task")
+      || event.dataTransfer?.getData("text/plain")
+      || draggedTaskId;
+    const task = tasks.find((item) => item.id === taskId);
+    resetWorkspaceDragUi();
+    if (!task || !column) return;
+    requestWorkspaceMove(task, column);
+  }
+
+  function updateFilter(key, value) {'''
+
+source = repl
