@@ -133,4 +133,129 @@ new_stat = r'''function WorkspaceMiniStat({
     const reduceMotion = typeof window !== "undefined"
       && window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
 
-    if
+    if (reduceMotion) {
+      setEntered(true);
+      setAnimatedPercent(safePercent);
+      if (targetNumber !== null) setAnimatedMetric(targetNumber);
+      return undefined;
+    }
+
+    setEntered(false);
+    setAnimatedPercent(0);
+    if (targetNumber !== null) setAnimatedMetric(0);
+
+    enterTimer = window.setTimeout(() => setEntered(true), Math.max(0, delay));
+    startTimer = window.setTimeout(() => {
+      const duration = 980;
+      const startedAt = performance.now();
+
+      const tick = (now) => {
+        const rawProgress = Math.min(1, (now - startedAt) / duration);
+        const eased = 1 - Math.pow(1 - rawProgress, 4);
+        setAnimatedPercent(safePercent * eased);
+        if (targetNumber !== null) setAnimatedMetric(targetNumber * eased);
+        if (rawProgress < 1) animationFrame = requestAnimationFrame(tick);
+      };
+
+      animationFrame = requestAnimationFrame(tick);
+    }, Math.max(0, delay) + 80);
+
+    return () => {
+      window.clearTimeout(enterTimer);
+      window.clearTimeout(startTimer);
+      cancelAnimationFrame(animationFrame);
+    };
+  }, [safePercent, targetNumber, delay]);
+
+  const radius = 34;
+  const circumference = 2 * Math.PI * radius;
+  const dashOffset = circumference * (1 - animatedPercent / 100);
+  const displayValue = targetNumber === null
+    ? value
+    : typeof formatAnimatedValue === "function"
+      ? formatAnimatedValue(animatedMetric)
+      : Math.round(animatedMetric);
+
+  const bars = [42, 66, 52, 88, 74];
+
+  return (
+    <div
+      className={`group relative min-h-[118px] overflow-hidden rounded-[22px] border border-zinc-100 bg-white/95 px-4 py-3.5 shadow-[0_8px_26px_rgba(15,23,42,0.045)] transition-[transform,box-shadow,border-color,opacity] duration-500 hover:-translate-y-1 hover:border-zinc-200 hover:shadow-[0_18px_44px_rgba(15,23,42,0.09)] dark:border-white/10 dark:bg-zinc-950/90 ${
+        entered ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+      }`}
+      style={{ transitionDelay: `${Math.max(0, delay)}ms` }}
+    >
+      <div
+        className="pointer-events-none absolute -start-10 -top-12 h-24 w-24 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
+        style={{ background: current.glow }}
+      />
+      <div className="relative flex items-center gap-3.5">
+        <div className="relative h-[74px] w-[74px] shrink-0">
+          <svg className="h-full w-full -rotate-90" viewBox="0 0 80 80" aria-hidden="true">
+            <circle
+              cx="40"
+              cy="40"
+              r={radius}
+              fill="none"
+              stroke={current.track}
+              strokeWidth="7"
+            />
+            <circle
+              cx="40"
+              cy="40"
+              r={radius}
+              fill="none"
+              stroke={current.ring}
+              strokeWidth="7"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={dashOffset}
+              style={{
+                filter: `drop-shadow(0 0 5px ${current.glow})`,
+                transition: "stroke-dashoffset 80ms linear",
+              }}
+            />
+          </svg>
+          <div className="absolute inset-[10px] grid place-items-center rounded-full bg-white shadow-[inset_0_1px_5px_rgba(15,23,42,0.08)] dark:bg-zinc-900">
+            <span
+              className={`max-w-[54px] text-center text-[18px] font-black leading-none tracking-tight ${current.textClass}`}
+              style={{
+                transform: entered ? "scale(1)" : "scale(0.72)",
+                transition: `transform 620ms cubic-bezier(.16,1.35,.3,1) ${Math.max(0, delay) + 160}ms`,
+              }}
+            >
+              {displayValue}
+            </span>
+          </div>
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <div className="text-[13px] font-black leading-5 text-zinc-950 dark:text-white">{label}</div>
+          {note ? <div className={`mt-0.5 text-[11px] font-bold leading-4 ${current.noteClass}`}>{note}</div> : null}
+
+          <div className="mt-3 flex h-6 items-end gap-1" aria-hidden="true">
+            {bars.map((height, index) => (
+              <span
+                key={`${tone}-${index}`}
+                className={`w-1.5 rounded-full ${current.barClass}`}
+                style={{
+                  height: `${height}%`,
+                  opacity: entered ? 0.72 : 0,
+                  transform: entered ? "scaleY(1)" : "scaleY(0.05)",
+                  transformOrigin: "bottom",
+                  transition: `transform 620ms cubic-bezier(.16,1,.3,1) ${Math.max(0, delay) + 240 + (index * 70)}ms, opacity 360ms ease ${Math.max(0, delay) + 240 + (index * 70)}ms`,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}'''
+
+source = replace_once(source, old_stat, new_stat, "premium animated KPI component")
+
+source = replace_once(
+    source,
+    'const titleClass = "line-clamp-2 text-start text-sm font-black l
