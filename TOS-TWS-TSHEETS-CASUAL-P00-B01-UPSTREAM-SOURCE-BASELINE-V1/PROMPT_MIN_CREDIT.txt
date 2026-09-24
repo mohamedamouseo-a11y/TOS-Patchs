@@ -1,0 +1,5 @@
+Run only the P00-B01 runner below. No audit, no manual edits, no install/build, no TOS changes, no commit, no push.
+
+curl -fsSL https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/main/TOS-TWS-TSHEETS-CASUAL-P00-B01-UPSTREAM-SOURCE-BASELINE-V1/run.sh -o /tmp/tsheets-casual-p00-b01.sh && bash /tmp/tsheets-casual-p00-b01.sh
+
+Return only the runner's final KEY=VALUE lines.
