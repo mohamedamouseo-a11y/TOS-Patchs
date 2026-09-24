@@ -183,7 +183,6 @@ new_stat = r'''function WorkspaceMiniStat({
       className={`group relative min-h-[118px] overflow-hidden rounded-[22px] border border-zinc-100 bg-white/95 px-4 py-3.5 shadow-[0_8px_26px_rgba(15,23,42,0.045)] transition-[transform,box-shadow,border-color,opacity] duration-500 hover:-translate-y-1 hover:border-zinc-200 hover:shadow-[0_18px_44px_rgba(15,23,42,0.09)] dark:border-white/10 dark:bg-zinc-950/90 ${
         entered ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
       }`}
-      style={{ transitionDelay: `${Math.max(0, delay)}ms` }}
     >
       <div
         className="pointer-events-none absolute -start-10 -top-12 h-24 w-24 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
