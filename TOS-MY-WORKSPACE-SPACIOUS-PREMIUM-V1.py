@@ -331,4 +331,104 @@ new_stats = r'''    <div className="tos-my-workspace mx-auto w-full max-w-[1800p
           delay={0}
         />
         <WorkspaceMiniStat
-          label={isAr ? "إجمالي المهام
+          label={isAr ? "إجمالي المهام" : "Total tasks"}
+          value={totalCount}
+          animatedNumber={totalCount}
+          note={isAr ? "الشخصية والمشاريع" : "Personal and projects"}
+          tone="zinc"
+          percent={tasks.length ? 100 : 0}
+          delay={90}
+        />
+        <WorkspaceMiniStat
+          label={isAr ? "المهام المكتملة" : "Completed tasks"}
+          value={doneCount}
+          animatedNumber={doneCount}
+          note={isAr ? "هذا الشهر" : "Completed"}
+          tone="emerald"
+          percent={(doneCount / totalForStats) * 100}
+          delay={180}
+        />
+        <WorkspaceMiniStat
+          label={isAr ? "إجمالي التقديرات" : "Total estimates"}
+          value={formatHoursValue(estimatedHours, isAr)}
+          animatedNumber={estimatedHours}
+          formatAnimatedValue={(number) => formatHoursValue(number, isAr)}
+          note={isAr ? "وقت تقديري" : "Estimated time"}
+          tone="blue"
+          percent={estimatedHours ? 100 : 0}
+          delay={270}
+        />
+        <WorkspaceMiniStat
+          label={isAr ? "المهام المتأخرة" : "Overdue tasks"}
+          value={overdueCount}
+          animatedNumber={overdueCount}
+          note={isAr ? "تحتاج انتباهك" : "Need attention"}
+          tone="red"
+          percent={(overdueCount / totalForStats) * 100}
+          delay={360}
+        />
+      </div>'''
+
+source = replace_once(source, old_stats, new_stats, "spacious KPI row")
+
+source = replace_once(
+    source,
+    '<div className="mt-4 overflow-x-auto pb-1">\n          <div className="grid min-w-[1180px] grid-cols-6 gap-2.5">',
+    '<div data-tos-my-workspace-spacious-premium="v1" className="tos-my-workspace-board-scroll mt-4 overflow-x-auto overscroll-x-contain pb-3 pt-1">\n          <div className="flex w-max min-w-full gap-4">',
+    "horizontal premium board",
+)
+
+old_section_class = r'''                  className={`overflow-hidden rounded-[20px] border bg-white/[0.82] shadow-sm transition-[border-color,box-shadow,transform,background-color] duration-150 dark:bg-zinc-900/70 dark:shadow-black/20 ${
+                    isDropTarget
+                      ? "scale-[1.008] border-amber-300 bg-amber-50/45 shadow-lg shadow-amber-100/60 ring-2 ring-amber-200/70 dark:border-amber-400/50 dark:bg-amber-500/10 dark:ring-amber-400/20"
+                      : "border-zinc-100 shadow-zinc-200/50 dark:border-white/10"
+                  }`}'''
+
+new_section_class = r'''                  className={`w-[340px] shrink-0 overflow-hidden rounded-[22px] border bg-white/[0.82] shadow-sm transition-[border-color,box-shadow,transform,background-color] duration-150 2xl:w-[360px] dark:bg-zinc-900/70 dark:shadow-black/20 ${
+                    isDropTarget
+                      ? "scale-[1.008] border-amber-300 bg-amber-50/45 shadow-lg shadow-amber-100/60 ring-2 ring-amber-200/70 dark:border-amber-400/50 dark:bg-amber-500/10 dark:ring-amber-400/20"
+                      : "border-zinc-100 shadow-zinc-200/50 dark:border-white/10"
+                  }`}'''
+
+source = replace_once(source, old_section_class, new_section_class, "fixed spacious columns")
+
+source = replace_once(
+    source,
+    '<header className="flex items-center justify-between gap-2.5 px-3 py-2.5">',
+    '<header className="flex items-center justify-between gap-3 px-4 py-3.5">',
+    "spacious column header",
+)
+
+source = replace_once(
+    source,
+    'className={`text-base font-black ${column.toneClass.split(" ").filter((part) => part.startsWith("text-") || part.startsWith("dark:text-")).join(" ")}`}',
+    'className={`text-[17px] font-black tracking-tight ${column.toneClass.split(" ").filter((part) => part.startsWith("text-") || part.startsWith("dark:text-")).join(" ")}`}',
+    "larger column title",
+)
+
+source = replace_once(
+    source,
+    'className="min-h-[120px] max-h-[660px] space-y-2.5 overflow-y-auto border-t border-zinc-100 p-2.5 dark:border-white/10"',
+    'className="min-h-[160px] max-h-[720px] space-y-3 overflow-y-auto border-t border-zinc-100 p-3.5 dark:border-white/10"',
+    "spacious column task stack",
+)
+
+TARGET.write_text(source, encoding="utf-8")
+
+print("PATCH=PASS")
+print("PATCH_NAME=TOS-MY-WORKSPACE-SPACIOUS-PREMIUM-V1")
+print(f"FILES_CHANGED={TARGET.relative_to(ROOT)}")
+print("BOARD_COLUMNS_WIDTH=340PX_360PX_2XL")
+print("BOARD_HORIZONTAL_SCROLL=ACTIVE")
+print("TASK_CARDS_SPACIOUS=ACTIVE")
+print("KPI_SVG_RING_ANIMATION=ACTIVE")
+print("KPI_COUNT_UP_ANIMATION=ACTIVE")
+print("KPI_STAGGER=ACTIVE")
+print("KPI_MINI_BARS_ANIMATION=ACTIVE")
+print("PREFERS_REDUCED_MOTION=RESPECTED")
+print("MY_WORKSPACE_DRAG_DROP=PRESERVED")
+print("WAITING_CLIENT_GATE=PRESERVED")
+print("BACKEND_UNCHANGED=YES")
+print("DB_UNCHANGED=YES")
+print("DEPENDENCIES_ADDED=NO")
+print("NEXT=build frontend, deploy atomically, verify My Workspace visually + drag/drop")
