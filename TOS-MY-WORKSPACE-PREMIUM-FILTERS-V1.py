@@ -190,3 +190,143 @@ source = replace_once(
     "premium select component",
 )
 
+old_filters = r'''      <div className="mt-4 rounded-[18px] border border-zinc-100 bg-zinc-50/60 p-2.5 dark:border-white/10 dark:bg-white/5">
+        <div className="grid gap-2.5 lg:grid-cols-[minmax(240px,1.4fr)_minmax(170px,0.8fr)_minmax(150px,0.7fr)_minmax(150px,0.7fr)_minmax(160px,0.75fr)]">
+          <label className="relative block">
+            <Search className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-slate-400 ${isAr ? "right-4" : "left-4"}`} size={16} />
+            <input
+              value={filters.search}
+              onChange={(event) => updateFilter("search", event.target.value)}
+              placeholder={isAr ? "ابحث باسم المهمة..." : "Search by task name..."}
+              className={`h-10 w-full rounded-xl border border-zinc-200 bg-white text-xs font-bold text-zinc-800 outline-none transition placeholder:text-slate-400 focus:border-amber-300 focus:ring-4 focus:ring-amber-50 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:ring-amber-500/10 ${isAr ? "pr-10 pl-3" : "pl-10 pr-3"}`}
+            />
+          </label>
+          <select value={filters.projectId} onChange={(event) => updateFilter("projectId", event.target.value)} className="h-10 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-black text-zinc-700 outline-none transition focus:border-amber-300 focus:ring-4 focus:ring-amber-50 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:ring-amber-500/10">
+            <option value="">{isAr ? "كل المهام" : "All tasks"}</option>
+            <option value={personalProjectFilterValue}>{isAr ? "المهام الشخصية" : "Personal tasks"}</option>
+            {projectOptions.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}
+          </select>
+          <select value={filters.day} onChange={(event) => updateFilter("day", event.target.value)} className="h-10 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-black text-zinc-700 outline-none transition focus:border-amber-300 focus:ring-4 focus:ring-amber-50 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:ring-amber-500/10">
+            <option value="">{isAr ? "اليوم" : "Day"}</option>
+            {dayOptions.map((day) => <option key={day.value} value={day.value}>{day.label}</option>)}
+          </select>
+          <select value={filters.month} onChange={(event) => updateFilter("month", event.target.value)} className="h-10 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-black text-zinc-700 outline-none transition focus:border-amber-300 focus:ring-4 focus:ring-amber-50 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:ring-amber-500/10">
+            <option value="">{isAr ? "الشهر" : "Month"}</option>
+            {monthOptions.map((month) => <option key={month.value} value={month.value}>{month.label}</option>)}
+          </select>
+          <select value={filters.sort} onChange={(event) => updateFilter("sort", event.target.value)} className="h-10 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-black text-zinc-700 outline-none transition focus:border-amber-300 focus:ring-4 focus:ring-amber-50 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:ring-amber-500/10">
+            <option value="">{isAr ? "ترتيب اللوحة (سحب يدوي)" : "Board order (manual drag)"}</option>
+            <option value="newest">{isAr ? "الأحدث أولًا" : "Newest first"}</option>
+            <option value="oldest">{isAr ? "الأقدم أولًا" : "Oldest first"}</option>
+          </select>
+        </div>
+      </div>'''
+
+new_filters = r'''      <div
+        data-tos-my-workspace-premium-filters="v1"
+        className="mt-4 rounded-[22px] border border-zinc-200/70 bg-[linear-gradient(135deg,rgba(255,255,255,0.98),rgba(250,250,250,0.92))] p-2.5 shadow-[0_10px_30px_rgba(15,23,42,0.045)] ring-1 ring-white/70 dark:border-white/10 dark:bg-[linear-gradient(135deg,rgba(24,24,27,0.96),rgba(9,9,11,0.92))] dark:ring-white/5"
+      >
+        <div className="grid gap-2.5 lg:grid-cols-[minmax(280px,1.55fr)_minmax(190px,0.9fr)_minmax(170px,0.75fr)_minmax(180px,0.8fr)_minmax(200px,0.9fr)]">
+          <label className="group relative block">
+            <span className={`pointer-events-none absolute top-1/2 z-10 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-[11px] border border-amber-100 bg-amber-50 text-amber-700 shadow-sm transition group-focus-within:border-amber-200 group-focus-within:bg-amber-100/70 dark:border-amber-400/15 dark:bg-amber-500/10 dark:text-amber-300 ${isAr ? "right-2.5" : "left-2.5"}`}>
+              <Search size={15} strokeWidth={2.3} />
+            </span>
+            <input
+              value={filters.search}
+              onChange={(event) => updateFilter("search", event.target.value)}
+              placeholder={isAr ? "ابحث باسم المهمة أو المشروع..." : "Search task or project..."}
+              className={`h-[52px] w-full rounded-[16px] border border-zinc-200/80 bg-white/95 text-[12px] font-bold text-zinc-900 shadow-[0_5px_16px_rgba(15,23,42,0.045)] outline-none transition-all duration-200 placeholder:text-zinc-400 hover:border-amber-200 hover:shadow-[0_10px_24px_rgba(15,23,42,0.07)] focus:border-amber-300 focus:ring-4 focus:ring-amber-100/70 dark:border-white/10 dark:bg-zinc-950/95 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:hover:border-amber-400/30 dark:focus:border-amber-400/45 dark:focus:ring-amber-500/10 ${isAr ? "pr-12 pl-4" : "pl-12 pr-4"}`}
+            />
+            {filters.search ? (
+              <button
+                type="button"
+                onClick={() => updateFilter("search", "")}
+                className={`absolute top-1/2 z-10 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full bg-zinc-100 text-zinc-400 transition hover:bg-zinc-200 hover:text-zinc-700 dark:bg-white/5 dark:text-zinc-500 dark:hover:bg-white/10 dark:hover:text-zinc-200 ${isAr ? "left-2.5" : "right-2.5"}`}
+                aria-label={isAr ? "مسح البحث" : "Clear search"}
+              >
+                <X size={13} strokeWidth={2.6} />
+              </button>
+            ) : null}
+          </label>
+
+          <PremiumFilterSelect
+            value={filters.projectId}
+            onChange={(value) => updateFilter("projectId", value)}
+            isAr={isAr}
+            label={isAr ? "المشروع" : "Project"}
+            placeholder={isAr ? "كل المهام" : "All tasks"}
+            icon={Layers3}
+            minMenuWidth={260}
+            options={[
+              { value: "", label: isAr ? "كل المهام" : "All tasks" },
+              { value: personalProjectFilterValue, label: isAr ? "المهام الشخصية" : "Personal tasks" },
+              ...projectOptions.map((project) => ({ value: project.id, label: project.name })),
+            ]}
+          />
+
+          <PremiumFilterSelect
+            value={filters.day}
+            onChange={(value) => updateFilter("day", value)}
+            isAr={isAr}
+            label={isAr ? "اليوم" : "Day"}
+            placeholder={isAr ? "كل الأيام" : "Any day"}
+            icon={CalendarDays}
+            minMenuWidth={220}
+            options={[
+              { value: "", label: isAr ? "كل الأيام" : "Any day" },
+              ...dayOptions,
+            ]}
+          />
+
+          <PremiumFilterSelect
+            value={filters.month}
+            onChange={(value) => updateFilter("month", value)}
+            isAr={isAr}
+            label={isAr ? "الشهر" : "Month"}
+            placeholder={isAr ? "كل الشهور" : "Any month"}
+            icon={CalendarDays}
+            minMenuWidth={220}
+            options={[
+              { value: "", label: isAr ? "كل الشهور" : "Any month" },
+              ...monthOptions,
+            ]}
+          />
+
+          <PremiumFilterSelect
+            value={filters.sort}
+            onChange={(value) => updateFilter("sort", value)}
+            isAr={isAr}
+            label={isAr ? "الترتيب" : "Sort"}
+            placeholder={isAr ? "ترتيب اللوحة" : "Board order"}
+            icon={ArrowUpDown}
+            minMenuWidth={240}
+            options={[
+              { value: "", label: isAr ? "ترتيب اللوحة (سحب يدوي)" : "Board order (manual drag)" },
+              { value: "newest", label: isAr ? "الأحدث أولًا" : "Newest first" },
+              { value: "oldest", label: isAr ? "الأقدم أولًا" : "Oldest first" },
+            ]}
+          />
+        </div>
+      </div>'''
+
+source = replace_once(source, old_filters, new_filters, "premium filter bar")
+
+TARGET.write_text(source, encoding="utf-8")
+
+print("PATCH=PASS")
+print("PATCH_NAME=TOS-MY-WORKSPACE-PREMIUM-FILTERS-V1")
+print(f"FILES_CHANGED={TARGET.relative_to(ROOT)}")
+print("NATIVE_FILTER_SELECTS=REMOVED")
+print("CUSTOM_PREMIUM_DROPDOWNS=ACTIVE")
+print("PREMIUM_SEARCH=ACTIVE")
+print("OUTSIDE_CLICK_CLOSE=ACTIVE")
+print("ESCAPE_CLOSE=ACTIVE")
+print("FILTER_LOGIC=PRESERVED")
+print("DATE_SORT_DRAG_GUARD=PRESERVED")
+print("STICKY_SCROLLBAR_V1_1=PRESERVED")
+print("SPACIOUS_PREMIUM=PRESERVED")
+print("MY_WORKSPACE_DRAG_DROP=PRESERVED")
+print("BACKEND_UNCHANGED=YES")
+print("DB_UNCHANGED=YES")
+print("DEPENDENCIES_ADDED=NO")
+print("NEXT=build frontend, atomic deploy, verify custom dropdowns/search visually")
