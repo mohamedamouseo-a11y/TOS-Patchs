@@ -258,4 +258,77 @@ source = replace_once(source, old_stat, new_stat, "premium animated KPI componen
 
 source = replace_once(
     source,
-    'const titleClass = "line-clamp-2 text-start text-sm font-black l
+    'const titleClass = "line-clamp-2 text-start text-sm font-black leading-6 text-blue-700 underline-offset-4 transition group-hover:underline dark:text-blue-300";',
+    'const titleClass = "line-clamp-3 text-start text-[15px] font-black leading-6 text-blue-700 underline-offset-4 transition group-hover:underline dark:text-blue-300";',
+    "larger card title",
+)
+
+source = replace_once(
+    source,
+    'className="relative grid min-h-[116px] max-h-[220px] place-items-center overflow-hidden bg-zinc-50 dark:bg-zinc-900"',
+    'className="relative grid min-h-[148px] max-h-[260px] place-items-center overflow-hidden bg-zinc-50 dark:bg-zinc-900"',
+    "larger attachment preview shell",
+)
+
+source = replace_once(
+    source,
+    'className="block max-h-[220px] w-full object-contain"',
+    'className="block max-h-[260px] w-full object-contain"',
+    "larger attachment preview image",
+)
+
+old_card_classes = r'''      className={`group relative rounded-[16px] border bg-white px-2.5 py-2.5 shadow-sm transition-[border-color,box-shadow,transform,opacity] duration-150 dark:bg-zinc-950 dark:shadow-black/20 ${
+        canDrag ? "cursor-grab active:cursor-grabbing" : ""
+      } ${
+        isDragging
+          ? "scale-[0.985] border-amber-300 opacity-45 shadow-lg shadow-amber-100/40 dark:border-amber-400/50"
+          : "border-zinc-100 shadow-zinc-200/35 hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-md hover:shadow-amber-100/35 dark:border-white/10 dark:hover:border-amber-400/40"
+      }`}'''
+
+new_card_classes = r'''      className={`group relative rounded-[18px] border bg-white px-3.5 py-3.5 shadow-sm transition-[border-color,box-shadow,transform,opacity] duration-150 dark:bg-zinc-950 dark:shadow-black/20 ${
+        canDrag ? "cursor-grab active:cursor-grabbing" : ""
+      } ${
+        isDragging
+          ? "scale-[0.985] border-amber-300 opacity-45 shadow-lg shadow-amber-100/40 dark:border-amber-400/50"
+          : "border-zinc-100 shadow-zinc-200/35 hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] hover:shadow-amber-100/25 dark:border-white/10 dark:hover:border-amber-400/40"
+      }`}'''
+
+source = replace_once(source, old_card_classes, new_card_classes, "spacious task card")
+
+source = replace_once(
+    source,
+    'className="mt-2 inline-flex max-w-full items-center gap-1.5 rounded-full bg-zinc-50 px-2.5 py-1 text-[10px] font-black text-zinc-500 ring-1 ring-zinc-100 dark:bg-white/5 dark:text-zinc-300 dark:ring-white/10"',
+    'className="mt-2.5 inline-flex max-w-full items-center gap-1.5 rounded-full bg-zinc-50 px-3 py-1.5 text-[11px] font-black text-zinc-500 ring-1 ring-zinc-100 dark:bg-white/5 dark:text-zinc-300 dark:ring-white/10"',
+    "larger project chip",
+)
+
+source = replace_once(
+    source,
+    'className="mt-2.5 flex items-center justify-between gap-2 border-t border-zinc-100 pt-2.5 text-[10px] font-black dark:border-white/10"',
+    'className="mt-3 flex items-center justify-between gap-2 border-t border-zinc-100 pt-3 text-[11px] font-black dark:border-white/10"',
+    "larger card footer",
+)
+
+old_stats = r'''    <div className="tos-my-workspace mx-auto w-full max-w-[1580px]" dir={isAr ? "rtl" : "ltr"}>
+      <div className={`mb-4 grid grid-cols-2 gap-3 md:grid-cols-5 ${isAr ? "direction-rtl" : "direction-ltr"}`}>
+        <WorkspaceMiniStat label={isAr ? "نسبة الإنجاز" : "Completion rate"} value={`${completionRate}%`} note={isAr ? "من إجمالي المهام" : "Of total tasks"} tone="amber" percent={completionRate} />
+        <WorkspaceMiniStat label={isAr ? "إجمالي المهام" : "Total tasks"} value={totalCount} note={isAr ? "الشخصية والمشاريع" : "Personal and projects"} tone="zinc" percent={tasks.length ? 100 : 0} />
+        <WorkspaceMiniStat label={isAr ? "المهام المكتملة" : "Completed tasks"} value={doneCount} note={isAr ? "هذا الشهر" : "Completed"} tone="emerald" percent={(doneCount / totalForStats) * 100} />
+        <WorkspaceMiniStat label={isAr ? "إجمالي التقديرات" : "Total estimates"} value={formatHoursValue(estimatedHours, isAr)} note={isAr ? "وقت تقديري" : "Estimated time"} tone="blue" percent={estimatedHours ? 100 : 0} />
+        <WorkspaceMiniStat label={isAr ? "المهام المتأخرة" : "Overdue tasks"} value={overdueCount} note={isAr ? "تحتاج انتباهك" : "Need attention"} tone="red" percent={(overdueCount / totalForStats) * 100} />
+      </div>'''
+
+new_stats = r'''    <div className="tos-my-workspace mx-auto w-full max-w-[1800px]" dir={isAr ? "rtl" : "ltr"}>
+      <div className={`mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5 ${isAr ? "direction-rtl" : "direction-ltr"}`}>
+        <WorkspaceMiniStat
+          label={isAr ? "نسبة الإنجاز" : "Completion rate"}
+          value={`${completionRate}%`}
+          animatedNumber={completionRate}
+          formatAnimatedValue={(number) => `${Math.round(number)}%`}
+          note={isAr ? "من إجمالي المهام" : "Of total tasks"}
+          tone="amber"
+          percent={completionRate}
+          delay={0}
+        />
+        <WorkspaceMiniStat
+          label={isAr ? "إجمالي المهام
