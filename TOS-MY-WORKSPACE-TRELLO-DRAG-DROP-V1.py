@@ -302,4 +302,97 @@ grouped_replacement = '''  }, [filteredTasks, filters.sort]);
 
   function updateFilter(key, value) {'''
 
-source = repl
+source = replace_once(
+    source,
+    grouped_anchor,
+    grouped_replacement,
+    "workspace drag engine",
+)
+
+source = replace_once(
+    source,
+    '''            <option value="">{isAr ? "ترتيب التاريخ" : "Date order"}</option>''',
+    '''            <option value="">{isAr ? "ترتيب اللوحة (سحب يدوي)" : "Board order (manual drag)"}</option>''',
+    "manual board order label",
+)
+
+old_board = '''            {workspaceColumns.map((column) => {
+              const columnTasks = groupedTasks[column.id] || [];
+              return (
+                <section key={column.id} className="overflow-hidden rounded-[20px] border border-zinc-100 bg-white/[0.82] shadow-sm shadow-zinc-200/50 dark:border-white/10 dark:bg-zinc-900/70 dark:shadow-black/20">
+                  <div className={`h-1.5 ${column.topClass}`} />
+                  <header className="flex items-center justify-between gap-2.5 px-3 py-2.5">
+                    <div>
+                      <h3 className={`text-base font-black ${column.toneClass.split(" ").filter((part) => part.startsWith("text-") || part.startsWith("dark:text-")).join(" ")}`}>{isAr ? column.labelAr : column.labelEn}</h3>
+                      <p className="mt-1 text-[11px] font-bold text-slate-400 dark:text-zinc-500">{isAr ? "حسب حالة المهمة" : "By task status"}</p>
+                    </div>
+                    <span className={`grid h-9 min-w-9 place-items-center rounded-full px-2 text-xs font-black ring-1 ${column.pillClass}`}>{columnTasks.length}</span>
+                  </header>
+                  <div className="max-h-[660px] space-y-2.5 overflow-y-auto border-t border-zinc-100 p-2.5 dark:border-white/10">
+                    {columnTasks.length ? columnTasks.map((task) => (
+                      <WorkspaceTaskCard
+                        key={task.id}
+                        task={task}
+                        ui={ui}
+                        isAr={isAr}
+                        onOpenTask={openTask}
+                        onOpenSettings={openTaskSettings}
+                        canManagePersonalTask={task.personalOwnerId === user?.id}
+                      />
+                    )) : (
+                      <div className="rounded-[16px] border border-dashed border-zinc-200 bg-zinc-50/70 px-3 py-5 text-center text-[11px] font-bold text-slate-400 dark:border-white/10 dark:bg-white/5 dark:text-zinc-500">
+                        <FolderKanban className="mx-auto mb-2" size={18} />
+                        {isAr ? "لا توجد مهام في هذه الحالة" : "No tasks in this status"}
+                      </div>
+                    )}
+                  </div>
+                </section>
+              );
+            })}'''
+
+new_board = '''            {workspaceColumns.map((column) => {
+              const columnTasks = groupedTasks[column.id] || [];
+              const isDropTarget = Boolean(draggedTaskId && dropTargetColumnId === column.id);
+              const manualDragEnabled = !filters.sort;
+              return (
+                <section
+                  key={column.id}
+                  data-my-workspace-column-id={column.id}
+                  onDragOver={(event) => manualDragEnabled && handleWorkspaceColumnDragOver(event, column)}
+                  onDrop={(event) => manualDragEnabled && handleWorkspaceColumnDrop(event, column)}
+                  className={`overflow-hidden rounded-[20px] border bg-white/[0.82] shadow-sm transition-[border-color,box-shadow,transform,background-color] duration-150 dark:bg-zinc-900/70 dark:shadow-black/20 ${
+                    isDropTarget
+                      ? "scale-[1.008] border-amber-300 bg-amber-50/45 shadow-lg shadow-amber-100/60 ring-2 ring-amber-200/70 dark:border-amber-400/50 dark:bg-amber-500/10 dark:ring-amber-400/20"
+                      : "border-zinc-100 shadow-zinc-200/50 dark:border-white/10"
+                  }`}
+                >
+                  <div className={`h-1.5 ${column.topClass}`} />
+                  <header className="flex items-center justify-between gap-2.5 px-3 py-2.5">
+                    <div>
+                      <h3 className={`text-base font-black ${column.toneClass.split(" ").filter((part) => part.startsWith("text-") || part.startsWith("dark:text-")).join(" ")}`}>{isAr ? column.labelAr : column.labelEn}</h3>
+                      <p className="mt-1 text-[11px] font-bold text-slate-400 dark:text-zinc-500">
+                        {manualDragEnabled
+                          ? (isAr ? "اسحب الكروت لنقلها أو ترتيبها" : "Drag cards to move or reorder")
+                          : (isAr ? "ألغِ ترتيب التاريخ لتفعيل السحب" : "Clear date sorting to enable drag")}
+                      </p>
+                    </div>
+                    <span className={`grid h-9 min-w-9 place-items-center rounded-full px-2 text-xs font-black ring-1 ${column.pillClass}`}>{columnTasks.length}</span>
+                  </header>
+                  <div className="min-h-[120px] max-h-[660px] space-y-2.5 overflow-y-auto border-t border-zinc-100 p-2.5 dark:border-white/10">
+                    {isDropTarget ? (
+                      <div className="rounded-[14px] border border-dashed border-amber-300 bg-amber-50/80 px-3 py-2 text-center text-[10px] font-black text-amber-700 dark:border-amber-400/40 dark:bg-amber-500/10 dark:text-amber-200">
+                        {isAr ? "اترك الكارت هنا" : "Drop card here"}
+                      </div>
+                    ) : null}
+                    {columnTasks.length ? columnTasks.map((task) => (
+                      <WorkspaceTaskCard
+                        key={task.id}
+                        task={task}
+                        ui={ui}
+                        isAr={isAr}
+                        onOpenTask={openTask}
+                        onOpenSettings={openTaskSettings}
+                        canManagePersonalTask={task.personalOwnerId === user?.id}
+                        canDrag={manualDragEnabled && !dragBusyTaskId}
+                        onDragStart={handleWorkspaceDragStart}
+           
