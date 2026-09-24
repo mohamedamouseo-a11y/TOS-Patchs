@@ -395,4 +395,105 @@ new_board = '''            {workspaceColumns.map((column) => {
                         canManagePersonalTask={task.personalOwnerId === user?.id}
                         canDrag={manualDragEnabled && !dragBusyTaskId}
                         onDragStart={handleWorkspaceDragStart}
-           
+                        onDragEnd={handleWorkspaceDragEnd}
+                        onDragOverCard={handleWorkspaceCardDragOver}
+                        onDropOnCard={handleWorkspaceCardDrop}
+                        dragInsertEdge={dragOverTaskId === task.id ? dragInsertEdge : ""}
+                        isDragging={draggedTaskId === task.id || dragBusyTaskId === task.id}
+                      />
+                    )) : (
+                      <div className="rounded-[16px] border border-dashed border-zinc-200 bg-zinc-50/70 px-3 py-5 text-center text-[11px] font-bold text-slate-400 dark:border-white/10 dark:bg-white/5 dark:text-zinc-500">
+                        <FolderKanban className="mx-auto mb-2" size={18} />
+                        {isAr ? "لا توجد مهام في هذه الحالة" : "No tasks in this status"}
+                      </div>
+                    )}
+                  </div>
+                </section>
+              );
+            })}'''
+
+source = replace_once(source, old_board, new_board, "workspace board drop zones")
+
+source = replace_once(
+    source,
+    '''      <WorkspaceTaskEditorModal
+        open={editorOpen}''',
+    '''      {waitingClientMoveDraft ? (
+        <div className="fixed inset-0 z-[120] grid place-items-center bg-zinc-950/45 p-4 backdrop-blur-sm" role="presentation">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="my-workspace-waiting-client-title"
+            className="w-full max-w-lg rounded-[24px] border border-amber-200 bg-white p-5 shadow-2xl dark:border-amber-400/20 dark:bg-zinc-950"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-600">
+                  {isAr ? "بانتظار العميل" : "Waiting client"}
+                </p>
+                <h3 id="my-workspace-waiting-client-title" className="mt-1 text-lg font-black text-zinc-950 dark:text-white">
+                  {waitingClientMoveDraft.task?.title || (isAr ? "المهمة" : "Task")}
+                </h3>
+                <p className="mt-1 text-xs font-bold leading-5 text-zinc-500 dark:text-zinc-400">
+                  {isAr ? "اكتب بوضوح ما الذي ننتظره من العميل قبل نقل الكارت." : "Add a clear reason for what we are waiting for from the client before moving the card."}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setWaitingClientMoveDraft(null)}
+                className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-zinc-200 text-zinc-500 transition hover:bg-zinc-50 dark:border-white/10 dark:text-zinc-300 dark:hover:bg-white/5"
+                aria-label={isAr ? "إغلاق" : "Close"}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <textarea
+              autoFocus
+              value={waitingClientMoveDraft.reason}
+              onChange={(event) => setWaitingClientMoveDraft((current) => current ? { ...current, reason: event.target.value } : current)}
+              placeholder={isAr ? "مثال: ننتظر اعتماد التصميم النهائي من العميل..." : "Example: Waiting for the client's final design approval..."}
+              className="mt-4 min-h-[110px] w-full resize-y rounded-2xl border border-amber-200 bg-amber-50/40 px-3.5 py-3 text-sm font-bold text-zinc-800 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100 dark:border-amber-400/20 dark:bg-amber-500/5 dark:text-zinc-100 dark:focus:ring-amber-500/10"
+            />
+            <div className="mt-4 flex flex-wrap justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setWaitingClientMoveDraft(null)}
+                className="rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-black text-zinc-600 transition hover:bg-zinc-50 dark:border-white/10 dark:bg-zinc-900 dark:text-zinc-200"
+              >
+                {isAr ? "إلغاء" : "Cancel"}
+              </button>
+              <button
+                type="button"
+                onClick={confirmWaitingClientMove}
+                disabled={!String(waitingClientMoveDraft.reason || "").trim()}
+                className="rounded-xl bg-amber-500 px-4 py-2.5 text-xs font-black text-white transition hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isAr ? "حفظ السبب ونقل المهمة" : "Save reason & move"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <WorkspaceTaskEditorModal
+        open={editorOpen}''',
+    "Waiting Client drag modal",
+)
+
+TARGET.write_text(source, encoding="utf-8")
+
+print("PATCH=PASS")
+print("PATCH_NAME=TOS-MY-WORKSPACE-TRELLO-DRAG-DROP-V1")
+print(f"FILES_CHANGED={TARGET.relative_to(ROOT)}")
+print("MY_WORKSPACE_DRAG_DROP=ACTIVE")
+print("CROSS_COLUMN_STATUS_MOVE=ACTIVE")
+print("SAME_COLUMN_REORDER=ACTIVE")
+print("PERSONAL_ORDER_API=REUSED")
+print("PERSONAL_TASK_UPDATE_API=REUSED")
+print("PROJECT_TASK_UPDATE_API=REUSED")
+print("WAITING_CLIENT_REASON_GATE=PRESERVED")
+print("DATE_SORT_DRAG_GUARD=ACTIVE")
+print("BACKEND_UNCHANGED=YES")
+print("DB_UNCHANGED=YES")
+print("DEPENDENCIES_ADDED=NO")
+print("NEXT=build frontend, deploy atomically, verify My Workspace in browser")
