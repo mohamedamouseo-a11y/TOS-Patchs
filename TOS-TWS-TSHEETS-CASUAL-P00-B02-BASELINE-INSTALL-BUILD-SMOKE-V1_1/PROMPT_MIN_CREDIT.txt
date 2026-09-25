@@ -1,0 +1,7 @@
+Run only the P00-B02 V1_1 fix. Do not re-clone and do not audit unrelated code. Reuse the dependencies and Univer build already produced by the failed V1 run. Do not manually edit source, deploy to TOS, touch PM2/nginx/DB, commit, or push.
+
+curl -fsSL https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/main/TOS-TWS-TSHEETS-CASUAL-P00-B02-BASELINE-INSTALL-BUILD-SMOKE-V1_1/run.sh -o /tmp/tsheets-casual-p00-b02-v1_1.sh && bash /tmp/tsheets-casual-p00-b02-v1_1.sh
+
+Let the runner finish once; do not duplicate build commands in another session.
+
+Return only the final KEY=VALUE lines printed by the runner.
