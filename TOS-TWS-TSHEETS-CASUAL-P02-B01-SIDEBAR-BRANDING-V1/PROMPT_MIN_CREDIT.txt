@@ -1,0 +1,18 @@
+Apply only TOS-TWS-TSHEETS-CASUAL-P02-B01-SIDEBAR-BRANDING-V1 using its runner. Do not audit unrelated code, do not rebuild the Casual upstream source, and do not commit or push.
+
+curl -fsSL https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/main/TOS-TWS-TSHEETS-CASUAL-P02-B01-SIDEBAR-BRANDING-V1/run.sh -o /tmp/tsheets-casual-p02-b01.sh && bash /tmp/tsheets-casual-p02-b01.sh
+
+After PASS, browser-test with an authenticated session if available:
+1. Workspace > TWS shows a nested "T-Sheets Lab" / "T-Sheets تجريبي" item.
+2. Clicking it opens /tws/sheets-lab without a full-page error.
+3. The spreadsheet renders and cell editing still works.
+4. The embedded titlebar shows the green T-Sheets mark/wordmark and no visible "Casual Sheets" branding on the initial editor screen.
+5. Clicking the embedded T-Sheets brand does not navigate the iframe away.
+6. Clicking parent TWS returns to /tws dashboard.
+7. Existing old TSheets document route still uses the old editor.
+8. No new console errors.
+
+If browser/auth is unavailable, report BROWSER_TEST=BLOCKED without guessing.
+
+Return only:
+PATCH, PASS_FAIL, TOS_BUILD, DEPLOY_MODE, PM2, HTTP_LAB, HTTP_RUNTIME, BROWSER_TEST, SIDEBAR_CHILD, LAB_OPEN, CELL_EDIT, TSHEETS_BRAND, CASUAL_VISIBLE, BRAND_CLICK, TWS_PARENT_BACK, OLD_TSHEETS, CONSOLE, GIT_STATUS, ERROR.
