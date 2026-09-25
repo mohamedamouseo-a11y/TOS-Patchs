@@ -1,0 +1,17 @@
+Apply only the P02-B01 V1_1 loading hotfix. Do not audit unrelated code. Do not rebuild Casual Sheets or Univer. Do not manually edit. Do not commit or push.
+
+curl -fsSL https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/main/TOS-TWS-TSHEETS-CASUAL-P02-B01-SIDEBAR-BRANDING-V1_1/run.sh -o /tmp/tsheets-casual-p02-b01-v1_1.sh && bash /tmp/tsheets-casual-p02-b01-v1_1.sh
+
+After PASS, browser-test /tws/sheets-lab with an authenticated session:
+- hard refresh once;
+- measure approximately how long until the grid is usable;
+- loading overlay must disappear;
+- edit one cell;
+- T-Sheets branding must remain visible;
+- T-Sheets Lab sidebar child must remain visible;
+- check for repeated/rapid console errors.
+
+If the grid is still not usable after 15 seconds, stop waiting and report LOAD_RESULT=STILL_SLOW.
+
+Return only:
+PATCH, PASS_FAIL, TOS_BUILD, DEPLOY_MODE, PM2, HTTP_LAB, HTTP_RUNTIME, MUTATION_OBSERVER_REMOVED, BRANDING_RETRY_MODE, BROWSER_TEST, LOAD_SECONDS, LOAD_RESULT, CELL_EDIT, TSHEETS_BRAND, SIDEBAR_CHILD, CONSOLE, GIT_STATUS, ERROR.
