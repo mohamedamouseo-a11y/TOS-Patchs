@@ -1,0 +1,15 @@
+Run only P01-B01 using its runner. Do not re-clone Casual Sheets, do not redo P00 setup, do not manually edit files, and do not commit or push.
+
+curl -fsSL https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/main/TOS-TWS-TSHEETS-CASUAL-P01-B01-SIDE-BY-SIDE-INTEGRATION-V1/run.sh -o /tmp/tsheets-casual-p01-b01.sh && bash /tmp/tsheets-casual-p01-b01.sh
+
+After PASS, browser-test https://tos.tamiyouz.com/tws/sheets-lab if browser/auth is available:
+- new Casual Sheets UI renders inside TOS without blank screen;
+- a cell can be selected and edited;
+- /tws still opens the existing TWS dashboard;
+- an existing old TSheets document route still uses the old TSheets editor;
+- no new console errors caused by the lab route.
+
+If browser/auth is unavailable, report BROWSER_TEST=BLOCKED without guessing.
+
+Return only:
+PATCH, PASS_FAIL, UPSTREAM_BASE_BUILD, TOS_BUILD, RUNTIME_SYNC, DEPLOY_MODE, PM2, HTTP_ROUTE, HTTP_RUNTIME, BROWSER_TEST, LAB_RENDER, CELL_EDIT, OLD_TWS, OLD_TSHEETS, CONSOLE, GIT_STATUS, ERROR.
