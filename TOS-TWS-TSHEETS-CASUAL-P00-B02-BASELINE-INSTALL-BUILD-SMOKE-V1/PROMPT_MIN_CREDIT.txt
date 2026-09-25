@@ -1,0 +1,7 @@
+Run only P00-B02 from the already-cloned Casual Sheets source. Do not re-clone. Do not audit unrelated TOS code. Do not edit source manually. Do not deploy to TOS, PM2, nginx, or DB. Do not commit or push.
+
+curl -fsSL https://raw.githubusercontent.com/mohamedamouseo-a11y/TOS-Patchs/main/TOS-TWS-TSHEETS-CASUAL-P00-B02-BASELINE-INSTALL-BUILD-SMOKE-V1/run.sh -o /tmp/tsheets-casual-p00-b02.sh && bash /tmp/tsheets-casual-p00-b02.sh
+
+This first build can be long because upstream builds its pinned Univer fork. Let the runner finish; do not duplicate commands in separate sessions.
+
+Return only the runner's final KEY=VALUE lines.
