@@ -1,0 +1,58 @@
+diff --git a/vendor/tsheets-casual-upstream/apps/web/src/shell/TitleBar.tsx b/vendor/tsheets-casual-upstream/apps/web/src/shell/TitleBar.tsx
+--- a/vendor/tsheets-casual-upstream/apps/web/src/shell/TitleBar.tsx
++++ b/vendor/tsheets-casual-upstream/apps/web/src/shell/TitleBar.tsx
+@@ -113,7 +113,7 @@
+  * Click the filename to rename inline; Enter commits, Escape reverts,
+  * blur commits the current draft.
+  */
+-export function TitleBar({ onBackHome }: { onBackHome?: () => void } = {}) {
++export function TitleBar() {
+   const { meta, renameWorkbook } = useWorkbook();
+   const ui = useUI();
+   const api = useUniverAPI();
+@@ -169,7 +169,9 @@ export function TitleBar({ onBackHome }: { onBackHome?: () => void } = {}) {
+         label="Back to sheets"
+         title="Back to sheets"
+         data-testid="titlebar-back-home"
+-        onClick={() => (onBackHome ? onBackHome() : navigate('/home'))}
++        onClick={() => {
++          window.dispatchEvent(new CustomEvent('tos:tsheets-open-home'));
++        }}
+         style={{ marginRight: 4 }}
+       />
+       <a
+diff --git a/vendor/tsheets-casual-upstream/apps/web/src/App.tsx b/vendor/tsheets-casual-upstream/apps/web/src/App.tsx
+--- a/vendor/tsheets-casual-upstream/apps/web/src/App.tsx
++++ b/vendor/tsheets-casual-upstream/apps/web/src/App.tsx
+@@ -118,6 +118,17 @@ export function App() {
+   const [homeDismissed, setHomeDismissed] = useState(() => isDesktop());
+   const [homeForcedOpen, setHomeForcedOpen] = useState(false);
+ 
++  useEffect(() => {
++    const openHome = () => {
++      setHomeForcedOpen(true);
++      setHomeDismissed(false);
++    };
++    window.addEventListener('tos:tsheets-open-home', openHome);
++    return () => {
++      window.removeEventListener('tos:tsheets-open-home', openHome);
++    };
++  }, []);
++
+   // Mirror the open file's name into the browser tab/window title,
+   // Office-style ("Book1 — Casual Sheets"). On `/home` or `/templates`
+   // keep the original marketing/SEO title (captured once at mount) so
+@@ -720,14 +731,7 @@ export function App() {
+                                               data-ribbon={ribbonCompact ? 'compact' : 'full'}
+                                               data-testid="app-shell"
+                                             >
+-                                              <TitleBar
+-                                                onBackHome={() => {
+-                                                  setHomeForcedOpen(true);
+-                                                  setHomeDismissed(false);
+-                                                }}
+-                                              />
++                                              <TitleBar />
+                                               <Toolbar />
+                                               <AutosaveRestoreBanner />
+                                               <DesktopRecoveryBanner />
