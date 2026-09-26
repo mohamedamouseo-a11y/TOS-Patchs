@@ -1,0 +1,81 @@
+diff --git a/vendor/tsheets-casual-upstream/apps/web/src/shell/TitleBar.tsx b/vendor/tsheets-casual-upstream/apps/web/src/shell/TitleBar.tsx
+--- a/vendor/tsheets-casual-upstream/apps/web/src/shell/TitleBar.tsx
++++ b/vendor/tsheets-casual-upstream/apps/web/src/shell/TitleBar.tsx
+@@ -113,7 +113,7 @@
+  * Click the filename to rename inline; Enter commits, Escape reverts,
+  * blur commits the current draft.
+  */
+-export function TitleBar() {
++export function TitleBar({ onBackHome }: { onBackHome?: () => void } = {}) {
+   const { meta, renameWorkbook } = useWorkbook();
+   const ui = useUI();
+   const api = useUniverAPI();
+@@ -169,7 +169,7 @@ export function TitleBar() {
+         label="Back to sheets"
+         title="Back to sheets"
+         data-testid="titlebar-back-home"
+-        onClick={() => navigate('/home')}
++        onClick={() => (onBackHome ? onBackHome() : navigate('/home'))}
+         style={{ marginRight: 4 }}
+       />
+       <a
+diff --git a/vendor/tsheets-casual-upstream/apps/web/src/App.tsx b/vendor/tsheets-casual-upstream/apps/web/src/App.tsx
+--- a/vendor/tsheets-casual-upstream/apps/web/src/App.tsx
++++ b/vendor/tsheets-casual-upstream/apps/web/src/App.tsx
+@@ -116,6 +116,7 @@ export function App() {
+   // bridge (web keeps the original false → overlay-until-probe behaviour).
+   const [homeDismissed, setHomeDismissed] = useState(() => isDesktop());
++  const [homeForcedOpen, setHomeForcedOpen] = useState(false);
+ 
+   // Mirror the open file's name into the browser tab/window title,
+   // Office-style ("Book1 — Casual Sheets"). On `/home` or `/templates`
+@@ -719,7 +720,14 @@ export function App() {
+                                               data-ribbon={ribbonCompact ? 'compact' : 'full'}
+                                               data-testid="app-shell"
+                                             >
+-                                              <TitleBar />
++                                              <TitleBar
++                                                onBackHome={() => {
++                                                  setHomeForcedOpen(true);
++                                                  setHomeDismissed(false);
++                                                }}
++                                              />
+                                               <Toolbar />
+                                               <AutosaveRestoreBanner />
+                                               <DesktopRecoveryBanner />
+@@ -758,7 +766,12 @@ export function App() {
+                                           <HomeScreen
+                                             dismissed={homeDismissed}
+-                                            onDismiss={() => setHomeDismissed(true)}
++                                            forceVisible={homeForcedOpen}
++                                            onDismiss={() => {
++                                              setHomeForcedOpen(false);
++                                              setHomeDismissed(true);
++                                            }}
+                                           />
+                                         </>
+                                       }
+diff --git a/vendor/tsheets-casual-upstream/apps/web/src/home/HomeScreen.tsx b/vendor/tsheets-casual-upstream/apps/web/src/home/HomeScreen.tsx
+--- a/vendor/tsheets-casual-upstream/apps/web/src/home/HomeScreen.tsx
++++ b/vendor/tsheets-casual-upstream/apps/web/src/home/HomeScreen.tsx
+@@ -60,10 +60,12 @@ const VIEW_META: Record<HomeView, { title: string; sub: string; icon: string }> 
+ export function HomeScreen({
+   dismissed,
++  forceVisible = false,
+   onDismiss,
+ }: {
+   dismissed: boolean;
++  forceVisible?: boolean;
+   onDismiss: () => void;
+ }) {
+   const wb = useWorkbook();
+@@ -105,7 +107,7 @@ export function HomeScreen({
+     }
+     return map;
+   }, []);
+ 
+-  const visible = !dismissed && isBlank && !inCollabRoom;
++  const visible = !dismissed && (forceVisible || isBlank) && !inCollabRoom;
+ 
+   // Esc closes the home, same as the X button.
+   useEffect(() => {
